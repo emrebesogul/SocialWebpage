@@ -1,2 +1,6 @@
 # SocialWebpage
-This is DHBW project in Webengineering 4th Semester
+Middleware code in folder Backend.
+
+React code in folder Frontend.
+
+--DHBW project in course Webengineering II--
