@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 
+import GetData from '../API/GetData';
+
 class Home extends Component {
     constructor() {
         super();
@@ -10,7 +12,9 @@ class Home extends Component {
     render() {
         return (
             <div>
-                <h1>Hellloooooooo</h1>
+                <h1>Hello</h1>
+
+                <GetData />
             </div>
         )
     }
