@@ -8,7 +8,7 @@ var assert = require('assert');
 
 var url = 'mongodb://localhost:27017/socialwebpage';
 
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
     var findDocuments = function(db, callback) {
         var collection = db.collection('users');
         collection.find().toArray(function(err,docs){
@@ -17,6 +17,7 @@ app.get('/', function(req, res) {
             //callback;
         })
     }
+    //Connection ganz am anfang
     MongoClient.connect(url, function(err, client){
         if (err) throw err;
         console.log("it is working");
@@ -25,6 +26,7 @@ app.get('/', function(req, res) {
             db.close();
         });
     })
+    //functions, database.js
 });
 
 
