@@ -1,7 +1,6 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Open Sans';
 }
 
 #ourProduct {
@@ -18,15 +17,14 @@ body {
 }
 
 #formularLogin label {
-    font-size: 16px;
     margin-bottom: 8px;
     margin-top: 20px;
 }
 
 #formularLogin button {
-    font-size: 14px;
+
 }
 
 #formularLogin span {
-    font-size: 14px;
+
 }
