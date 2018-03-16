@@ -10,16 +10,17 @@ class Login extends Component {
     constructor() {
         super();
 
-        this.state = {value: ''};
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.api = '/loginUser';
-
         this.state = {
           username: "",
+          userID: "",
           password: "",
           token: "",
           message: ""
         }
+
+        this.api = '/user/loginUser';
+
+        this.handleSubmit = this.handleSubmit.bind(this);
 
         //const getdata = new GetData();
         //getdata.get()
@@ -27,6 +28,9 @@ class Login extends Component {
         this.pageTitle = "Log in to Social Webpage";
         document.title = this.pageTitle;
     }
+
+
+
 
     //Post user login data and check if they are correct
     async handleSubmit(event) {
@@ -38,13 +42,13 @@ class Login extends Component {
 
         //Do something with response
         const response = await checkUserDataAtLogin(this.api, this.state.username, this.state.password);
+        this.setState({message : JSON.parse(response).message});
+        this.setState({token : JSON.parse(response).sessionToken});
+        this.setState({userID : JSON.parse(response).userID});
+
         alert(response);
 
         //Cookies und Session => SessionID zurückgeben und Key speichern
-
-
-
-
     }
 
     render() {
@@ -55,7 +59,7 @@ class Login extends Component {
                 </div>
 
                 <div id="formularLogin">
-                    <Form onSubmit={this.handleSubmit}>
+                    <Form error onSubmit={this.handleSubmit}>
                       <Form.Field required>
                         <label>Username</label>
                         <input required placeholder='Username' name="username"/>
@@ -66,9 +70,6 @@ class Login extends Component {
                       </Form.Field>
 
                       <Button type='submit'>Log In</Button>
-                      <span>Don't have an account? <Link to="/register">Sign up</Link></span>
-                      <span>Test and go to Home:  <Link to="/home">Home</Link></span>
-                      Save credentials in cookies
                     </Form>
                 </div>
 

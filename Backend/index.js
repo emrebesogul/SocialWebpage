@@ -26,7 +26,7 @@ MongoClient.connect(url, function(err, client) {
 
 
       //----------------------LOGIN----------------------//
-      app.post('/loginUser', (req, res) => {
+      app.post('/user/loginUser', (req, res) => {
           const userCredential = JSON.stringify(req.body);
           database.checkUserCredentials(client.db('socialwebpage'), res, userCredential, res, function(){
               db.close();

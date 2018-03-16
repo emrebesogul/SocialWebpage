@@ -15,21 +15,34 @@ module.exports = {
 
       //Check username and password
       if (username != null && password != null) {
-          collection.find({"username": username}).toArray(function(err, docs){
+          collection.findOne({"username": username}, function(err, docs) {
               if (err) {
+                  res.status(200).send(JSON.stringify({
+                      message: "User not found"
+                  }));
                   throw err;
               }
 
-              //if(passwordHashed == docs[0].password) {
-              if(password == docs[0].password) {
-                  res.status(200).send(JSON.stringify({
-                      message: "Correct credentials", sessionToken: sessionToken, username: username
-                  }));
+              console.log("Docs", docs);
+
+              if (docs) {
+                  //if(passwordHashed == docs[0].password) {
+                  if (password == docs.password) {
+                      console.log("Correct credentials");
+                      res.status(200).send(JSON.stringify({
+                          success: "Correct credentials", sessionToken: sessionToken, userID: docs._id,
+                      }));
+                  } else {
+                      console.log("Password wrong");
+                      res.status(200).send(JSON.stringify({
+                          message: "Password wrong"
+                      }));
+                  }
               }
               else {
-                  res.status(401).send({
-                      error: "Password wrong"
-                  });
+                  res.status(200).send(JSON.stringify({
+                      message: "User not found"
+                  }));
               }
           })
       }
