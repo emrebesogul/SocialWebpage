@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { Button, Form, Image } from 'semantic-ui-react'
 
 import '../style.css';
 

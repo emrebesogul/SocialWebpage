@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
+import '../style.css';
+
 import { Button, Form, Image } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
-import $ from 'jquery';
-
-import PostLoginData from '../API/POST/PostLoginData';
-
-import '../style.css';
+import {checkUserDataAtLogin} from '../API/POST/PostMethods';
 
 class Login extends Component {
     constructor() {
@@ -14,51 +12,39 @@ class Login extends Component {
 
         this.state = {value: ''};
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.url = 'http://localhost:8000/loginUser';
+        this.api = '/loginUser';
 
         this.state = {
           username: "",
-          password: ""
+          password: "",
+          token: "",
+          message: ""
         }
+
+        //const getdata = new GetData();
+        //getdata.get()
 
         this.pageTitle = "Log in to Social Webpage";
         document.title = this.pageTitle;
     }
 
-    handleSubmit(event) {
+    //Post user login data and check if they are correct
+    async handleSubmit(event) {
         event.preventDefault();
         console.log("clicked now on submit");
-        console.log(this.state.username);
-        console.log(this.state.password);
 
         this.state.username = event.target[0].value;
         this.state.password = event.target[1].value;
 
-        console.log(this.state.username);
-        console.log(this.state.password);
+        //Do something with response
+        const response = await checkUserDataAtLogin(this.api, this.state.username, this.state.password);
+        alert(response);
 
-        this.getdata();
-        //<PostLoginData username={this.state.username} password={this.state.password}/>
-    }
+        //Cookies und Session => SessionID zurückgeben und Key speichern
 
-    getdata() {
-      $.ajax({
-        url: this.url,
-        type: "POST",
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON.stringify({username:this.state.username, password:this.state.password}),
-        success: function(res) {
-            console.log("Successfully responded from server: ");
-            console.log(res[0].username);
-            console.log(res[0].first_name);
-            console.log(res[0].last_name);
-            console.log(res[0].birthday);
-        }.bind(this),
-        error: function(xhr, status, err){
-            console.log(err);
-        }
-      });
+
+
+
     }
 
     render() {
@@ -71,8 +57,8 @@ class Login extends Component {
                 <div id="formularLogin">
                     <Form onSubmit={this.handleSubmit}>
                       <Form.Field required>
-                        <label>Username or Email</label>
-                        <input required placeholder='Username or E-Mail...' name="username"/>
+                        <label>Username</label>
+                        <input required placeholder='Username' name="username"/>
                       </Form.Field>
                       <Form.Field required>
                         <label>Password</label>
