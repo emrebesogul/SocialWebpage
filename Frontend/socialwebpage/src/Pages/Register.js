@@ -18,7 +18,7 @@ class Reqister extends Component {
 
             <div>
               <div id="login-menu">
-                <Link to="/"><span id="login-inactive" className="login-menu-label">Sign Up</span></Link>
+                <Link to="/login"><span id="login-inactive" className="login-menu-label">Sign Up</span></Link>
                 <Link to="/register"><span id="login-active" className="login-menu-label">Register</span></Link>
               </div>
               <div id="ourProduct">

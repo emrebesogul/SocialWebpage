@@ -16,6 +16,7 @@ class Profile extends Component {
         return (
           <div>
             <div id="feed">
+
               <div id="mobile-header">
                 <Link to="/profile">
                   <Button circular size="medium" id="profile-button-mobile" icon>
@@ -23,7 +24,7 @@ class Profile extends Component {
                     Profile
                   </Button>
                 </Link>
-                <Link to="/">
+                <Link to="/login">
                   <Button circular size="medium" id="logout-button-mobile" icon>
                     <Icon className="menu-icons" name='log out' />
                     Log out
@@ -38,7 +39,7 @@ class Profile extends Component {
                     Profile
                   </Button>
                 </Link>
-                <Link to="/">
+                <Link to="/login">
                   <Button circular size="medium" id="logout-button" icon>
                     <Icon className="menu-icons" name='log out' />
                     Log out
@@ -46,11 +47,12 @@ class Profile extends Component {
                 </Link>
               </div>
 
+            </div>
 
-              </div>
-              <div id="feed-content">
+            <div id="feed-content">
                 <FeedTab />
-              </div>
+            </div>
+
           </div>
         )
     }
