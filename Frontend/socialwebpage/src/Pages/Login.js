@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import '../style.css';
+import { Button, Form, Image, Input } from 'semantic-ui-react';
 
-import { Button, Form, Image } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import {checkUserDataAtLogin} from '../API/POST/PostMethods';
@@ -27,6 +26,7 @@ class Login extends Component {
 
         this.pageTitle = "Log in to Social Webpage";
         document.title = this.pageTitle;
+
     }
 
 
@@ -53,27 +53,41 @@ class Login extends Component {
 
     render() {
         return (
+          <div id ="body-div">
             <div>
-                <div id="ourProduct">
-                    <Image src='/assets/images/logos/logo.jpg' size='medium' verticalAlign='middle' /> <span>Ta Daaa!</span>
+              <div id="login-menu">
+                <Link to="/"><span id="login-active" className="login-menu-label">Sign Up</span></Link>
+                <Link to="/register"><span id="login-inactive" className="login-menu-label">Register</span></Link>
+              </div>
+              <div id="ourProduct">
+
+              </div>
+              <div id="formularLogin">
+                <div>
+                
+
                 </div>
+                  <Form onSubmit={this.handleSubmit}>
+                    <Form.Field required>
+                      <Input inverted  className="login-input-text" placeholder='Username or E-Mail...' name="username" />
+                    </Form.Field>
+                    <Form.Field required>
+                      <Input className="login-input-text" type="password" placeholder='Password' name="password" />
+                    </Form.Field>
 
-                <div id="formularLogin">
-                    <Form error onSubmit={this.handleSubmit}>
-                      <Form.Field required>
-                        <label>Username</label>
-                        <input required placeholder='Username' name="username"/>
-                      </Form.Field>
-                      <Form.Field required>
-                        <label>Password</label>
-                        <input type="password" required placeholder='Password' name="password" />
-                      </Form.Field>
+                    <Button inverted className="ui basic" id="login-button-submit" type="submit" animated='fade'>
+                      <Button.Content visible>
+                        Login
+                      </Button.Content>
+                      <Button.Content hidden>
+                        Enter the platform!
+                      </Button.Content>
+                    </Button>
 
-                      <Button type='submit'>Log In</Button>
-                    </Form>
-                </div>
-
+                  </Form>
+              </div>
             </div>
+          </div>
         )
     }
 }
