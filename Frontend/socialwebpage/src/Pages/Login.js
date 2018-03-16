@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Form, Image } from 'semantic-ui-react';
+import { Button, Form, Image, Input } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import '../style.css';
@@ -10,32 +10,45 @@ class Login extends Component {
         super();
         this.pageTitle = "Log in to Social Webpage"
         document.title = this.pageTitle;
+
     }
 
     render() {
         return (
+          <div id ="body-div">
             <div>
-                <div id="ourProduct">
-                    <Image src='/assets/images/logos/logo.jpg' size='medium' verticalAlign='middle' /> <span>Ta Daaa!</span>
+              <div id="login-menu">
+                <Link to="/"><span id="login-active" className="login-menu-label">Sign Up</span></Link>
+                <Link to="/register"><span id="login-inactive" className="login-menu-label">Register</span></Link>
+              </div>
+              <div id="ourProduct">
+
+              </div>
+              <div id="formularLogin">
+                <div>
+                
                 </div>
+                  <Form>
+                    <Form.Field required>
+                      <Input inverted  className="login-input-text" placeholder='Username or E-Mail...' />
+                    </Form.Field>
+                    <Form.Field required>
+                      <Input className="login-input-text" type="password" placeholder='Password' />
+                    </Form.Field>
 
-                <div id="formularLogin">
-                    <Form>
-                      <Form.Field required>
-                        <label>Username or Email</label>
-                        <input placeholder='Username or E-Mail...' />
-                      </Form.Field>
-                      <Form.Field required>
-                        <label>Password</label>
-                        <input type="password" placeholder='Password' />
-                      </Form.Field>
+                    <Button inverted className="ui basic" id="login-button-submit" type="submit" animated='fade'>
+                      <Button.Content visible>
+                        Login
+                      </Button.Content>
+                      <Button.Content hidden>
+                        Enter the platform!
+                      </Button.Content>
+                    </Button>
 
-                      <Button type='submit' onClick={()=>{ alert('Hola'); }}>Log In</Button>
-                      <span>Don't have an account? <Link to="/register">Sign up</Link></span>
-                    </Form>
-                </div>
-
+                  </Form>
+              </div>
             </div>
+          </div>
         )
     }
 }
