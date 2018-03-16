@@ -1,45 +1,42 @@
+var md5 = require('js-md5');
+var uuid = require('uuid');
+
 module.exports = {
-  getAllUserData: function (db, res, callback) {
-      let collection = db.collection('users');
-      collection.find().toArray(function(err, docs){
-          if (err) {
-              throw err;
-          }
-          res.send(docs)
-          console.log(docs);
-      })
-  },
+
+  //----------------------LOGIN----------------------//
   checkUserCredentials: function (db, res, userCredential) {
-      let collection = db.collection('users');
-
-      let user = JSON.parse(userCredential).username;
+      //Select table and parse form input fields
+      const collection = db.collection('users');
+      let username = JSON.parse(userCredential).username;
       let password = JSON.parse(userCredential).password;
+      let passwordHashed = md5(password);
 
-      //Anmeldung mit Email weg, zu komliziert...!
-      if(user != null && password != null) {
-          collection.find({"username": user}).toArray(function(err, docs){
+      let sessionToken = uuid.v4();
+
+      //Check username and password
+      if (username != null && password != null) {
+          collection.find({"username": username}).toArray(function(err, docs){
               if (err) {
                   throw err;
               }
-              //console.log("Successfully fetched user data: ");
-              //console.log(docs[0]);
-              //console.log(docs[0].password);
 
+              //if(passwordHashed == docs[0].password) {
               if(password == docs[0].password) {
-                  console.log("Successfully fetched user data: " );
-                  console.log(docs[0]);
-                  res.send(docs);
+                  res.status(200).send(JSON.stringify({
+                      message: "Correct credentials", sessionToken: sessionToken, username: username
+                  }));
               }
               else {
-                  console.log("False credentials!");
-                  res.send("false credentials");
+                  res.status(401).send({
+                      error: "Password wrong"
+                  });
               }
           })
       }
   }
+
+  //----------------------REGISTER----------------------//
+
+
+
 }
-
-//unct getAllUse
-
-
-//module.export{asd,asda}

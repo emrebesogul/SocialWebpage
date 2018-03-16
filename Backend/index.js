@@ -22,15 +22,10 @@ MongoClient.connect(url, function(err, client) {
       throw err;
   } else {
       console.log("Successfully connected to MongoDB");
+      app.use(bodyParser.json());
 
-      app.use(bodyParser.json())
-      app.get('/getUsers', (req, res) => {
-          database.getAllUserData(client.db('socialwebpage'), res, function(){
-              db.close();
-          });
-      });
-      
-      //app.get('/loginUser'); -> Browseranfrage
+
+      //----------------------LOGIN----------------------//
       app.post('/loginUser', (req, res) => {
           const userCredential = JSON.stringify(req.body);
           database.checkUserCredentials(client.db('socialwebpage'), res, userCredential, res, function(){
@@ -38,9 +33,12 @@ MongoClient.connect(url, function(err, client) {
           });
       });
 
+      //----------------------REGISTER----------------------//
+
+
 
       app.listen(8000, function() {
-          console.log('Listening on port 8000...')
+          console.log('Listening for API Requests on port 8000...')
       })
   }
 })
