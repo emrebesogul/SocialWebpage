@@ -21,26 +21,35 @@ class Reqister extends Component {
                 <Link to="/login"><span id="login-inactive" className="login-menu-label">Sign Up</span></Link>
                 <Link to="/register"><span id="login-active" className="login-menu-label">Register</span></Link>
               </div>
-              <div id="ourProduct">
 
+              <div id="ourProduct">
+                  Product
               </div>
+              
               <div id="formularLogin">
                   <Form>
-                    <Form.Field required>
-                      <Input inverted  className="login-input-text" placeholder='Surname' />
-                      <Input inverted  className="login-input-text" placeholder='Name' />
-                    </Form.Field>
-                    <Form.Field required>
-                      <Input inverted  className="login-input-text" placeholder='Username' />
 
-                          <Input inverted  className="login-input-text" iconPosition='left' placeholder='Email'>
+                    <Form.Field required>
+                      <Input inverted className="login-input-text" placeholder='First name' />
+                      <Input inverted className="login-input-text" placeholder='Last name' />
+                    </Form.Field>
+
+                    <Form.Field required>
+                      <Input inverted className="login-input-text" placeholder='Username' />
+
+                          <Input inverted className="login-input-text" iconPosition='left' placeholder='Email'>
                              <Icon name='at' />
                              <input />
                            </Input>
                     </Form.Field>
+
                     <Form.Field required>
                       <Input className="login-input-text" type="password" placeholder='Password' />
-                      <Input className="login-input-text" type="password" placeholder='Password' />
+                    </Form.Field>
+
+                    <Form.Field>
+                      <Input className="login-input-text" placeholder='Birthday: dd-mm-yy' />
+                      <Input className="login-input-text" placeholder='Gender: Male/Female' />
                     </Form.Field>
 
 
@@ -49,7 +58,7 @@ class Reqister extends Component {
                         Register
                       </Button.Content>
                       <Button.Content hidden>
-                        Enter the platform!
+                        Join the platform!
                       </Button.Content>
                     </Button>
 

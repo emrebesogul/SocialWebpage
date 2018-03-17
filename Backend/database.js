@@ -30,7 +30,7 @@ module.exports = {
                   if (password == docs.password) {
                       console.log("Correct credentials");
                       res.status(200).send(JSON.stringify({
-                          success: "Correct credentials", sessionToken: sessionToken, userID: docs._id,
+                          message : "Correct credentials", sessionToken: sessionToken, userID: docs._id,
                       }));
                   } else {
                       console.log("Password wrong");

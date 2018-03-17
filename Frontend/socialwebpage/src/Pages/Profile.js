@@ -37,7 +37,7 @@ class Profile extends Component {
                     Feed
                   </Button>
                 </Link>
-                <Link to="/">
+                <Link to="/asd">
                   <Button circular size="medium" id="logout-button" icon>
                     <Icon className="menu-icons" name='log out' />
                     Log out

@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import { Button, Form, Image, Input } from 'semantic-ui-react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import {checkUserDataAtLogin} from '../API/POST/PostMethods';
+
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies'
 
 class Login extends Component {
     constructor() {
@@ -13,14 +15,12 @@ class Login extends Component {
           userID: "",
           password: "",
           token: "",
-          message: ""
+          message: "",
+          redirect: false
         }
 
         this.api = '/user/loginUser';
         this.handleSubmit = this.handleSubmit.bind(this);
-
-        //const getdata = new GetData();
-        //getdata.get()
 
         this.pageTitle = "Log in to Social Webpage";
         document.title = this.pageTitle;
@@ -31,8 +31,8 @@ class Login extends Component {
         event.preventDefault();
         console.log("clicked now on submit");
 
-        this.state.username = event.target[0].value;
-        this.state.password = event.target[1].value;
+        this.state.username =  event.target[0].value;
+        this.state.password =  event.target[1].value;
 
         const response = await checkUserDataAtLogin(this.api, this.state.username, this.state.password);
 
@@ -41,10 +41,26 @@ class Login extends Component {
         this.setState({token : JSON.parse(response).sessionToken});
         this.setState({userID : JSON.parse(response).userID});
 
-        alert(response);
+        let now = new Date();
+        now.setTime(now.getTime() + 1 * 3600 * 1000);
+
+        //Save token in cookie
+        if(this.state.message == "Correct credentials") {
+            bake_cookie("token", this.state.token);
+            bake_cookie("userID", this.state.userID);
+
+            this.setState({ redirect: true });
+        } else {
+            alert(this.state.message);
+        }
     }
 
     render() {
+        const { redirect } = this.state;
+         if (redirect) {
+           return <Redirect to='/' />;
+         }
+
         return (
           <div id ="body-div">
             <div>
@@ -55,7 +71,7 @@ class Login extends Component {
               </div>
 
               <div id="ourProduct">
-                  Bild und Produktname
+                  Product
               </div>
 
               <div id="formularLogin">

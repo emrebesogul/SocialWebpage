@@ -10,7 +10,8 @@
     "react-scripts": "1.1.1",
     "redux": "^3.7.2",
     "redux-react-session": "^2.3.1",
-    "semantic-ui-react": "^0.78.3"
+    "semantic-ui-react": "^0.78.3",
+    "sfcookies": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
