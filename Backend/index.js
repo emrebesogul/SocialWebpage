@@ -1,36 +1,44 @@
 var express = require('express');
 var app = express();
-var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
-//var objectId = require('mongodb').ObjectID;
 var assert = require('assert');
+const cors = require('cors');
+var bodyParser = require('body-parser');
+
+app.use(cors());
+
+// create application/json parser
+var jsonParser = bodyParser.json();
+
+//Import functions
+var database = require('./database');
+
+var url = 'mongodb://127.0.0.1:27017/socialwebpage';
+
+// Connect to Mongo on start
+MongoClient.connect(url, function(err, client) {
+  if (err) {
+      console.log('Unable to connect to MongoDB');
+      throw err;
+  } else {
+      console.log("Successfully connected to MongoDB");
+      app.use(bodyParser.json());
 
 
-var url = 'mongodb://localhost:27017/socialwebpage';
+      //----------------------LOGIN----------------------//
+      app.post('/user/loginUser', (req, res) => {
+          const userCredential = JSON.stringify(req.body);
+          database.checkUserCredentials(client.db('socialwebpage'), res, userCredential, res, function(){
+              db.close();
+          });
+      });
 
-app.get('/', (req, res) => {
-    var findDocuments = function(db, callback) {
-        var collection = db.collection('users');
-        collection.find().toArray(function(err,docs){
-            if (err) throw err;
-            res.send(docs);
-            //callback;
-        })
-    }
-    //Connection ganz am anfang
-    MongoClient.connect(url, function(err, client){
-        if (err) throw err;
-        console.log("it is working");
-        // db.close();
-        findDocuments(client.db('socialwebpage'), function(){
-            db.close();
-        });
-    })
-    //functions, database.js
-});
+      //----------------------REGISTER----------------------//
 
 
 
-app.listen(8000, function() {
-  console.log('listening on 8000')
+      app.listen(8000, function() {
+          console.log('Listening for API Requests on port 8000...')
+      })
+  }
 })
