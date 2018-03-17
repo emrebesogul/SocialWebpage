@@ -2,6 +2,7 @@ import $ from 'jquery';
 
 var url = "http://localhost:8000";
 
+//----------------------LOGIN----------------------//
 export const checkUserDataAtLogin=(api, username, password) =>
 {
     return new Promise((resolve, reject) => {
@@ -23,6 +24,7 @@ export const checkUserDataAtLogin=(api, username, password) =>
     });
 }
 
+//----------------------REGISTER----------------------//
 export const registerUserToPlatform=(api, firstname, lastname, username, email, password, birthday, gender) =>
 {
     return new Promise((resolve, reject) => {
@@ -43,3 +45,5 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
         });
     });
 }
+
+//----------------------xy----------------------//
