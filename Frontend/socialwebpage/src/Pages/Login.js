@@ -1,16 +1,54 @@
 import React, {Component} from 'react';
 import { Button, Form, Image, Input } from 'semantic-ui-react';
+
 import { Link } from 'react-router-dom';
 
-import '../style.css';
-
+import {checkUserDataAtLogin} from '../API/POST/PostMethods';
 
 class Login extends Component {
     constructor() {
         super();
-        this.pageTitle = "Log in to Social Webpage"
+
+        this.state = {
+          username: "",
+          userID: "",
+          password: "",
+          token: "",
+          message: ""
+        }
+
+        this.api = '/user/loginUser';
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+        //const getdata = new GetData();
+        //getdata.get()
+
+        this.pageTitle = "Log in to Social Webpage";
         document.title = this.pageTitle;
 
+    }
+
+
+
+
+    //Post user login data and check if they are correct
+    async handleSubmit(event) {
+        event.preventDefault();
+        console.log("clicked now on submit");
+
+        this.state.username = event.target[0].value;
+        this.state.password = event.target[1].value;
+
+        //Do something with response
+        const response = await checkUserDataAtLogin(this.api, this.state.username, this.state.password);
+        this.setState({message : JSON.parse(response).message});
+        this.setState({token : JSON.parse(response).sessionToken});
+        this.setState({userID : JSON.parse(response).userID});
+
+        alert(response);
+
+        //Cookies und Session => SessionID zurückgeben und Key speichern
     }
 
     render() {
@@ -27,13 +65,14 @@ class Login extends Component {
               <div id="formularLogin">
                 <div>
                 
+
                 </div>
-                  <Form>
+                  <Form onSubmit={this.handleSubmit}>
                     <Form.Field required>
-                      <Input inverted  className="login-input-text" placeholder='Username or E-Mail...' />
+                      <Input inverted  className="login-input-text" placeholder='Username or E-Mail...' name="username" />
                     </Form.Field>
                     <Form.Field required>
-                      <Input className="login-input-text" type="password" placeholder='Password' />
+                      <Input className="login-input-text" type="password" placeholder='Password' name="password" />
                     </Form.Field>
 
                     <Button inverted className="ui basic" id="login-button-submit" type="submit" animated='fade'>
