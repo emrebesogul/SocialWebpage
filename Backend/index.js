@@ -34,7 +34,13 @@ MongoClient.connect(url, function(err, client) {
       });
 
       //----------------------REGISTER----------------------//
-
+      app.post('/user/create', (req, res) => {
+          const newUserData = JSON.stringify(req.body);
+          console.log(newUserData);
+          database.registerUserToPlatform(client.db('socialwebpage'), res, newUserData, res, function(){
+              db.close();
+          });
+      });
 
 
       app.listen(8000, function() {

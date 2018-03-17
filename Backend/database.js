@@ -26,8 +26,8 @@ module.exports = {
               console.log("Docs", docs);
 
               if (docs) {
-                  //if(passwordHashed == docs[0].password) {
-                  if (password == docs.password) {
+                  if(passwordHashed == docs.password) {
+                  //if (password == docs.password) {
                       console.log("Correct credentials");
                       res.status(200).send(JSON.stringify({
                           message : "Correct credentials", sessionToken: sessionToken, userID: docs._id,
@@ -46,10 +46,37 @@ module.exports = {
               }
           })
       }
-  }
+  },
 
   //----------------------REGISTER----------------------//
+  registerUserToPlatform: function (db, res, newUserData) {
+      //Select table and parse form input fields
+      const collection = db.collection('users');
+      let firstname = JSON.parse(newUserData).username;
+      let lastname = JSON.parse(newUserData).lastname;
+      let username = JSON.parse(newUserData).username;
+      let email = JSON.parse(newUserData).email;
+      let password = JSON.parse(newUserData).password;
+      let birthday = JSON.parse(newUserData).birthday;
+      let gender = JSON.parse(newUserData).gender;
 
+      let passwordHashed = md5(password);
+
+      //Check username and password
+      if (username != null && password != null) {
+          collection.insert({
+              "first_name": firstname,
+              "last_name": lastname,
+              "username": username,
+              "email": email,
+              "password": passwordHashed,
+              "birthday": birthday,
+              "gender": gender,
+          })
+      }
+
+
+  }
 
 
 }
