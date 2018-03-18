@@ -41,7 +41,15 @@ MongoClient.connect(url, function(err, client) {
           });
       });
 
+      //----------------------Feed----------------------//
+      app.get('/feed', (req, res) => {
+        database.getFeed(client.db('socialwebpage'), res, () => {
+            db.close();
+        });
+      });
+
       //----------------------xy----------------------//
+
 
 
 
