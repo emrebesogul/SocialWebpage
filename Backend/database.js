@@ -101,8 +101,21 @@ module.exports = {
               }
 
           })
-      }
-  }
+        }
+  },
+
+    //----------------------Feed----------------------//
+    getFeed: function (db, res) {
+        db.collection('images').find({}).toArray(function(err_images, res_images) {
+            if (err_images) throw err_images;
+            db.collection('stories').find({}).toArray(function(err_stories, result_stories) {
+                if (err_stories) throw err_stories;
+                var feed = res_images.concat(result_stories);
+                feed.sort((a, b) => b.date_created - a.date_created);
+                res.status(200).send(feed);
+            });
+        });
+    }
 
   //----------------------xy----------------------//
 
