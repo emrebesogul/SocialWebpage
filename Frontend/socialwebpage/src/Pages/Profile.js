@@ -1,48 +1,79 @@
 import React, {Component} from 'react';
 import { Button, Header, Icon, Image } from 'semantic-ui-react'
 import ProfileTab from '../Components/ProfileTab.js';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 import '../profileStyle.css';
 
 class Profile extends Component {
-    constructor() {
-        super();
-        this.pageTitle = "Social Webpage Home"
-        document.title = this.pageTitle;
-    }
+  constructor() {
+      super();
+
+      this.state = {
+        redirectToLogin: false
+      }
+
+      this.checkThisSession();
+
+      this.pageTitle = "Social Webpage Home"
+      document.title = this.pageTitle;
+  }
+
+  checkThisSession() {
+      let token = read_cookie("token");
+
+      if(token.length == 0) {
+          console.log("Token: ", token);
+          this.state.redirectToLogin = true;
+      } else {
+          console.log("Token Key: ", token);
+      }
+  }
+
+  handleLogout() {
+      delete_cookie("token");
+      delete_cookie("userID");
+
+      this.setState({ redirectToLogin: true });
+  }
 
     render() {
+      const { redirectToLogin } = this.state;
+       if (redirectToLogin) {
+         return <Redirect to='/login'/>;
+       }
+
         return (
           <div>
             <div id="mobile-header">
-              <Link to="/feed">
+              <Link to="/">
                 <Button circular size="medium" id="profile-button-mobile" icon>
                   <Icon className="menu-icons" name='feed' />
                   Feed
                 </Button>
               </Link>
-              <Link to="/">
-                <Button circular size="medium" id="logout-button-mobile" icon>
+
+                <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
                   <Icon className="menu-icons" name='log out' />
                   Log out
                 </Button>
-              </Link>
+
             </div>
               <div id="profile">
                 <div id="profile-header-button">
-                <Link to="/feed">
+                <Link to="/">
                   <Button circular size="medium" id="profile-button" icon>
                     <Icon className="menu-icons" name='feed' />
                     Feed
                   </Button>
                 </Link>
-                <Link to="/asd">
-                  <Button circular size="medium" id="logout-button" icon>
+
+                  <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
                     <Icon className="menu-icons" name='log out' />
                     Log out
                   </Button>
-                </Link>
+
               </div>
               </div>
                 <div id="profile-header">
