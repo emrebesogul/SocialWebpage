@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Button, Form, Image, Input, Checkbox, Icon  } from 'semantic-ui-react'
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import '../style.css';
 
@@ -19,7 +19,7 @@ class Reqister extends Component {
           birthday: "",
           gender: "",
           message: "",
-          redirect: false
+          redirectToLogin: false
         }
 
         this.api = '/user/create';
@@ -28,7 +28,7 @@ class Reqister extends Component {
         document.title = this.pageTitle;
     }
 
-    //Post user login data and check if they are correct
+    //Create account
     async handleSubmit(event) {
         event.preventDefault();
         console.log("clicked now on submit");
@@ -51,11 +51,27 @@ class Reqister extends Component {
             this.state.birthday,
             this.state.gender
         );
-        alert(response);
 
+        //Do something with response
+        this.setState({message : JSON.parse(response).message});
+
+        if(this.state.message == "User successfully created") {
+            alert("Account was successfully set up. Please login to join the Platform.");
+            this.setState({ redirectToLogin: true });
+        } else {
+            //Error messages
+            let errorField = document.getElementById("error-message");
+            let messageText = "<b>"+this.state.message+"</b>";
+            errorField.innerHTML = messageText;
+        }
     }
 
     render() {
+        const { redirectToLogin } = this.state;
+         if (redirectToLogin) {
+           return <Redirect to='/login' />;
+         }
+
         return (
           <div id ="body-div">
 
@@ -73,21 +89,21 @@ class Reqister extends Component {
                   <Form onSubmit={this.handleSubmit.bind(this)}>
 
                     <Form.Field required>
-                      <Input inverted className="login-input-text" placeholder='First name' />
-                      <Input inverted className="login-input-text" placeholder='Last name' />
+                      <Input required inverted className="login-input-text" placeholder='First name' />
+                      <Input required inverted className="login-input-text" placeholder='Last name' />
                     </Form.Field>
 
                     <Form.Field required>
-                      <Input inverted className="login-input-text" placeholder='Username' />
+                      <Input required inverted className="login-input-text" placeholder='Username' />
 
-                          <Input inverted className="login-input-text" iconPosition='left' placeholder='Email'>
+                          <Input required inverted className="login-input-text" iconPosition='left' placeholder='Email'>
                              <Icon name='at' />
                              <input />
                            </Input>
                     </Form.Field>
 
                     <Form.Field required>
-                      <Input className="login-input-text" type="password" placeholder='Password' />
+                      <Input required className="login-input-text" type="password" placeholder='Password' />
                     </Form.Field>
 
                     <Form.Field>
@@ -104,6 +120,9 @@ class Reqister extends Component {
                         Join the platform!
                       </Button.Content>
                     </Button>
+
+                    <div id="error-message">
+                    </div>
 
                   </Form>
               </div>

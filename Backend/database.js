@@ -17,30 +17,28 @@ module.exports = {
       if (username != null && password != null) {
           collection.findOne({"username": username}, function(err, docs) {
               if (err) {
-                  res.status(200).send(JSON.stringify({
+                  res.send(JSON.stringify({
                       message: "User not found"
                   }));
                   throw err;
               }
 
-              console.log("Docs", docs);
-
               if (docs) {
                   if(passwordHashed == docs.password) {
                   //if (password == docs.password) {
                       console.log("Correct credentials");
-                      res.status(200).send(JSON.stringify({
+                      res.send(JSON.stringify({
                           message : "Correct credentials", sessionToken: sessionToken, userID: docs._id,
                       }));
                   } else {
                       console.log("Password wrong");
-                      res.status(200).send(JSON.stringify({
+                      res.send(JSON.stringify({
                           message: "Password wrong"
                       }));
                   }
               }
               else {
-                  res.status(200).send(JSON.stringify({
+                  res.send(JSON.stringify({
                       message: "User not found"
                   }));
               }
@@ -64,19 +62,50 @@ module.exports = {
 
       //Check username and password
       if (username != null && password != null) {
-          collection.insert({
-              "first_name": firstname,
-              "last_name": lastname,
-              "username": username,
-              "email": email,
-              "password": passwordHashed,
-              "birthday": birthday,
-              "gender": gender,
+          collection.findOne({"username": username}, function(err, docs) {
+              if (err) {
+                  throw err;
+              }
+
+              if(docs) {
+                  res.send(JSON.stringify({
+                      message: "Username already taken"
+                  }));
+              } else {
+                  collection.findOne({"email": email}, function(err, docs) {
+                      if (err) {
+                          throw err;
+                      }
+                      if(docs) {
+                          res.send(JSON.stringify({
+                              message: "E-Mail already given"
+                          }));
+                      } else {
+                          console.log("User created!");
+
+                          res.send(JSON.stringify({
+                              message: "User successfully created"
+                          }));
+
+                          collection.insert({
+                              "first_name": firstname,
+                              "last_name": lastname,
+                              "username": username,
+                              "email": email,
+                              "password": passwordHashed,
+                              "birthday": birthday,
+                              "gender": gender,
+                          })
+                      }
+                  })
+              }
+
           })
       }
-
-
   }
+
+  //----------------------xy----------------------//
+
 
 
 }

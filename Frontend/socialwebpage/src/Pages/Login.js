@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Form, Image, Input } from 'semantic-ui-react';
+import { Button, Form, Image, Input, Message } from 'semantic-ui-react';
 import { Link, Redirect } from 'react-router-dom';
 
 import {checkUserDataAtLogin} from '../API/POST/PostMethods';
@@ -44,14 +44,17 @@ class Login extends Component {
         let now = new Date();
         now.setTime(now.getTime() + 1 * 3600 * 1000);
 
-        //Save token in cookie
+        //Save token in cookie when login data right
         if(this.state.message == "Correct credentials") {
             bake_cookie("token", this.state.token);
             bake_cookie("userID", this.state.userID);
 
             this.setState({ redirect: true });
         } else {
-            alert(this.state.message);
+            //Error messages
+            let errorField = document.getElementById("error-message");
+            let messageText = "<b>"+this.state.message+"</b>";
+            errorField.innerHTML = messageText;
         }
     }
 
@@ -95,9 +98,12 @@ class Login extends Component {
                         Enter the platform!
                       </Button.Content>
                     </Button>
+
+                    <div id="error-message">
+                    </div>
+
                   </Form>
               </div>
-
             </div>
           </div>
         )

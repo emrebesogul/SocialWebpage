@@ -28,7 +28,7 @@ MongoClient.connect(url, function(err, client) {
       //----------------------LOGIN----------------------//
       app.post('/user/loginUser', (req, res) => {
           const userCredential = JSON.stringify(req.body);
-          database.checkUserCredentials(client.db('socialwebpage'), res, userCredential, res, function(){
+          database.checkUserCredentials(client.db('socialwebpage'), res, userCredential, function(){
               db.close();
           });
       });
@@ -36,11 +36,13 @@ MongoClient.connect(url, function(err, client) {
       //----------------------REGISTER----------------------//
       app.post('/user/create', (req, res) => {
           const newUserData = JSON.stringify(req.body);
-          console.log(newUserData);
-          database.registerUserToPlatform(client.db('socialwebpage'), res, newUserData, res, function(){
+          database.registerUserToPlatform(client.db('socialwebpage'), res, newUserData, function(){
               db.close();
           });
       });
+
+      //----------------------xy----------------------//
+
 
 
       app.listen(8000, function() {
