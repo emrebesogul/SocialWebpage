@@ -77,6 +77,14 @@ body {
   Feed
   All CSS-specific for Feed site.
 */
+
+#settings-icon{
+  display: inline;
+  /* margin-left: 0px; */
+  float: right;
+  margin-right: 3%;
+}
+
 #feed {
   margin-top: 20px;
 }
@@ -145,11 +153,27 @@ a.item:hover {
   transition: all 0.28s !important;
 }
 
+.input-label{
+  width: 80px;
+  text-align: right;
+  border: none !important;
+}
+
+#account-settings{
+  margin-bottom: 30px;
+  padding: 1.032em;
+}
+
 #logo-image{
   position: absolute;
     left: 13%;
     top: 30px;
     border-radius: 100%;
+}
+
+.login-input-text {
+  width: 30% !important;
+  margin-right: 25px;
 }
 
 /*

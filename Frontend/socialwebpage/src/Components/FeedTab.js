@@ -1,6 +1,17 @@
-import React from 'react'
-import { Tab, Card, Image, Icon, Comment, Header, Rating, List } from 'semantic-ui-react'
+import React, {Component} from 'react'
+import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
 import Profile from '../Pages/Profile'
+
+class FeedTab extends Component {
+  constructor(){
+    super();
+  }
+
+  //Edit account
+  async handleSubmit(event) {
+
+  }
+}
 
 const panes = [
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
@@ -119,12 +130,61 @@ const panes = [
 
   </Tab.Pane> },
   { menuItem: 'Settings', render: () => <Tab.Pane attached={false}>
+  <div id="settings">
+    <div id="account-settings">
+      <Header as='h2' size="medium" icon textAlign="left">
+      <Icon name='settings' id="settings-icon" />
+      Account Settings
+      <Header.Subheader>
+        Manage your account settings and set e-mail preferences.
+      </Header.Subheader>
+      </Header>
+
+      <Form >
+
+        <Form.Field required>
+          <Label basic="true" className="input-label">First Name</Label>
+          <Input required  inverted className="login-input-text" placeholder='First name' />
+          <Label basic="true" className="input-label">Last Name</Label>
+          <Input required inverted className="login-input-text" placeholder='Last name' />
+        </Form.Field>
+
+        <Form.Field required>
+          <Label basic="true" className="input-label">Username</Label>
+          <Input required inverted className="login-input-text" placeholder='Username' />
+          <Label basic="true" className="input-label">Password</Label>
+          <Input required className="login-input-text" type="password" placeholder='Password' />
+        </Form.Field>
+
+        <Form.Field required>
+          <Label basic="true" className="input-label">Email</Label>
+          <Input required inverted className="login-input-text" iconPosition='left' placeholder='Email'>
+             <Icon name='at' />
+             <input />
+           </Input>
+        </Form.Field>
+
+        <Button>Save</Button>
+      </Form>
+
+    </div>
+    <div id="profile-settings">
+      <Header as='h2' size="medium" icon textAlign="left">
+      <Icon name='user' id="settings-icon" />
+      Profile Settings
+      <Header.Subheader>
+        Manage your profile settings and set e-mail preferences.
+      </Header.Subheader>
+      </Header>
+    </div>
+  </div>
+
 
   </Tab.Pane> },
 ]
 
-const TabExampleSecondaryPointing = () => (
+const FeedTabs = () => (
   <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
 )
 
-export default TabExampleSecondaryPointing
+export default FeedTabs
