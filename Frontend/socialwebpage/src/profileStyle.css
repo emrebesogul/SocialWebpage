@@ -58,6 +58,12 @@ body {
   All CSS-specific for Profile site.
 */
 
+.ui.segment.active.tab{
+  border: none;
+  box-shadow: none;
+  padding: 8px;
+}
+
 #profile{
   margin-top: 20px;
 }
@@ -184,12 +190,12 @@ a.item:hover {
 @media only screen and (max-width: 1270px) {
   #feed-content{
     width: 100% !important;
-    max-width: 890px;
+    max-width: 840px;
   }
 
   #profile-content{
     width: 100% !important;
-    max-width: 890px;
+    max-width: 840px;
   }
 
   #feed{

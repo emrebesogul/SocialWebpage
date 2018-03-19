@@ -1,17 +1,5 @@
-import React, {Component} from 'react'
+import React from 'react'
 import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
-import Profile from '../Pages/Profile'
-
-class FeedTab extends Component {
-  constructor(){
-    super();
-  }
-
-  //Edit account
-  async handleSubmit(event) {
-
-  }
-}
 
 const panes = [
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>

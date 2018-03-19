@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Button, Header, Icon, Image, Feed, Card } from 'semantic-ui-react'
+import { Button, Icon } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
 
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { read_cookie, delete_cookie } from 'sfcookies';
 
 import '../profileStyle.css';
 
@@ -24,7 +24,7 @@ class Profile extends Component {
     checkThisSession() {
         let token = read_cookie("token");
 
-        if(token.length == 0) {
+        if(token.length === 0) {
             console.log("Token: ", token);
             this.state.redirectToLogin = true;
         } else {

@@ -1,10 +1,10 @@
 import React from 'react'
-import { Tab, Card, Image, Icon, Comment, Header, Rating } from 'semantic-ui-react'
+import { Tab, Card, Image, Comment, Header, Rating } from 'semantic-ui-react'
 
 const panes = [
   { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
-  <div>
-    <Card fluid="true">
+  <Card.Group>
+    <Card fluid="true" centered="true">
       <Image src='/assets/images/bg.jpg' />
       <Card.Content>
         <Card.Header>
@@ -38,7 +38,7 @@ const panes = [
       </Comment.Group>
       </Card.Content>
     </Card>
-    <Card fluid="true">
+    <Card fluid="true" centered="true">
       <Image src='/assets/images/john-towner-154060-unsplash.jpg' />
       <Card.Content>
         <Card.Header>
@@ -71,14 +71,12 @@ const panes = [
       </Comment.Group>
       </Card.Content>
     </Card>
-  </div>
-
-
+  </Card.Group>
 
   </Tab.Pane> },
   { menuItem: 'Story', render: () => <Tab.Pane attached={false}>
-  <Card.Group>
-    <Card>
+  <Card.Group id="cg">
+  <Card fluid="true" centered="true">
       <Card.Content>
         <Card.Header>
           Windows 10 Polaris
@@ -89,11 +87,15 @@ const panes = [
           </span>
         </Card.Meta>
         <Card.Description>
-          Matthew is a musician living in Nashville.
+          Mobile First means designing for mobile before designing for desktop or any other device (This will make the page display faster on smaller devices).
+
+This means that we must make some changes in our CSS.
+
+Instead of changing styles when the width gets smaller than 768px, we should change the design when the width gets larger than 768px. This will make our design Mobile First:
         </Card.Description>
       </Card.Content>
     </Card>
-    <Card>
+    <Card fluid="true" centered="true">
       <Card.Content>
         <Card.Header>
           Windows 10 Andromeda
@@ -108,22 +110,23 @@ const panes = [
         </Card.Description>
       </Card.Content>
     </Card>
+    <Card fluid="true" centered="trues">
+      <Card.Content>
+        <Card.Header>
+          MacOS High Sierra
+        </Card.Header>
+        <Card.Meta>
+          <span className='date'>
+            March 15, 2018
+          </span>
+        </Card.Meta>
+        <Card.Description>
+          Matthew is a musician living in Nashville.
+        </Card.Description>
+      </Card.Content>
+    </Card>
   </Card.Group>
-  <Card>
-    <Card.Content>
-      <Card.Header>
-        MacOS High Sierra
-      </Card.Header>
-      <Card.Meta>
-        <span className='date'>
-          March 15, 2018
-        </span>
-      </Card.Meta>
-      <Card.Description>
-        Matthew is a musician living in Nashville.
-      </Card.Description>
-    </Card.Content>
-  </Card>
+
 
   </Tab.Pane> },
   { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>Tab 3 Content</Tab.Pane> },
