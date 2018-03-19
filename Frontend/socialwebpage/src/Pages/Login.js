@@ -74,13 +74,10 @@ class Login extends Component {
               </div>
 
               <div id="ourProduct">
-                  Product
+
               </div>
 
               <div id="formularLogin">
-                <div>
-                    LOGIN
-                </div>
 
                   <Form onSubmit={this.handleSubmit}>
                     <Form.Field required>

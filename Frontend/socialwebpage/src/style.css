@@ -11,7 +11,7 @@ body {
   height: 100vh;
   position: absolute;
   width: 100vw;
-  background: linear-gradient(to right bottom, #a7c7c0, #111e26);
+  background: linear-gradient(to right bottom, #c4e3dc8c, #162934);
 }
 
 #ourProduct {
@@ -22,18 +22,15 @@ body {
 }
 
 #formularLogin {
-  width: 420px;
-  color: white;
-  /* padding-top: 30px; */
-  padding: 39px 20px;
-  /* padding-left: 20px; */
-  background-color: #3c3c3c75;
-  margin: 0 auto;
-  border: 1px solid rgba(69,69,69, 0.55);
-  text-align: center;
-  border-radius: 10px;
-  -webkit-box-shadow: 9px 12px 15px 1px #9a9a9acc;
-  box-shadow: 7px 9px 14px 0px #9a9a9aa8;
+    width: 420px;
+    color: white;
+    padding: 39px 20px;
+    background-color: #4c4c4c52;
+    margin: 0 auto;
+    text-align: center;
+    border-radius: 10px;
+    -webkit-box-shadow: 9px 12px 15px 1px #9a9a9acc;
+    box-shadow: 7px 9px 14px 0px #9a9a9a66
 }
 
 #formularLogin label {
@@ -75,6 +72,8 @@ body {
 
  .login-input-text {
   margin-bottom: 15px;
+  display: block;
+  width: 100% !important;
 }
 
 

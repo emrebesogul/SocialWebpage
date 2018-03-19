@@ -1,5 +1,5 @@
 import React from 'react'
-import { Tab, Card, Image, Comment, Header, Rating } from 'semantic-ui-react'
+import { Tab, Card, Image, Comment, Header, Rating, Form, Button } from 'semantic-ui-react'
 
 const panes = [
   { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
@@ -129,7 +129,80 @@ Instead of changing styles when the width gets smaller than 768px, we should cha
 
 
   </Tab.Pane> },
-  { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>Tab 3 Content</Tab.Pane> },
+  { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>
+  <div className="settings">
+  <Comment.Group className="account-settings profile-comments">
+     <Comment>
+       <Comment.Avatar src='/assets/images/boy.png' />
+       <Comment.Content>
+         <Comment.Author as='a'>Matt</Comment.Author>
+         <Comment.Metadata>
+           <div>Today at 5:42PM</div>
+         </Comment.Metadata>
+         <Comment.Text>How artistic!</Comment.Text>
+         <Comment.Actions>
+           <Comment.Action>Reply</Comment.Action>
+         </Comment.Actions>
+       </Comment.Content>
+     </Comment>
+
+     <Comment>
+       <Comment.Avatar src='/assets/images/boy.png' />
+       <Comment.Content>
+         <Comment.Author as='a'>Elliot Fu</Comment.Author>
+         <Comment.Metadata>
+           <div>Yesterday at 12:30AM</div>
+         </Comment.Metadata>
+         <Comment.Text>
+           <p>This has been very useful for my research. Thanks as well!</p>
+         </Comment.Text>
+         <Comment.Actions>
+           <Comment.Action>Reply</Comment.Action>
+         </Comment.Actions>
+       </Comment.Content>
+       <Comment.Group>
+         <Comment>
+           <Comment.Avatar src='/assets/images/girl.png' />
+           <Comment.Content>
+             <Comment.Author as='a'>Jenny Hess</Comment.Author>
+             <Comment.Metadata>
+               <div>Just now</div>
+             </Comment.Metadata>
+             <Comment.Text>
+               Elliot you are always so right :)
+             </Comment.Text>
+             <Comment.Actions>
+               <Comment.Action>Reply</Comment.Action>
+             </Comment.Actions>
+           </Comment.Content>
+         </Comment>
+       </Comment.Group>
+     </Comment>
+
+     <Comment>
+       <Comment.Avatar src='/assets/images/girl.png' />
+       <Comment.Content>
+         <Comment.Author as='a'>Joe Henderson</Comment.Author>
+         <Comment.Metadata>
+           <div>5 days ago</div>
+         </Comment.Metadata>
+         <Comment.Text>
+           Dude, this is awesome. Thanks so much
+         </Comment.Text>
+         <Comment.Actions>
+           <Comment.Action>Reply</Comment.Action>
+         </Comment.Actions>
+       </Comment.Content>
+     </Comment>
+
+     <Form reply>
+       <Form.TextArea autoHeight="true" rows="3" />
+       <Button content='Add Reply' labelPosition='left' icon='edit' />
+     </Form>
+    </Comment.Group>
+  </div>
+
+  </Tab.Pane> },
 ]
 
 const TabExampleSecondaryPointing = () => (
