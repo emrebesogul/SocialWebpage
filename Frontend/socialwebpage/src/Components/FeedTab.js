@@ -3,8 +3,8 @@ import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Lab
 
 const panes = [
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
-  <div>
-    <Card fluid="true">
+  <Card.Group>
+    <Card fluid="true" centered="true">
       <Image src='/assets/images/bg.jpg' />
       <Card.Content>
         <Card.Header>
@@ -38,7 +38,7 @@ const panes = [
       </Comment.Group>
       </Card.Content>
     </Card>
-    <Card fluid="true">
+    <Card fluid="true" centered="true">
       <Image src='/assets/images/john-towner-154060-unsplash.jpg' />
       <Card.Content>
         <Card.Header>
@@ -71,55 +71,59 @@ const panes = [
       </Comment.Group>
       </Card.Content>
     </Card>
-  </div>
+  </Card.Group>
 
 
 
   </Tab.Pane> },
   { menuItem: 'Friends', render: () => <Tab.Pane attached={false}>
-  <List className="friend-list" relaxed divided>
-    <List.Item>
-      <Image size="tiny" avatar src='/assets/images/bg.jpg' />
-      <List.Content>
-        <List.Header as='a'>Rachel B.</List.Header>
-        <List.Description>Last seen watching <a><b>Arrested Development</b></a> just now.</List.Description>
-          <List.Description>Connected since May 21th, 2017</List.Description>
-          <List.Description>4 mutual contacts</List.Description>
-      </List.Content>
-    </List.Item>
-    <List.Item>
-      <Image avatar circular size="tiny" src='/assets/images/bg.jpg' />
-      <List.Content>
-        <List.Header as='a'>Jimmy Neutron</List.Header>
-        <List.Description>Last seen watching Arrested Developmentjust now.</List.Description>
-        <List.Description>Connected since May 20th, 2017</List.Description>
-        <List.Description>22 mutual contacts</List.Description>
-      </List.Content>
-    </List.Item>
-    <List.Item>
-      <Image size="tiny" avatar src='/assets/images/bg.jpg' />
-      <List.Content>
-        <List.Header as='a'>Conor McGregor</List.Header>
-        <List.Description>Last seen watching <a><b>Arrested Development</b></a> just now.</List.Description>
-          <List.Description>Connected since May 20th, 2018</List.Description>
-          <List.Description>222 mutual contacts</List.Description>
-      </List.Content>
-    </List.Item>
-    <List.Item>
-      <Image size="tiny" avatar src='/assets/images/bg.jpg' />
-      <List.Content>
-        <List.Header as='a'>Steve Jobs</List.Header>
-        <List.Description>Last seen watching <a><b>Arrested Development</b></a> just now.</List.Description>
-          <List.Description>Connected since May 20th, 2017</List.Description>
-          <List.Description>22 mutual contacts</List.Description>
-      </List.Content>
-    </List.Item>
-  </List>
+  <div className="settings">
+    <div id="friends">
+      <List className="friend-list" relaxed divided>
+        <List.Item>
+          <Image size="tiny" avatar src='/assets/images/bg.jpg' />
+          <List.Content>
+            <List.Header as='a'>Rachel B.</List.Header>
+            <List.Description>Last seen watching <a><b>Arrested Development</b></a> just now.</List.Description>
+              <List.Description>Connected since May 21th, 2017</List.Description>
+              <List.Description>4 mutual contacts</List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item>
+          <Image avatar circular size="tiny" src='/assets/images/bg.jpg' />
+          <List.Content>
+            <List.Header as='a'>Jimmy Neutron</List.Header>
+            <List.Description>Last seen watching Arrested Developmentjust now.</List.Description>
+            <List.Description>Connected since May 20th, 2017</List.Description>
+            <List.Description>22 mutual contacts</List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item>
+          <Image size="tiny" avatar src='/assets/images/bg.jpg' />
+          <List.Content>
+            <List.Header as='a'>Conor McGregor</List.Header>
+            <List.Description>Last seen watching <a><b>Arrested Development</b></a> just now.</List.Description>
+              <List.Description>Connected since May 20th, 2018</List.Description>
+              <List.Description>222 mutual contacts</List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item>
+          <Image size="tiny" avatar src='/assets/images/bg.jpg' />
+          <List.Content>
+            <List.Header as='a'>Steve Jobs</List.Header>
+            <List.Description>Last seen watching <a><b>Arrested Development</b></a> just now.</List.Description>
+              <List.Description>Connected since May 20th, 2017</List.Description>
+              <List.Description>22 mutual contacts</List.Description>
+          </List.Content>
+        </List.Item>
+      </List>
+    </div>
+  </div>
 
   </Tab.Pane> },
   { menuItem: 'Settings', render: () => <Tab.Pane attached={false}>
-  <div id="settings">
-    <div id="account-settings">
+  <div className="settings">
+    <div className="account-settings">
       <Header as='h2' size="medium" icon textAlign="left">
       <Icon name='settings' id="settings-icon" />
       Account Settings
@@ -156,7 +160,7 @@ const panes = [
       </Form>
 
     </div>
-    <div id="profile-settings">
+    <div className="account-settings">
       <Header as='h2' size="medium" icon textAlign="left">
       <Icon name='user' id="settings-icon" />
       Profile Settings
