@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import { Button, Form, Image, Input, Message } from 'semantic-ui-react';
+import { Button, Form, Input } from 'semantic-ui-react';
 import { Link, Redirect } from 'react-router-dom';
 
 import {checkUserDataAtLogin} from '../API/POST/PostMethods';
 
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies'
+import { bake_cookie } from 'sfcookies'
 
 class Login extends Component {
     constructor() {
@@ -45,7 +45,7 @@ class Login extends Component {
         now.setTime(now.getTime() + 1 * 3600 * 1000);
 
         //Save token in cookie when login data right
-        if(this.state.message == "Correct credentials") {
+        if(this.state.message === "Correct credentials") {
             bake_cookie("token", this.state.token);
             bake_cookie("userID", this.state.userID);
 

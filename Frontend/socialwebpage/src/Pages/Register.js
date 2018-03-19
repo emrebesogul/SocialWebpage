@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Form, Image, Input, Checkbox, Icon  } from 'semantic-ui-react'
+import { Button, Form, Input, Icon  } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom';
 
 import '../style.css';
@@ -55,8 +55,8 @@ class Reqister extends Component {
         //Do something with response
         this.setState({message : JSON.parse(response).message});
 
-        if(this.state.message == "User successfully created") {
-            alert("Account was successfully set up. Please login to join the Platform.");
+        if(this.state.message === "User successfully created") {
+            alert("Account was successfully set up. Please login to join the platform.");
             this.setState({ redirectToLogin: true });
         } else {
             //Error messages
