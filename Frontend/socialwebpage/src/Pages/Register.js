@@ -82,7 +82,7 @@ class Reqister extends Component {
               </div>
 
               <div id="ourProduct">
-                  Product
+
               </div>
 
               <div id="formularLogin">
@@ -94,12 +94,15 @@ class Reqister extends Component {
                     </Form.Field>
 
                     <Form.Field required>
-                      <Input required inverted className="login-input-text" placeholder='Username' />
+                      <Input required inverted className="login-input-text" iconPosition="left" placeholder='Username'>
+                         <Icon name='user' />
+                        <input />
+                      </Input>
 
-                          <Input required inverted className="login-input-text" iconPosition='left' placeholder='Email'>
-                             <Icon name='at' />
-                             <input />
-                           </Input>
+                      <Input required inverted className="login-input-text" iconPosition='left' placeholder='Email'>
+                         <Icon name='at' />
+                         <input />
+                       </Input>
                     </Form.Field>
 
                     <Form.Field required>

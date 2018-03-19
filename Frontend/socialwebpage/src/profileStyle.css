@@ -186,6 +186,16 @@ a.item:hover {
     box-shadow: 2px 2px 2px rgba(200,200,200, 0.4);
 }
 
+.profile-comments{
+  margin-left: 15px;
+  /* width: 105%; */
+  margin-top: 5px;
+}
+
+.account-input {
+  margin-bottom: 20px !important;
+}
+
 #logo-image{
   position: absolute;
     left: 13%;
@@ -193,7 +203,7 @@ a.item:hover {
     border-radius: 100%;
 }
 
-.login-input-text {
+.account-input-text {
   width: 30% !important;
   margin-right: 25px;
 }

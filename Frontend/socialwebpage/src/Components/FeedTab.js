@@ -134,23 +134,23 @@ const panes = [
 
       <Form >
 
-        <Form.Field required>
+        <Form.Field className="account-input" required>
           <Label basic="true" className="input-label">First Name</Label>
-          <Input required  inverted className="login-input-text" placeholder='First name' />
+          <Input required  inverted className="account-input-text" placeholder='First name' />
           <Label basic="true" className="input-label">Last Name</Label>
-          <Input required inverted className="login-input-text" placeholder='Last name' />
+          <Input required inverted className="account-input-text" placeholder='Last name' />
         </Form.Field>
 
-        <Form.Field required>
+        <Form.Field className="account-input" required>
           <Label basic="true" className="input-label">Username</Label>
-          <Input required inverted className="login-input-text" placeholder='Username' />
+          <Input required inverted className="account-input-text" placeholder='Username' />
           <Label basic="true" className="input-label">Password</Label>
-          <Input required className="login-input-text" type="password" placeholder='Password' />
+          <Input required className="account-input-text" type="password" placeholder='Password' />
         </Form.Field>
 
-        <Form.Field required>
+        <Form.Field className="account-input" required>
           <Label basic="true" className="input-label">Email</Label>
-          <Input required inverted className="login-input-text" iconPosition='left' placeholder='Email'>
+          <Input required inverted className="account-input-text" iconPosition='left' placeholder='Email'>
              <Icon name='at' />
              <input />
            </Input>
