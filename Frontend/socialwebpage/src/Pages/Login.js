@@ -29,7 +29,6 @@ class Login extends Component {
     //Post user login data and check if they are correct
     async handleSubmit(event) {
         event.preventDefault();
-        console.log("clicked now on submit");
 
         this.state.username =  event.target[0].value;
         this.state.password =  event.target[1].value;
@@ -41,10 +40,7 @@ class Login extends Component {
         this.setState({token : JSON.parse(response).sessionToken});
         this.setState({userID : JSON.parse(response).userID});
 
-        let now = new Date();
-        now.setTime(now.getTime() + 1 * 3600 * 1000);
-
-        //Save token in cookie when login data right
+        //Save token and userID in session
         if(this.state.message === "Correct credentials") {
             bake_cookie("token", this.state.token);
             bake_cookie("userID", this.state.userID);
@@ -57,6 +53,7 @@ class Login extends Component {
             errorField.innerHTML = messageText;
         }
     }
+
 
     render() {
         const { redirect } = this.state;
@@ -74,11 +71,9 @@ class Login extends Component {
               </div>
 
               <div id="ourProduct">
-
               </div>
 
               <div id="formularLogin">
-
                   <Form onSubmit={this.handleSubmit}>
                     <Form.Field required>
                       <Input inverted className="login-input-text" placeholder='Username' name="username" />
