@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Button, Icon } from 'semantic-ui-react'
+import { Button, Icon, Form, Input } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
 
 import { read_cookie, delete_cookie } from 'sfcookies';
 
 import '../profileStyle.css';
 
-class Feed extends Component {
+class Upload extends Component {
     constructor() {
         super();
 
@@ -66,10 +66,10 @@ class Feed extends Component {
               </div>
 
               <div id="feed-header">
-                <Link to="/profile">
+                <Link to="/">
                   <Button circular size="medium" id="profile-button" icon>
-                    <Icon className="menu-icons" name='user' />
-                    Profile
+                    <Icon className="menu-icons" name='feed' />
+                    Feed
                   </Button>
                 </Link>
 
@@ -83,7 +83,15 @@ class Feed extends Component {
             </div>
 
             <div id="feed-content">
-                <FeedTab />
+                <h2>Upload new content</h2>
+                <Form>
+                  <span className="input-label-upload"> Enter the title of your new post</span>
+                  <Input className="input-upload" type="text"/>
+
+                  <span className="input-label-upload"> Select the file you want to share</span>
+                  <Input className="input-upload" type="file" accept="image/*" />
+                  <Button id="button-upload" type="submit">Post</Button>
+                </Form>
             </div>
 
           </div>
@@ -91,4 +99,4 @@ class Feed extends Component {
     }
 }
 
-export default Feed;
+export default Upload;
