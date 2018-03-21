@@ -4,8 +4,10 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 const cors = require('cors');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 app.use(cors());
+app.use(session());
 
 // create application/json parser
 var jsonParser = bodyParser.json();
@@ -23,6 +25,12 @@ MongoClient.connect(url, function(err, client) {
   } else {
       console.log("Successfully connected to MongoDB");
       app.use(bodyParser.json());
+
+      app.use(session({
+          secret  : 'some-private-key',
+          key     : 'test',
+          proxy   : 'true'
+      }));
 
 
       //----------------------LOGIN----------------------//

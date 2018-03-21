@@ -40,8 +40,7 @@ class Login extends Component {
         this.setState({token : JSON.parse(response).sessionToken});
         this.setState({userID : JSON.parse(response).userID});
 
-        //Save token and userID in cookie when login data right
-        //Search for new implementation!!! => Man kann value ändern und verfälschen
+        //Save token and userID in session
         if(this.state.message === "Correct credentials") {
             bake_cookie("token", this.state.token);
             bake_cookie("userID", this.state.userID);
