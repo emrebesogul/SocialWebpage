@@ -110,6 +110,18 @@ margin-right: 3%;
 }
 
 
+
+.upload-dropzone{
+  width: 320px;
+  height: 230px;
+  margin-top: 10px;
+  padding: 8px;
+  border-width: 1px;
+  border-color: rgb(62, 62, 62);
+  border-style: dashed;
+  border-radius: 5px;
+}
+
 .input-label-upload{
   display: block;
   margin-top: 40px;
@@ -190,6 +202,11 @@ a.item:hover {
   border: none !important;
 }
 
+.content {
+  margin-top: 30px !important;
+  display: flex;
+}
+
 .account-settings{
   margin-bottom: 30px;
   padding: 1.032em;
@@ -225,6 +242,7 @@ a.item:hover {
 #upload-button{
   margin-bottom: 20px;
 }
+
 
 #upload-button:hover{
   background-color: rgb(40,40,40) !important;

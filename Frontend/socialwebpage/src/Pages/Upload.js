@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Button, Icon, Form, Input } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
+import Dropzone from '../Components/Dropzone'
 
 import { read_cookie, delete_cookie } from 'sfcookies';
 
@@ -82,15 +83,15 @@ class Upload extends Component {
 
             </div>
 
-            <div id="feed-content">
-                <h2>Upload new content</h2>
+            <div className="content">
+                <h2 >Upload new content</h2>
                 <Form>
                   <span className="input-label-upload"> Enter the title of your new post</span>
                   <Input className="input-upload" type="text"/>
 
                   <span className="input-label-upload"> Select the file you want to share</span>
-                  <Input className="input-upload" type="file" accept="image/*" />
-                  <Button id="button-upload" type="submit">Post</Button>
+                  <Dropzone />
+                <Button id="button-upload" type="submit">Post</Button>
                 </Form>
             </div>
 
