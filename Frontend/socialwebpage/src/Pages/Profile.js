@@ -41,7 +41,7 @@ class Profile extends Component {
                 </Button>
               </Link>
 
-                <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
+                <Button circular size="medium" id="logout-button-mobile" icon >
                   <Icon className="menu-icons" name='log out' />
                   Log out
                 </Button>
@@ -56,7 +56,7 @@ class Profile extends Component {
                   </Button>
                 </Link>
 
-                  <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
+                  <Button circular size="medium" id="logout-button" icon >
                     <Icon className="menu-icons" name='log out' />
                     Log out
                   </Button>
