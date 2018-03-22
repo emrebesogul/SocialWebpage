@@ -67,3 +67,25 @@ export const uploadPictureToPlatform=(api, title, description, numberLikes, time
         });
     });
 }
+
+//----------------------Post Story----------------------//
+export const uploadStoryToPlatform=(api, title, content, userId) =>
+{
+    return new Promise((resolve, reject) => {
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({title: title, content: content, userId: userId}),
+          success: function(res) {
+              console.log("Response from server: ", res);
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              console.log(err);
+              reject(err);
+          }
+        });
+    });
+}

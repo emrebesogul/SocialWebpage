@@ -80,13 +80,23 @@ MongoClient.connect(url, function(err, client) {
         });
       });
 
-      //----------------------Profile----------------------//
+      //----------------------Create Image----------------------//
       app.get('/image/create', (req, res) => {
         console.log("Bild posten");
         console.log(req.body);
         //database.getFeed(client.db('socialwebpage'), res, () => {
         //    db.close();
         //});
+      });
+
+      //----------------------Create Story----------------------//
+      app.post('/story/create', (req, res) => {
+        console.log("Add story to database:");
+        console.log(req.body);
+        const storyData = JSON.stringify(req.body);
+          database.createStoryEntry(client.db('socialwebpage'), res, storyData, function(){
+              db.close();
+          });
       });
 
 
