@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Button, Icon, Form, Input } from 'semantic-ui-react'
+import { Button, Icon, Form, Input, TextArea } from 'semantic-ui-react'
 import Dropzone from '../Components/Dropzone'
 
 import '../profileStyle.css';
 
-class Upload extends Component {
+class PostText extends Component {
     constructor() {
         super();
 
@@ -46,12 +46,12 @@ class Upload extends Component {
 
             <div id="upload-content">
                 <Form>
-                  <h2>Upload new content</h2>
-                  <span className="input-label-upload"> Enter the title of your new post</span>
+                  <h2>Post a new story</h2>
+                  <span className="input-label-upload"> Enter the title of your new story</span>
                   <Input className="input-upload" type="text"/>
 
-                  <span className="input-label-upload"> Select the file you want to share</span>
-                  <Dropzone />
+                  <span className="input-label-upload"> What story do you want to share?</span>
+                  <TextArea className="input-upload"></TextArea>
                   <Button id="button-upload" type="submit">Post</Button>
                 </Form>
             </div>
@@ -60,4 +60,4 @@ class Upload extends Component {
     }
 }
 
-export default Upload;
+export default PostText;

@@ -1,5 +1,6 @@
 body {
   background: none;
+  height: auto;
 }
 
 
@@ -94,14 +95,22 @@ body {
 margin-right: 3%;
 }
 
+
 #button-upload{
   margin-top: 25px;
   display: block;
 }
 
+#button-upload:hover{
+  background-color: rgb(40,40,40) !important;
+  color: rgb(245,245,245) !important;
+  transition: all 0.3s;
+}
+
 #feed {
   margin-top: 20px;
 }
+
 
 .input-upload{
   width: 320px;
@@ -202,10 +211,11 @@ a.item:hover {
   border: none !important;
 }
 
+/*
 .content {
   margin-top: 30px !important;
   display: flex;
-}
+}*/
 
 .account-settings{
   margin-bottom: 30px;
@@ -239,10 +249,21 @@ a.item:hover {
     border-radius: 100%;
 }
 
+
 #upload-button{
   margin-bottom: 20px;
 }
 
+#upload-content{
+  display: block;
+  left: 34%;
+  position: absolute;
+  right: 34%;
+}
+
+.ui.comments{
+  max-width: none !important;
+}
 
 #upload-button:hover{
   background-color: rgb(40,40,40) !important;
