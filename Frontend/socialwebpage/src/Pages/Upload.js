@@ -80,10 +80,10 @@ class Upload extends Component {
         <div>
           <div id="feed">
               <div id="mobile-header">
-                <Link to="/profile">
+                <Link to="/">
                   <Button circular size="medium" id="profile-button-mobile" icon>
-                    <Icon className="menu-icons" name='user' />
-                    Profile
+                    <Icon className="menu-icons" name='feed' />
+                    Feed
                   </Button>
                 </Link>
 
