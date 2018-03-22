@@ -46,4 +46,24 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
     });
 }
 
-//----------------------xy----------------------//
+//----------------------Post Image----------------------//
+export const uploadPictureToPlatform=(api, title, description, numberLikes, timestamp, imagePath) =>
+{
+    return new Promise((resolve, reject) => {
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({title: title, description: description, numberLikes: numberLikes, timestamp: timestamp, imagePath: imagePath}),
+          success: function(res) {
+              console.log("Response from server: ", res);
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              console.log(err);
+              reject(err);
+          }
+        });
+    });
+}
