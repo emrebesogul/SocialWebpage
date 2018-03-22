@@ -9,18 +9,20 @@ class Basic extends React.Component {
   }
 
   onDrop(files) {
+    console.log(files)
     this.setState({
-      files
+      files: files
     });
+    alert(files[0].name + " -- " + files[0].size)
   }
 
   render() {
     return (
       <section>
 
-          <Dropzone id="dz-repair" disablePreview="true" className="upload-dropzone" onDrop={this.onDrop.bind(this)}>
+        <Dropzone id="dz-repair" multiple={ false } acceptedFiles="image/jpeg, image/png, image/gif" disablePreview="true" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
             <p>Try dropping a picture here, or click to select a picture to upload.</p>
-          </Dropzone>
+        </Dropzone>
 
         <aside>
           <h4 >Dropped picture</h4>

@@ -13,6 +13,15 @@ var jsonParser = bodyParser.json();
 var database = require('./database');
 var url = 'mongodb://127.0.0.1:27017/socialwebpage';
 
+// 5aad6d046ad239693bcd29cd
+/*
+- Bilder posten (POST /image/create)
+- Texte posten (POST /story/create)
+- Bilder anzeigen im Feed (GET /story/list)
+- Texte anzeigen im Feed (GET /image/list)
+- Bilder anzeigen im Profil (GET /image/list?userid=$userid)
+- Texte anzeigen im Profil (GET /story/list?userid=$userid)
+*/
 
 app.use(cors());
 
@@ -71,8 +80,14 @@ MongoClient.connect(url, function(err, client) {
         });
       });
 
-      //----------------------xy----------------------//
-
+      //----------------------Profile----------------------//
+      app.get('/image/create', (req, res) => {
+        console.log("Bild posten");
+        console.log(req.body);
+        //database.getFeed(client.db('socialwebpage'), res, () => {
+        //    db.close();
+        //});
+      });
 
 
       app.listen(8000, function() {
