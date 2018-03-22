@@ -52,18 +52,15 @@ class Upload extends Component {
 
         console.log(this.state.files[0])
 
-        const data = new FormData();
-        data.append('file', this.state.files[0]);
-        data.append('filename', this.state.files[0].name);
-        data.append('description', this.state.files[0].description);
-
-
+        const fd = new FormData();
+        fd.append('avatar', this.state.files[0], 'filename',this.state.files[0].name, 'filedescription',this.state.files[0].description);
 
         const response = await uploadPictureToPlatform(
             this.api,
-            data
+            fd
         );
 
+        console.log(response);
         alert(response);
 
         //Do something with response
@@ -131,7 +128,7 @@ class Upload extends Component {
 
                       <span className="input-label-upload"> Select the file you want to share</span>
 
-                      <Dropzone id="dz-repair" multiple={ false } acceptedFiles="image/jpeg, image/png, image/gif" disablePreview="true" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+                      <Dropzone id="dz-repair" multiple={ false } name="avatar" acceptedFiles="image/jpeg, image/png, image/gif" disablePreview="true" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
                           <p>Try dropping a picture here, or click to select a picture to upload.</p>
                       </Dropzone>
 

@@ -6,36 +6,37 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 var session = require('express-session')
 var cookieParser = require('cookie-parser');
+var multer = require('multer');
 
 // create application/json parser
 var jsonParser = bodyParser.json();
 
-//Import functions
 var database = require('./database');
 var url = 'mongodb://127.0.0.1:27017/socialwebpage';
 
-// 5aad6d046ad239693bcd29cd
-/*
-Emre:
-- Bilder posten (POST /image/create)
-- Bilder anzeigen im Feed (GET /story/list)
-- Bilder anzeigen im Profil (GET /image/list?userid=$userid)
-- Bild und Story zeitlich anzeigen
+//Setup Multer:
+var storage = multer.diskStorage({
+  destination: 'uploads/posts/',
+  filename: function (req, file, callback) {
+      callback(null,file.fieldname + '-' + Date.now());
+  }
+});
 
-Konstantin:
-- Texte posten (POST /story/create)
-- Texte anzeigen im Feed (GET /image/list)
-- Texte anzeigen im Profil (GET /story/list?userid=$userid)
+var upload = multer({ storage: storage});
 
-*/
+app.use(express.static('./public'));
+
 
 
 app.use(cors());
-app.use(cookieParser());
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  if (req.method === "OPTIONS") {
+      res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+      return res.status(200).json({});
+  }
   next();
 });
 
@@ -46,11 +47,6 @@ app.use(session({
     cookie:{}
  }));
 
- function checkSession(a, b, c) {
-     console.log("checkSession");
-     console.log(c); //next();      nodemon und next.js
-     c();
- }
 
 // Connect to Mongo DB on start
 MongoClient.connect(url, function(err, client) {
@@ -70,7 +66,6 @@ MongoClient.connect(url, function(err, client) {
           console.log(req.sessionID);
           console.log(req.session.cookie);
 
-
           console.log(req.session)
           console.log(req.session.user)
           console.log(req.session.test)
@@ -83,6 +78,7 @@ MongoClient.connect(url, function(err, client) {
           console.log("=================================");
       });
 
+
       //----------------------LOGIN----------------------//
       app.post('/user/loginUser', (req, res) => {
           const userCredential = JSON.stringify(req.body);
@@ -91,6 +87,7 @@ MongoClient.connect(url, function(err, client) {
           });
       });
 
+
       //----------------------REGISTER----------------------//
       app.post('/user/create', (req, res) => {
           const newUserData = JSON.stringify(req.body);
@@ -98,6 +95,7 @@ MongoClient.connect(url, function(err, client) {
               db.close();
           });
       });
+
 
       //----------------------Feed----------------------//
       app.get('/feed', (req, res) => {
@@ -108,22 +106,35 @@ MongoClient.connect(url, function(err, client) {
         //nodemon
       });
 
+
       //----------------------Profile----------------------//
       app.get('/image/list', (req, res) => {
           //get: /?id=123
           // req.param('id')...
       });
 
-
-      app.post('/image/create', (req, res) => {
-        console.log("Bild posten");
-        console.log(req.body);
+      //----------------------Upload Image to Server----------------------//
 
 
-        //database.getFeed(client.db('socialwebpage'), res, () => {
-        //    db.close();
-        //});
+      app.post('/image/create', upload.single('avatar'), (req, res) => {
+          console.log(req.body)
+
+          if (!req.file) {
+            console.log("No file received");
+            res.send(JSON.stringify({
+                success: false
+
+            }));
+
+          } else {
+            console.log('file received');
+            res.send(JSON.stringify({
+                success: true
+            }));
+
+          }
       });
+
 
       //----------------------Create Story----------------------//
       app.post('/story/create', (req, res) => {
@@ -136,8 +147,28 @@ MongoClient.connect(url, function(err, client) {
       });
 
 
+      //----------------------xy----------------------//
+
+
+
       app.listen(8000, function() {
           console.log('Listening for API Requests on port 8000...')
       })
   }
 })
+
+
+// 5aad6d046ad239693bcd29cd
+/*
+Emre:
+- Bilder posten (POST /image/create)
+- Bilder anzeigen im Feed (GET /story/list)
+- Bilder anzeigen im Profil (GET /image/list?userid=$userid)
+- Bild und Story zeitlich anzeigen
+
+Konstantin:
+- Texte posten (POST /story/create)
+- Texte anzeigen im Feed (GET /image/list)
+- Texte anzeigen im Profil (GET /story/list?userid=$userid)
+
+*/

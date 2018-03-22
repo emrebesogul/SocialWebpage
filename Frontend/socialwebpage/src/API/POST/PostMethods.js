@@ -47,7 +47,7 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
 }
 
 //----------------------Post Image----------------------//
-export const uploadPictureToPlatform=(api, data) =>
+export const uploadPictureToPlatform=(api, fd) =>
 {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -56,8 +56,7 @@ export const uploadPictureToPlatform=(api, data) =>
           cache: false,
           contentType: false,
           processData: false,
-          dataType: 'json',
-          data: data,
+          data: fd,
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);
