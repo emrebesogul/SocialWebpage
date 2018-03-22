@@ -21,3 +21,33 @@ export const getUser=(api)=>{
       }
       });
 }
+
+export const checkSession=(api)=>{
+    $.ajax({
+      url: url + api,
+      dataType:'json',
+      cache: false,
+      type: "GET",
+      success: function(data) {
+        console.log("session exists...")
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.log(err);
+      }
+      });
+}
+
+export const deleteSession=(api)=>{
+    $.ajax({
+      url: url + api,
+      dataType:'json',
+      cache: false,
+      type: "GET",
+      success: function(data) {
+        console.log("Session deleted")
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.log(err);
+      }
+      });
+}
