@@ -32,7 +32,6 @@ class Upload extends Component {
         document.title = this.pageTitle;
     }
 
-    render() {
     checkThisSession() {
 
     }
@@ -78,6 +77,7 @@ class Upload extends Component {
          }
 
         return (
+        <div>
           <div id="feed">
               <div id="mobile-header">
                 <Link to="/profile">
@@ -110,9 +110,9 @@ class Upload extends Component {
 
             </div>
 
-            <div className="content">
+            <div id="upload-content">
                 <h2 >Upload new content</h2>
-                    <Form onSubmit={this.handleSubmit.bind(this)}>
+                <Form onSubmit={this.handleSubmit.bind(this)}>
 
                       <span className="input-label-upload"> Enter the title of your new post</span>
                       <Input className="input-upload" type="text"/>
