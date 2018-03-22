@@ -125,6 +125,16 @@ MongoClient.connect(url, function(err, client) {
         //});
       });
 
+      //----------------------Create Story----------------------//
+      app.post('/story/create', (req, res) => {
+        console.log("Add story to database:");
+        console.log(req.body);
+        const storyData = JSON.stringify(req.body);
+          database.createStoryEntry(client.db('socialwebpage'), res, storyData, function(){
+              db.close();
+          });
+      });
+
 
       app.listen(8000, function() {
           console.log('Listening for API Requests on port 8000...')
