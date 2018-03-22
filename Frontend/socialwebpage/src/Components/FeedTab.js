@@ -1,8 +1,29 @@
 import React from 'react'
 import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
+import { Link } from 'react-router-dom';
+
+// const arr =[{name:"lars"}]
+/* {arr.map(item =>
+{return(
+
+   <div>{item.name}</div>
+   )
+})}
+
+*/
 
 const panes = [
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
+  <Link to="/upload">
+    <Button circular size="medium" id="upload-button" icon>
+      <Icon className="menu-icons" name='upload' />
+      Upload Content
+    </Button>
+  </Link>
+  <Button circular size="medium" id="upload-button" icon>
+    <Icon className="menu-icons" name='plus' />
+    Add Story
+  </Button>
   <Card.Group>
     <Card fluid="true" centered="true">
       <Image src='/assets/images/bg.jpg' />

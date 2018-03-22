@@ -33,8 +33,19 @@ class Profile extends Component {
          return <Redirect to='/login'/>;
        }
 
+       // const arr =[{name:"lars"}]
+       /* {arr.map(item =>
+       {return(
+
+          <div>{item.name}</div>
+          )
+      })}
+
+       */
+
         return (
           <div>
+
             <div id="mobile-header">
               <Link to="/">
                 <Button circular size="medium" id="profile-button-mobile" icon>

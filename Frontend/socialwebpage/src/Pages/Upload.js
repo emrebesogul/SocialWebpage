@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Button, Icon } from 'semantic-ui-react'
+import { Button, Icon, Form, Input } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
+import Dropzone from '../Components/Dropzone'
 
-import {checkSession, deleteSession} from '../API/GET/GetMethods';
+import { read_cookie, delete_cookie } from 'sfcookies';
 
 import '../profileStyle.css';
 
-class Feed extends Component {
+class Upload extends Component {
     constructor() {
         super();
 
@@ -15,33 +16,26 @@ class Feed extends Component {
           redirectToLogin: false
         }
 
-        this.apiCheckSession = "/checkSession"
-        this.apiDeleteSession = "/deleteSession";
-
         this.checkThisSession();
 
-        this.pageTitle = "Social Webpage Home";
+        this.pageTitle = "Social Webpage Home"
         document.title = this.pageTitle;
     }
 
     checkThisSession() {
-        //checkSession(this.apiCheckSession);
+        let token = read_cookie("token");
 
-        /*
-            if() {
-                this.setState({ redirectToLogin: true });
-            }
-            else {
-                ...
-            }
+        if(token.length === 0) {
+            console.log("Token: ", token);
+            this.state.redirectToLogin = true;
+        } else {
+            console.log("Token Key: ", token);
         }
-        }
-        */
-
     }
 
     handleLogout() {
-        //deleteSession(this.apiDeleteSession);
+        delete_cookie("token");
+        delete_cookie("userID");
 
         this.setState({ redirectToLogin: true });
     }
@@ -73,10 +67,10 @@ class Feed extends Component {
               </div>
 
               <div id="feed-header">
-                <Link to="/profile">
+                <Link to="/">
                   <Button circular size="medium" id="profile-button" icon>
-                    <Icon className="menu-icons" name='user' />
-                    Profile
+                    <Icon className="menu-icons" name='feed' />
+                    Feed
                   </Button>
                 </Link>
 
@@ -89,8 +83,16 @@ class Feed extends Component {
 
             </div>
 
-            <div id="feed-content">
-                <FeedTab />
+            <div className="content">
+                <h2 >Upload new content</h2>
+                <Form>
+                  <span className="input-label-upload"> Enter the title of your new post</span>
+                  <Input className="input-upload" type="text"/>
+
+                  <span className="input-label-upload"> Select the file you want to share</span>
+                  <Dropzone />
+                <Button id="button-upload" type="submit">Post</Button>
+                </Form>
             </div>
 
           </div>
@@ -98,4 +100,4 @@ class Feed extends Component {
     }
 }
 
-export default Feed;
+export default Upload;

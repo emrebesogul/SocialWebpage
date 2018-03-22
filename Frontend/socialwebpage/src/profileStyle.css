@@ -94,8 +94,38 @@ body {
 margin-right: 3%;
 }
 
+#button-upload{
+  margin-top: 25px;
+  display: block;
+}
+
 #feed {
   margin-top: 20px;
+}
+
+.input-upload{
+  width: 320px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+
+
+.upload-dropzone{
+  width: 320px;
+  height: 230px;
+  margin-top: 10px;
+  padding: 8px;
+  border-width: 1px;
+  border-color: rgb(62, 62, 62);
+  border-style: dashed;
+  border-radius: 5px;
+}
+
+.input-label-upload{
+  display: block;
+  margin-top: 40px;
+  margin-right: 20px;
 }
 
 #feed-content{
@@ -131,6 +161,7 @@ margin-right: 3%;
   display: none;
   width: 100%;
   height: 42px;
+  margin-bottom: 20px;
   background-color: rgb(240,240,240);
 }
 
@@ -171,6 +202,11 @@ a.item:hover {
   border: none !important;
 }
 
+.content {
+  margin-top: 30px !important;
+  display: flex;
+}
+
 .account-settings{
   margin-bottom: 30px;
   padding: 1.032em;
@@ -203,6 +239,17 @@ a.item:hover {
     border-radius: 100%;
 }
 
+#upload-button{
+  margin-bottom: 20px;
+}
+
+
+#upload-button:hover{
+  background-color: rgb(40,40,40) !important;
+  color: rgb(245,245,245) !important;
+  transition: all 0.3s;
+}
+
 .account-input-text {
   width: 30% !important;
   margin-right: 25px;
@@ -213,10 +260,10 @@ a.item:hover {
   All media queries for Feed and Profile.
 */
 
-@media only screen and (max-width: 1270px) {
+@media only screen and (max-width: 1250px) {
   #feed-content{
     width: 100% !important;
-    max-width: 840px;
+    max-width: 765px;
   }
 
   #profile-content{
@@ -228,12 +275,13 @@ a.item:hover {
     margin-top: 0px;
   }
 
+
   #mobile-header{
     display: block;
   }
 }
 
-@media only screen and (max-width: 1271px) {
+@media only screen and (max-width: 1251px) {
   #profile-button{
     display: none;
   }
