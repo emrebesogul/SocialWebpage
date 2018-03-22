@@ -10,28 +10,15 @@ class Profile extends Component {
       super();
 
       this.state = {
-        redirectToLogin: false
       }
 
-      this.checkThisSession();
 
       this.pageTitle = "Social Webpage Home"
       document.title = this.pageTitle;
   }
 
-  checkThisSession() {
-
-  }
-
-  handleLogout() {
-      this.setState({ redirectToLogin: true });
-  }
 
     render() {
-      const { redirectToLogin } = this.state;
-       if (redirectToLogin) {
-         return <Redirect to='/login'/>;
-       }
 
        // const arr =[{name:"lars"}]
        /* {arr.map(item =>

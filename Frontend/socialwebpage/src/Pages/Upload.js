@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Button, Icon, Form, Input } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
-import Dropzone from '../Components/Dropzone';
+//import Dropzone from '../Components/Dropzone';
+import Dropzone from 'react-dropzone'
 import FormData from 'form-data';
 
 import uuidv4 from 'uuid/v4';
@@ -16,13 +17,12 @@ class Upload extends Component {
         super();
 
         this.state = {
-          file: null,
+          files: [],
           title: "",
           description: "",
-          numberLikes: 0,
-          timestamp: 0,
           imagePath: "",
-          redirectToFeed: false
+          redirectToFeed: false,
+          imageURL: ""
         }
 
         this.checkThisSession();
@@ -47,27 +47,34 @@ class Upload extends Component {
         event.preventDefault();
         console.log("clicked now on submit");
 
-        this.state.imageName =  event.target[0].value;
-        this.state.imagePath =  uuidv4();
+        this.state.title =  event.target[0].value;
+        this.state.description =  event.target[1].value;
 
-        console.log(this.state.imagePath);
-        // public/assets/images/posts
+        console.log(this.state.files[0])
+
+        const fd = new FormData();
+        fd.append('avatar', this.state.files[0], 'filename',this.state.files[0].name, 'filedescription',this.state.files[0].description);
 
         const response = await uploadPictureToPlatform(
             this.api,
-            this.state.title,
-            this.state.description,
-            this.state.numberLikes,
-            this.state.timestamp,
-            this.state.imagePath
+            fd
         );
 
+        console.log(response);
         alert(response);
 
         //Do something with response
         //this.setState({message : JSON.parse(response).message});
 
     }
+
+
+    onDrop(files) {
+      this.setState({
+        files: files
+      });
+    }
+
 
 
     render() {
@@ -78,7 +85,7 @@ class Upload extends Component {
 
         return (
         <div>
-          <div id="feed">
+            <div id="feed">
               <div id="mobile-header">
                 <Link to="/">
                   <Button circular size="medium" id="profile-button-mobile" icon>
@@ -107,7 +114,6 @@ class Upload extends Component {
                 </Button>
               </div>
 
-
             </div>
 
             <div id="upload-content">
@@ -117,12 +123,21 @@ class Upload extends Component {
                       <span className="input-label-upload"> Enter the title of your new post</span>
                       <Input className="input-upload" type="text"/>
 
+                      <span className="input-label-upload"> Add description...</span>
+                      <Input className="input-upload" type="text"/>
+
                       <span className="input-label-upload"> Select the file you want to share</span>
-                      <Dropzone />
+
+                      <Dropzone id="dz-repair" multiple={ false } name="avatar" acceptedFiles="image/jpeg, image/png, image/gif" disablePreview="true" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+                          <p>Try dropping a picture here, or click to select a picture to upload.</p>
+                      </Dropzone>
 
                       <Button id="button-upload" type="submit">Post</Button>
 
                 </Form>
+
+                <img src={this.state.imageURL} alt="img" />
+
             </div>
           </div>
         )

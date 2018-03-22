@@ -12,6 +12,9 @@ body {
 #card-content{
   margin-bottom: 15px;
   margin-top: 7px;
+  
+#error-message-upload-story {
+  display: none
 }
 
 #profile-button{

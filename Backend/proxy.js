@@ -8,22 +8,12 @@ const cors = require('cors');
 
 app.use(cors());
 
-app.use('/get', proxy('localhost:8000/', {
+app.use('/get', proxy('localhost:8000/api/checkSession', {
     proxyReqPathResolver: function(req) {
         console.log(req.url);
         return req.url;
     }})
 );
-
-app.post();
-app.get();
-
-app.use('/login', (req, res) => {
-  req.pipe(request.post('localhost:8000/checkLoginData'));
-  console.log(req.url);
-});
-
-
 
 app.listen(8080, function() {
   console.log('listening on 8080')

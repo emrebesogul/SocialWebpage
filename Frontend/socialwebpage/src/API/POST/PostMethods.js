@@ -47,7 +47,30 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
 }
 
 //----------------------Post Image----------------------//
-export const uploadPictureToPlatform=(api, title, description, numberLikes, timestamp, imagePath) =>
+export const uploadPictureToPlatform=(api, fd) =>
+{
+    return new Promise((resolve, reject) => {
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: false,
+          processData: false,
+          data: fd,
+          success: function(res) {
+              console.log("Response from server: ", res);
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              console.log(err);
+              reject(err);
+          }
+        });
+    });
+}
+
+//----------------------Post Story----------------------//
+export const uploadStoryToPlatform=(api, title, content, userId) =>
 {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -55,7 +78,7 @@ export const uploadPictureToPlatform=(api, title, description, numberLikes, time
           type: "POST",
           cache: false,
           contentType: 'application/json',
-          data: JSON.stringify({title: title, description: description, numberLikes: numberLikes, timestamp: timestamp, imagePath: imagePath}),
+          data: JSON.stringify({title: title, content: content, userId: userId}),
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);
