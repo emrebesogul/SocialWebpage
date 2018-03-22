@@ -5,7 +5,7 @@ import Login from './Pages/Login';
 import Register from './Pages/Register';
 import Profile from './Pages/Profile';
 import Feed from './Pages/Feed';
-import UploadImage from './Pages/UploadImage'
+import Upload from './Pages/Upload'
 import PostText from './Pages/PostText'
 
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
