@@ -3,9 +3,12 @@ import { Link, Redirect } from 'react-router-dom';
 import { Button, Icon } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
 
-import {checkSession, deleteSession} from '../API/GET/GetMethods';
-
+import {callFetch, checkSession, deleteSession} from '../API/GET/GetMethods';
 import '../profileStyle.css';
+
+var iso = require('isomorphic-fetch');
+var es = require('es6-promise').polyfill();
+
 
 class Profile extends Component {
     constructor() {
@@ -25,23 +28,13 @@ class Profile extends Component {
     }
 
     checkThisSession() {
-        //checkSession(this.apiCheckSession);
-
-        /*
-            if() {
-                this.setState({ redirectToLogin: true });
-            }
-            else {
-                ...
-            }
-        }
-        }
-        */
+        //callFetch("GET", this.apiCheckSession, null);
+        checkSession(this.apiCheckSession);
 
     }
 
     handleLogout() {
-        //deleteSession(this.apiDeleteSession);
+        deleteSession(this.apiDeleteSession);
 
         this.setState({ redirectToLogin: true });
     }

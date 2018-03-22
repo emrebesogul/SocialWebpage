@@ -9,11 +9,9 @@ class Basic extends React.Component {
   }
 
   onDrop(files) {
-    console.log(files)
     this.setState({
       files: files
     });
-    alert(files[0].name + " -- " + files[0].size)
   }
 
   render() {

@@ -5,7 +5,7 @@ module.exports = {
 
 
   //----------------------LOGIN----------------------//
-  checkUserCredentials: function (db, req, res, userCredential) {
+  checkUserCredentials: function (db, req, res, userCredential,fn) {
       //Select table and parse form input fields
       const collection = db.collection('users');
       let username = JSON.parse(userCredential).username;
@@ -30,13 +30,18 @@ module.exports = {
                    if (docs) {
                        if(passwordHashed == docs.password) {
                            console.log("Correct credentials");
+
+                           req.session.user = docs._id;
+                           console.log("Saved User ID in Session: ", req.session.user);
+
+                           req.session.save(function(err) {
+                             // session saved
+                           })
+
+
                            res.send(JSON.stringify({
                                message : "Correct credentials"
                            }));
-
-                           //Save user id in session
-                           req.session.userID = docs._id;
-                           console.log("Saved User ID in Session: ", req.session.userID);
 
                        } else {
                            console.log("Password wrong");
@@ -57,7 +62,7 @@ module.exports = {
 
 
   //----------------------REGISTER----------------------//
-  registerUserToPlatform: function (db, res, newUserData) {
+  registerUserToPlatform: function (db, req, res, newUserData) {
       //Select table and parse form input fields
       const collection = db.collection('users');
       let firstname = JSON.parse(newUserData).username;
@@ -92,6 +97,11 @@ module.exports = {
                           }));
                       } else {
                           console.log("User created!");
+
+
+                          console.log("Saved User ID in Session: ", req.session.user);
+                          console.log("Saved User ID in Session: ", req.session.user);
+
 
                           res.send(JSON.stringify({
                               message: "User successfully created"
