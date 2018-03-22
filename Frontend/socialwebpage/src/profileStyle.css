@@ -9,6 +9,10 @@ body {
   All Buttons styled on Feed, Profile sites.
 */
 
+#error-message-upload-story {
+  display: none
+}
+
 #profile-button{
     margin-left: 10px;
     margin-top: 15px;
