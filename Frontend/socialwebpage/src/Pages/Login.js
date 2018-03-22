@@ -4,8 +4,6 @@ import { Link, Redirect } from 'react-router-dom';
 
 import {checkUserDataAtLogin} from '../API/POST/PostMethods';
 
-import { bake_cookie } from 'sfcookies'
-
 class Login extends Component {
     constructor() {
         super();
@@ -42,9 +40,7 @@ class Login extends Component {
 
         //Save token and userID in session
         if(this.state.message === "Correct credentials") {
-            bake_cookie("token", this.state.token);
-            bake_cookie("userID", this.state.userID);
-
+            //Redirect to feed when successfull login
             this.setState({ redirect: true });
         } else {
             //Error messages

@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { Button, Header, Icon } from 'semantic-ui-react'
 import ProfileTab from '../Components/ProfileTab.js';
 import { Link, Redirect } from 'react-router-dom';
-import { read_cookie, delete_cookie } from 'sfcookies';
 
 import '../profileStyle.css';
 
@@ -21,20 +20,10 @@ class Profile extends Component {
   }
 
   checkThisSession() {
-      let token = read_cookie("token");
 
-      if(token.length === 0) {
-          console.log("Token: ", token);
-          this.state.redirectToLogin = true;
-      } else {
-          console.log("Token Key: ", token);
-      }
   }
 
   handleLogout() {
-      delete_cookie("token");
-      delete_cookie("userID");
-
       this.setState({ redirectToLogin: true });
   }
 

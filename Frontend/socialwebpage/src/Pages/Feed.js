@@ -3,7 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { Button, Icon } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
 
-import { read_cookie, delete_cookie } from 'sfcookies';
+import {checkSession, deleteSession} from '../API/GET/GetMethods';
 
 import '../profileStyle.css';
 
@@ -15,26 +15,33 @@ class Feed extends Component {
           redirectToLogin: false
         }
 
+        this.apiCheckSession = "/checkSession"
+        this.apiDeleteSession = "/deleteSession";
+
         this.checkThisSession();
 
-        this.pageTitle = "Social Webpage Home"
+        this.pageTitle = "Social Webpage Home";
         document.title = this.pageTitle;
     }
 
     checkThisSession() {
-        let token = read_cookie("token");
+        //checkSession(this.apiCheckSession);
 
-        if(token.length === 0) {
-            console.log("Token: ", token);
-            this.state.redirectToLogin = true;
-        } else {
-            console.log("Token Key: ", token);
+        /*
+            if() {
+                this.setState({ redirectToLogin: true });
+            }
+            else {
+                ...
+            }
         }
+        }
+        */
+
     }
 
     handleLogout() {
-        delete_cookie("token");
-        delete_cookie("userID");
+        //deleteSession(this.apiDeleteSession);
 
         this.setState({ redirectToLogin: true });
     }

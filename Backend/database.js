@@ -1,50 +1,60 @@
 var md5 = require('js-md5');
-var uuid = require('uuid');
+var session = require('express-session')
 
 module.exports = {
 
+
   //----------------------LOGIN----------------------//
-  checkUserCredentials: function (db, res, userCredential) {
+  checkUserCredentials: function (db, req, res, userCredential) {
       //Select table and parse form input fields
       const collection = db.collection('users');
       let username = JSON.parse(userCredential).username;
       let password = JSON.parse(userCredential).password;
       let passwordHashed = md5(password);
 
-      let sessionToken = uuid.v4();
+      if(!username || !password) {
+          res.send(JSON.stringify({
+              message: "Felder ausfüllen..."
+          }));
+       } else {
+           //Check username and password
+           if (username != null && password != null) {
+               collection.findOne({"username": username}, function(err, docs) {
+                   if (err) {
+                       res.send(JSON.stringify({
+                           message: "User not found"
+                       }));
+                       throw err;
+                   }
 
-      //Check username and password
-      if (username != null && password != null) {
-          collection.findOne({"username": username}, function(err, docs) {
-              if (err) {
-                  res.send(JSON.stringify({
-                      message: "User not found"
-                  }));
-                  throw err;
-              }
+                   if (docs) {
+                       if(passwordHashed == docs.password) {
+                           console.log("Correct credentials");
+                           res.send(JSON.stringify({
+                               message : "Correct credentials"
+                           }));
 
-              if (docs) {
-                  if(passwordHashed == docs.password) {
-                  //if (password == docs.password) {
-                      console.log("Correct credentials");
-                      res.send(JSON.stringify({
-                          message : "Correct credentials", sessionToken: sessionToken, userID: docs._id,
-                      }));
-                  } else {
-                      console.log("Password wrong");
-                      res.send(JSON.stringify({
-                          message: "Password wrong"
-                      }));
-                  }
-              }
-              else {
-                  res.send(JSON.stringify({
-                      message: "User not found"
-                  }));
-              }
-          })
-      }
+                           //Save user id in session
+                           req.session.userID = docs._id;
+                           console.log("Saved User ID in Session: ", req.session.userID);
+
+                       } else {
+                           console.log("Password wrong");
+                           res.send(JSON.stringify({
+                               message: "Password wrong"
+                           }));
+                       }
+                   }
+                   else {
+                       res.send(JSON.stringify({
+                           message: "User not found"
+                       }));
+                   }
+               })
+           }
+       }
   },
+
 
   //----------------------REGISTER----------------------//
   registerUserToPlatform: function (db, res, newUserData) {
@@ -104,18 +114,20 @@ module.exports = {
         }
   },
 
-    //----------------------Feed----------------------//
-    getFeed: function (db, res) {
-        db.collection('images').find({}).toArray(function(err_images, res_images) {
-            if (err_images) throw err_images;
-            db.collection('stories').find({}).toArray(function(err_stories, result_stories) {
-                if (err_stories) throw err_stories;
-                var feed = res_images.concat(result_stories);
-                feed.sort((a, b) => b.date_created - a.date_created);
-                res.status(200).send(feed);
-            });
-        });
-    }
+
+  //----------------------Feed----------------------//
+  getFeed: function (db, res) {
+      db.collection('images').find({}).toArray(function(err_images, res_images) {
+          if (err_images) throw err_images;
+          db.collection('stories').find({}).toArray(function(err_stories, result_stories) {
+              if (err_stories) throw err_stories;
+              var feed = res_images.concat(result_stories);
+              feed.sort((a, b) => b.date_created - a.date_created);
+              res.status(200).send(feed);
+          });
+      });
+  }
+
 
   //----------------------xy----------------------//
 

@@ -2,22 +2,27 @@ var express = require('express');
 var app = express();
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
-const cors = require('cors');
+var cors = require('cors');
 var bodyParser = require('body-parser');
-var session = require('express-session');
-
-app.use(cors());
-app.use(session());
+var session = require('express-session')
 
 // create application/json parser
 var jsonParser = bodyParser.json();
 
 //Import functions
 var database = require('./database');
-
 var url = 'mongodb://127.0.0.1:27017/socialwebpage';
 
-// Connect to Mongo on start
+
+app.use(cors());
+
+app.use(session({
+    secret: 'bla blub',
+    resave: false,
+    saveUninitialized: false
+ }));
+
+// Connect to Mongo DB on start
 MongoClient.connect(url, function(err, client) {
   if (err) {
       console.log('Unable to connect to MongoDB');
@@ -26,17 +31,27 @@ MongoClient.connect(url, function(err, client) {
       console.log("Successfully connected to MongoDB");
       app.use(bodyParser.json());
 
-      app.use(session({
-          secret  : 'some-private-key',
-          key     : 'test',
-          proxy   : 'true'
-      }));
+      //----------------------SESSION----------------------//
+      app.get('/checkSession', (req, res) => {
+          if(! req.session.userID){
+            console.log("NOPE.. ", req.session.userID);
 
+          } else {
+              console.log("Is Session here...", req.session.userID);
+          }
+      });
+
+      app.get('/deleteSession', (req, res) => {
+          console.log("will delete: ", req.session.userID);
+          req.session.destroy(function(err) {
+              console.log("Deleted session...");
+          })
+      });
 
       //----------------------LOGIN----------------------//
       app.post('/user/loginUser', (req, res) => {
           const userCredential = JSON.stringify(req.body);
-          database.checkUserCredentials(client.db('socialwebpage'), res, userCredential, function(){
+          database.checkUserCredentials(client.db('socialwebpage'), req, res, userCredential, function(){
               db.close();
           });
       });
@@ -57,7 +72,6 @@ MongoClient.connect(url, function(err, client) {
       });
 
       //----------------------xy----------------------//
-
 
 
 
