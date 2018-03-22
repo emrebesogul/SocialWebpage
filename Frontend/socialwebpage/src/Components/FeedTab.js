@@ -12,6 +12,9 @@ import { Link } from 'react-router-dom';
 
 */
 
+const arr =[{name:"lars", date: "September 15, 2018", src: "/assets/images/bg.jpg", description: "Fuck this shit"},
+            {name: "Johannes", date: "May 19, 2019", src: "/assets/images/john-towner-154060-unsplash.jpg", description: "Fuck this shit, too"}];
+
 const panes = [
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
   <Link to="/upload">
@@ -25,74 +28,66 @@ const panes = [
     <Icon className="menu-icons" name='plus' />
     Add Story
   </Button></Link>
-  <Card.Group>
-    <Card fluid="true" centered="true">
-      <Image src='/assets/images/bg.jpg' />
-      <Card.Content>
-        <Card.Header>
-            <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
-            </Rating> Dunes
-        </Card.Header>
-        <Card.Meta>
-          <span className='date'>
-            March 15, 2018
-          </span>
-        </Card.Meta>
-        <Card.Description>
-          Matthew is a musician living in Nashville.
-        </Card.Description>
-        <Comment.Group>
 
-        <Header as='h4' dividing>Comments</Header>
-        <Comment>
-          <Comment.Avatar src='/assets/images/bg.jpg' />
-          <Comment.Content>
-            <Comment.Author as='a'>Matt</Comment.Author>
-            <Comment.Metadata>
-              <div>Today at 5:42PM</div>
-            </Comment.Metadata>
-            <Comment.Text>How artistic!</Comment.Text>
-            <Comment.Actions>
-              <Comment.Action>Reply</Comment.Action>
-            </Comment.Actions>
-          </Comment.Content>
-        </Comment>
-      </Comment.Group>
-      </Card.Content>
-    </Card>
-    <Card fluid="true" centered="true">
-      <Image src='/assets/images/john-towner-154060-unsplash.jpg' />
-      <Card.Content>
-        <Card.Header>
-            <Rating icon='heart' size="large" defaultRating={0} maxRating={1}/> Matthew
-        </Card.Header>
-        <Card.Meta>
-          <span className='date'>
-            March 15, 2018
-          </span>
-        </Card.Meta>
-        <Card.Description>
-          Matthew is a musician living in Nashville.
-        </Card.Description>
-        <Comment.Group>
+    <Card.Group>
+      {arr.map(item =>
+      {return(
+        <div id="card-content">
+          <Card fluid="true" centered="true">
+            <Image src={item.src} />
+            <Card.Content>
+              <Card.Header>
+                  <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
+                  </Rating> {item.name}
+              </Card.Header>
+              <Card.Meta>
+                <span className='date'>
+                  {item.date}
+                </span>
+              </Card.Meta>
+              <Card.Description>
+                {item.description}
+              </Card.Description>
+            </Card.Content>
+          </Card>
+         </div>
+         )
+      })}
+    {/*
+      <Card fluid="true" centered="true">
+        <Image src='/assets/images/john-towner-154060-unsplash.jpg' />
+        <Card.Content>
+          <Card.Header>
+              <Rating icon='heart' size="large" defaultRating={0} maxRating={1}/> Matthew
+          </Card.Header>
+          <Card.Meta>
+            <span className='date'>
+              March 15, 2018
+            </span>
+          </Card.Meta>
+          <Card.Description>
+            Matthew is a musician living in Nashville.
+          </Card.Description>
+          <Comment.Group>
 
-        <Header as='h4' dividing>Comments</Header>
-        <Comment>
-          <Comment.Avatar src='/assets/images/bg.jpg' />
-          <Comment.Content>
-            <Comment.Author as='a'>Matt</Comment.Author>
-            <Comment.Metadata>
-              <div>Today at 5:42PM</div>
-            </Comment.Metadata>
-            <Comment.Text>How artistic!</Comment.Text>
-            <Comment.Actions>
-              <Comment.Action>Reply</Comment.Action>
-            </Comment.Actions>
-          </Comment.Content>
-        </Comment>
-      </Comment.Group>
-      </Card.Content>
-    </Card>
+          <Header as='h4' dividing>Comments</Header>
+          <Comment>
+            <Comment.Avatar src='/assets/images/bg.jpg' />
+            <Comment.Content>
+              <Comment.Author as='a'>Matt</Comment.Author>
+              <Comment.Metadata>
+                <div>Today at 5:42PM</div>
+              </Comment.Metadata>
+              <Comment.Text>How artistic!</Comment.Text>
+              <Comment.Actions>
+                <Comment.Action>Reply</Comment.Action>
+              </Comment.Actions>
+            </Comment.Content>
+          </Comment>
+        </Comment.Group>
+        </Card.Content>
+      </Card>
+      */}
   </Card.Group>
 
 

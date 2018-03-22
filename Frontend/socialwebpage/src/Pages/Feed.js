@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Button, Icon } from 'semantic-ui-react'
+import { Button, Icon, Card, Image, Rating } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
 
 import {callFetch, checkSession, deleteSession} from '../API/GET/GetMethods';
@@ -81,14 +81,26 @@ class Profile extends Component {
               </div>
 
             </div>
+            <div>
 
+            </div>
             <div id="feed-content">
-                <FeedTab />
+                  <FeedTab />
             </div>
 
           </div>
         )
     }
 }
+
+
+/* {arr.map(item =>
+{return(
+
+   <div>{item.name}</div>
+   )
+})}
+
+*/
 
 export default Profile;
