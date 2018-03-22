@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Button, Icon, Form, Input } from 'semantic-ui-react';
+import { Button, Icon, Form, Input } from 'semantic-ui-react'
 import FeedTab from '../Components/FeedTab.js';
 import Dropzone from '../Components/Dropzone';
 import FormData from 'form-data';
@@ -32,6 +32,7 @@ class Upload extends Component {
         document.title = this.pageTitle;
     }
 
+    render() {
     checkThisSession() {
 
     }
@@ -77,9 +78,7 @@ class Upload extends Component {
          }
 
         return (
-          <div>
-            <div id="feed">
-
+          <div id="feed">
               <div id="mobile-header">
                 <Link to="/profile">
                   <Button circular size="medium" id="profile-button-mobile" icon>
@@ -88,11 +87,10 @@ class Upload extends Component {
                   </Button>
                 </Link>
 
-                <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
+                <Button circular size="medium" id="logout-button-mobile" icon >
                     <Icon className="menu-icons" name='log out' />
                     Log out
                 </Button>
-
               </div>
 
               <div id="feed-header">
@@ -103,12 +101,12 @@ class Upload extends Component {
                   </Button>
                 </Link>
 
-                <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
+                <Button circular size="medium" id="logout-button" icon >
                     <Icon className="menu-icons" name='log out' />
                     Log out
                 </Button>
-
               </div>
+
 
             </div>
 
@@ -126,7 +124,6 @@ class Upload extends Component {
 
                 </Form>
             </div>
-
           </div>
         )
     }

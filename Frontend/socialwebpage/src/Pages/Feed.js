@@ -7,7 +7,7 @@ import {checkSession, deleteSession} from '../API/GET/GetMethods';
 
 import '../profileStyle.css';
 
-class Feed extends Component {
+class Profile extends Component {
     constructor() {
         super();
 
@@ -98,4 +98,4 @@ class Feed extends Component {
     }
 }
 
-export default Feed;
+export default Profile;

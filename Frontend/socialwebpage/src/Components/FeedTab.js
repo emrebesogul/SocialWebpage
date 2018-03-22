@@ -20,10 +20,11 @@ const panes = [
       Upload Content
     </Button>
   </Link>
+  <Link to="/post">
   <Button circular size="medium" id="upload-button" icon>
     <Icon className="menu-icons" name='plus' />
     Add Story
-  </Button>
+  </Button></Link>
   <Card.Group>
     <Card fluid="true" centered="true">
       <Image src='/assets/images/bg.jpg' />
@@ -177,7 +178,7 @@ const panes = [
            </Input>
         </Form.Field>
 
-        <Button>Save</Button>
+        <Button id="button-upload">Save</Button>
       </Form>
 
     </div>
