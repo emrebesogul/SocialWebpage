@@ -28,13 +28,11 @@ class PostText extends Component {
 
         this.state.title =  event.target[0].value;
         this.state.content =  event.target[1].value;
-        this.state.userId = "UID:123435445645"; 
 
         const response = await uploadStoryToPlatform(
             this.api,
             this.state.title,
-            this.state.content,
-            this.state.userId         
+            this.state.content
         );
 
         // Redirect to feed if respose is message is true
@@ -88,9 +86,9 @@ class PostText extends Component {
                   <span id="error-message-upload-story">Upload failed. Try again later</span>
                   <h2>Post a new story</h2>
                   <span className="input-label-upload"> Enter the title of your new story</span>
-                  
+
                   <Input required className="input-upload" type="text"/>
-                  
+
                   <span className="input-label-upload"> What story do you want to share?</span>
                   <TextArea required className="input-upload"></TextArea>
                   <Button id="button-upload" type="submit">Post</Button>

@@ -100,7 +100,7 @@ export const uploadStoryToPlatform=(api, title, content, userId) =>
           type: "POST",
           cache: false,
           contentType: 'application/json',
-          data: JSON.stringify({title: title, content: content, userId: userId}),
+          data: JSON.stringify({title: title, content: content}),
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);

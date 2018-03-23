@@ -140,11 +140,40 @@ module.exports = {
       });
   },
 
+
+  //----------------------Upload Image----------------------//
+  uploadImageToPlatform: function (db, res, file) {
+    const fileData = file.fileData;
+    const fileDataInfo = file.fileDataInfo;
+
+    let title = JSON.parse(fileDataInfo).title;
+    let description = JSON.parse(fileDataInfo).description;
+    let path = JSON.parse(fileData).destination;
+    let filename = JSON.parse(fileData).filename;
+    let userId = '5aad6d046ad239693bcd29cd';
+
+    db.collection('images').insert({
+        "title": title,
+        "description": description,
+        "path": path,
+        "filename": filename,
+        "numerOfLikes": 0,
+        "date_created": Date.now(),
+        "userId": userId
+    });
+
+    res.send(JSON.stringify({
+        message: "Image uploaded"
+    }));
+
+    },
+
+
   //----------------------Create Story Entry----------------------//
   createStoryEntry: function (db, res, storyData) {
     let title = JSON.parse(storyData).title;
     let content = JSON.parse(storyData).content;
-    let userId = JSON.parse(storyData).userId;
+    let userId = '5aad6d046ad239693bcd29cd';
     db.collection('stories').insert({
         "title": title,
         "content": content,

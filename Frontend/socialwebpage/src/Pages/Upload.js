@@ -22,7 +22,8 @@ class Upload extends Component {
           description: "",
           imagePath: "",
           redirectToFeed: false,
-          imageURL: ""
+          imageURL: "",
+          message: "",
         }
 
         this.checkThisSession();
@@ -50,10 +51,13 @@ class Upload extends Component {
         this.state.title =  event.target[0].value;
         this.state.description =  event.target[1].value;
 
-        console.log(this.state.files[0])
+        //let fileAttributes = [];
+        //fileAttributes.push({"title": this.state.title, "description": this.state.description});
 
         const fd = new FormData();
-        fd.append('avatar', this.state.files[0], 'filename',this.state.files[0].name, 'filedescription',this.state.files[0].description);
+        fd.append('theImage', this.state.files[0]);
+        fd.append('title', this.state.title);
+        fd.append('description', this.state.description);
 
         const response = await uploadPictureToPlatform(
             this.api,
@@ -61,10 +65,18 @@ class Upload extends Component {
         );
 
         console.log(response);
-        alert(response);
 
         //Do something with response
-        //this.setState({message : JSON.parse(response).message});
+        this.setState({message : JSON.parse(response).message});
+
+        if(this.state.message === "Image uploaded") {
+            this.setState({ redirectToFeed: true });
+        } else {
+            //Error messages
+            let errorField = document.getElementById("error-message");
+            let messageText = "<b>"+this.state.message+"</b>";
+            errorField.innerHTML = messageText;
+        }
 
     }
 
@@ -128,15 +140,15 @@ class Upload extends Component {
 
                       <span className="input-label-upload"> Select the file you want to share</span>
 
-                      <Dropzone id="dz-repair" multiple={ false } name="avatar" acceptedFiles="image/jpeg, image/png, image/gif" disablePreview="true" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+                      <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" disablePreview="true" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
                           <p>Try dropping a picture here, or click to select a picture to upload.</p>
                       </Dropzone>
 
                       <Button id="button-upload" type="submit">Post</Button>
 
+                      <div id="error-message">
+                      </div>
                 </Form>
-
-                <img src={this.state.imageURL} alt="img" />
 
             </div>
           </div>

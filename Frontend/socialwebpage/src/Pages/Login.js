@@ -14,7 +14,7 @@ class Login extends Component {
           password: "",
           token: "",
           message: "",
-          redirect: false
+          redirectToFeed: false
         }
 
         this.api = '/user/loginUser';
@@ -41,7 +41,7 @@ class Login extends Component {
         //Save token and userID in session
         if(this.state.message === "Correct credentials") {
             //Redirect to feed when successfull login
-            this.setState({ redirect: true });
+            this.setState({ redirectToFeed: true });
         } else {
             //Error messages
             let errorField = document.getElementById("error-message");
@@ -52,8 +52,8 @@ class Login extends Component {
 
 
     render() {
-        const { redirect } = this.state;
-         if (redirect) {
+        const { redirectToFeed } = this.state;
+         if (redirectToFeed) {
            return <Redirect to='/' />;
          }
 

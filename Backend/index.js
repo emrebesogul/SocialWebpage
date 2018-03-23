@@ -1,33 +1,40 @@
-var express = require('express');
-var app = express();
-var MongoClient = require('mongodb').MongoClient;
-var assert = require('assert');
-var cors = require('cors');
-var bodyParser = require('body-parser');
-var session = require('express-session')
-var cookieParser = require('cookie-parser');
-var multer = require('multer');
+const express = require('express');
+const app = express();
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const session = require('express-session')
+const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const uuid = require('uuid/v4');
 
 // create application/json parser
-var jsonParser = bodyParser.json();
+const jsonParser = bodyParser.json();
 
-var database = require('./database');
-var url = 'mongodb://127.0.0.1:27017/socialwebpage';
+const database = require('./database');
+const url = 'mongodb://127.0.0.1:27017/socialwebpage';
 
 //Setup Multer:
-var storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: 'uploads/posts/',
   filename: function (req, file, callback) {
-      callback(null,file.fieldname + '-' + Date.now());
+      callback(null, uuid());
   }
 });
 
-var upload = multer({ storage: storage});
+const upload = multer({ storage: storage});
 
 app.use(express.static('./public'));
 
 
 
+//==================================================================================================//
+
+
+
+
+//==================================================================================================//
 app.use(cors());
 
 app.use(function(req, res, next) {
@@ -48,6 +55,8 @@ app.use(session({
  }));
 
 
+
+//==================================================================================================//
 // Connect to Mongo DB on start
 MongoClient.connect(url, function(err, client) {
   if (err) {
@@ -114,24 +123,25 @@ MongoClient.connect(url, function(err, client) {
       });
 
       //----------------------Upload Image to Server----------------------//
-
-
-      app.post('/image/create', upload.single('avatar'), (req, res) => {
-          console.log(req.body)
-
+      app.post('/image/create', upload.single('theImage'), (req, res) => {
           if (!req.file) {
             console.log("No file received");
             res.send(JSON.stringify({
-                success: false
-
+                message: "Image could not be uploaded"
             }));
-
           } else {
-            console.log('file received');
-            res.send(JSON.stringify({
-                success: true
-            }));
+              console.log(req.file)
+              console.log(req.body)
 
+              const fileData = JSON.stringify(req.file);
+              const fileDataInfo = JSON.stringify(req.body);
+
+              const file = {fileData, fileDataInfo}
+              console.log(file)
+
+              database.uploadImageToPlatform(client.db('socialwebpage'), res, file, function(){
+                  db.close();
+              });
           }
       });
 
@@ -158,16 +168,18 @@ MongoClient.connect(url, function(err, client) {
 })
 
 
+
+//==================================================================================================//
+
+//Comments
 // 5aad6d046ad239693bcd29cd
 /*
 Emre:
-- Bilder posten (POST /image/create)
 - Bilder anzeigen im Feed (GET /story/list)
 - Bilder anzeigen im Profil (GET /image/list?userid=$userid)
 - Bild und Story zeitlich anzeigen
 
 Konstantin:
-- Texte posten (POST /story/create)
 - Texte anzeigen im Feed (GET /image/list)
 - Texte anzeigen im Profil (GET /story/list?userid=$userid)
 
