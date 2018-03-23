@@ -175,13 +175,11 @@ MongoClient.connect(url, function(err, client) {
 // 5aad6d046ad239693bcd29cd
 /*
 Emre:
-- Bilder posten (POST /image/create)
 - Bilder anzeigen im Feed (GET /story/list)
 - Bilder anzeigen im Profil (GET /image/list?userid=$userid)
 - Bild und Story zeitlich anzeigen
 
 Konstantin:
-- Texte posten (POST /story/create)
 - Texte anzeigen im Feed (GET /image/list)
 - Texte anzeigen im Profil (GET /story/list?userid=$userid)
 

@@ -171,7 +171,7 @@ module.exports = {
   createStoryEntry: function (db, res, storyData) {
     let title = JSON.parse(storyData).title;
     let content = JSON.parse(storyData).content;
-    let userId = JSON.parse(storyData).userId;
+    let userId = '5aad6d046ad239693bcd29cd';
     db.collection('stories').insert({
         "title": title,
         "content": content,
