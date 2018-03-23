@@ -14,7 +14,8 @@ class Profile extends Component {
 
       this.state = {
         responseImages: [],
-        responseStories: []
+        responseStories: [],
+        redirectToLogin: false
       }
 
       this.apiCheckSession = "/checkSession"
@@ -25,7 +26,7 @@ class Profile extends Component {
       this.pageTitle = "Social Webpage Home"
       document.title = this.pageTitle;
   }
-  
+
     async checkThisSession() {
       const response = await checkSession(this.apiCheckSession);
       if(response.message === "User is authorized") {
@@ -33,29 +34,25 @@ class Profile extends Component {
       } else {
           this.setState({redirectToLogin: true})
       }
-  }
+      }
 
-  handleLogout() {
-      deleteSession(this.apiDeleteSession);
-      this.setState({ redirectToLogin: true });
-  }
+      handleLogout() {
+          deleteSession(this.apiDeleteSession);
+          this.setState({ redirectToLogin: true });
+      }
 
   async getProfileData() {
 
     //response
 
-
     render() {
+
         const { redirectToLogin } = this.state;
          if (redirectToLogin) {
            return <Redirect to='/login'/>;
          }
        // const arr =[{name:"lars"}]
-       /* {arr.map(item =>
-       {return(
-
-   }
-    render() {
+       //{arr.map(item =>
 
       images = this.state.responseImages;
       stories = this.state.responseStories;
