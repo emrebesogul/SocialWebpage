@@ -41,7 +41,7 @@ class Profile extends Component {
           this.setState({ redirectToLogin: true });
       }
 
-  async getProfileData() {
+  async getProfileData() {}
 
     //response
 
