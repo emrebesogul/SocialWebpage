@@ -129,7 +129,7 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------Feed----------------------//
       app.get('/feed', (req, res) => {
-        console.log("User ID Feed: " + req.session.userID);
+        console.log("User ID Feed: " + "5aad6d046ad239693bcd29cd");
         database.getFeed(client.db('socialwebpage'), res, () => {
             db.close();
         });
