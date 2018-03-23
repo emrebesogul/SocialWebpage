@@ -2,6 +2,8 @@ import React from 'react'
 import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 
+
+import {getFeedData} from '../Pages/Feed';
 // const arr =[{name:"lars"}]
 /* {arr.map(item =>
 {return(
@@ -12,8 +14,26 @@ import { Link } from 'react-router-dom';
 
 */
 
-const arr =[{name:"lars", date: "September 15, 2018", src: "", description: "Fuck this shit"},
-            {name: "Johannes", date: "May 19, 2019", src: "/assets/images/john-towner-154060-unsplash.jpg", description: "Fuck this shit, too"}];
+class FeedTab extends React.Component{
+  constructor() {
+    super();
+
+  
+  }
+
+  render(){
+    return(
+      <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+    )
+  }
+
+  myfunc(){
+    return "hello";
+  }
+}
+
+const arr =[{title:"lars", date_created: "September 15, 2018", src: "/assets/images/bg.jpg", content: "Fuck this shit", number_of_likes: 3, username: "Leonardo_64", userId: 12345 },
+            {title: "Johannes", date_created: "May 19, 2019", src: "/assets/images/john-towner-154060-unsplash.jpg", content: "Fuck this shit, too", number_of_likes: 201, username: "Leonardo_64", userId: 12345}];
 
 const panes = [
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
@@ -29,67 +49,81 @@ const panes = [
     Add Story
   </Button></Link>
 
+<div>
+  <getFeedData />
+</div>
 
-      {arr.map(item =>
-      {return(
-        <div id="card-content">
-          <Card.Group>
-            <Card fluid="true" centered="true">
-              <Image src={item.src} />
-              <Card.Content>
-                <Card.Header>
-                    <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
-                    </Rating> {item.name}
-                </Card.Header>
-                <Card.Meta>
-                  <span className='date'>
-                    {item.date}
-                  </span>
-                </Card.Meta>
-                <Card.Description>
-                  {item.description}
-                </Card.Description>
-              </Card.Content>
-            </Card>
-          </Card.Group>
-         </div>
-         )
-      })}
-    {/*
-      <Card fluid="true" centered="true">
-        <Image src='/assets/images/john-towner-154060-unsplash.jpg' />
-        <Card.Content>
-          <Card.Header>
-              <Rating icon='heart' size="large" defaultRating={0} maxRating={1}/> Matthew
-          </Card.Header>
-          <Card.Meta>
-            <span className='date'>
-              March 15, 2018
-            </span>
-          </Card.Meta>
-          <Card.Description>
-            Matthew is a musician living in Nashville.
-          </Card.Description>
-          <Comment.Group>
 
-          <Header as='h4' dividing>Comments</Header>
-          <Comment>
-            <Comment.Avatar src='/assets/images/bg.jpg' />
-            <Comment.Content>
-              <Comment.Author as='a'>Matt</Comment.Author>
-              <Comment.Metadata>
-                <div>Today at 5:42PM</div>
-              </Comment.Metadata>
-              <Comment.Text>How artistic!</Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
-            </Comment.Content>
-          </Comment>
-        </Comment.Group>
-        </Card.Content>
-      </Card>
-      */}
+  {arr.map(item =>
+  {return(
+    <div id="card-content">
+      <Card.Group>
+        <Card fluid="true" centered="true">
+          <span className="username-label"> @{item.username} </span>
+          <Image src={item.src} />
+          <Card.Content>
+            <Card.Header>
+                <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
+                </Rating> {item.title}
+                <div class="ui mini horizontal statistic post-likes">
+                  <div class="value">
+                    {item.number_of_likes}
+                  </div>
+                  <div class="label">
+                    Likes
+                  </div>
+              </div>
+            </Card.Header>
+            <Card.Meta>
+              <span className='date'>
+                {item.date_created}
+              </span>
+            </Card.Meta>
+            <Card.Description>
+              {item.content}
+            </Card.Description>
+          </Card.Content>
+        </Card>
+      </Card.Group>
+     </div>
+     )
+  })}
+{/*
+  <Card fluid="true" centered="true">
+    <Image src='/assets/images/john-towner-154060-unsplash.jpg' />
+    <Card.Content>
+      <Card.Header>
+          <Rating icon='heart' size="large" defaultRating={0} maxRating={1}/> Matthew
+      </Card.Header>
+      <Card.Meta>
+        <span className='date'>
+          March 15, 2018
+        </span>
+      </Card.Meta>
+      <Card.Description>
+        Matthew is a musician living in Nashville.
+      </Card.Description>
+      <Comment.Group>
+
+      <Header as='h4' dividing>Comments</Header>
+      <Comment>
+        <Comment.Avatar src='/assets/images/bg.jpg' />
+        <Comment.Content>
+          <Comment.Author as='a'>Matt</Comment.Author>
+          <Comment.Metadata>
+            <div>Today at 5:42PM</div>
+          </Comment.Metadata>
+          <Comment.Text>How artistic!</Comment.Text>
+          <Comment.Actions>
+            <Comment.Action>Reply</Comment.Action>
+          </Comment.Actions>
+        </Comment.Content>
+      </Comment>
+    </Comment.Group>
+    </Card.Content>
+  </Card>
+  */}
+
 
 
 
@@ -194,8 +228,11 @@ const panes = [
   </Tab.Pane> },
 ]
 
-const FeedTabs = () => (
+{/* const FeedTab = () => (
   <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
-)
+) */}
 
-export default FeedTabs
+
+
+
+export default FeedTab
