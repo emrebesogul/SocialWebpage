@@ -4,10 +4,11 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const session = require('express-session')
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const uuid = require('uuid/v4');
+var jwt = require('jsonwebtoken');
+
 
 // create application/json parser
 const jsonParser = bodyParser.json();
@@ -47,13 +48,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie:{}
- }));
-
 
 
 //==================================================================================================//
@@ -66,25 +60,52 @@ MongoClient.connect(url, function(err, client) {
       console.log("Successfully connected to MongoDB");
       app.use(bodyParser.json());
 
-      //----------------------SESSION----------------------//
-      app.get('/checkSession', (req, res) => {
+
+
+      //----------------------SESSION CHECK----------------------//
+      app.get('/checkSession', verifyToken, (req, res) => {
           console.log("=================================");
-          req.session.test = 123456
-          req.session.test2 = 1010101
-
-          console.log(req.sessionID);
-          console.log(req.session.cookie);
-
-          console.log(req.session)
-          console.log(req.session.user)
-          console.log(req.session.test)
-          console.log(req.session.test2)
-
-          res.send(JSON.stringify({
-              hi: "hallo",
-              lol: req.session.userID
-          }));
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  res.json({
+                      message: "User is authorized"
+                  });
+              }
+          });
           console.log("=================================");
+      });
+
+      //Verify Token
+      function verifyToken(req, res, next) {
+          console.log("verifying token...")
+          console.log(req);
+          console.log("Header: ",req.headers.authorization)
+          //Get auth header value
+          const bearerHeader = req.headers.authorization;
+          if(typeof bearerHeader !== 'undefined') {
+              //Split at the space
+              const bearer = bearerHeader.split(' ');
+              const bearerToken = bearer[1];
+              //Set the Token
+              req.token = bearerToken;
+              //Next middleware
+              next();
+          } else {
+              //Forbidden
+              res.json({
+                  message: "User is not authorized"
+              });
+          }
+      }
+
+
+      //----------------------SESSION DELETE----------------------//
+      app.get('/deleteSession', (req, res) => {
+          res.status(200).send({ auth: false, token: null });
       });
 
 

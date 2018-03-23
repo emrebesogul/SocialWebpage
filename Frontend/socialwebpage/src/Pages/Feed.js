@@ -3,11 +3,9 @@ import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/POST/PostMethods';
 
-import {callFetch, checkSession, deleteSession} from '../API/GET/GetMethods';
+import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import '../profileStyle.css';
 
-var iso = require('isomorphic-fetch');
-var es = require('es6-promise').polyfill();
 var arr;
 
 class Profile extends Component {
@@ -21,7 +19,7 @@ class Profile extends Component {
           redirectToLogin: false
         }
 
-        this.apiCheckSession = "/checkSession"
+        this.apiCheckSession = "/checkSession";
         this.apiDeleteSession = "/deleteSession";
 
         this.checkThisSession();
@@ -30,15 +28,18 @@ class Profile extends Component {
         document.title = this.pageTitle;
     }
 
-    checkThisSession() {
-        //callFetch("GET", this.apiCheckSession, null);
-        checkSession(this.apiCheckSession);
-
+    async checkThisSession() {
+        console.log(this.apiCheckSession)
+        const response = await checkSession(this.apiCheckSession);
+        if(response.message === "User is authorized") {
+            console.log("Have fun...")
+        } else {
+            this.setState({redirectToLogin: true})
+        }
     }
 
     handleLogout() {
         deleteSession(this.apiDeleteSession);
-
         this.setState({ redirectToLogin: true });
     }
 

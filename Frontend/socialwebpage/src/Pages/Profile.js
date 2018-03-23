@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom';
+import {callFetch, checkSession, deleteSession} from '../API/GET/GetMethods';
 
 import '../profileStyle.css';
 
@@ -16,15 +17,42 @@ class Profile extends Component {
         responseStories: []
       }
 
+      this.apiCheckSession = "/checkSession"
+      this.apiDeleteSession = "/deleteSession";
+
+      this.checkThisSession();
 
       this.pageTitle = "Social Webpage Home"
       document.title = this.pageTitle;
+  }
+  
+    async checkThisSession() {
+      const response = await checkSession(this.apiCheckSession);
+      if(response.message === "User is authorized") {
+          console.log("Have fun...")
+      } else {
+          this.setState({redirectToLogin: true})
+      }
+  }
+
+  handleLogout() {
+      deleteSession(this.apiDeleteSession);
+      this.setState({ redirectToLogin: true });
   }
 
   async getProfileData() {
 
     //response
 
+
+    render() {
+        const { redirectToLogin } = this.state;
+         if (redirectToLogin) {
+           return <Redirect to='/login'/>;
+         }
+       // const arr =[{name:"lars"}]
+       /* {arr.map(item =>
+       {return(
 
    }
     render() {
@@ -43,7 +71,7 @@ class Profile extends Component {
                 </Button>
               </Link>
 
-                <Button circular size="medium" id="logout-button-mobile" icon >
+                <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
                   <Icon className="menu-icons" name='log out' />
                   Log out
                 </Button>
@@ -58,7 +86,7 @@ class Profile extends Component {
                   </Button>
                 </Link>
 
-                  <Button circular size="medium" id="logout-button" icon >
+                  <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
                     <Icon className="menu-icons" name='log out' />
                     Log out
                   </Button>

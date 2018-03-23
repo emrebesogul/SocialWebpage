@@ -8,6 +8,7 @@ import FormData from 'form-data';
 
 import uuidv4 from 'uuid/v4';
 
+import {callFetch, checkSession, deleteSession} from '../API/GET/GetMethods';
 import {uploadPictureToPlatform} from '../API/POST/PostMethods';
 
 import '../profileStyle.css';
@@ -22,25 +23,33 @@ class Upload extends Component {
           description: "",
           imagePath: "",
           redirectToFeed: false,
+          redirectToLogin: false,
           imageURL: "",
           message: "",
         }
 
-        this.checkThisSession();
+        this.apiCheckSession = "/checkSession"
+        this.apiDeleteSession = "/deleteSession";
         this.api = "/image/create";
+
+        this.checkThisSession();
 
         this.pageTitle = "Social Webpage Home"
         document.title = this.pageTitle;
     }
 
-    checkThisSession() {
-
+    async checkThisSession() {
+        const response = await checkSession(this.apiCheckSession);
+        if(response.message === "User is authorized") {
+            console.log("Have fun...")
+        } else {
+            this.setState({redirectToLogin: true})
+        }
     }
 
     handleLogout() {
-
-
-        this.setState({ redirectToFeed: true });
+        deleteSession(this.apiDeleteSession);
+        this.setState({ redirectToLogin: true });
     }
 
     //Post image to feed
@@ -95,6 +104,11 @@ class Upload extends Component {
            return <Redirect to='/'/>;
          }
 
+         const { redirectToLogin } = this.state;
+          if (redirectToLogin) {
+            return <Redirect to='/login'/>;
+        }
+
         return (
         <div>
             <div id="feed">
@@ -106,7 +120,7 @@ class Upload extends Component {
                   </Button>
                 </Link>
 
-                <Button circular size="medium" id="logout-button-mobile" icon >
+                <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
                     <Icon className="menu-icons" name='log out' />
                     Log out
                 </Button>
@@ -120,7 +134,7 @@ class Upload extends Component {
                   </Button>
                 </Link>
 
-                <Button circular size="medium" id="logout-button" icon >
+                <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
                     <Icon className="menu-icons" name='log out' />
                     Log out
                 </Button>
