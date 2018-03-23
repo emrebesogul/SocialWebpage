@@ -131,6 +131,8 @@ module.exports = {
               if (err_stories) throw err_stories;
               let feed = res_images.concat(result_stories);
               feed.sort((a, b) => b.date_created - a.date_created);
+              console.log("##feed###")
+              console.log(feed);
               res.status(200).send(feed);
           });
       });

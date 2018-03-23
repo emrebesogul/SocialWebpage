@@ -1,30 +1,38 @@
 import React from 'react'
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button } from 'semantic-ui-react'
 
-const arr =[{name:"lars", date: "September 15, 2018", src: "/assets/images/bg.jpg", description: "Fuck this shit"},
-            {name: "Johannes", date: "May 19, 2019", src: "/assets/images/john-towner-154060-unsplash.jpg", description: "Fuck this shit, too"}];
+
 
 const panes = [
   { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
-  
+
   <Card.Group>
     {arr.map(item =>
     {return(
       <div id="card-content">
         <Card fluid="true" centered="true">
+          <span className="username-label"> @{item.username} </span>
           <Image src={item.src} />
           <Card.Content>
             <Card.Header>
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
-                </Rating> {item.name}
+                </Rating> {item.title}
+                <div class="ui mini horizontal statistic post-likes">
+                <div class="value">
+                  {item.number_of_likes}
+                </div>
+                <div class="label">
+                  Likes
+                </div>
+              </div>
             </Card.Header>
             <Card.Meta>
               <span className='date'>
-                {item.date}
+                {item.date_created}
               </span>
             </Card.Meta>
             <Card.Description>
-              {item.description}
+              {item.content}
             </Card.Description>
           </Card.Content>
         </Card>
@@ -36,58 +44,40 @@ const panes = [
 
   </Tab.Pane> },
   { menuItem: 'Story', render: () => <Tab.Pane attached={false}>
-  <Card.Group id="cg">
-  <Card fluid="true" centered="true">
-      <Card.Content>
-        <Card.Header>
-          Windows 10 Polaris
-        </Card.Header>
-        <Card.Meta>
-          <span className='date'>
-            March 15, 2018
-          </span>
-        </Card.Meta>
-        <Card.Description>
-          Mobile First means designing for mobile before designing for desktop or any other device (This will make the page display faster on smaller devices).
 
-This means that we must make some changes in our CSS.
-
-Instead of changing styles when the width gets smaller than 768px, we should change the design when the width gets larger than 768px. This will make our design Mobile First:
-        </Card.Description>
-      </Card.Content>
-    </Card>
-    <Card fluid="true" centered="true">
-      <Card.Content>
-        <Card.Header>
-          Windows 10 Andromeda
-        </Card.Header>
-        <Card.Meta>
-          <span className='date'>
-            March 15, 2018
-          </span>
-        </Card.Meta>
-        <Card.Description>
-          Matthew is a musician living in Nashville.
-        </Card.Description>
-      </Card.Content>
-    </Card>
-    <Card fluid="true" centered="trues">
-      <Card.Content>
-        <Card.Header>
-          MacOS High Sierra
-        </Card.Header>
-        <Card.Meta>
-          <span className='date'>
-            March 15, 2018
-          </span>
-        </Card.Meta>
-        <Card.Description>
-          Matthew is a musician living in Nashville.
-        </Card.Description>
-      </Card.Content>
-    </Card>
-  </Card.Group>
-
+        {txt.map(item =>
+        {return(
+          <div id="card-content">
+            <Card.Group>
+              <Card fluid="true" centered="true">
+                <span className="username-label"> @{item.username} </span>
+                <Card.Content>
+                  <Card.Header>
+                      <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
+                      </Rating> {item.title}
+                      <div class="ui mini horizontal statistic post-likes">
+                        <div class="value">
+                          {item.number_of_likes}
+                        </div>
+                        <div class="label">
+                          Likes
+                        </div>
+                    </div>
+                  </Card.Header>
+                  <Card.Meta>
+                    <span className='date'>
+                      {item.date_created}
+                    </span>
+                  </Card.Meta>
+                  <Card.Description>
+                    {item.content}
+                  </Card.Description>
+                </Card.Content>
+              </Card>
+            </Card.Group>
+           </div>
+           )
+        })}
 
   </Tab.Pane> },
   { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>
