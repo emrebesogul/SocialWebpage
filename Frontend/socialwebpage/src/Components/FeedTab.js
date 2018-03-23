@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 
 */
 
-const arr =[{name:"lars", date: "September 15, 2018", src: "/assets/images/bg.jpg", description: "Fuck this shit"},
+const arr =[{name:"lars", date: "September 15, 2018", src: "", description: "Fuck this shit"},
             {name: "Johannes", date: "May 19, 2019", src: "/assets/images/john-towner-154060-unsplash.jpg", description: "Fuck this shit, too"}];
 
 const panes = [
@@ -29,27 +29,29 @@ const panes = [
     Add Story
   </Button></Link>
 
-    <Card.Group>
+
       {arr.map(item =>
       {return(
         <div id="card-content">
-          <Card fluid="true" centered="true">
-            <Image src={item.src} />
-            <Card.Content>
-              <Card.Header>
-                  <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
-                  </Rating> {item.name}
-              </Card.Header>
-              <Card.Meta>
-                <span className='date'>
-                  {item.date}
-                </span>
-              </Card.Meta>
-              <Card.Description>
-                {item.description}
-              </Card.Description>
-            </Card.Content>
-          </Card>
+          <Card.Group>
+            <Card fluid="true" centered="true">
+              <Image src={item.src} />
+              <Card.Content>
+                <Card.Header>
+                    <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
+                    </Rating> {item.name}
+                </Card.Header>
+                <Card.Meta>
+                  <span className='date'>
+                    {item.date}
+                  </span>
+                </Card.Meta>
+                <Card.Description>
+                  {item.description}
+                </Card.Description>
+              </Card.Content>
+            </Card>
+          </Card.Group>
          </div>
          )
       })}
@@ -88,7 +90,7 @@ const panes = [
         </Card.Content>
       </Card>
       */}
-  </Card.Group>
+
 
 
 
