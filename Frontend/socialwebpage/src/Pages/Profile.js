@@ -22,6 +22,10 @@ class Profile extends Component {
   }
 
   async getProfileData() {
+
+    //response
+
+
    }
     render() {
 
