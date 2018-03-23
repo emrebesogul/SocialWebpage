@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
-import {fetchFeedData} from '../API/POST/PostMethods';
+import {fetchFeedData} from '../API/GET/GetMethods';
 
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import '../profileStyle.css';

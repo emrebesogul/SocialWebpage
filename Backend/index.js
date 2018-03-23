@@ -168,13 +168,31 @@ MongoClient.connect(url, function(err, client) {
 
 
       //----------------------Create Story----------------------//
+      //
+      // Calls the method createStoryEntry that insert the information of a new story
+      // to the database.
+      // Post parameters: title, content and userId of the new story entry
       app.post('/story/create', (req, res) => {
         console.log("Add story to database:");
         console.log(req.body);
         const storyData = JSON.stringify(req.body);
-          database.createStoryEntry(client.db('socialwebpage'), res, storyData, function(){
+          database.createStoryEntry(client.db('socialwebpage'), res, storyData, () => {
               db.close();
           });
+      });
+
+      //----------------------List Story Entries in a user profile----------------------//
+      //
+      // Calls the method listStoryEntriesForUserId that returns all story entries for 
+      // the user id in the query to the react application.
+      // Get prameter: userId of the respective user
+      app.get('/story/list', (req, res) => {
+        let userId = req.query.userId;
+        console.log("List story entries for user id:" + userId);
+        const storyData = JSON.stringify(req.body);
+            database.listStoryEntriesForUserId(client.db('socialwebpage'), res, userId, () => {
+                db.close();
+            });
       });
 
 
