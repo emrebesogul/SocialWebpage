@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Button, Form, Input } from 'semantic-ui-react';
 import { Link, Redirect } from 'react-router-dom';
+import { bake_cookie } from 'sfcookies';
 
 import {checkUserDataAtLogin} from '../API/POST/PostMethods';
 
@@ -35,12 +36,12 @@ class Login extends Component {
 
         //Do something with response
         this.setState({message : JSON.parse(response).message});
-        this.setState({token : JSON.parse(response).sessionToken});
-        this.setState({userID : JSON.parse(response).userID});
+        this.setState({token : JSON.parse(response).token});
 
         //Save token and userID in session
         if(this.state.message === "Correct credentials") {
             //Redirect to feed when successfull login
+            bake_cookie("token", this.state.token);
             this.setState({ redirectToFeed: true });
         } else {
             //Error messages

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Button, Icon, Form, Input, TextArea } from 'semantic-ui-react'
 import {uploadStoryToPlatform} from '../API/POST/PostMethods';
+import {checkSession, deleteSession} from '../API/GET/GetMethods';
 
 import '../profileStyle.css';
 
@@ -13,13 +14,32 @@ class PostText extends Component {
           title: "",
           content: "",
           redirectToFeed: false,
+          redirectToLogin: false,
           status: false
         }
 
+        this.apiCheckSession = "/checkSession"
+        this.apiDeleteSession = "/deleteSession";
         this.api = "/story/create";
+
+        this.checkThisSession();
 
         this.pageTitle = "Social Webpage Home"
         document.title = this.pageTitle;
+    }
+
+    async checkThisSession() {
+        const response = await checkSession(this.apiCheckSession);
+        if(response.message === "User is authorized") {
+            console.log("Have fun...")
+        } else {
+            this.setState({redirectToLogin: true})
+        }
+    }
+
+    handleLogout() {
+        deleteSession(this.apiDeleteSession);
+        this.setState({ redirectToLogin: true });
     }
 
       // Upload story
@@ -48,9 +68,15 @@ class PostText extends Component {
 
     render() {
         const { redirectToFeed } = this.state;
+        const { redirectToLogin } = this.state;
+
         if (redirectToFeed) {
            return <Redirect to='/'/>;
         }
+        if (redirectToLogin) {
+          return <Redirect to='/login'/>;
+        }
+
         return (
           <div id="feed">
               <div id="mobile-header">
@@ -61,7 +87,7 @@ class PostText extends Component {
                   </Button>
                 </Link>
 
-                <Button circular size="medium" id="logout-button-mobile" icon >
+                <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
                     <Icon className="menu-icons" name='log out' />
                     Log out
                 </Button>
@@ -75,7 +101,7 @@ class PostText extends Component {
                   </Button>
                 </Link>
 
-                <Button circular size="medium" id="logout-button" icon >
+                <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
                     <Icon className="menu-icons" name='log out' />
                     Log out
                 </Button>

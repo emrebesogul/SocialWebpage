@@ -1,5 +1,6 @@
 var md5 = require('js-md5');
 var session = require('express-session')
+var jwt = require('jsonwebtoken');
 
 module.exports = {
 
@@ -31,17 +32,14 @@ module.exports = {
                        if(passwordHashed == docs.password) {
                            console.log("Correct credentials");
 
-                           req.session.user = docs._id;
-                           console.log("Saved User ID in Session: ", req.session.user);
+                           jwt.sign({userid: docs._id}, 'secretkey', (err, token) => {
+                               res.send(JSON.stringify({
+                                   message : "Correct credentials",
+                                   token
+                               }));
+                           });
 
-                           req.session.save(function(err) {
-                             // session saved
-                           })
-
-
-                           res.send(JSON.stringify({
-                               message : "Correct credentials"
-                           }));
+                           console.log("JWT created");
 
                        } else {
                            console.log("Password wrong");
