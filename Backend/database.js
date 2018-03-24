@@ -96,11 +96,6 @@ module.exports = {
                       } else {
                           console.log("User created!");
 
-
-                          console.log("Saved User ID in Session: ", req.session.user);
-                          console.log("Saved User ID in Session: ", req.session.user);
-
-
                           res.send(JSON.stringify({
                               message: "User successfully created"
                           }));
