@@ -136,8 +136,8 @@ module.exports = {
              as: "user"
            }
          },
-         { $project : 
-            { 
+         { $project :
+            {
                 "title" : 1,
                 "description": 1,
                 "path": 1,
@@ -147,13 +147,13 @@ module.exports = {
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                }        
-            } 
+                }
+            }
          }
         ]).toArray(function(err_images, res_images) {
             if (err_images) throw err_images;
             db.collection('stories').aggregate([
-                { $lookup: 
+                { $lookup:
                     {
                         from: "users",
                         localField: "user_id",
@@ -161,8 +161,8 @@ module.exports = {
                         as: "user"
                     }
                 },
-                { $project : 
-                    { 
+                { $project :
+                    {
                         "title" : 1,
                         "content": 1,
                         date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
@@ -170,7 +170,7 @@ module.exports = {
                         "user_id": 1,
                         "username": {
                             "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                        } 
+                        }
                     }
                 }
                 ]).toArray(function(err_stories, res_stories) {
@@ -217,8 +217,8 @@ module.exports = {
 
 
   //----------------------Create Story Entry----------------------//
-  // 
-  // Receives the titel and the content of a story and inserts it 
+  //
+  // Receives the titel and the content of a story and inserts it
   // to the database. After that, a message with "true" is send to
   // the react application.
   createStoryEntry: function (db, res, storyData) {
@@ -238,7 +238,7 @@ module.exports = {
 
   //----------------------List Story Entries in Profile----------------------//
   //
-  // Receives the userId of a user and sends all story entries of this user 
+  // Receives the userId of a user and sends all story entries of this user
   // to the react application. These story entries are sorted by date.
   listStoryEntriesForUserId: function (db, res, userId) {
     db.collection('stories').aggregate([
@@ -251,7 +251,7 @@ module.exports = {
              as: "user"
            }
          },
-         { $project : { 
+         { $project : {
                 "title" : 1,
                 "content": 1,
                 date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
@@ -259,8 +259,8 @@ module.exports = {
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                } 
-            } 
+                }
+            }
          },
          { $sort : { "date_created" : -1 } }
         ]).toArray(function(err_stories, result_stories) {
@@ -272,5 +272,5 @@ module.exports = {
   //----------------------xy----------------------//
 
 
-  
+
 }

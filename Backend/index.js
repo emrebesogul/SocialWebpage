@@ -36,6 +36,7 @@ app.use(express.static('./public'));
 
 
 //==================================================================================================//
+//Enable CORS
 app.use(cors());
 
 app.use(function(req, res, next) {
@@ -133,7 +134,6 @@ MongoClient.connect(url, function(err, client) {
         database.getFeed(client.db('socialwebpage'), res, () => {
             db.close();
         });
-        //nodemon
       });
 
 
@@ -183,7 +183,7 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------List Story Entries in a user profile----------------------//
       //
-      // Calls the method listStoryEntriesForUserId that returns all story entries for 
+      // Calls the method listStoryEntriesForUserId that returns all story entries for
       // the user id in the query to the react application.
       // Get prameter: userId of the respective user
       app.get('/story/list', (req, res) => {
