@@ -1,6 +1,7 @@
 var md5 = require('js-md5');
 var session = require('express-session')
 var jwt = require('jsonwebtoken');
+var ObjectId = require('mongodb').ObjectId;
 
 module.exports = {
 
@@ -31,7 +32,6 @@ module.exports = {
                    if (docs) {
                        if(passwordHashed == docs.password) {
                            console.log("Correct credentials");
-
                            jwt.sign({userid: docs._id}, 'secretkey', (err, token) => {
                                res.send(JSON.stringify({
                                    message : "Correct credentials",
@@ -96,11 +96,6 @@ module.exports = {
                       } else {
                           console.log("User created!");
 
-
-                          console.log("Saved User ID in Session: ", req.session.user);
-                          console.log("Saved User ID in Session: ", req.session.user);
-
-
                           res.send(JSON.stringify({
                               message: "User successfully created"
                           }));
@@ -123,17 +118,66 @@ module.exports = {
   },
 
 
-  //----------------------Feed----------------------//
+  //----------------------Get Feed----------------------//
+  //
+  // Sends all story entries and images sorted by date to the react application.
   getFeed: function (db, res) {
-      db.collection('images').find({}).toArray(function(err_images, res_images) {
-          if (err_images) throw err_images;
-          db.collection('stories').find({}).toArray(function(err_stories, result_stories) {
-              if (err_stories) throw err_stories;
-              let feed = res_images.concat(result_stories);
-              feed.sort((a, b) => b.date_created - a.date_created);
-              console.log("##feed###")
-              console.log(feed);
-              res.status(200).send(feed);
+    db.collection('images').aggregate([
+        { $lookup:
+           {
+             from: "users",
+             localField: "user_id",
+             foreignField: "_id",
+             as: "user"
+           }
+         },
+         { $project :
+            {
+                "title" : 1,
+                "description": 1,
+                "path": 1,
+                "filename": 1,
+                "number_of_likes": 1,
+                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
+                "user_id": 1,
+                "username": {
+                    "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                }
+            }
+         }
+        ]).toArray(function(err_images, res_images) {
+            if (err_images) throw err_images;
+            db.collection('stories').aggregate([
+                { $lookup:
+                    {
+                        from: "users",
+                        localField: "user_id",
+                        foreignField: "_id",
+                        as: "user"
+                    }
+                },
+                { $project :
+                    {
+                        "title" : 1,
+                        "content": 1,
+                        date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
+                        "number_of_likes": 1,
+                        "user_id": 1,
+                        "username": {
+                            "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                        }
+                    }
+                }
+                ]).toArray(function(err_stories, res_stories) {
+                    if (err_stories) throw err_stories;
+
+                    let feed = res_images.concat(res_stories);
+                    feed.sort(function(a, b) {
+                        return new Date(b.date_created) - new Date(a.date_created);
+                    });
+                    console.log("##feed###")
+                    console.log(feed);
+                    res.status(200).send(feed);
           });
       });
   },
@@ -155,9 +199,9 @@ module.exports = {
         "description": description,
         "path": path,
         "filename": filename,
-        "numerOfLikes": 0,
-        "date_created": Date.now(),
-        "userId": userId
+        "numer_of_likes": 0,
+        "date_created": new Date(),
+        "user_id": new ObjectId(userId)
     });
 
     res.send(JSON.stringify({
@@ -168,18 +212,56 @@ module.exports = {
 
 
   //----------------------Create Story Entry----------------------//
+  //
+  // Receives the titel and the content of a story and inserts it
+  // to the database. After that, a message with "true" is send to
+  // the react application.
   createStoryEntry: function (db, res, storyData) {
     let title = JSON.parse(storyData).title;
     let content = JSON.parse(storyData).content;
     let userId = '5aad6d046ad239693bcd29cd';
+
     db.collection('stories').insert({
         "title": title,
         "content": content,
-        "numerOfLikes": 0,
-        "date_created": Date.now(),
-        "userId": userId
+        "number_of_likes": 0,
+        "date_created": new Date(),
+        "user_id": new ObjectId(userId)
     });
     res.send(true);
+  },
+
+  //----------------------List Story Entries in Profile----------------------//
+  //
+  // Receives the userId of a user and sends all story entries of this user
+  // to the react application. These story entries are sorted by date.
+  listStoryEntriesForUserId: function (db, res, userId) {
+    db.collection('stories').aggregate([
+        { $match : { user_id : new ObjectId(userId) } },
+        { $lookup:
+           {
+             from: "users",
+             localField: "user_id",
+             foreignField: "_id",
+             as: "user"
+           }
+         },
+         { $project : {
+                "title" : 1,
+                "content": 1,
+                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
+                "number_of_likes": 1,
+                "user_id": 1,
+                "username": {
+                    "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                }
+            }
+         },
+         { $sort : { "date_created" : -1 } }
+        ]).toArray(function(err_stories, result_stories) {
+        if (err_stories) throw err_stories;
+            res.status(200).send(result_stories);
+    });
   }
 
   //----------------------xy----------------------//

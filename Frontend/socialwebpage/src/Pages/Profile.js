@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom';
-import {callFetch, checkSession, deleteSession} from '../API/GET/GetMethods';
+import {callFetch, checkSession, deleteSession, getStoryForUserId} from '../API/GET/GetMethods';
+
 
 import '../profileStyle.css';
 
@@ -11,6 +12,8 @@ var stories;
 class Profile extends Component {
   constructor() {
       super();
+
+      this.getProfileData();
 
       this.state = {
         responseImages: [],
@@ -34,16 +37,18 @@ class Profile extends Component {
       } else {
           this.setState({redirectToLogin: true})
       }
-      }
+    }
 
       handleLogout() {
           deleteSession(this.apiDeleteSession);
           this.setState({ redirectToLogin: true });
       }
 
-  async getProfileData() {}
-
-    //response
+  async getProfileData() {
+    const response = await getStoryForUserId("/story/list?userId=5ab54d6687df40307449df74");
+    this.setState({responseStories : response});
+    console.log(response)
+  }
 
     render() {
 
@@ -121,7 +126,7 @@ const panes = [
     {return(
       <div id="card-content">
         <Card fluid="true" centered="true">
-          <span className="username-label"> @{item.username} </span>
+          <span className="username-label"> @{item.usename} </span>
           <Image src={item.src} />
           <Card.Content>
             <Card.Header>
@@ -155,12 +160,13 @@ const panes = [
   </Tab.Pane> },
   { menuItem: 'Story', render: () => <Tab.Pane attached={false}>
 
+
         {stories.map(item =>
         {return(
           <div id="card-content">
             <Card.Group>
               <Card fluid="true" centered="true">
-                <span className="username-label"> @{item.username} </span>
+                <span className="username-label"> @{item.user[0].username} </span>
                 <Card.Content>
                   <Card.Header>
                       <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>

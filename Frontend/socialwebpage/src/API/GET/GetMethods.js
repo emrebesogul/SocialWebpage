@@ -62,3 +62,44 @@ export const deleteSession=(api)=>{
       }
       });
 }
+
+//----------------------Get user story entries----------------------//
+export const getStoryForUserId=(api)=>{
+  return new Promise((resolve, reject) => {
+    $.ajax({
+        url: url + api,
+        dataType:'json',
+        cache: false,
+        type: "GET",
+        success: function(res) {
+          console.log("Response from server: ", res);
+          resolve(res);
+        }.bind(this),
+        error: function(xhr, status, err){
+          console.log(err);
+        }
+      });
+  });
+}
+
+//----------------------Get Feed----------------------//
+export const fetchFeedData=(api) =>
+{
+    return new Promise((resolve, reject) => {
+        $.ajax({
+          url: url + api,
+          type: "GET",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify(),
+          success: function(res) {
+              console.log("Response from server: ", res);
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              console.log(err);
+              reject(err);
+          }
+        });
+    });
+}
