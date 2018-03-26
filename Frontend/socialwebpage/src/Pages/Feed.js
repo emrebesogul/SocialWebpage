@@ -62,7 +62,7 @@ class Profile extends Component {
         arr = this.state.resArr;
 
         return (
-          <div>
+          <div id="main-content">
             <div id="feed">
 
               <div id="mobile-header">
