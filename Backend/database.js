@@ -44,7 +44,7 @@ module.exports = {
                        } else {
                            console.log("Password wrong");
                            res.send(JSON.stringify({
-                               message: "Password wrong"
+                               message: "Wrong Email/ or Password"
                            }));
                        }
                    }
