@@ -4,7 +4,6 @@ body {
   background-color: rgb(254,254,254) !important;
 }
 
-
 /*
   Buttons
   All Buttons styled on Feed, Profile sites.
@@ -16,25 +15,41 @@ body {
 
 #feed-card{
   margin-bottom: 15px;
-  margin-top: 7px;
+
 }
 
+
+/*
+  Sidebar with menu functions. Visible on every page.
+*/
 #welcome-label{
   position: absolute;
-  top: 63px;
+  top: 54px;
   left: -7px;
   border: solid 1px rgb(232, 232, 232);
   width: 16%;
   min-width: 170px;
   max-width: 230px;
   text-align: center;
-  border-radius: 9px;
-  height: 64vh;
-  padding-top: 11px;
+  border-radius: 5px;
+  height: 400px;
+  padding-top: 10px;
   color: rgb(30,30,30);
   background-color: #f2f2f224;
   -webkit-box-shadow: -1px 1px 5px -1px #23374d94;
   box-shadow: -1px 1px 5px -1px #8383847d
+}
+
+/*
+  Sidebar header label.
+*/
+#welcome-label-header{
+  border-bottom: solid 1px rgb(235,235,235);
+  padding-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: -3px 3px 3px 0px #d3dade45;
+
 }
 
 #error-message-upload-story {
@@ -84,29 +99,10 @@ div.description{
   margin-right: 20px;
 }
 
-#profile-button{
-  width: 70%;
-  min-width: 100px;
-  background: rgba(221, 221, 221, 0);
-  color: rgb(41, 41, 41) !important;
-
-  /* OLD
-    margin-left: 10px;
-    margin-top: 15px;
-    right: 0;
-    margin-right: 115px;
-    position: absolute;
-    color: rgb(40,40,40) !important;*/
-
-}
-
-#profile-button:hover{
-  /*background-color: rgb(40,40,40) !important;*/
-  color: rgb(105,105,105) !important;
-  transition: all 0.23s;
-}
-
-
+/*
+  Profile button which directs to profile.
+  Only visible in mobile version (max-width <= 1250px).
+*/
 #profile-button-mobile{
     margin-left: 10px;
     margin-right: 115px;
@@ -116,12 +112,15 @@ div.description{
     color: rgb(40,40,40) !important;
 }
 
+/*
+  Logout Button for logging out the current user.
+  Visible in sidebar.
+*/
 #logout-button{
-
-  width: 70%;
+  width: 90%;
+  text-align: right;
   min-width: 100px;
   background: rgba(221, 221, 221, 0);
-  margin-top: 15px;
   color: rgb(41,41,41) !important;
 }
 
@@ -131,6 +130,10 @@ div.description{
   transition: all 0.3s;
 }
 
+/*
+  Logout Button for logging out the current user.
+  Only visible in mobile version (max-width <= 1250px).
+*/
 #logout-button-mobile {
   display: block;
   right: 0;
@@ -150,17 +153,6 @@ div.description{
   box-shadow: none;
   padding: 8px;
   background-color: rgb(254,254,254) !important;
-}
-
-#welcome-label-header{
-  border-bottom: solid 1px rgb(213, 213, 213);
-  padding-bottom: 10px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-#profile{
-  margin-top: 20px;
 }
 
 #profile-content {
@@ -190,19 +182,22 @@ margin-right: 3%;
 }
 
 
-#button-upload{
-  margin-top: 25px;
+.button-upload{
+  margin-top: 25px !important;
   display: block;
   color: rgb(65,65,65) !important;
 }
 
-#button-upload:hover{
+.button-upload:hover{
   background-color: rgb(40,40,40) !important;
   color: rgb(245,245,245) !important;
   transition: all 0.3s;
 }
 
-#feed {
+/*
+  Top margin for all pages.
+*/
+.feed {
   margin-top: 20px;
 }
 
@@ -212,8 +207,6 @@ margin-right: 3%;
   border-radius: 3px;
   margin-top: 10px;
 }
-
-
 
 .upload-dropzone{
   width: 320px;
@@ -238,8 +231,8 @@ margin-right: 3%;
   max-width: 820px;
 }
 
-#feed-header {
-  margin-bottom: 20px;
+.feed-header {
+  margin-bottom: 20px !important;
   width: 100%;
   height: 40px;
   position: fixed;
@@ -352,19 +345,35 @@ a.item:hover {
   color: rgb(65,65,65) !important;
 }
 
+#upload-button-mobile:hover{
+  background-color: rgb(40,40,40) !important;
+  color: rgb(245,245,245) !important;
+  transition: all 0.3s;
+}
+
+.seperator{
+  width: 90%;
+  height: 1px;
+  margin-bottom: 7px;
+  background-color: rgb(220,220,220);
+  box-shadow: -3px 3px 3px 0px #d3dade45;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 #upload-button{
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: rgb(65,65,65) !important;
   background: none !important;
+  width: 90%;
+  text-align: right;
 }
 
 #upload-content{
   display: block;
-    /* position: absolute; */
-    width: 325px;
-    /* right: 34%; */
-    margin-left: auto;
-    margin-right: auto;
+  width: 325px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .ui.comments{
@@ -397,13 +406,25 @@ a.item:hover {
     display: inherit;
   }
 
+  #profile-button{
+    display: none;
+  }
+
+  #logout-button{
+    display: none;
+  }
+
   #profile-content{
     width: 100% !important;
     max-width: 840px;
   }
 
-  #feed{
-    margin-top: 0px;
+  .feed-header{
+    display: none;
+  }
+
+  .feed{
+    margin-top: 0px !important;
   }
 
 div.content{
@@ -420,7 +441,6 @@ div.content{
   font-size: 1em;
   border-radius: 0;
 }
-
 
   #mobile-header{
     display: block;
@@ -469,15 +489,5 @@ div.content{
 
   .input-label{
     display: block !important;
-  }
-}
-
-@media only screen and (max-width: 1251px) {
-  #profile-button{
-    display: none;
-  }
-
-  #logout-button{
-    display: none;
   }
 }

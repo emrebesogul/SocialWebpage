@@ -63,7 +63,7 @@ class Profile extends Component {
 
         return (
           <div id="main-content">
-            <div id="feed">
+            <div className="feed">
 
               <div id="mobile-header">
                 <Link to="/profile">
@@ -80,9 +80,24 @@ class Profile extends Component {
 
               </div>
 
-              <div id="feed-header">
+              <div className="feed-header">
                 <div id="welcome-label">
                   <h4 id="welcome-label-header">Leonardo_64</h4>
+
+                    <Link to="/profile">
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='user' />
+                        Profile
+                      </Button>
+                    </Link>
+
+                    <Link to="/">
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='feed' />
+                        Feed
+                      </Button>
+                    </Link>
+
                     <Link to="/upload">
                       <Button labelPosition="right" size="medium" id="upload-button" icon>
                         <Icon className="menu-icons" size="large" name='upload' />
@@ -96,26 +111,23 @@ class Profile extends Component {
                     </Button>
                   </Link>
 
-                  <Link to="/profile">
-                    <Button labelPosition="right"  size="medium" id="profile-button" icon>
-                      <Icon className="menu-icons" size="large" name='user' />
-                      Profile
-                    </Button>
-                  </Link>
+                  <div className="seperator"></div>
 
                   <Link to="/profile">
-                    <Button labelPosition="right"  size="medium" id="logout-button" icon>
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='compass' />
                       Roadmap
                     </Button>
                   </Link>
 
                   <Link to="/profile">
-                    <Button labelPosition="right"  size="medium" id="logout-button" icon>
-                      <Icon className="menu-icons" size="large" name='user' />
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='group' />
                       About Us
                     </Button>
                   </Link>
+
+                  <div className="seperator"></div>
 
                   <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
                       <Icon className="menu-icons" size="large" name='log out' />

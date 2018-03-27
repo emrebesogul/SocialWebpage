@@ -78,38 +78,82 @@ class PostText extends Component {
         }
 
         return (
-          <div id="feed">
-              <div id="mobile-header">
-                <Link to="/">
-                  <Button circular size="medium" id="profile-button-mobile" icon>
-                    <Icon className="menu-icons" name='feed' />
-                    Feed
+          <div>
+            <div className="feed">
+                <div id="mobile-header">
+                  <Link to="/">
+                    <Button circular size="medium" id="profile-button-mobile" icon>
+                      <Icon className="menu-icons" name='feed' />
+                      Feed
+                    </Button>
+                  </Link>
+
+                  <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
+                      <Icon className="menu-icons" name='log out' />
+                      Log out
                   </Button>
-                </Link>
+                </div>
 
-                <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
-                    <Icon className="menu-icons" name='log out' />
-                    Log out
-                </Button>
-              </div>
+                <div className="feed-header">
+                  <div id="welcome-label">
+                    <h4 id="welcome-label-header">Leonardo_64</h4>
 
-              <div id="feed-header">
-                <Link to="/">
-                  <Button circular size="medium" id="profile-button" icon>
-                    <Icon className="menu-icons" name='feed' />
-                    Feed
-                  </Button>
-                </Link>
+                      <Link to="/profile">
+                        <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                          <Icon className="menu-icons" size="large" name='user' />
+                          Profile
+                        </Button>
+                      </Link>
 
-                <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
-                    <Icon className="menu-icons" name='log out' />
-                    Log out
-                </Button>
-              </div>
+                      <Link to="/">
+                        <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                          <Icon className="menu-icons" size="large" name='feed' />
+                          Feed
+                        </Button>
+                      </Link>
+
+                      <Link to="/upload">
+                        <Button labelPosition="right" size="medium" id="upload-button" icon>
+                          <Icon className="menu-icons" size="large" name='upload' />
+                          Upload Content
+                        </Button>
+                      </Link>
+                      <Link to="/post">
+                      <Button labelPosition="right" size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='plus' />
+                        Add Story
+                      </Button>
+                    </Link>
+
+                    <div className="seperator"></div>
+
+                    <Link to="/profile">
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='compass' />
+                        Roadmap
+                      </Button>
+                    </Link>
+
+                    <Link to="/profile">
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='group' />
+                        About Us
+                      </Button>
+                    </Link>
+
+                    <div className="seperator"></div>
+
+                    <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
+                        <Icon className="menu-icons" size="large" name='log out' />
+                        Log out
+                    </Button>
+                  </div>
+                </div>
+            </div>
 
             <div id="upload-content">
                <Form onSubmit={this.handleSubmit.bind(this)}>
-                  <span id="error-message-upload-story">Upload failed. Try again later</span>
+
                   <h2>Post a new story</h2>
                   <span className="input-label-upload"> Enter the title of your new story</span>
 
@@ -117,7 +161,8 @@ class PostText extends Component {
 
                   <span className="input-label-upload"> What story do you want to share?</span>
                   <TextArea required className="input-upload"></TextArea>
-                  <Button id="button-upload" type="submit">Post</Button>
+                  <Button className="button-upload" type="submit">Post</Button>
+                  <span id="error-message-upload-story">Upload failed. Try again later</span>
                 </Form>
             </div>
           </div>
