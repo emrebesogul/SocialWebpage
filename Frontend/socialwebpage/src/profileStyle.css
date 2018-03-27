@@ -1,6 +1,7 @@
 body {
   background: none;
   height: auto;
+  background-color: rgb(254,254,254) !important;
 }
 
 
@@ -9,17 +10,39 @@ body {
   All Buttons styled on Feed, Profile sites.
 */
 
+#main-content{
+  background-color: rgb(254,254,254) !important;
+}
+
 #feed-card{
   margin-bottom: 15px;
   margin-top: 7px;
+}
+
+#welcome-label{
+  position: absolute;
+  top: 63px;
+  left: -7px;
+  border: solid 1px rgb(232, 232, 232);
+  width: 16%;
+  min-width: 170px;
+  max-width: 230px;
+  text-align: center;
+  border-radius: 9px;
+  height: 64vh;
+  padding-top: 11px;
+  color: rgb(30,30,30);
+  background-color: #f2f2f224;
+  -webkit-box-shadow: -1px 1px 5px -1px #23374d94;
+  box-shadow: -1px 1px 5px -1px #8383847d
 }
 
 #error-message-upload-story {
   display: none
 }
 
-.card-meta{
-  
+.image-feed{
+  object-fit: contain;
 }
 
 #hidden{
@@ -49,8 +72,8 @@ div.description{
   padding-top: 11px;
   height: 40px;
   font-size: 14px;
-  color: rgb(63, 63, 62);
-  background-color: rgba(248, 249, 249, 0.49);
+  color: rgb(33, 33, 32);
+  background-color: rgba(248, 249, 249, 0.59);
   text-align: left;
   padding-left: 15px;
 }
@@ -62,18 +85,25 @@ div.description{
 }
 
 #profile-button{
+  width: 70%;
+  min-width: 100px;
+  background: rgba(221, 221, 221, 0);
+  color: rgb(41, 41, 41) !important;
+
+  /* OLD
     margin-left: 10px;
     margin-top: 15px;
     right: 0;
     margin-right: 115px;
     position: absolute;
-    color: rgb(40,40,40) !important;
+    color: rgb(40,40,40) !important;*/
+
 }
 
 #profile-button:hover{
-  background-color: rgb(40,40,40) !important;
-  color: rgb(245,245,245) !important;
-  transition: all 0.3s;
+  /*background-color: rgb(40,40,40) !important;*/
+  color: rgb(105,105,105) !important;
+  transition: all 0.23s;
 }
 
 
@@ -87,12 +117,12 @@ div.description{
 }
 
 #logout-button{
-  display: block;
-  right: 0;
-  margin-right: 15px;
+
+  width: 70%;
+  min-width: 100px;
+  background: rgba(221, 221, 221, 0);
   margin-top: 15px;
-  position: absolute;
-  color: rgb(40,40,40) !important;
+  color: rgb(41,41,41) !important;
 }
 
 #logout-button:hover{
@@ -119,6 +149,14 @@ div.description{
   border: none;
   box-shadow: none;
   padding: 8px;
+  background-color: rgb(254,254,254) !important;
+}
+
+#welcome-label-header{
+  border-bottom: solid 1px rgb(213, 213, 213);
+  padding-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #profile{
@@ -235,8 +273,9 @@ margin-right: 3%;
 
 
 .menu-icons{
-  padding-right: 20px;
-padding-left: 5px;
+  padding-right: 20px !important;
+  padding-left: 5px;
+  background: none !important;
 }
 
 #name-label{
@@ -307,10 +346,16 @@ a.item:hover {
     border-radius: 100%;
 }
 
+#upload-button-mobile{
+  display: none;
+  margin-bottom: 20px;
+  color: rgb(65,65,65) !important;
+}
 
 #upload-button{
   margin-bottom: 20px;
   color: rgb(65,65,65) !important;
+  background: none !important;
 }
 
 #upload-content{
@@ -346,6 +391,10 @@ a.item:hover {
   #feed-content{
     width: 100% !important;
     max-width: 765px;
+  }
+
+  #upload-button-mobile{
+    display: inherit;
   }
 
   #profile-content{

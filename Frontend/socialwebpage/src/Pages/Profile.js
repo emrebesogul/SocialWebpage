@@ -131,7 +131,7 @@ const panes = [
       <div >
         <Card fluid="true" centered="true">
           <span className="username-label"> @{item.username} </span>
-          <Image src={item.src} />
+          <Image className="image-feed" src={item.src} />
           <Card.Content id="card-content">
             <Card.Header className="card-header">
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>

@@ -81,18 +81,47 @@ class Profile extends Component {
               </div>
 
               <div id="feed-header">
-                <Link to="/profile">
-                  <Button circular size="medium" id="profile-button" icon>
-                    <Icon className="menu-icons" name='user' />
-                    Profile
+                <div id="welcome-label">
+                  <h4 id="welcome-label-header">Leonardo_64</h4>
+                    <Link to="/upload">
+                      <Button labelPosition="right" size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='upload' />
+                        Upload Content
+                      </Button>
+                    </Link>
+                    <Link to="/post">
+                    <Button labelPosition="right" size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='plus' />
+                      Add Story
+                    </Button>
+                  </Link>
+
+                  <Link to="/profile">
+                    <Button labelPosition="right"  size="medium" id="profile-button" icon>
+                      <Icon className="menu-icons" size="large" name='user' />
+                      Profile
+                    </Button>
+                  </Link>
+
+                  <Link to="/profile">
+                    <Button labelPosition="right"  size="medium" id="logout-button" icon>
+                      <Icon className="menu-icons" size="large" name='compass' />
+                      Roadmap
+                    </Button>
+                  </Link>
+
+                  <Link to="/profile">
+                    <Button labelPosition="right"  size="medium" id="logout-button" icon>
+                      <Icon className="menu-icons" size="large" name='user' />
+                      About Us
+                    </Button>
+                  </Link>
+
+                  <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
+                      <Icon className="menu-icons" size="large" name='log out' />
+                      Log out
                   </Button>
-                </Link>
-
-                <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
-                    <Icon className="menu-icons" name='log out' />
-                    Log out
-                </Button>
-
+                </div>
               </div>
 
             </div>
@@ -114,13 +143,13 @@ class Profile extends Component {
 const panes = [
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
   <Link to="/upload">
-    <Button circular size="medium" id="upload-button" icon>
+    <Button circular size="medium" id="upload-button-mobile" icon>
       <Icon className="menu-icons" name='upload' />
       Upload Content
     </Button>
   </Link>
   <Link to="/post">
-  <Button circular size="medium" id="upload-button" icon>
+  <Button circular size="medium" id="upload-button-mobile" icon>
     <Icon className="menu-icons" name='plus' />
     Add Story
   </Button></Link>
@@ -136,7 +165,7 @@ const panes = [
       <Card.Group>
         <Card fluid="true" centered="true">
           <span className="username-label"> @{item.username} </span>
-          <Image src={item.src} />
+          <Image className="image-feed" src={item.src} />
           <Card.Content id="card-content">
             <Card.Header className="card-header">
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
