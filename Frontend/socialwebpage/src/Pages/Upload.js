@@ -41,7 +41,7 @@ class Upload extends Component {
     async checkThisSession() {
         const response = await checkSession(this.apiCheckSession);
         if(response.message === "User is authorized") {
-            console.log("Have fun...")
+
         } else {
             this.setState({redirectToLogin: true})
         }
@@ -59,9 +59,6 @@ class Upload extends Component {
 
         this.state.title =  event.target[0].value;
         this.state.description =  event.target[1].value;
-
-        //let fileAttributes = [];
-        //fileAttributes.push({"title": this.state.title, "description": this.state.description});
 
         const fd = new FormData();
         fd.append('theImage', this.state.files[0]);

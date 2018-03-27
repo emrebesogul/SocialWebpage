@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { read_cookie, delete_cookie } from 'sfcookies';
 
 var url = "http://localhost:8000";
 
@@ -50,6 +51,8 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
 export const uploadPictureToPlatform=(api, fd) =>
 {
     return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
         $.ajax({
           url: url + api,
           type: "POST",
@@ -57,6 +60,9 @@ export const uploadPictureToPlatform=(api, fd) =>
           contentType: false,
           processData: false,
           data: fd,
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);
@@ -73,12 +79,17 @@ export const uploadPictureToPlatform=(api, fd) =>
 export const uploadStoryToPlatform=(api, title, content, userId) =>
 {
     return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
         $.ajax({
           url: url + api,
           type: "POST",
           cache: false,
           contentType: 'application/json',
           data: JSON.stringify({title: title, content: content}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);

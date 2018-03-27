@@ -32,10 +32,10 @@ module.exports = {
                    if (docs) {
                        if(passwordHashed == docs.password) {
                            console.log("Correct credentials");
-                           jwt.sign({userid: docs._id}, 'secretkey', (err, token) => {
+                           jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
                                res.send(JSON.stringify({
                                    message : "Correct credentials",
-                                   token
+                                   token,
                                }));
                            });
 
@@ -187,12 +187,13 @@ module.exports = {
   uploadImageToPlatform: function (db, res, file) {
     const fileData = file.fileData;
     const fileDataInfo = file.fileDataInfo;
+    const userid = file.userid;
 
     let title = JSON.parse(fileDataInfo).title;
     let description = JSON.parse(fileDataInfo).description;
     let path = JSON.parse(fileData).destination;
     let filename = JSON.parse(fileData).filename;
-    let userId = '5aad6d046ad239693bcd29cd';
+    let userId = userid;
 
     db.collection('images').insert({
         "title": title,
@@ -216,10 +217,11 @@ module.exports = {
   // Receives the titel and the content of a story and inserts it
   // to the database. After that, a message with "true" is send to
   // the react application.
-  createStoryEntry: function (db, res, storyData) {
-    let title = JSON.parse(storyData).title;
-    let content = JSON.parse(storyData).content;
-    let userId = '5aad6d046ad239693bcd29cd';
+  createStoryEntry: function (db, res, file) {
+      console.log(file)
+    let title = JSON.parse(file.storyData).title;
+    let content = JSON.parse(file.storyData).content;
+    let userId = file.userid;
 
     db.collection('stories').insert({
         "title": title,

@@ -45,7 +45,9 @@ class Profile extends Component {
       }
 
   async getProfileData() {
-    const response = await getStoryForUserId("/story/list?userId=5ab54d6687df40307449df74");
+    //const response = await getStoryForUserId("/story/list?userId=5ab65068b68d159f81a08cee");
+    const response = await getStoryForUserId("/story/list");
+
     this.setState({responseStories : response});
     console.log(response)
   }
@@ -166,7 +168,7 @@ const panes = [
           <div id="card-content">
             <Card.Group>
               <Card fluid="true" centered="true">
-                <span className="username-label"> @{item.user[0].username} </span>
+                <span className="username-label"> @{item.username} </span>
                 <Card.Content>
                   <Card.Header>
                       <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>

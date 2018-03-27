@@ -66,11 +66,16 @@ export const deleteSession=(api)=>{
 //----------------------Get user story entries----------------------//
 export const getStoryForUserId=(api)=>{
   return new Promise((resolve, reject) => {
+    var token = read_cookie('token')
+
     $.ajax({
         url: url + api,
         dataType:'json',
         cache: false,
         type: "GET",
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
         success: function(res) {
           console.log("Response from server: ", res);
           resolve(res);

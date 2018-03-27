@@ -72,6 +72,8 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
+                  console.log(authData.username)
+                  console.log(authData.userid)
                   res.json({
                       message: "User is authorized"
                   });
@@ -82,9 +84,9 @@ MongoClient.connect(url, function(err, client) {
 
       //Verify Token
       function verifyToken(req, res, next) {
-          console.log("verifying token...")
-          console.log(req);
-          console.log("Header: ",req.headers.authorization)
+          //console.log("verifying token...")
+          //console.log(req);
+          //console.log("Header: ",req.headers.authorization)
           //Get auth header value
           const bearerHeader = req.headers.authorization;
           if(typeof bearerHeader !== 'undefined') {
@@ -130,7 +132,6 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------Feed----------------------//
       app.get('/feed', (req, res) => {
-        console.log("User ID Feed: " + "5aad6d046ad239693bcd29cd");
         database.getFeed(client.db('socialwebpage'), res, () => {
             db.close();
         });
@@ -144,25 +145,37 @@ MongoClient.connect(url, function(err, client) {
       });
 
       //----------------------Upload Image to Server----------------------//
-      app.post('/image/create', upload.single('theImage'), (req, res) => {
+      app.post('/image/create', verifyToken, upload.single('theImage'), (req, res) => {
           if (!req.file) {
             console.log("No file received");
             res.send(JSON.stringify({
                 message: "Image could not be uploaded"
             }));
           } else {
-              console.log(req.file)
-              console.log(req.body)
+              jwt.verify(req.token, 'secretkey', (err, authData) => {
+                  if(err) {
+                      res.json({
+                          message: "User is not authorized"
+                      });
+                  } else {
+                      console.log(authData.userid)
 
-              const fileData = JSON.stringify(req.file);
-              const fileDataInfo = JSON.stringify(req.body);
+                      const fileData = JSON.stringify(req.file);
+                      const fileDataInfo = JSON.stringify(req.body);
+                      const userid = authData.userid
 
-              const file = {fileData, fileDataInfo}
-              console.log(file)
+                      console.log("User ID aus session", userid)
 
-              database.uploadImageToPlatform(client.db('socialwebpage'), res, file, function(){
-                  db.close();
+                      const file = {fileData, fileDataInfo, userid}
+                      console.log("File: ", file)
+
+                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file, function(){
+                          db.close();
+                      });
+
+                  }
               });
+
           }
       });
 
@@ -172,13 +185,30 @@ MongoClient.connect(url, function(err, client) {
       // Calls the method createStoryEntry that insert the information of a new story
       // to the database.
       // Post parameters: title, content and userId of the new story entry
-      app.post('/story/create', (req, res) => {
+      app.post('/story/create', verifyToken, (req, res) => {
         console.log("Add story to database:");
         console.log(req.body);
-        const storyData = JSON.stringify(req.body);
-          database.createStoryEntry(client.db('socialwebpage'), res, storyData, () => {
-              db.close();
-          });
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                console.log(authData.userid)
+                const userid = authData.userid
+
+                const storyData = JSON.stringify(req.body);
+                const file = {storyData, userid}
+
+                database.createStoryEntry(client.db('socialwebpage'), res, file, () => {
+                    db.close();
+                });
+
+            }
+        });
+
+
       });
 
       //----------------------List Story Entries in a user profile----------------------//
@@ -186,13 +216,28 @@ MongoClient.connect(url, function(err, client) {
       // Calls the method listStoryEntriesForUserId that returns all story entries for
       // the user id in the query to the react application.
       // Get prameter: userId of the respective user
-      app.get('/story/list', (req, res) => {
-        let userId = req.query.userId;
-        console.log("List story entries for user id:" + userId);
-        const storyData = JSON.stringify(req.body);
-            database.listStoryEntriesForUserId(client.db('socialwebpage'), res, userId, () => {
-                db.close();
-            });
+      app.get('/story/list', verifyToken, (req, res) => {
+        //let userId = req.query.userId;
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                console.log(authData.userid)
+                const userid = authData.userid
+
+                console.log("List story entries for user id:" + userid);
+
+                database.listStoryEntriesForUserId(client.db('socialwebpage'), res, userid, () => {
+                    db.close();
+                });
+
+            }
+        });
+
+
       });
 
 
