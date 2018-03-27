@@ -176,13 +176,14 @@ module.exports = {
                 ]).toArray(function(err_stories, res_stories) {
                     if (err_stories) throw err_stories;
 
-                    let feed = res_images.concat(res_stories);
                     res_stories.map(item => {
                         item.date_created = getDate(item.date_created);
                     });
                     res_images.map(item => {
                         item.date_created = getDate(item.date_created);
                     });
+
+                    let feed = res_images.concat(res_stories);
                     feed.sort(function(a, b) {
                         return new Date(b.date_created) - new Date(a.date_created);
                     });
@@ -301,12 +302,11 @@ function getMonthName (month) {
     return monthNames[month];
   }
 
-
   function getDate (date) {
       date = new Date(date);
       let hours = date.getHours();
       let minutes = date.getMinutes();
-      let days = date.getDay();
+      let days = date.getDate();
       let months = getMonthName(date.getMonth());
       let year = date.getFullYear();
       if (hours < 10) hours = "0" + hours;
