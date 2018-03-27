@@ -18,15 +18,23 @@ const url = 'mongodb://127.0.0.1:27017/socialwebpage';
 
 //Setup Multer:
 const storage = multer.diskStorage({
-  destination: 'uploads/posts/',
+  destination: 'public/uploads/posts/',
   filename: function (req, file, callback) {
-      callback(null, uuid());
+         switch (file.mimetype) {
+         case 'image/jpeg':
+            ext = '.jpeg';
+            break;
+         case 'image/png':
+            ext = '.png';
+            break;
+     }
+     callback(null, uuid() + ext);
   }
 });
 
 const upload = multer({ storage: storage});
 
-app.use(express.static('./public'));
+app.use(express.static('public'));
 
 
 
