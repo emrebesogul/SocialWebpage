@@ -62,7 +62,7 @@ class Profile extends Component {
         arr = this.state.resArr;
 
         return (
-          <div>
+          <div id="main-content">
             <div id="feed">
 
               <div id="mobile-header">
@@ -132,13 +132,13 @@ const panes = [
 
   {arr.map(item =>
   {return(
-    <div id="card-content">
+    <div id="feed-card">
       <Card.Group>
         <Card fluid="true" centered="true">
           <span className="username-label"> @{item.username} </span>
           <Image src={item.src} />
-          <Card.Content>
-            <Card.Header>
+          <Card.Content id="card-content">
+            <Card.Header className="card-header">
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
                 </Rating> {item.title}
                 <div class="ui mini horizontal statistic post-likes">
@@ -150,7 +150,7 @@ const panes = [
                   </div>
               </div>
             </Card.Header>
-            <Card.Meta>
+            <Card.Meta className="card-meta">
               <span className='date'>
                 {item.date_created}
               </span>

@@ -8,6 +8,7 @@ import '../profileStyle.css';
 
 var images;
 var stories;
+var username;
 
 class Profile extends Component {
   constructor() {
@@ -64,6 +65,7 @@ class Profile extends Component {
       images = this.state.responseImages;
       stories = this.state.responseStories;
 
+
         return (
           <div>
 
@@ -101,7 +103,7 @@ class Profile extends Component {
                   <Header as='h2' size="huge" icon textAlign='center'>
                     <Icon name='user' circular />
                     <Header.Content>
-                      Leonardo_64
+                      Leonardo
                       <Header.Subheader>
                         Johannes Mändle
                       </Header.Subheader>
@@ -126,12 +128,12 @@ const panes = [
   <Card.Group>
     {images.map(item =>
     {return(
-      <div id="card-content">
+      <div >
         <Card fluid="true" centered="true">
-          <span className="username-label"> @{item.usename} </span>
+          <span className="username-label"> @{item.username} </span>
           <Image src={item.src} />
-          <Card.Content>
-            <Card.Header>
+          <Card.Content id="card-content">
+            <Card.Header className="card-header">
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
                 </Rating> {item.title}
                 <div class="ui mini horizontal statistic post-likes">
@@ -143,7 +145,7 @@ const panes = [
                 </div>
               </div>
             </Card.Header>
-            <Card.Meta>
+            <Card.Meta className="card-meta">
               <span className='date'>
                 {item.date_created}
               </span>
@@ -165,12 +167,12 @@ const panes = [
 
         {stories.map(item =>
         {return(
-          <div id="card-content">
+          <div>
             <Card.Group>
               <Card fluid="true" centered="true">
                 <span className="username-label"> @{item.username} </span>
-                <Card.Content>
-                  <Card.Header>
+                <Card.Content id="card-content">
+                  <Card.Header className="card-header">
                       <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
                       </Rating> {item.title}
                       <div class="ui mini horizontal statistic post-likes">
@@ -182,7 +184,7 @@ const panes = [
                         </div>
                     </div>
                   </Card.Header>
-                  <Card.Meta>
+                  <Card.Meta className="card-meta">
                     <span className='date'>
                       {item.date_created}
                     </span>

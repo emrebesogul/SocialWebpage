@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Button, Icon, Form, Input } from 'semantic-ui-react'
-import FeedTab from '../Components/FeedTab.js';
 //import Dropzone from '../Components/Dropzone';
 import Dropzone from 'react-dropzone'
 import FormData from 'form-data';
