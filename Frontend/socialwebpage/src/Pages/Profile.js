@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom';
-import {callFetch, checkSession, deleteSession, getStoryForUserId} from '../API/GET/GetMethods';
+import {callFetch, checkSession, deleteSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 import ProfileHeader from '../Components/ProfileHeader'
 
@@ -9,12 +9,10 @@ import '../profileStyle.css';
 
 var images;
 var stories;
-var username;
 
 class Profile extends Component {
   constructor(props) {
       super(props);
-
 
       this.state = {
         responseImages: [],
@@ -24,8 +22,13 @@ class Profile extends Component {
 
       this.apiCheckSession = "/checkSession"
       this.apiDeleteSession = "/deleteSession";
+<<<<<<< HEAD
       this.api = "/story/list";
       this.property = props.match.params.username;
+=======
+      this.apiStories = "/story/list";
+      this.apiImages = "/image/list";
+>>>>>>> 77fda4619528d654005c77d00b3b0543a37159e0
 
       this.getProfileData(this.property);
       this.checkThisSession();
@@ -42,13 +45,23 @@ class Profile extends Component {
     }
 
       async getProfileData(username) {
+        console.log("Username: " + username)
         if(username == undefined) {
-            const response = await getStoryForUserId(this.api);
-            this.setState({responseStories : response});
+            const responseStories = await getStoryForUserId(this.apiStories);
+            const responseImages = await getImagesForUserId(this.apiImages);
+            this.setState({
+              responseStories : responseStories,
+              responseImages : responseImages
+            });
         } else {
-            let api = this.api + "?username=" + username;
-            const response = await getStoryForUserId(api);
-            this.setState({responseStories : response});
+            let apiStoriesWithUsername = this.apiStories + "?username=" + username;
+            let apiImagesWithUsername = this.apiImages + "?username=" + username;
+            const responseStories = await getStoryForUserId(apiStoriesWithUsername);
+            const responseImages = await getImagesForUserId(apiImagesWithUsername);
+            this.setState({
+              responseStories : responseStories,
+              responseImages : responseImages
+            });
         }
       }
 
@@ -78,9 +91,13 @@ const panes = [
   <Card.Group>
     {images.map(item =>
     {return(
-      <div >
+      <div id="profile-card">
+
         <Card fluid="true" centered="true">
-          <span className="username-label"> @{item.username} </span>
+          <div className="username-label">
+            <span > @{item.username} </span>
+            <Button id="delete-button" circular icon="delete" size="small"></Button>
+          </div>
           <Image className="image-feed" src={item.src} />
           <Card.Content id="card-content">
             <Card.Header className="card-header">
@@ -120,7 +137,10 @@ const panes = [
           <div>
             <Card.Group>
               <Card fluid="true" centered="true">
-                <span className="username-label"> @{item.username} </span>
+                <div className="username-label">
+                  <span > @{item.username} </span>
+                  <Button id="delete-button" circular icon="delete" size="small"></Button>
+                </div>
                 <Card.Content id="card-content">
                   <Card.Header className="card-header">
                       <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>

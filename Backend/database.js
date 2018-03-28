@@ -38,9 +38,6 @@ var call = module.exports = {
                                    token,
                                }));
                            });
-
-                           console.log("JWT created");
-
                        } else {
                            console.log("Password wrong");
                            res.send(JSON.stringify({
@@ -190,6 +187,9 @@ var call = module.exports = {
 
 
   //----------------------Upload Image----------------------//
+  //
+  // Receives a file from the react application and stores it
+  // to the database.
   uploadImageToPlatform: function (db, res, file) {
     const fileData = file.fileData;
     const fileDataInfo = file.fileDataInfo;
@@ -218,11 +218,9 @@ var call = module.exports = {
 
   //----------------------Create Story Entry----------------------//
   //
-  // Receives the titel and the content of a story and inserts it
-  // to the database. After that, a message with "true" is send to
-  // the react application.
+  // Receives the titel and the content of a story and inserts it to the database. 
+  // After that, a message with "true" is send to the react application.
   createStoryEntry: function (db, res, file) {
-    console.log(file)
     let title = JSON.parse(file.storyData).title;
     let content = JSON.parse(file.storyData).content;
     let userId = file.userid;
@@ -237,11 +235,11 @@ var call = module.exports = {
     res.send(true);
   },
 
-  //----------------------List Story Entries in Profile----------------------//
+  //----------------------List Story Entries in Profile for a Username----------------------//
   //
-  // Receives the userId of a user and sends all story entries of this user
-  // to the react application. These story entries are sorted by date.
-  getIdOfOtherUser: function(db, res, username) {
+  // Receives the name of a user, fetchs the corresponding user id from the database and 
+  // calls the method listStoryEntriesForUserId.
+  listStoryEntriesForUsername: function(db, res, username) {
       const collection = db.collection('users');
       collection.findOne({"username": username}, function(err, docs) {
           if (err) {
@@ -260,9 +258,37 @@ var call = module.exports = {
               }));
           }
       })
-
   },
 
+  //----------------------List Images in Profile for a Username----------------------//
+  //
+  // Receives the name of a user, fetchs the corresponding user id from the database and 
+  // calls the method listImagesForUserId.
+  listImagesForUsername: function(db, req, res, username) {
+    const collection = db.collection('users');
+    collection.findOne({"username": username}, function(err, docs) {
+        if (err) {
+            res.send(JSON.stringify({
+                message: "User not found"
+            }));
+            throw err;
+        }
+
+        if (docs) {
+            test.listImagesForUserId(db, req, res, docs._id)
+        }
+        else {
+            res.send(JSON.stringify({
+                message: "User not found"
+            }));
+        }
+    })
+},
+
+  //----------------------List Story Entries in Profile----------------------//
+  //
+  // Receives the userId of a user and sends all story entries of this user
+  // to the react application. These story entries are sorted by date.
   listStoryEntriesForUserId: function (db, res, userId) {
     db.collection('stories').aggregate([
         { $match : { user_id : new ObjectId(userId) } },
@@ -277,7 +303,7 @@ var call = module.exports = {
          { $project : {
                 "title" : 1,
                 "content": 1,
-                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
+                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                 "number_of_likes": 1,
                 "user_id": 1,
                 "username": {
@@ -295,12 +321,12 @@ var call = module.exports = {
     });
   },
 
-  //----------------------List Story Entries in Profile For other people...----------------------//
+  //----------------------List Images in Profile----------------------//
   //
-  // Receives the userId of a user and sends all story entries of this user
-  // to the react application. These story entries are sorted by date.
-  listStoryEntriesForUsername: function (db, res, userId) {
-    db.collection('stories').aggregate([
+  // Receives the userId of a user and sends all images of this user
+  // to the react application. These images are sorted by date.
+  listImagesForUserId: function (db, req, res, userId) {
+    db.collection('images').aggregate([
         { $match : { user_id : new ObjectId(userId) } },
         { $lookup:
            {
@@ -310,11 +336,14 @@ var call = module.exports = {
              as: "user"
            }
          },
-         { $project : {
+         { $project :
+            {
                 "title" : 1,
                 "content": 1,
-                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
+                "src": 1,
+                "filename": 1,
                 "number_of_likes": 1,
+                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
@@ -322,12 +351,13 @@ var call = module.exports = {
             }
          },
          { $sort : { "date_created" : -1 } }
-        ]).toArray(function(err_stories, result_stories) {
-        if (err_stories) throw err_stories;
-            result_stories.map(item => {
-                item.date_created = getDate(item.date_created);
-            });
-            res.status(200).send(result_stories);
+        ]).toArray(function(err_images, result_images) {
+        if (err_images) throw err_images;
+        result_images.map(item => {
+            item.date_created = getDate(item.date_created);
+            item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename
+        });
+            res.status(200).send(result_images);
     });
   },
 
