@@ -15,7 +15,7 @@ body {
 
 #feed-card{
   margin-bottom: 15px;
-
+  margin-top: -19px;
 }
 
 
@@ -112,6 +112,14 @@ div.description{
     color: rgb(40,40,40) !important;
 }
 
+div.ui.pointing.secondary.menu{
+  border: solid 1px rgba(208, 199, 197, 0.29);
+  border-radius: 5px;
+  background: rgb(252,252,252);
+  -webkit-box-shadow: 0px 5px 3px 0px #9191911a;
+  box-shadow: 0px 2px 3px 0px #9191911a;
+}
+
 /*
   Logout Button for logging out the current user.
   Visible in sidebar.
@@ -120,8 +128,9 @@ div.description{
   width: 90%;
   text-align: right;
   min-width: 100px;
+  font-weight: 500;
   background: rgba(221, 221, 221, 0);
-  color: rgb(41,41,41) !important;
+  color: rgb(50,50,50) !important;
 }
 
 #logout-button:hover{
@@ -289,7 +298,8 @@ a.item {
 }
 
 a.item:hover {
-  background-color: rgb(50,50,50) !important;
+  background-color: rgb(60,60,60) !important;
+  border-bottom: solid 2px rgb(250,250,250) !important;
   border-radius: 3px !important;
   color: rgb(255,255,255) !important;
   transition: all 0.28s !important;
@@ -363,8 +373,9 @@ a.item:hover {
 
 #upload-button{
   margin-bottom: 10px;
-  color: rgb(65,65,65) !important;
+  color: rgb(50,50,50) !important;
   background: none !important;
+  font-weight: 500;
   width: 90%;
   text-align: right;
 }
