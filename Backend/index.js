@@ -66,7 +66,21 @@ MongoClient.connect(url, function(err, client) {
       console.log("Successfully connected to MongoDB");
       app.use(bodyParser.json());
 
-
+      //----------------------SESSION CHECK----------------------//
+      app.get('/getUsername', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User not found"
+                  });
+              } else {
+                  res.json({
+                      message: "User found",
+                      username: authData.username
+                  });
+              }
+          });
+      });
 
       //----------------------SESSION CHECK----------------------//
       app.get('/checkSession', verifyToken, (req, res) => {
