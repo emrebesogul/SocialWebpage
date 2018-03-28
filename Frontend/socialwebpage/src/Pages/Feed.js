@@ -169,9 +169,12 @@ const panes = [
     <div id="feed-card">
       <Card.Group>
         <Card fluid="true" centered="true">
-          <Link to={`/profile/${item.username}`}>
-              <span className="username-label"> @{item.username} </span>
-          </Link>
+          <div className="username-label">
+            <Link to={`/profile/${item.username}`}>
+                <span > @{item.username} </span>
+            </Link>
+          </div>
+
           <Image className="image-feed" src={item.src} />
           <Card.Content id="card-content">
             <Card.Header className="card-header">
