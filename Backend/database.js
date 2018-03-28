@@ -121,7 +121,7 @@ var test = module.exports = {
   //----------------------Get Feed----------------------//
   //
   // Sends all story entries and images sorted by date to the react application.
-  getFeed: function (db, res) {
+  getFeed: function (db, req, res) {
     db.collection('images').aggregate([
         { $lookup:
            {
@@ -134,11 +134,11 @@ var test = module.exports = {
          { $project :
             {
                 "title" : 1,
-                "description": 1,
-                "path": 1,
+                "content": 1,
+                "src": 1,
                 "filename": 1,
                 "number_of_likes": 1,
-                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
+                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
@@ -160,7 +160,7 @@ var test = module.exports = {
                     {
                         "title" : 1,
                         "content": 1,
-                        date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
+                        date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created",timezone: "Europe/Berlin"}},
                         "number_of_likes": 1,
                         "user_id": 1,
                         "username": {
@@ -176,6 +176,7 @@ var test = module.exports = {
                     });
                     res_images.map(item => {
                         item.date_created = getDate(item.date_created);
+                        item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename
                     });
 
                     let feed = res_images.concat(res_stories);
@@ -195,17 +196,15 @@ var test = module.exports = {
     const userid = file.userid;
 
     let title = JSON.parse(fileDataInfo).title;
-    let description = JSON.parse(fileDataInfo).description;
-    let path = JSON.parse(fileData).destination;
+    let content = JSON.parse(fileDataInfo).content;
+    let src = JSON.parse(fileData).destination;
     let filename = JSON.parse(fileData).filename;
     let userId = userid;
-
     db.collection('images').insert({
         "title": title,
-        "description": description,
-        "path": path,
+        "content": content,
         "filename": filename,
-        "numer_of_likes": 0,
+        "number_of_likes": 0,
         "date_created": new Date(),
         "user_id": new ObjectId(userId)
     });

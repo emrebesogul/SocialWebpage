@@ -30,11 +30,8 @@ class Profile extends Component {
     }
 
     async checkThisSession() {
-        console.log(this.apiCheckSession)
         const response = await checkSession(this.apiCheckSession);
-        if(response.message === "User is authorized") {
-            console.log("Have fun...")
-        } else {
+        if(response.message !== "User is authorized") {
             this.setState({redirectToLogin: true})
         }
     }
@@ -45,12 +42,7 @@ class Profile extends Component {
     }
 
    async getFeedData() {
-
         const response = await fetchFeedData("/feed");
-
-        console.log("#########")
-        console.log(response);
-
         this.setState({resArr: response});
     }
 

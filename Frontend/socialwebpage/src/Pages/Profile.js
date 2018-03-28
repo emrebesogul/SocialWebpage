@@ -24,7 +24,6 @@ class Profile extends Component {
       this.apiDeleteSession = "/deleteSession";
       this.api = "/story/list";
 
-      console.log("match:", props.match.params)
       this.getProfileData(props.match.params.username);
       this.checkThisSession();
 
@@ -34,9 +33,7 @@ class Profile extends Component {
 
     async checkThisSession() {
       const response = await checkSession(this.apiCheckSession);
-      if(response.message === "User is authorized") {
-          console.log("Have fun...")
-      } else {
+      if(response.message !== "User is authorized") {
           this.setState({redirectToLogin: true})
       }
     }
@@ -47,19 +44,13 @@ class Profile extends Component {
       }
 
       async getProfileData(username) {
-        console.log("username:", username)
         if(username == undefined) {
             const response = await getStoryForUserId(this.api);
             this.setState({responseStories : response});
-            console.log(response)
-
         } else {
             let api = this.api + "?username=" + username;
             const response = await getStoryForUserId(api);
             this.setState({responseStories : response});
-            console.log(response)
-
-
         }
       }
 
