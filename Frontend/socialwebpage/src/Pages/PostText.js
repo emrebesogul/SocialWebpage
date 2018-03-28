@@ -3,6 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { Button, Icon, Form, Input, TextArea } from 'semantic-ui-react'
 import {uploadStoryToPlatform} from '../API/POST/PostMethods';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
+import Sidebar from '../Components/Sidebar'
 
 import '../profileStyle.css';
 
@@ -14,12 +15,10 @@ class PostText extends Component {
           title: "",
           content: "",
           redirectToFeed: false,
-          redirectToLogin: false,
           status: false
         }
 
         this.apiCheckSession = "/checkSession"
-        this.apiDeleteSession = "/deleteSession";
         this.api = "/story/create";
 
         this.checkThisSession();
@@ -68,87 +67,15 @@ class PostText extends Component {
 
     render() {
         const { redirectToFeed } = this.state;
-        const { redirectToLogin } = this.state;
 
         if (redirectToFeed) {
            return <Redirect to='/'/>;
-        }
-        if (redirectToLogin) {
-          return <Redirect to='/login'/>;
         }
 
         return (
           <div>
             <div className="feed">
-                <div id="mobile-header">
-                  <Link to="/">
-                    <Button circular size="medium" id="profile-button-mobile" icon>
-                      <Icon className="menu-icons" name='feed' />
-                      Feed
-                    </Button>
-                  </Link>
-
-                  <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
-                      <Icon className="menu-icons" name='log out' />
-                      Log out
-                  </Button>
-                </div>
-
-                <div className="feed-header">
-                  <div id="welcome-label">
-                    <h4 id="welcome-label-header">Leonardo_64</h4>
-
-                      <Link to="/profile">
-                        <Button labelPosition="right"  size="medium" id="upload-button" icon>
-                          <Icon className="menu-icons" size="large" name='user' />
-                          Profile
-                        </Button>
-                      </Link>
-
-                      <Link to="/">
-                        <Button labelPosition="right"  size="medium" id="upload-button" icon>
-                          <Icon className="menu-icons" size="large" name='feed' />
-                          Feed
-                        </Button>
-                      </Link>
-
-                      <Link to="/upload">
-                        <Button labelPosition="right" size="medium" id="upload-button" icon>
-                          <Icon className="menu-icons" size="large" name='upload' />
-                          Upload Content
-                        </Button>
-                      </Link>
-                      <Link to="/post">
-                      <Button labelPosition="right" size="medium" id="upload-button" icon>
-                        <Icon className="menu-icons" size="large" name='plus' />
-                        Add Story
-                      </Button>
-                    </Link>
-
-                    <div className="seperator"></div>
-
-                    <Link to="/profile">
-                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
-                        <Icon className="menu-icons" size="large" name='compass' />
-                        Roadmap
-                      </Button>
-                    </Link>
-
-                    <Link to="/profile">
-                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
-                        <Icon className="menu-icons" size="large" name='group' />
-                        About Us
-                      </Button>
-                    </Link>
-
-                    <div className="seperator"></div>
-
-                    <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
-                        <Icon className="menu-icons" size="large" name='log out' />
-                        Log out
-                    </Button>
-                  </div>
-                </div>
+                <Sidebar />
             </div>
 
             <div id="upload-content">
