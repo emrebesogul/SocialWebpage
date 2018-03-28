@@ -120,13 +120,6 @@ class Sidebar extends Component {
                     </Button>
                   </Link>
 
-                  <Link to="/settings">
-                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
-                      <Icon className="menu-icons" size="large" name='group' />
-                      Settings
-                    </Button>
-                  </Link>
-
                   <div className="seperator"></div>
 
                   <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>

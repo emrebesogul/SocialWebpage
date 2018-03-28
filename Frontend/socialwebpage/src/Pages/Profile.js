@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom';
 import {callFetch, checkSession, deleteSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
-import Sidebar from '../Components/Sidebar'
+import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
@@ -76,7 +76,7 @@ class Profile extends Component {
         return (
           <div className="feed">
 
-              <Sidebar />
+              <SidebarProfile />
               <ProfileHeader name={this.property}/>
 
               <div id="profile-content">
