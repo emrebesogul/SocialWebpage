@@ -98,9 +98,13 @@ const panes = [
   <Card.Group>
     {images.map(item =>
     {return(
-      <div >
+      <div id="profile-card">
+
         <Card fluid="true" centered="true">
-          <span className="username-label"> @{item.username} </span>
+          <div className="username-label">
+            <span > @{item.username} </span>
+            <Button id="delete-button" circular icon="delete" size="small"></Button>
+          </div>
           <Image className="image-feed" src={item.src} />
           <Card.Content id="card-content">
             <Card.Header className="card-header">
@@ -140,7 +144,10 @@ const panes = [
           <div>
             <Card.Group>
               <Card fluid="true" centered="true">
-                <span className="username-label"> @{item.username} </span>
+                <div className="username-label">
+                  <span > @{item.username} </span>
+                  <Button id="delete-button" circular icon="delete" size="small"></Button>
+                </div>
                 <Card.Content id="card-content">
                   <Card.Header className="card-header">
                       <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>

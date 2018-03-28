@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
-import {  } from 'semantic-ui-react'
+import { Icon, Step } from 'semantic-ui-react'
 import {uploadStoryToPlatform} from '../API/POST/PostMethods';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
@@ -53,7 +53,18 @@ class Roadmap extends Component {
             </div>
 
             <div id="upload-content">
-              Roadmap
+              <h2>Roadmap for Scope</h2>
+
+              <h3>Milestone 1</h3>
+                <span className='date'>
+                  007. Mar. 2018
+                </span>
+              <h3>Milestone 2</h3>
+              <h3>Milestone 3</h3>
+              <h3>Alpha</h3>
+              <h3>Beta</h3>
+              <h3>Final Release</h3>
+
             </div>
           </div>
         )
