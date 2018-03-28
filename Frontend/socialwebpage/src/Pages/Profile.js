@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom';
-import {callFetch, checkSession, deleteSession, getStoryForUserId} from '../API/GET/GetMethods';
+import {callFetch, checkSession, deleteSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
 import '../profileStyle.css';
@@ -14,7 +14,6 @@ class Profile extends Component {
   constructor(props) {
       super(props);
 
-
       this.state = {
         responseImages: [],
         responseStories: [],
@@ -23,7 +22,8 @@ class Profile extends Component {
 
       this.apiCheckSession = "/checkSession"
       this.apiDeleteSession = "/deleteSession";
-      this.api = "/story/list";
+      this.apiStories = "/story/list";
+      this.apiImages = "/image/list";
 
       this.getProfileData(props.match.params.username);
       this.checkThisSession();
@@ -40,13 +40,23 @@ class Profile extends Component {
     }
 
       async getProfileData(username) {
+        console.log("Username: " + username)
         if(username == undefined) {
-            const response = await getStoryForUserId(this.api);
-            this.setState({responseStories : response});
+            const responseStories = await getStoryForUserId(this.apiStories);
+            const responseImages = await getImagesForUserId(this.apiImages);
+            this.setState({
+              responseStories : responseStories,
+              responseImages : responseImages
+            });
         } else {
-            let api = this.api + "?username=" + username;
-            const response = await getStoryForUserId(api);
-            this.setState({responseStories : response});
+            let apiStoriesWithUsername = this.apiStories + "?username=" + username;
+            let apiImagesWithUsername = this.apiImages + "?username=" + username;
+            const responseStories = await getStoryForUserId(apiStoriesWithUsername);
+            const responseImages = await getImagesForUserId(apiImagesWithUsername);
+            this.setState({
+              responseStories : responseStories,
+              responseImages : responseImages
+            });
         }
       }
 

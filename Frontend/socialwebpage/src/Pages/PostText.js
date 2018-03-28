@@ -29,9 +29,7 @@ class PostText extends Component {
 
     async checkThisSession() {
         const response = await checkSession(this.apiCheckSession);
-        if(response.message === "User is authorized") {
-            console.log("Have fun...")
-        } else {
+        if(response.message !== "User is authorized") {
             this.setState({redirectToLogin: true})
         }
     }

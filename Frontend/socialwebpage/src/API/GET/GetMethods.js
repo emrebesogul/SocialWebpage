@@ -70,7 +70,6 @@ export const deleteSession=(api)=>{
 export const getStoryForUserId=(api)=>{
   return new Promise((resolve, reject) => {
     var token = read_cookie('token')
-    console.log(api)
     $.ajax({
         url: url + api,
         dataType:'json',
@@ -80,7 +79,28 @@ export const getStoryForUserId=(api)=>{
             'Authorization': 'Bearer ' + token
         },
         success: function(res) {
-          console.log("Response from server: ", res);
+          resolve(res);
+        }.bind(this),
+        error: function(xhr, status, err){
+          console.log(err);
+        }
+      });
+  });
+}
+
+//----------------------Get images----------------------//
+export const getImagesForUserId=(api)=>{
+  return new Promise((resolve, reject) => {
+    var token = read_cookie('token')
+    $.ajax({
+        url: url + api,
+        dataType:'json',
+        cache: false,
+        type: "GET",
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(res) {
           resolve(res);
         }.bind(this),
         error: function(xhr, status, err){
