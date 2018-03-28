@@ -22,13 +22,14 @@ class Profile extends Component {
 
       this.apiCheckSession = "/checkSession"
       this.apiDeleteSession = "/deleteSession";
-<<<<<<< HEAD
-      this.api = "/story/list";
-      this.property = props.match.params.username;
-=======
+
       this.apiStories = "/story/list";
       this.apiImages = "/image/list";
->>>>>>> 77fda4619528d654005c77d00b3b0543a37159e0
+
+      this.api = "/story/list";
+      this.property = props.match.params.username;
+
+
 
       this.getProfileData(this.property);
       this.checkThisSession();
@@ -74,7 +75,7 @@ class Profile extends Component {
           <div className="feed">
 
               <Sidebar />
-              <ProfileHeader name={this.propery}/>
+              <ProfileHeader name={this.property}/>
 
               <div id="profile-content">
                   <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
