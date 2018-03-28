@@ -121,7 +121,6 @@ export const fetchFeedData=(api) =>
           contentType: 'application/json',
           data: JSON.stringify(),
           success: function(res) {
-              console.log("Response from server: ", res);
               resolve(res);
           }.bind(this),
           error: function(xhr, status, err){
