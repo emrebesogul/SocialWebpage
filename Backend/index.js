@@ -225,27 +225,33 @@ MongoClient.connect(url, function(err, client) {
       // the user id in the query to the react application.
       // Get prameter: userId of the respective user
       app.get('/story/list', verifyToken, (req, res) => {
-        //let userId = req.query.userId;
 
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
-            if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
-            } else {
-                console.log(authData.userid)
-                const userid = authData.userid
+        if(req.query.username) {
+            let username = req.query.username;
+            console.log("GET id of other user: ",username)
 
-                console.log("List story entries for user id:" + userid);
+            database.getIdOfOtherUser(client.db('socialwebpage'), res, username, () => {
+                db.close();
+            });
+        } else {
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    console.log(authData.userid)
+                    const userid = authData.userid
 
-                database.listStoryEntriesForUserId(client.db('socialwebpage'), res, userid, () => {
-                    db.close();
-                });
+                    console.log("List story entries for user id:" + userid);
 
-            }
-        });
+                    database.listStoryEntriesForUserId(client.db('socialwebpage'), res, userid, () => {
+                        db.close();
+                    });
 
-
+                }
+            });
+        }
       });
 
 

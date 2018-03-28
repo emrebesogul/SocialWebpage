@@ -16,7 +16,8 @@ class Profile extends Component {
 
         this.state = {
           resArr: [],
-          redirectToLogin: false
+          redirectToLogin: false,
+          username: "emre"
         }
 
         this.apiCheckSession = "/checkSession";
@@ -63,6 +64,7 @@ class Profile extends Component {
 
         return (
           <div id="main-content">
+
             <div id="feed">
 
               <div id="mobile-header">
@@ -99,9 +101,9 @@ class Profile extends Component {
             <div>
 
             </div>
+
             <div id="feed-content">
                   <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
-
             </div>
 
           </div>
@@ -135,7 +137,9 @@ const panes = [
     <div id="feed-card">
       <Card.Group>
         <Card fluid="true" centered="true">
-          <span className="username-label"> @{item.username} </span>
+          <Link to={`/profile/${item.username}`}>
+              <span className="username-label"> @{item.username} </span>
+          </Link>
           <Image src={item.src} />
           <Card.Content id="card-content">
             <Card.Header className="card-header">
