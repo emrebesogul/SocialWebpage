@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Button, Icon, Form, Input } from 'semantic-ui-react'
+import {  Redirect } from 'react-router-dom';
+import { Button, Form, Input } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
 import Dropzone from 'react-dropzone'
 import FormData from 'form-data';
 
-import uuidv4 from 'uuid/v4';
-
-import {callFetch, checkSession, deleteSession} from '../API/GET/GetMethods';
+import {checkSession} from '../API/GET/GetMethods';
 import {uploadPictureToPlatform} from '../API/POST/PostMethods';
 
 import '../profileStyle.css';

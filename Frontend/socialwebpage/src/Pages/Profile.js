@@ -8,7 +8,6 @@ import '../profileStyle.css';
 
 var images;
 var stories;
-var username;
 
 class Profile extends Component {
   constructor(props) {

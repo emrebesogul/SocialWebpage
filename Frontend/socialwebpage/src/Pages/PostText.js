@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Button, Icon, Form, Input, TextArea } from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom';
+import { Button, Form, Input, TextArea } from 'semantic-ui-react'
 import {uploadStoryToPlatform} from '../API/POST/PostMethods';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
@@ -54,7 +54,7 @@ class PostText extends Component {
 
         // Redirect to feed if respose is message is true
         this.setState({status: response});
-        if(this.state.status == true) {
+        if(this.state.status === true) {
             this.setState({ redirectToFeed: true });
         } else {
             let errorField = document.getElementById("error-message-upload-story");
