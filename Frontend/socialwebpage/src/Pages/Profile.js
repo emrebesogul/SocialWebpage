@@ -29,12 +29,14 @@ class Profile extends Component {
       this.api = "/story/list";
       this.property = props.match.params.username;
 
-
-
       this.getProfileData(this.property);
       this.checkThisSession();
 
-      this.pageTitle = "Social Webpage Home"
+      if(this.property === undefined) {
+          this.pageTitle = "My Profile "
+      } else {
+          this.pageTitle = "Profile of user: " + this.property
+      }
       document.title = this.pageTitle;
   }
 

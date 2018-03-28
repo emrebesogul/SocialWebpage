@@ -23,7 +23,7 @@ class PostText extends Component {
 
         this.checkThisSession();
 
-        this.pageTitle = "Social Webpage Home"
+        this.pageTitle = "Tell us a story..."
         document.title = this.pageTitle;
     }
 

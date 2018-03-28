@@ -23,7 +23,7 @@ class Roadmap extends Component {
 
         this.checkThisSession();
 
-        this.pageTitle = "Social Webpage Home"
+        this.pageTitle = "Roadmap"
         document.title = this.pageTitle;
       }
 

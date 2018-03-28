@@ -23,7 +23,7 @@ class Profile extends Component {
 
         this.checkThisSession();
 
-        this.pageTitle = "Social Webpage Home";
+        this.pageTitle = "Recent posts and updates...";
         document.title = this.pageTitle;
     }
 
