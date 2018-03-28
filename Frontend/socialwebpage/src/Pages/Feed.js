@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
+import { Link } from 'react-router-dom';
+import { Tab, Card, Image, Icon, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
-import {checkSession, deleteSession} from '../API/GET/GetMethods';
+import {checkSession} from '../API/GET/GetMethods';
 import '../profileStyle.css';
 
 var arr;

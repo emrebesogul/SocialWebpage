@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
+import { Icon, Button } from 'semantic-ui-react'
 
-import {checkSession, deleteSession} from '../API/GET/GetMethods';
+import {deleteSession} from '../API/GET/GetMethods';
 
 import '../profileStyle.css';
 
@@ -82,7 +82,7 @@ class Sidebar extends Component {
 
                   <div className="seperator"></div>
 
-                  <Link to="/profile">
+                  <Link to="/roadmap">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='compass' />
                       Roadmap

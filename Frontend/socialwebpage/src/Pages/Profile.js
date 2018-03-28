@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 'semantic-ui-react'
-import { Link, Redirect } from 'react-router-dom';
-import {callFetch, checkSession, deleteSession, getStoryForUserId} from '../API/GET/GetMethods';
+import {checkSession, getStoryForUserId} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
 import '../profileStyle.css';
 
 var images;
 var stories;
-var username;
 
 class Profile extends Component {
   constructor(props) {
@@ -40,7 +38,7 @@ class Profile extends Component {
     }
 
       async getProfileData(username) {
-        if(username == undefined) {
+        if(username === undefined) {
             const response = await getStoryForUserId(this.api);
             this.setState({responseStories : response});
         } else {
