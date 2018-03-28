@@ -64,12 +64,7 @@ class Profile extends Component {
 
         return (
           <div id="main-content">
-<<<<<<< HEAD
             <div className="feed">
-=======
-
-            <div id="feed">
->>>>>>> 0be9801332cb5aad0f3042c50f7f6792834767fe
 
               <div id="mobile-header">
                 <Link to="/profile">
@@ -182,15 +177,10 @@ const panes = [
     <div id="feed-card">
       <Card.Group>
         <Card fluid="true" centered="true">
-<<<<<<< HEAD
-          <span className="username-label"> @{item.username} </span>
-          <Image className="image-feed" src={item.src} />
-=======
           <Link to={`/profile/${item.username}`}>
               <span className="username-label"> @{item.username} </span>
           </Link>
-          <Image src={item.src} />
->>>>>>> 0be9801332cb5aad0f3042c50f7f6792834767fe
+          <Image className="image-feed" src={item.src} />
           <Card.Content id="card-content">
             <Card.Header className="card-header">
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
