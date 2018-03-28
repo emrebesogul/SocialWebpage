@@ -218,7 +218,7 @@ var call = module.exports = {
 
   //----------------------Create Story Entry----------------------//
   //
-  // Receives the titel and the content of a story and inserts it to the database. 
+  // Receives the titel and the content of a story and inserts it to the database.
   // After that, a message with "true" is send to the react application.
   createStoryEntry: function (db, res, file) {
     let title = JSON.parse(file.storyData).title;
@@ -237,7 +237,7 @@ var call = module.exports = {
 
   //----------------------List Story Entries in Profile for a Username----------------------//
   //
-  // Receives the name of a user, fetchs the corresponding user id from the database and 
+  // Receives the name of a user, fetchs the corresponding user id from the database and
   // calls the method listStoryEntriesForUserId.
   listStoryEntriesForUsername: function(db, res, username) {
       const collection = db.collection('users');
@@ -262,7 +262,7 @@ var call = module.exports = {
 
   //----------------------List Images in Profile for a Username----------------------//
   //
-  // Receives the name of a user, fetchs the corresponding user id from the database and 
+  // Receives the name of a user, fetchs the corresponding user id from the database and
   // calls the method listImagesForUserId.
   listImagesForUsername: function(db, req, res, username) {
     const collection = db.collection('users');
@@ -275,7 +275,7 @@ var call = module.exports = {
         }
 
         if (docs) {
-            test.listImagesForUserId(db, req, res, docs._id)
+            call.listImagesForUserId(db, req, res, docs._id)
         }
         else {
             res.send(JSON.stringify({
