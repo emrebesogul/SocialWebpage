@@ -66,7 +66,21 @@ MongoClient.connect(url, function(err, client) {
       console.log("Successfully connected to MongoDB");
       app.use(bodyParser.json());
 
-
+      //----------------------SESSION CHECK----------------------//
+      app.get('/getUsername', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User not found"
+                  });
+              } else {
+                  res.json({
+                      message: "User found",
+                      username: authData.username
+                  });
+              }
+          });
+      });
 
       //----------------------SESSION CHECK----------------------//
       app.get('/checkSession', verifyToken, (req, res) => {
@@ -131,7 +145,12 @@ MongoClient.connect(url, function(err, client) {
       });
 
 
-      //----------------------Feed----------------------//
+      
+      //----------------------Show the Feed----------------------//
+      //
+      // Calls the method getFeed that fetchs all images and story entries from
+      // the database.
+      // Post parameters: title, content and userId of the new story entry
       app.get('/feed', (req, res) => {
         database.getFeed(client.db('socialwebpage'), req, res, () => {
             db.close();
@@ -139,13 +158,11 @@ MongoClient.connect(url, function(err, client) {
       });
 
 
-      //----------------------Profile----------------------//
-      app.get('/image/list', (req, res) => {
-          //get: /?id=123
-          // req.param('id')...
-      });
-
-      //----------------------Upload Image to Server----------------------//
+      //----------------------Upload Image----------------------//
+      //
+      // Calls the method uploadImageToPlatform that insert the new image
+      // to the database.
+      // Post parameters: title, content and userId of the new story entry
       app.post('/image/create', verifyToken, upload.single('theImage'), (req, res) => {
           if (!req.file) {
             res.send(JSON.stringify({
@@ -199,14 +216,13 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------List Story Entries in a user profile----------------------//
       //
-      // Calls the method listStoryEntriesForUserId that returns all story entries for
-      // the user id in the query to the react application.
+      // Calls the method listStoryEntriesForUserId or listStoryEntriesForUsername that 
+      // returns all story entries for the user id in the query to the react application.
       // Get prameter: userId of the respective user
       app.get('/story/list', verifyToken, (req, res) => {
-
         if(req.query.username) {
             let username = req.query.username;
-            database.getIdOfOtherUser(client.db('socialwebpage'), res, username, () => {
+            database.listStoryEntriesForUsername(client.db('socialwebpage'), res, username, () => {
                 db.close();
             });
         } else {
@@ -218,6 +234,34 @@ MongoClient.connect(url, function(err, client) {
                 } else {
                     const userid = authData.userid
                     database.listStoryEntriesForUserId(client.db('socialwebpage'), res, userid, () => {
+                        db.close();
+                    });
+                }
+            });
+        }
+      });
+
+
+      //----------------------List Images in a user profile----------------------//
+      //
+      // Calls the method listImagesForUserId or listImagesForUsername that returns all 
+      // images for the user id in the query to the react application.
+      // Get prameter: userId of the respective user
+      app.get('/image/list', verifyToken, (req, res) => {
+        if(req.query.username) {
+            let username = req.query.username;
+            database.listImagesForUsername(client.db('socialwebpage'), req, res, username, () => {
+                db.close();
+            });
+        } else {
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    const userid = authData.userid
+                    database.listImagesForUserId(client.db('socialwebpage'), req, res, userid, () => {
                         db.close();
                     });
                 }

@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Icon, Button } from 'semantic-ui-react'
 
-import {deleteSession} from '../API/GET/GetMethods';
+import {checkSession, deleteSession} from '../API/GET/GetMethods';
+import {getCurrentUser} from '../API/GET/GetMethods';
 
 import '../profileStyle.css';
 
@@ -12,12 +13,28 @@ class Sidebar extends Component {
         super();
 
         this.state = {
-          redirectToLogin: false
+          redirectToLogin: false,
+          username: "Username"
         }
-
+        this.api = "/getUsername"
+        this.apiCheckSession = "/checkSession";
         this.apiDeleteSession = "/deleteSession";
+
+        this.checkThisSession();
+        this.getCurrentUser();
     }
 
+    async checkThisSession() {
+        const response = await checkSession(this.apiCheckSession);
+        if(response.message !== "User is authorized") {
+            this.setState({redirectToLogin: true})
+        }
+    }
+
+    async getCurrentUser() {
+        const response = await getCurrentUser(this.api);
+        this.setState({username: response.username})
+    }
 
     handleLogout() {
         deleteSession(this.apiDeleteSession);
@@ -51,7 +68,7 @@ class Sidebar extends Component {
 
               <div className="feed-header">
                 <div id="welcome-label">
-                  <h4 id="welcome-label-header">Leonardo_64</h4>
+                  <h4 id="welcome-label-header">{this.state.username}</h4>
 
                     <Link to="/profile">
                       <Button labelPosition="right"  size="medium" id="upload-button" icon>
