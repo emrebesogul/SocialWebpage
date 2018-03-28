@@ -8,7 +8,7 @@ import {getCurrentUser} from '../API/GET/GetMethods';
 import '../profileStyle.css';
 
 
-class Sidebar extends Component {
+class SidebarProfile extends Component {
     constructor() {
         super();
 
@@ -52,10 +52,10 @@ class Sidebar extends Component {
         return (
             <div>
               <div id="mobile-header">
-                <Link to="/profile">
+                <Link to="/">
                   <Button circular size="medium" id="profile-button-mobile" icon>
-                    <Icon className="menu-icons" name='user' />
-                    Profile
+                    <Icon className="menu-icons" name='feed' />
+                    Feed
                   </Button>
                 </Link>
 
@@ -136,4 +136,4 @@ class Sidebar extends Component {
 
 }
 
-export default Sidebar;
+export default SidebarProfile;

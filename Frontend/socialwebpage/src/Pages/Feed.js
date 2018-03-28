@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
+import { Tab, Card, Image, Icon, Rating, List, Button } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
@@ -60,13 +60,13 @@ handleRate(){
                         [
                           { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
                           <Link to="/upload">
-                            <Button circular size="medium" id="upload-button-mobile" icon>
+                            <Button  size="medium" id="upload-button-mobile" icon>
                               <Icon className="menu-icons" name='upload' />
                               Upload Content
                             </Button>
                           </Link>
                           <Link to="/post">
-                          <Button circular size="medium" id="upload-button-mobile" icon>
+                          <Button  size="medium" id="upload-button-mobile" icon>
                             <Icon className="menu-icons" name='plus' />
                             Add Story
                           </Button></Link>
@@ -78,9 +78,9 @@ handleRate(){
                            */}
 
 
-                          {arr.map(item =>
+                          {arr.map((item, index) =>
                           {return(
-                            <div id="feed-card">
+                            <div key={index} id="feed-card">
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
@@ -203,56 +203,7 @@ handleRate(){
 
                           </Tab.Pane> },
                           { menuItem: 'Settings', render: () => <Tab.Pane attached={false}>
-                          <div className="settings">
-                            <div className="account-settings">
-                              <Header as='h2' size="medium" icon textAlign="left">
-                              <Icon name='settings' id="settings-icon" />
-                              Account Settings
-                              <Header.Subheader>
-                                Manage your account settings and set e-mail preferences.
-                              </Header.Subheader>
-                              </Header>
-
-                              <Form >
-
-                                <Form.Field className="account-input" required>
-                                  <Label basic="true" className="input-label">First Name</Label>
-                                  <Input required  inverted className="account-input-text" placeholder='First name' />
-                                  <Label basic="true" className="input-label">Last Name</Label>
-                                  <Input required inverted className="account-input-text" placeholder='Last name' />
-                                </Form.Field>
-
-                                <Form.Field className="account-input" required>
-                                  <Label basic="true" className="input-label">Username</Label>
-                                  <Input required inverted className="account-input-text" placeholder='Username' />
-                                  <Label basic="true" className="input-label">Password</Label>
-                                  <Input required className="account-input-text" type="password" placeholder='Password' />
-                                </Form.Field>
-
-                                <Form.Field className="account-input" required>
-                                  <Label basic="true" className="input-label">Email</Label>
-                                  <Input required inverted className="account-input-text" iconPosition='left' placeholder='Email'>
-                                     <Icon name='at' />
-                                     <input />
-                                   </Input>
-                                </Form.Field>
-
-                                <Button id="button-upload">Save</Button>
-                              </Form>
-
-                            </div>
-                            <div className="account-settings">
-                              <Header as='h2' size="medium" icon textAlign="left">
-                              <Icon name='user' id="settings-icon" />
-                              Profile Settings
-                              <Header.Subheader>
-                                Manage your profile settings and set e-mail preferences.
-                              </Header.Subheader>
-                              </Header>
-                            </div>
-                          </div>
-
-
+                            Hello
                           </Tab.Pane> },
                         ]
                         } />

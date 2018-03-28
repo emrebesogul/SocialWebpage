@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 'semantic-ui-react'
-import { Link, Redirect } from 'react-router-dom';
-import {callFetch, checkSession, deleteSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
-import Sidebar from '../Components/Sidebar'
+import { checkSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
+import SidebarProfile from '../Components/SidebarProfile'
 
 import '../profileStyle.css';
 
@@ -40,7 +39,7 @@ class Profile extends Component {
 
       async getProfileData(username) {
         console.log("Username: " + username)
-        if(username == undefined) {
+        if(username === undefined) {
             const responseStories = await getStoryForUserId(this.apiStories);
             const responseImages = await getImagesForUserId(this.apiImages);
             this.setState({
@@ -67,7 +66,7 @@ class Profile extends Component {
         return (
           <div className="feed">
 
-              <Sidebar />
+              <SidebarProfile />
 
                 <div id="profile-header">
                   <Header as='h2' size="huge" icon textAlign='center'>
@@ -96,11 +95,10 @@ const panes = [
   { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
 
   <Card.Group>
-    {images.map(item =>
+    {images.map((item, index) =>
     {return(
-      <div id="profile-card">
-
-        <Card fluid="true" centered="true">
+      <div key={index} id="profile-card">
+        <Card fluid centered>
           <div className="username-label">
             <span > @{item.username} </span>
             <Button id="delete-button" circular icon="delete" size="small"></Button>
@@ -110,11 +108,11 @@ const panes = [
             <Card.Header className="card-header">
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
                 </Rating> {item.title}
-                <div class="ui mini horizontal statistic post-likes">
-                <div class="value">
+                <div className="ui mini horizontal statistic post-likes">
+                <div className="value">
                   {item.number_of_likes}
                 </div>
-                <div class="label">
+                <div className="label">
                   Likes
                 </div>
               </div>
@@ -139,11 +137,11 @@ const panes = [
   { menuItem: 'Story', render: () => <Tab.Pane attached={false}>
 
 
-        {stories.map(item =>
+        {stories.map((item, index) =>
         {return(
-          <div>
+          <div key={index}>
             <Card.Group>
-              <Card fluid="true" centered="true">
+              <Card fluid centered>
                 <div className="username-label">
                   <span > @{item.username} </span>
                   <Button id="delete-button" circular icon="delete" size="small"></Button>

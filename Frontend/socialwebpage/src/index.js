@@ -8,6 +8,7 @@ import Feed from './Pages/Feed';
 import Upload from './Pages/Upload'
 import PostText from './Pages/PostText'
 import Roadmap from './Pages/Roadmap'
+import Settings from './Pages/Settings'
 
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
@@ -25,6 +26,7 @@ ReactDOM.render(
             <Route exact path="/post" component={PostText}></Route>
             <Route exact path="/" component={Feed}></Route>
             <Route exact path="/roadmap" component={Roadmap}></Route>
+            <Route exact path="/settings" component={Settings}></Route>
         </Switch>
     </BrowserRouter>,
 root);

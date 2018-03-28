@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { Button, Form, Input, TextArea } from 'semantic-ui-react'
 import {uploadStoryToPlatform} from '../API/POST/PostMethods';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
-import Sidebar from '../Components/Sidebar'
+import SidebarProfile from '../Components/SidebarProfile'
 
 import '../profileStyle.css';
 
@@ -73,7 +73,7 @@ class PostText extends Component {
         return (
           <div>
             <div className="feed">
-                <Sidebar />
+                <SidebarProfile />
             </div>
 
             <div id="upload-content">
