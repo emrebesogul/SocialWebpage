@@ -16,11 +16,9 @@ export const getCurrentUser=(api)=>{
             'Authorization': 'Bearer ' + token
         },
         success: function(data) {
-            console.log(data)
           resolve(data);
         },
         error: function(xhr, status, err){
-          console.log(err);
           reject(err);
         }
     });
@@ -40,11 +38,9 @@ export const checkSession=(api)=>{
             'Authorization': 'Bearer ' + token
         },
         success: function(data) {
-          console.log("checking session with response: ", data)
           resolve(data);
         },
         error: function(xhr, status, err){
-          console.log(err);
           reject(err);
         }
     });
@@ -58,7 +54,6 @@ export const deleteSession=(api)=>{
       cache: false,
       type: "GET",
       success: function(data) {
-        console.log("Session deleted")
         delete_cookie('token')
       },
       error: function(xhr, status, err){
@@ -125,7 +120,6 @@ export const fetchFeedData=(api) =>
               resolve(res);
           },
           error: function(xhr, status, err){
-              console.log(err);
               reject(err);
           }
         });

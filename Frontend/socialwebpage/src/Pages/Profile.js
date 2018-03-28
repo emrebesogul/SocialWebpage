@@ -48,7 +48,6 @@ class Profile extends Component {
     }
 
       async getProfileData(username) {
-        console.log("Username: " + username)
         if(username === undefined) {
             const responseStories = await getStoryForUserId(this.apiStories);
             const responseImages = await getImagesForUserId(this.apiImages);
