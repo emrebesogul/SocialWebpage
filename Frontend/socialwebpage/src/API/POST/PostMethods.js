@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { read_cookie, delete_cookie } from 'sfcookies';
+import { read_cookie } from 'sfcookies';
 
 var url = "http://localhost:8000";
 
@@ -16,7 +16,7 @@ export const checkUserDataAtLogin=(api, username, password) =>
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               console.log(err);
               reject(err);
@@ -38,7 +38,7 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               console.log(err);
               reject(err);
@@ -66,7 +66,7 @@ export const uploadPictureToPlatform=(api, fd) =>
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               console.log(err);
               reject(err);
@@ -93,7 +93,7 @@ export const uploadStoryToPlatform=(api, title, content, userId) =>
           success: function(res) {
               console.log("Response from server: ", res);
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               console.log(err);
               reject(err);

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {  Redirect } from 'react-router-dom';
 import { Button, Form, Input } from 'semantic-ui-react'
-import Sidebar from '../Components/Sidebar'
+import SidebarProfile from '../Components/SidebarProfile'
 import Dropzone from 'react-dropzone'
 import FormData from 'form-data';
 
@@ -91,7 +91,7 @@ class Upload extends Component {
         <div>
             <div className="feed">
 
-            <Sidebar />
+            <SidebarProfile />
 
             <div id="upload-content">
                 <h2 >Upload new content</h2>
@@ -105,7 +105,7 @@ class Upload extends Component {
 
                       <span className="input-label-upload"> Select the file you want to share</span>
 
-                      <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" disablePreview="true" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+                      <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
                           <p>Try dropping a picture here, or click to select a picture to upload.</p>
                       </Dropzone>
 

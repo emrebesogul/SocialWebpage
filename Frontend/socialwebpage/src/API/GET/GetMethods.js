@@ -18,7 +18,7 @@ export const getCurrentUser=(api)=>{
         success: function(data) {
             console.log(data)
           resolve(data);
-        }.bind(this),
+        },
         error: function(xhr, status, err){
           console.log(err);
           reject(err);
@@ -42,7 +42,7 @@ export const checkSession=(api)=>{
         success: function(data) {
           console.log("checking session with response: ", data)
           resolve(data);
-        }.bind(this),
+        },
         error: function(xhr, status, err){
           console.log(err);
           reject(err);
@@ -60,7 +60,7 @@ export const deleteSession=(api)=>{
       success: function(data) {
         console.log("Session deleted")
         delete_cookie('token')
-      }.bind(this),
+      },
       error: function(xhr, status, err){
         console.log(err);
       }
@@ -81,7 +81,7 @@ export const getStoryForUserId=(api)=>{
         },
         success: function(res) {
           resolve(res);
-        }.bind(this),
+        },
         error: function(xhr, status, err){
           console.log(err);
         }
@@ -103,7 +103,7 @@ export const getImagesForUserId=(api)=>{
         },
         success: function(res) {
           resolve(res);
-        }.bind(this),
+        },
         error: function(xhr, status, err){
           console.log(err);
         }
@@ -122,9 +122,8 @@ export const fetchFeedData=(api) =>
           contentType: 'application/json',
           data: JSON.stringify(),
           success: function(res) {
-              console.log("Response from server: ", res);
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               console.log(err);
               reject(err);
