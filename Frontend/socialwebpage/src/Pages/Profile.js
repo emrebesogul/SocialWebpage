@@ -3,6 +3,7 @@ import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 's
 import { Link, Redirect } from 'react-router-dom';
 import {callFetch, checkSession, deleteSession, getStoryForUserId} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
+import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
 
@@ -24,8 +25,9 @@ class Profile extends Component {
       this.apiCheckSession = "/checkSession"
       this.apiDeleteSession = "/deleteSession";
       this.api = "/story/list";
+      this.property = props.match.params.username;
 
-      this.getProfileData(props.match.params.username);
+      this.getProfileData(this.property);
       this.checkThisSession();
 
       this.pageTitle = "Social Webpage Home"
@@ -59,24 +61,11 @@ class Profile extends Component {
           <div className="feed">
 
               <Sidebar />
+              <ProfileHeader name={this.propery}/>
 
-                <div id="profile-header">
-                  <Header as='h2' size="huge" icon textAlign='center'>
-                    <Icon name='user' circular />
-                    <Header.Content>
-                      Leonardo
-                      <Header.Subheader>
-                        Johannes Mändle
-                      </Header.Subheader>
-                      <Header.Subheader>
-                        Bempflingen
-                      </Header.Subheader>
-                    </Header.Content>
-                  </Header>
-                </div>
-                  <div id="profile-content">
-                    <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
-                  </div>
+              <div id="profile-content">
+                  <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+              </div>
           </div>
 
         )

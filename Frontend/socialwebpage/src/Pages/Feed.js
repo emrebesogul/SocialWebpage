@@ -55,11 +55,10 @@ class Profile extends Component {
           </div>
         );
     }
-
-
 }
 
 const panes = [
+
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
   <Link to="/upload">
     <Button circular size="medium" id="upload-button-mobile" icon>
@@ -79,6 +78,7 @@ const panes = [
 
 
   {arr.map(item =>
+
   {return(
     <div id="feed-card">
       <Card.Group>
@@ -91,6 +91,7 @@ const panes = [
 
           <Image className="image-feed" src={item.src} />
           <Card.Content id="card-content">
+
             <Card.Header className="card-header">
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
                 </Rating> {item.title}
@@ -103,6 +104,7 @@ const panes = [
                   </div>
               </div>
             </Card.Header>
+
             <Card.Meta className="card-meta">
               <span className='date'>
                 {item.date_created}

@@ -3,7 +3,7 @@ var session = require('express-session')
 var jwt = require('jsonwebtoken');
 var ObjectId = require('mongodb').ObjectId;
 
-var test = module.exports = {
+var call = module.exports = {
 
 
   //----------------------LOGIN----------------------//
@@ -252,7 +252,7 @@ var test = module.exports = {
           }
 
           if (docs) {
-              test.listStoryEntriesForUserId(db, res, docs._id)
+              call.listStoryEntriesForUserId(db, res, docs._id)
           }
           else {
               res.send(JSON.stringify({
@@ -329,6 +329,62 @@ var test = module.exports = {
             });
             res.status(200).send(result_stories);
     });
+  },
+
+  //----------------------Get Other User----------------------//
+  getOtherUserProfile: function(db, res, username) {
+      const collection = db.collection('users');
+      collection.findOne({"username": username}, function(err, docs) {
+          if (err) {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+              throw err;
+          }
+
+          if (docs) {
+              res.send(JSON.stringify({
+                  username: docs.username,
+                  firstname: docs.first_name,
+                  lastname: docs.last_name,
+                  email: docs.email
+              }));
+          }
+          else {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+          }
+      })
+
+  },
+
+  //----------------------Get Current User----------------------//
+  getCurrentUserProfile: function(db, res, userid) {
+      const collection = db.collection('users');
+      collection.findOne({"_id": ObjectId(userid)}, function(err, docs) {
+          if (err) {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+              throw err;
+          }
+
+          if (docs) {
+              res.send(JSON.stringify({
+                  username: docs.username,
+                  firstname: docs.first_name,
+                  lastname: docs.last_name,
+                  email: docs.email
+              }));
+          }
+          else {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+          }
+      })
+
   },
 
   //----------------------xy----------------------//
