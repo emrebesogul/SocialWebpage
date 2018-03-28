@@ -3,7 +3,7 @@ var session = require('express-session')
 var jwt = require('jsonwebtoken');
 var ObjectId = require('mongodb').ObjectId;
 
-module.exports = {
+var test = module.exports = {
 
 
   //----------------------LOGIN----------------------//
@@ -223,7 +223,7 @@ module.exports = {
   // to the database. After that, a message with "true" is send to
   // the react application.
   createStoryEntry: function (db, res, file) {
-      console.log(file)
+    console.log(file)
     let title = JSON.parse(file.storyData).title;
     let content = JSON.parse(file.storyData).content;
     let userId = file.userid;
@@ -242,7 +242,65 @@ module.exports = {
   //
   // Receives the userId of a user and sends all story entries of this user
   // to the react application. These story entries are sorted by date.
+  getIdOfOtherUser: function(db, res, username) {
+      const collection = db.collection('users');
+      collection.findOne({"username": username}, function(err, docs) {
+          if (err) {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+              throw err;
+          }
+
+          if (docs) {
+              test.listStoryEntriesForUserId(db, res, docs._id)
+          }
+          else {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+          }
+      })
+
+  },
+
   listStoryEntriesForUserId: function (db, res, userId) {
+    db.collection('stories').aggregate([
+        { $match : { user_id : new ObjectId(userId) } },
+        { $lookup:
+           {
+             from: "users",
+             localField: "user_id",
+             foreignField: "_id",
+             as: "user"
+           }
+         },
+         { $project : {
+                "title" : 1,
+                "content": 1,
+                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created"}},
+                "number_of_likes": 1,
+                "user_id": 1,
+                "username": {
+                    "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                }
+            }
+         },
+         { $sort : { "date_created" : -1 } }
+        ]).toArray(function(err_stories, result_stories) {
+        if (err_stories) throw err_stories;
+            result_stories.map(item => {
+                item.date_created = getDate(item.date_created);
+            });
+            res.status(200).send(result_stories);
+    });
+  },
+
+  //----------------------List Story Entries in Profile For other people...----------------------//
+  //
+  // Receives the userId of a user and sends all story entries of this user
+  // to the react application. These story entries are sorted by date.
+  listStoryEntriesForUsername: function (db, res, userId) {
     db.collection('stories').aggregate([
         { $match : { user_id : new ObjectId(userId) } },
         { $lookup:

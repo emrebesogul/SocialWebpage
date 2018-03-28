@@ -3,7 +3,6 @@ import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 's
 import { Link, Redirect } from 'react-router-dom';
 import {callFetch, checkSession, deleteSession, getStoryForUserId} from '../API/GET/GetMethods';
 
-
 import '../profileStyle.css';
 
 var images;
@@ -11,10 +10,9 @@ var stories;
 var username;
 
 class Profile extends Component {
-  constructor() {
-      super();
+  constructor(props) {
+      super(props);
 
-      this.getProfileData();
 
       this.state = {
         responseImages: [],
@@ -24,7 +22,10 @@ class Profile extends Component {
 
       this.apiCheckSession = "/checkSession"
       this.apiDeleteSession = "/deleteSession";
+      this.api = "/story/list";
 
+      console.log("match:", props.match.params)
+      this.getProfileData(props.match.params.username);
       this.checkThisSession();
 
       this.pageTitle = "Social Webpage Home"
@@ -45,13 +46,22 @@ class Profile extends Component {
           this.setState({ redirectToLogin: true });
       }
 
-  async getProfileData() {
-    //const response = await getStoryForUserId("/story/list?userId=5ab65068b68d159f81a08cee");
-    const response = await getStoryForUserId("/story/list");
+      async getProfileData(username) {
+        console.log("username:", username)
+        if(username == undefined) {
+            const response = await getStoryForUserId(this.api);
+            this.setState({responseStories : response});
+            console.log(response)
 
-    this.setState({responseStories : response});
-    console.log(response)
-  }
+        } else {
+            let api = this.api + "?username=" + username;
+            const response = await getStoryForUserId(api);
+            this.setState({responseStories : response});
+            console.log(response)
+
+
+        }
+      }
 
     render() {
 
@@ -64,7 +74,6 @@ class Profile extends Component {
 
       images = this.state.responseImages;
       stories = this.state.responseStories;
-
 
         return (
           <div className="feed">

@@ -12,12 +12,14 @@ import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
 import registerServiceWorker from './registerServiceWorker';
 
+//
+
 ReactDOM.render(
     <BrowserRouter>
         <Switch>
             <Route exact path="/login" component={Login}></Route>
             <Route exact path="/register" component={Register}></Route>
-            <Route exact path="/profile" component={Profile}></Route>
+            <Route path="/profile/:username?" component={Profile}></Route>
             <Route exact path="/upload" component={Upload}></Route>
             <Route exact path="/post" component={PostText}></Route>
             <Route exact path="/" component={Feed}></Route>
