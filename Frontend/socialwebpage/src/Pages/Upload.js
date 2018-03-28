@@ -27,7 +27,7 @@ class Upload extends Component {
 
         this.checkThisSession();
 
-        this.pageTitle = "Social Webpage Home"
+        this.pageTitle = "Upload an image..."
         document.title = this.pageTitle;
     }
 

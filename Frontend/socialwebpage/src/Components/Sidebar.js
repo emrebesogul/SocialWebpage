@@ -16,7 +16,7 @@ class Sidebar extends Component {
           redirectToLogin: false,
           username: "Username"
         }
-        this.api = "/getUsername"
+        this.api = "/getUserInfo"
         this.apiCheckSession = "/checkSession";
         this.apiDeleteSession = "/deleteSession";
 
@@ -117,6 +117,13 @@ class Sidebar extends Component {
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='group' />
                       About Us
+                    </Button>
+                  </Link>
+
+                  <Link to="/settings">
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='group' />
+                      Settings
                     </Button>
                   </Link>
 

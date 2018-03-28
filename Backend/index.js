@@ -67,19 +67,28 @@ MongoClient.connect(url, function(err, client) {
       app.use(bodyParser.json());
 
       //----------------------SESSION CHECK----------------------//
-      app.get('/getUsername', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User not found"
-                  });
-              } else {
-                  res.json({
-                      message: "User found",
-                      username: authData.username
-                  });
-              }
-          });
+      app.get('/getUserInfo', verifyToken, (req, res) => {
+
+          if(req.query.username) {
+              let username = req.query.username;
+              database.getOtherUserProfile(client.db('socialwebpage'), res, username, () => {
+                  db.close();
+              });
+          } else {
+              jwt.verify(req.token, 'secretkey', (err, authData) => {
+                  if(err) {
+                      res.json({
+                          message: "User is not authorized"
+                      });
+                  } else {
+                      const userid = authData.userid
+                      database.getCurrentUserProfile(client.db('socialwebpage'), res, userid, () => {
+                          db.close();
+                      });
+                  }
+              });
+          }
+
       });
 
       //----------------------SESSION CHECK----------------------//

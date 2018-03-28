@@ -22,7 +22,9 @@ class Profile extends Component {
 
       this.apiCheckSession = "/checkSession";
 
-      this.checkThisSession();
+        this.pageTitle = "Recent posts and updates...";
+        document.title = this.pageTitle;
+    }
 
       this.pageTitle = "Social Webpage Home";
       document.title = this.pageTitle;

@@ -3,7 +3,7 @@ var session = require('express-session')
 var jwt = require('jsonwebtoken');
 var ObjectId = require('mongodb').ObjectId;
 
-var test = module.exports = {
+var call = module.exports = {
 
 
   //----------------------LOGIN----------------------//
@@ -218,7 +218,7 @@ var test = module.exports = {
 
   //----------------------Create Story Entry----------------------//
   //
-  // Receives the titel and the content of a story and inserts it to the database. 
+  // Receives the titel and the content of a story and inserts it to the database.
   // After that, a message with "true" is send to the react application.
   createStoryEntry: function (db, res, file) {
     let title = JSON.parse(file.storyData).title;
@@ -237,7 +237,7 @@ var test = module.exports = {
 
   //----------------------List Story Entries in Profile for a Username----------------------//
   //
-  // Receives the name of a user, fetchs the corresponding user id from the database and 
+  // Receives the name of a user, fetchs the corresponding user id from the database and
   // calls the method listStoryEntriesForUserId.
   listStoryEntriesForUsername: function(db, res, username) {
       const collection = db.collection('users');
@@ -250,7 +250,7 @@ var test = module.exports = {
           }
 
           if (docs) {
-              test.listStoryEntriesForUserId(db, res, docs._id)
+              call.listStoryEntriesForUserId(db, res, docs._id)
           }
           else {
               res.send(JSON.stringify({
@@ -262,7 +262,7 @@ var test = module.exports = {
 
   //----------------------List Images in Profile for a Username----------------------//
   //
-  // Receives the name of a user, fetchs the corresponding user id from the database and 
+  // Receives the name of a user, fetchs the corresponding user id from the database and
   // calls the method listImagesForUserId.
   listImagesForUsername: function(db, req, res, username) {
     const collection = db.collection('users');
@@ -275,7 +275,7 @@ var test = module.exports = {
         }
 
         if (docs) {
-            test.listImagesForUserId(db, req, res, docs._id)
+            call.listImagesForUserId(db, req, res, docs._id)
         }
         else {
             res.send(JSON.stringify({
@@ -359,6 +359,62 @@ var test = module.exports = {
         });
             res.status(200).send(result_images);
     });
+  },
+
+  //----------------------Get Other User----------------------//
+  getOtherUserProfile: function(db, res, username) {
+      const collection = db.collection('users');
+      collection.findOne({"username": username}, function(err, docs) {
+          if (err) {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+              throw err;
+          }
+
+          if (docs) {
+              res.send(JSON.stringify({
+                  username: docs.username,
+                  firstname: docs.first_name,
+                  lastname: docs.last_name,
+                  email: docs.email
+              }));
+          }
+          else {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+          }
+      })
+
+  },
+
+  //----------------------Get Current User----------------------//
+  getCurrentUserProfile: function(db, res, userid) {
+      const collection = db.collection('users');
+      collection.findOne({"_id": ObjectId(userid)}, function(err, docs) {
+          if (err) {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+              throw err;
+          }
+
+          if (docs) {
+              res.send(JSON.stringify({
+                  username: docs.username,
+                  firstname: docs.first_name,
+                  lastname: docs.last_name,
+                  email: docs.email
+              }));
+          }
+          else {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+          }
+      })
+
   },
 
   //----------------------xy----------------------//

@@ -16,6 +16,7 @@ export const getCurrentUser=(api)=>{
             'Authorization': 'Bearer ' + token
         },
         success: function(data) {
+            console.log(data)
           resolve(data);
         },
         error: function(xhr, status, err){

@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Header, Rating, Form, Button, Icon } from 'semantic-ui-react'
-import { checkSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
-import SidebarProfile from '../Components/SidebarProfile'
+import { Link, Redirect } from 'react-router-dom';
+import {callFetch, checkSession, deleteSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
+import Sidebar from '../Components/Sidebar'
+import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
 
@@ -20,13 +22,21 @@ class Profile extends Component {
 
       this.apiCheckSession = "/checkSession"
       this.apiDeleteSession = "/deleteSession";
+
       this.apiStories = "/story/list";
       this.apiImages = "/image/list";
 
-      this.getProfileData(props.match.params.username);
+      this.api = "/story/list";
+      this.property = props.match.params.username;
+
+      this.getProfileData(this.property);
       this.checkThisSession();
 
-      this.pageTitle = "Social Webpage Home"
+      if(this.property === undefined) {
+          this.pageTitle = "My Profile "
+      } else {
+          this.pageTitle = "Profile of user: " + this.property
+      }
       document.title = this.pageTitle;
   }
 
@@ -66,25 +76,12 @@ class Profile extends Component {
         return (
           <div className="feed">
 
-              <SidebarProfile />
+              <Sidebar />
+              <ProfileHeader name={this.property}/>
 
-                <div id="profile-header">
-                  <Header as='h2' size="huge" icon textAlign='center'>
-                    <Icon name='user' circular />
-                    <Header.Content>
-                      Leonardo
-                      <Header.Subheader>
-                        Johannes Mändle
-                      </Header.Subheader>
-                      <Header.Subheader>
-                        Bempflingen
-                      </Header.Subheader>
-                    </Header.Content>
-                  </Header>
-                </div>
-                  <div id="profile-content">
-                    <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
-                  </div>
+              <div id="profile-content">
+                  <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+              </div>
           </div>
 
         )
