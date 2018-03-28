@@ -107,7 +107,7 @@ class Upload extends Component {
 
         return (
         <div>
-            <div id="feed">
+            <div className="feed">
               <div id="mobile-header">
                 <Link to="/">
                   <Button circular size="medium" id="profile-button-mobile" icon>
@@ -122,18 +122,60 @@ class Upload extends Component {
                 </Button>
               </div>
 
-              <div id="feed-header">
-                <Link to="/">
-                  <Button circular size="medium" id="profile-button" icon>
-                    <Icon className="menu-icons" name='feed' />
-                    Feed
-                  </Button>
-                </Link>
+              <div className="feed-header">
+                <div id="welcome-label">
+                  <h4 id="welcome-label-header">Leonardo_64</h4>
 
-                <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
-                    <Icon className="menu-icons" name='log out' />
-                    Log out
-                </Button>
+                    <Link to="/profile">
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='user' />
+                        Profile
+                      </Button>
+                    </Link>
+
+                    <Link to="/">
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='feed' />
+                        Feed
+                      </Button>
+                    </Link>
+
+                    <Link to="/upload">
+                      <Button labelPosition="right" size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='upload' />
+                        Upload Content
+                      </Button>
+                    </Link>
+                    <Link to="/post">
+                    <Button labelPosition="right" size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='plus' />
+                      Add Story
+                    </Button>
+                  </Link>
+
+                  <div className="seperator"></div>
+
+                  <Link to="/profile">
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='compass' />
+                      Roadmap
+                    </Button>
+                  </Link>
+
+                  <Link to="/profile">
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='group' />
+                      About Us
+                    </Button>
+                  </Link>
+
+                  <div className="seperator"></div>
+
+                  <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
+                      <Icon className="menu-icons" size="large" name='log out' />
+                      Log out
+                  </Button>
+                </div>
               </div>
 
             </div>
@@ -154,7 +196,7 @@ class Upload extends Component {
                           <p>Try dropping a picture here, or click to select a picture to upload.</p>
                       </Dropzone>
 
-                      <Button id="button-upload" type="submit">Post</Button>
+                      <Button className="button-upload" type="submit">Post</Button>
 
                       <div id="error-message">
                       </div>

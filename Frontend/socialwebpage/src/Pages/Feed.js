@@ -64,8 +64,7 @@ class Profile extends Component {
 
         return (
           <div id="main-content">
-
-            <div id="feed">
+            <div className="feed">
 
               <div id="mobile-header">
                 <Link to="/profile">
@@ -82,19 +81,60 @@ class Profile extends Component {
 
               </div>
 
-              <div id="feed-header">
-                <Link to="/profile">
-                  <Button circular size="medium" id="profile-button" icon>
-                    <Icon className="menu-icons" name='user' />
-                    Profile
+              <div className="feed-header">
+                <div id="welcome-label">
+                  <h4 id="welcome-label-header">Leonardo_64</h4>
+
+                    <Link to="/profile">
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='user' />
+                        Profile
+                      </Button>
+                    </Link>
+
+                    <Link to="/">
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='feed' />
+                        Feed
+                      </Button>
+                    </Link>
+
+                    <Link to="/upload">
+                      <Button labelPosition="right" size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='upload' />
+                        Upload Content
+                      </Button>
+                    </Link>
+                    <Link to="/post">
+                    <Button labelPosition="right" size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='plus' />
+                      Add Story
+                    </Button>
+                  </Link>
+
+                  <div className="seperator"></div>
+
+                  <Link to="/profile">
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='compass' />
+                      Roadmap
+                    </Button>
+                  </Link>
+
+                  <Link to="/profile">
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='group' />
+                      About Us
+                    </Button>
+                  </Link>
+
+                  <div className="seperator"></div>
+
+                  <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
+                      <Icon className="menu-icons" size="large" name='log out' />
+                      Log out
                   </Button>
-                </Link>
-
-                <Button circular size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
-                    <Icon className="menu-icons" name='log out' />
-                    Log out
-                </Button>
-
+                </div>
               </div>
 
             </div>
@@ -116,13 +156,13 @@ class Profile extends Component {
 const panes = [
   { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
   <Link to="/upload">
-    <Button circular size="medium" id="upload-button" icon>
+    <Button circular size="medium" id="upload-button-mobile" icon>
       <Icon className="menu-icons" name='upload' />
       Upload Content
     </Button>
   </Link>
   <Link to="/post">
-  <Button circular size="medium" id="upload-button" icon>
+  <Button circular size="medium" id="upload-button-mobile" icon>
     <Icon className="menu-icons" name='plus' />
     Add Story
   </Button></Link>
@@ -140,7 +180,7 @@ const panes = [
           <Link to={`/profile/${item.username}`}>
               <span className="username-label"> @{item.username} </span>
           </Link>
-          <Image src={item.src} />
+          <Image className="image-feed" src={item.src} />
           <Card.Content id="card-content">
             <Card.Header className="card-header">
                 <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
