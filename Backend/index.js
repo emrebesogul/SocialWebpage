@@ -257,6 +257,7 @@ MongoClient.connect(url, function(err, client) {
       // images for the user id in the query to the react application.
       // Get prameter: userId of the respective user
       app.get('/image/list', verifyToken, (req, res) => {
+          
         if(req.query.username) {
             let username = req.query.username;
             database.listImagesForUsername(client.db('socialwebpage'), req, res, username, () => {
@@ -276,6 +277,53 @@ MongoClient.connect(url, function(err, client) {
                 }
             });
         }
+      });
+
+      //----------------------Delete Story Entry----------------------//
+      //
+      // Calls the method deleteStoryEntry that that deletes a story entry
+      // from the database.
+      app.post('/story/delete', verifyToken, (req, res) => {
+
+        // check if the current user is also the author of this story entry
+        // if no, the user does not have the rights to delete this story
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const storyId = JSON.stringify(req.body);
+
+                database.deleteStoryEntryById(client.db('socialwebpage'), res, storyId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
+
+      //----------------------Delete Image----------------------//
+      //
+      // Calls the method deleteImage that that deletes an image from the database.
+      app.post('/image/delete', verifyToken, (req, res) => {
+
+        // check if the current user is also the author of this story entry
+        // if no, the user does not have the rights to delete this story
+        
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const imageId = JSON.stringify(req.body);
+
+                database.deleteImageById(client.db('socialwebpage'), res, imageId, () => {
+                    db.close();
+                });
+            }
+        });
       });
 
       //----------------------Update user----------------------//

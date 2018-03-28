@@ -97,3 +97,53 @@ export const uploadStoryToPlatform=(api, title, content, userId) =>
         });
     });
 }
+
+//----------------------Delete Story Entry----------------------//
+export const deleteStoryEntryById=(api, storyId) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({storyId: storyId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
+
+//----------------------Delete Image----------------------//
+export const deleteImageById=(api, imageId) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({imageId: imageId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}

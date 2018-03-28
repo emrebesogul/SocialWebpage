@@ -2,6 +2,7 @@ var md5 = require('js-md5');
 var session = require('express-session')
 var jwt = require('jsonwebtoken');
 var ObjectId = require('mongodb').ObjectId;
+var fs = require('fs');
 
 var call = module.exports = {
 
@@ -416,6 +417,58 @@ var call = module.exports = {
       })
 
   },
+
+  //----------------------Delete Story Entry----------------------//
+  //
+  // Receives the id of a story entry and deletes it from the database. 
+  // After that, a message with "true" is send to the react application.
+  deleteStoryEntryById: function (db, res, storyId) {
+
+    db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, function(err, docs) {
+        if (err) {
+            res.send(JSON.stringify({
+                message: "Error while deleting the story with id: " + storyId
+            }));
+            throw err;
+        }
+        res.send(true);
+    });
+  },
+
+  //----------------------Delete Image---------------------//
+  //
+  // Receives the id of an image and deletes it from the database. 
+  // After that, a message with "true" is send to the react application.
+  deleteImageById: function (db, res, imageId) {
+
+    db.collection("images").findOne({ _id : new ObjectId(JSON.parse(imageId).imageId) }, function(err, docs) {
+        if (err) {
+            res.send(JSON.stringify({
+                message: "Error while deleting the image with id: " + imageId
+            }));
+            throw err;
+        }
+        if(docs !== null) {
+            let path = "./public/uploads/posts/" + docs.filename;
+            fs.unlinkSync(path);
+            
+            db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, function(err, docs) {
+                if (err) {
+                    res.send(JSON.stringify({
+                        message: "Error while deleting the image with id: " + imageId
+                    }));
+                    throw err;
+                }
+                res.send(true);
+            });
+        }
+        else {
+            res.send(false);
+        }
+    });
+
+
+  }
 
   //----------------------Update User Data at Settings----------------------//
 /*
