@@ -19,11 +19,9 @@ class Upload extends Component {
         this.state = {
           files: [],
           title: "",
-          description: "",
-          imagePath: "",
+          content: "",
           redirectToFeed: false,
           redirectToLogin: false,
-          imageURL: "",
           message: "",
         }
 
@@ -39,9 +37,7 @@ class Upload extends Component {
 
     async checkThisSession() {
         const response = await checkSession(this.apiCheckSession);
-        if(response.message === "User is authorized") {
-
-        } else {
+        if(response.message !== "User is authorized") {
             this.setState({redirectToLogin: true})
         }
     }
@@ -57,12 +53,12 @@ class Upload extends Component {
         console.log("clicked now on submit");
 
         this.state.title =  event.target[0].value;
-        this.state.description =  event.target[1].value;
+        this.state.content =  event.target[1].value;
 
         const fd = new FormData();
         fd.append('theImage', this.state.files[0]);
         fd.append('title', this.state.title);
-        fd.append('description', this.state.description);
+        fd.append('content', this.state.content);
 
         const response = await uploadPictureToPlatform(
             this.api,
