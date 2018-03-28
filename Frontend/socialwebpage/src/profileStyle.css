@@ -126,7 +126,7 @@ div.description{
 
 #logout-button:hover{
   background-color: rgb(40,40,40) !important;
-  color: rgb(245,245,245) !important;
+  color: rgb(250,250,250) !important;
   transition: all 0.3s;
 }
 
@@ -382,7 +382,7 @@ a.item:hover {
 
 #upload-button:hover{
   background-color: rgb(40,40,40) !important;
-  color: rgb(245,245,245) !important;
+  color: rgb(250,250,250) !important;
   transition: all 0.3s;
 }
 
