@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Icon, Button } from 'semantic-ui-react'
+import { Icon, Button, Image } from 'semantic-ui-react'
 
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import {getCurrentUser} from '../API/GET/GetMethods';
@@ -50,6 +50,10 @@ class SidebarProfile extends Component {
 
         return (
             <div>
+
+              <Image className="logo" src="assets/images/Logo_nobg.png" />
+              <Image className="logo-mobile" src="assets/images/Logo_nobg.png" />
+
               <div id="mobile-header">
                 <Link to="/">
                   <Button circular size="medium" id="profile-button-mobile" icon>
@@ -67,12 +71,12 @@ class SidebarProfile extends Component {
 
               <div className="feed-header">
                 <div id="welcome-label">
-                  <h4 id="welcome-label-header">{this.state.username}</h4>
+                  <h4 id="welcome-label-header"></h4>
 
                     <Link to="/profile">
                       <Button labelPosition="right"  size="medium" id="upload-button" icon>
                         <Icon className="menu-icons" size="large" name='user' />
-                        Profile
+                        {this.state.username}
                       </Button>
                     </Link>
 
@@ -83,18 +87,19 @@ class SidebarProfile extends Component {
                       </Button>
                     </Link>
 
-                    <Link to="/upload">
-                      <Button labelPosition="right" size="medium" id="upload-button" icon>
-                        <Icon className="menu-icons" size="large" name='upload' />
-                        Upload Images
-                      </Button>
-                    </Link>
                     <Link to="/post">
                     <Button labelPosition="right" size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='plus' />
                       Add Story
                     </Button>
                   </Link>
+
+                    <Link to="/upload">
+                      <Button labelPosition="right" size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='upload' />
+                        Upload Image
+                      </Button>
+                    </Link>
 
                   <div className="seperator"></div>
 

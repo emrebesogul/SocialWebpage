@@ -69,23 +69,23 @@ class Profile extends Component {
 
       async handleRate(event, data){
         event.preventDefault();
-      
+
         this.state.entryId = data._id;
-      
+
         if(data.src) {
           const response = await likeImageById(
             "/image/like",
             this.state.entryId
           );
-        } 
+        }
         else {
           const response = await likeStoryEntryById(
             "/story/like",
             this.state.entryId
           );
         }
-       
-      
+
+
         // Redirect to feed if respose is message is true
         // this.setState({status: response});
         // if(this.state.status === true) {
@@ -126,44 +126,43 @@ class Profile extends Component {
                       [
                         { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
 
-                        <Card.Group>
+
                           {images.map((item, index) =>
                           {return(
                             <div key={index} id="profile-card">
-                              <Card fluid centered>
-                                <div className="username-label">
-                                  <span > @{item.username} </span>
-                                  <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button>
-                                </div>
-                                <Image className="image-feed" src={item.src} />
-                                <Card.Content id="card-content">
-                                  <Card.Header className="card-header">
+                              <Card.Group>
+                                <Card fluid centered>
+                                  <div className="username-label">
+                                    <span > @{item.username} </span>
+                                    <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button>
+                                  </div>
+                                  <Image className="image-feed" src={item.src} />
+                                  <Card.Content id="card-content">
+                                    <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                       </Rating> {item.title}
-                                      <div className="ui mini horizontal statistic post-likes">
-                                      <div className="value">
-                                        {item.number_of_likes}
-                                      </div>
-                                      <div className="label">
-                                        Likes
-                                      </div>
-                                    </div>
-                                  </Card.Header>
-                                  <Card.Meta className="card-meta">
-                                    <span className='date'>
-                                      {item.date_created}
-                                    </span>
-                                  </Card.Meta>
-                                  <Card.Description>
-                                    {item.content}
-                                  </Card.Description>
-                                </Card.Content>
-                              </Card>
+                                        <div className="ui mini horizontal statistic post-likes">
+                                          <div className="value">
+                                            {item.number_of_likes}
+                                          </div>
+                                        </div>
+                                    </Card.Header>
+                                    <Card.Meta className="card-meta">
+                                      <span className='date'>
+                                        {item.date_created}
+                                      </span>
+                                    </Card.Meta>
+                                    <Card.Description>
+                                      {item.content}
+                                    </Card.Description>
+                                  </Card.Content>
+                                </Card>
+                              </Card.Group>
                              </div>
                              )
                           })}
 
-                      </Card.Group>
+
 
                         </Tab.Pane> },
                         { menuItem: 'Story', render: () => <Tab.Pane attached={false}>

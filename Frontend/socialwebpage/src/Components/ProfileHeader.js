@@ -64,7 +64,7 @@ class ProfileHeader extends Component {
                 <div id="profile-header">
 
                   <div>
-                      {this.state.show ? <Button onClick={this.doSomethingWithUser.bind(this)}>Add Friend<Icon name="user"/></Button> : null}
+                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>Add Friend<Icon name="user"/></Button> : null}
                   </div>
 
 
