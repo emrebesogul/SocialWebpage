@@ -76,6 +76,8 @@ async handleRate(event, data){
 
         return (
           <div id="main-content">
+            <Image className="logo" src="assets/images/Logo_nobg.png" />
+            <Image className="logo-mobile" src="assets/images/Logo_nobg.png" />
             <div className="feed">
                  <Sidebar />
              </div>

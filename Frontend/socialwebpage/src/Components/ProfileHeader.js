@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Icon, Header} from 'semantic-ui-react'
+import { Icon, Header, Button} from 'semantic-ui-react'
 
 import {getCurrentUser} from '../API/GET/GetMethods';
 
@@ -47,6 +47,9 @@ class ProfileHeader extends Component {
             <div>
 
                 <div id="profile-header">
+                  <Button> Add Friend
+                    <Icon name="user"/>
+                  </Button>
                   <Header as='h2' size="huge" icon textAlign='center'>
                     <Icon name='user' circular />
                     <Header.Content>
