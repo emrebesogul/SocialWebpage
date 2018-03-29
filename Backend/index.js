@@ -304,8 +304,8 @@ MongoClient.connect(url, function(err, client) {
                 });
             } else {
                 const storyId = JSON.stringify(req.body);
-
-                database.deleteStoryEntryById(client.db('socialwebpage'), res, storyId, () => {
+                const userId = authData.userid;
+                database.deleteStoryEntryById(client.db('socialwebpage'), res, storyId, userId, () => {
                     db.close();
                 });
             }
@@ -327,8 +327,8 @@ MongoClient.connect(url, function(err, client) {
                 });
             } else {
                 const imageId = JSON.stringify(req.body);
-
-                database.deleteImageById(client.db('socialwebpage'), res, imageId, () => {
+                const userId = authData.userid;
+                database.deleteImageById(client.db('socialwebpage'), res, imageId, userId, () => {
                     db.close();
                 });
             }
