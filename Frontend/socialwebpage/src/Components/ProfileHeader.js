@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Comment, Header, Rating, List, Form, Input, Label, Button } from 'semantic-ui-react'
+import { Icon, Header} from 'semantic-ui-react'
 
 import {getCurrentUser} from '../API/GET/GetMethods';
 
@@ -19,14 +18,14 @@ class ProfileHeader extends Component {
           email: "beast@hpe.com"
         }
         this.api = "/getUserInfo"
-        console.log("Props: ", props)
+
 
         this.getCurrentUser(props.name);
     }
 
     async getCurrentUser(username) {
 
-        if(username == undefined) {
+        if(username === undefined) {
             const response = await getCurrentUser(this.api);
             this.setState({username: response.username})
             this.setState({firstname: response.firstname})

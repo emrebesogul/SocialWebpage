@@ -9,38 +9,37 @@ import '../profileStyle.css';
 
 
 class SidebarProfile extends Component {
-    constructor() {
-        super();
+  constructor() {
+      super();
 
-        this.state = {
-          redirectToLogin: false,
-          username: "Username"
-        }
-        this.api = "/getUsername"
-        this.apiCheckSession = "/checkSession";
-        this.apiDeleteSession = "/deleteSession";
+      this.state = {
+        redirectToLogin: false,
+        username: ""
+      }
+      this.api = "/getUserInfo"
+      this.apiCheckSession = "/checkSession";
+      this.apiDeleteSession = "/deleteSession";
 
-        this.checkThisSession();
-        this.getCurrentUser();
-    }
+      this.checkThisSession();
+      this.getCurrentUser();
+  }
 
-    async checkThisSession() {
-        const response = await checkSession(this.apiCheckSession);
-        if(response.message !== "User is authorized") {
-            this.setState({redirectToLogin: true})
-        }
-    }
+  async checkThisSession() {
+      const response = await checkSession(this.apiCheckSession);
+      if(response.message !== "User is authorized") {
+          this.setState({redirectToLogin: true})
+      }
+  }
 
-    async getCurrentUser() {
-        const response = await getCurrentUser(this.api);
-        this.setState({username: response.username})
-    }
+  async getCurrentUser() {
+      const response = await getCurrentUser(this.api);
+      this.setState({username: response.username})
+  }
 
-    handleLogout() {
-        deleteSession(this.apiDeleteSession);
-        this.setState({ redirectToLogin: true });
-    }
-
+  handleLogout() {
+      deleteSession(this.apiDeleteSession);
+      this.setState({ redirectToLogin: true });
+  }
 
 
     render() {

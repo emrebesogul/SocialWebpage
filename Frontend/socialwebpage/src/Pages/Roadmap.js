@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
-import { Icon, Step } from 'semantic-ui-react'
-import {uploadStoryToPlatform} from '../API/POST/PostMethods';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 

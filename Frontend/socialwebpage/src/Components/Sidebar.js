@@ -14,7 +14,7 @@ class Sidebar extends Component {
 
         this.state = {
           redirectToLogin: false,
-          username: "Username"
+          username: ""
         }
         this.api = "/getUserInfo"
         this.apiCheckSession = "/checkSession";
