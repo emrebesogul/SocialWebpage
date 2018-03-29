@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById} from '../API/POST/PostMethods';
+import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById} from '../API/POST/PostMethods';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 
@@ -96,6 +96,20 @@ class Profile extends Component {
         // }
       }
 
+      async handleDeleteImage(event, data) {
+        const response = await deleteImageById(
+          "/image/delete",
+          data._id
+        );
+      }
+
+      async handleDeleteStoryEntry(event, data) {
+        const response = await deleteStoryEntryById(
+          "/story/delete",
+          data._id
+        );
+      }
+
     render() {
 
       images = this.state.responseImages;
@@ -119,7 +133,7 @@ class Profile extends Component {
                               <Card fluid centered>
                                 <div className="username-label">
                                   <span > @{item.username} </span>
-                                  <Button id="delete-button" circular icon="delete" size="small"></Button>
+                                  <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button>
                                 </div>
                                 <Image className="image-feed" src={item.src} />
                                 <Card.Content id="card-content">
@@ -162,7 +176,7 @@ class Profile extends Component {
                                     <Card fluid centered>
                                       <div className="username-label">
                                         <span > @{item.username} </span>
-                                        <Button id="delete-button" circular icon="delete" size="small"></Button>
+                                        <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button>
                                       </div>
                                       <Card.Content id="card-content">
                                         <Card.Header className="card-header">

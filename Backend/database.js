@@ -22,7 +22,7 @@ var call = module.exports = {
        } else {
            //Check username and password
            if (username != null && password != null) {
-               collection.findOne({"username": username}, function(err, docs) {
+               collection.findOne({"username": username}, (err, docs) => {
                    if (err) {
                        res.send(JSON.stringify({
                            message: "User not found"
@@ -56,7 +56,6 @@ var call = module.exports = {
        }
   },
 
-
   //----------------------REGISTER----------------------//
   registerUserToPlatform: function (db, req, res, newUserData) {
       //Select table and parse form input fields
@@ -73,7 +72,7 @@ var call = module.exports = {
 
       //Check username and password
       if (username != null && password != null) {
-          collection.findOne({"username": username}, function(err, docs) {
+          collection.findOne({"username": username}, (err, docs) => {
               if (err) {
                   throw err;
               }
@@ -83,7 +82,7 @@ var call = module.exports = {
                       message: "Username already taken"
                   }));
               } else {
-                  collection.findOne({"email": email}, function(err, docs) {
+                  collection.findOne({"email": email}, (err, docs) => {
                       if (err) {
                           throw err;
                       }
@@ -114,7 +113,6 @@ var call = module.exports = {
           })
         }
   },
-
 
   //----------------------Get Feed----------------------//
   //
@@ -147,7 +145,7 @@ var call = module.exports = {
                 }
             }
          }
-        ]).toArray(function(err_images, res_images) {
+        ]).toArray((err_images, res_images) => {
             if (err_images) throw err_images;
             db.collection('stories').aggregate([
                 { $lookup:
@@ -174,28 +172,28 @@ var call = module.exports = {
                         }
                     }
                 }
-                ]).toArray(function(err_stories, res_stories) {
+                ]).toArray((err_stories, res_stories) => {
                     if (err_stories) throw err_stories;
 
                     res_stories.map(item => {
-                        item.date_created = getDate(item.date_created);
                         item.number_of_likes = item.liking_users.length;
                     });
                     res_images.map(item => {
-                        item.date_created = getDate(item.date_created);
                         item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
                         item.number_of_likes = item.liking_users.length;
                     });
 
                     let feed = res_images.concat(res_stories);
-                    feed.sort(function(a, b) {
+                    feed.sort((a, b) => {
                         return new Date(b.date_created) - new Date(a.date_created);
+                    });
+                    feed.map(item => {
+                        item.date_created = getDate(item.date_created);
                     });
                     res.status(200).send(feed);
           });
       });
   },
-
 
   //----------------------Upload Image----------------------//
   //
@@ -226,7 +224,6 @@ var call = module.exports = {
 
     },
 
-
   //----------------------Create Story Entry----------------------//
   //
   // Receives the titel and the content of a story and inserts it to the database.
@@ -252,7 +249,7 @@ var call = module.exports = {
   // calls the method listStoryEntriesForUserId.
   listStoryEntriesForUsername: function(db, res, username) {
       const collection = db.collection('users');
-      collection.findOne({"username": username}, function(err, docs) {
+      collection.findOne({"username": username}, (err, docs) => {
           if (err) {
               res.send(JSON.stringify({
                   message: "User not found"
@@ -277,7 +274,7 @@ var call = module.exports = {
   // calls the method listImagesForUserId.
   listImagesForUsername: function(db, req, res, username) {
     const collection = db.collection('users');
-    collection.findOne({"username": username}, function(err, docs) {
+    collection.findOne({"username": username}, (err, docs) => {
         if (err) {
             res.send(JSON.stringify({
                 message: "User not found"
@@ -327,7 +324,7 @@ var call = module.exports = {
             }
          },
          { $sort : { "date_created" : -1 } }
-        ]).toArray(function(err_stories, result_stories) {
+        ]).toArray((err_stories, result_stories) => {
         if (err_stories) throw err_stories;
             result_stories.map(item => {
                 item.date_created = getDate(item.date_created);
@@ -371,7 +368,7 @@ var call = module.exports = {
             }
          },
          { $sort : { "date_created" : -1 } }
-        ]).toArray(function(err_images, result_images) {
+        ]).toArray((err_images, result_images) => {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
@@ -385,7 +382,7 @@ var call = module.exports = {
   //----------------------Get Other User----------------------//
   getOtherUserProfile: function(db, res, username) {
       const collection = db.collection('users');
-      collection.findOne({"username": username}, function(err, docs) {
+      collection.findOne({"username": username}, (err, docs) => {
           if (err) {
               res.send(JSON.stringify({
                   message: "User not found"
@@ -413,7 +410,7 @@ var call = module.exports = {
   //----------------------Get Current User----------------------//
   getCurrentUserProfile: function(db, res, userid) {
       const collection = db.collection('users');
-      collection.findOne({"_id": ObjectId(userid)}, function(err, docs) {
+      collection.findOne({"_id": ObjectId(userid)},(err, docs) => {
           if (err) {
               res.send(JSON.stringify({
                   message: "User not found"
@@ -435,50 +432,41 @@ var call = module.exports = {
               }));
           }
       })
-
   },
 
   //----------------------Delete Story Entry----------------------//
   //
   // Receives the id of a story entry and deletes it from the database. 
   // After that, a message with "true" is send to the react application.
-  deleteStoryEntryById: function (db, res, storyId) {
+  deleteStoryEntryById: function (db, res, storyId, userId) {
 
-    db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, function(err, docs) {
-        if (err) {
-            res.send(JSON.stringify({
-                message: "Error while deleting the story with id: " + storyId
-            }));
-            throw err;
+    db.collection("stories").findOne({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => { 
+        if (err) throw err;
+        if (docs.user_id == userId) {
+            db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
+                if (err) throw err;
+                res.send(true);
+            });
         }
-        res.send(true);
-    });
+        else {
+            res.send(false);
+        }
+    });    
   },
 
   //----------------------Delete Image---------------------//
   //
   // Receives the id of an image and deletes it from the database. 
   // After that, a message with "true" is send to the react application.
-  deleteImageById: function (db, res, imageId) {
+  deleteImageById: function (db, res, imageId, userId) {
 
-    db.collection("images").findOne({ _id : new ObjectId(JSON.parse(imageId).imageId) }, function(err, docs) {
-        if (err) {
-            res.send(JSON.stringify({
-                message: "Error while deleting the image with id: " + imageId
-            }));
-            throw err;
-        }
-        if(docs !== null) {
-            let path = "./public/uploads/posts/" + docs.filename;
+    db.collection("images").findOne({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_find_images, res_find_images) => {
+        if (err_find_images) throw err_find_images;
+        if (res_find_images !== null && res_find_images.user_id == userId) {
+            let path = "./public/uploads/posts/" + res_find_images.filename;
             fs.unlinkSync(path);
-            
-            db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, function(err, docs) {
-                if (err) {
-                    res.send(JSON.stringify({
-                        message: "Error while deleting the image with id: " + imageId
-                    }));
-                    throw err;
-                }
+            db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_remove_image, res_remove_image) => {
+                if (err_remove_image) throw err_remove_image;
                 res.send(true);
             });
         }
@@ -486,8 +474,6 @@ var call = module.exports = {
             res.send(false);
         }
     });
-
-
   },
 
   //----------------------Like Story Entry----------------------//
@@ -503,21 +489,13 @@ var call = module.exports = {
         }, 
         (err_find_stories, res_find_stories) => {
 
-        if (err_find_stories) {
-            res.send(JSON.stringify({
-                message: "Error while liking the story with id: " + storyId
-            }));
-            throw err_find_stories;
-        }
-        if(res_find_stories.liking_users.includes(userId)) {
+        if (err_find_stories) throw err_find_stories;
+        if (res_find_stories.liking_users.includes(userId)) {
             let index = res_find_stories.liking_users.indexOf(userId);
             if (index > -1) {
                 res_find_stories.liking_users.splice(index, 1);
             }
             else {
-                res.send(JSON.stringify({
-                    message: "Error while liking the story with id: " + storyId
-                }));
                 throw err_find_stories;
             }
         }
@@ -534,12 +512,7 @@ var call = module.exports = {
             },
             (err_update_stories, res_update_stories) => {
 
-            if (err_update_stories) {
-                res.send(JSON.stringify({
-                    message: "Error while updating the story with id: " + storyId
-                }));
-                throw err_update_stories;
-            }
+            if (err_update_stories) throw err_update_stories;
         });
         res.send(true);
     });
@@ -600,25 +573,15 @@ var call = module.exports = {
     });
   },
 
-
   //----------------------Update User Data at Settings----------------------//
-/*
-db.collection('userlist').update({ _id: ObjectId(userToUpdate)}, req.body, function (err, result) {
-    res.send(
-        (err === null) ? {msg: ''} : {msg: err}
-    );
-});
-*/
 updateUserData: function(db, res, data) {
     const collectionUsers = db.collection('users');
 
     const userid = data.userid;
     const userData = data.userData
     const hashedPassword = md5(userData.password)
-    //console.log("hashed: ", hashedPassword)
 
     if(userData.password !== '') {
-        //console.log("Pass1:---",hashedPassword,"---")
         collectionUsers.update(
             {_id: ObjectId(userid)},
             {
@@ -632,7 +595,6 @@ updateUserData: function(db, res, data) {
             }
         );
     } else {
-        //console.log("Pass2:---", userData.password, "---")
         collectionUsers.update(
             {_id: ObjectId(userid)},
             {
