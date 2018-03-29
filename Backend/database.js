@@ -178,11 +178,9 @@ var call = module.exports = {
                     if (err_stories) throw err_stories;
 
                     res_stories.map(item => {
-                        item.date_created = getDate(item.date_created);
                         item.number_of_likes = item.liking_users.length;
                     });
                     res_images.map(item => {
-                        item.date_created = getDate(item.date_created);
                         item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
                         item.number_of_likes = item.liking_users.length;
                     });
@@ -190,6 +188,9 @@ var call = module.exports = {
                     let feed = res_images.concat(res_stories);
                     feed.sort(function(a, b) {
                         return new Date(b.date_created) - new Date(a.date_created);
+                    });
+                    feed.map(item => {
+                        item.date_created = getDate(item.date_created);
                     });
                     res.status(200).send(feed);
           });
