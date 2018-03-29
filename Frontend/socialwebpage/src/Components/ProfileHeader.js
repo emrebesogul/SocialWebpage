@@ -11,6 +11,7 @@ class ProfileHeader extends Component {
         super(props);
 
         this.state = {
+          show: false,
           redirectToLogin: false,
           username: "Username",
           firstname: "First name",
@@ -40,16 +41,33 @@ class ProfileHeader extends Component {
             this.setState({email: response.email})
         }
 
+        console.log("checking...")
+        console.log(username)
+        console.log(this.state.username)
+
+        if(username === this.state.username) {
+            console.log("Different user...", "...", this.state.show)
+            this.setState({ show: true});
+        }
     }
+
+
+    doSomethingWithUser() {
+        alert("You want to add " + this.state.username + " to your friendlist?")
+    }
+
 
     render() {
         return (
             <div>
 
                 <div id="profile-header">
-                  <Button size="medium" id="button-add-friend" icon> Add Friend
-                    <Icon className="menu-icons" name="user"/>
-                  </Button>
+
+                  <div>
+                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>Add Friend<Icon name="user"/></Button> : null}
+                  </div>
+
+
                   <Header as='h2' size="huge" icon textAlign='center'>
                     <Icon name='user' circular />
                     <Header.Content>
