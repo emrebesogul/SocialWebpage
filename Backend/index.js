@@ -160,9 +160,18 @@ MongoClient.connect(url, function(err, client) {
       // Calls the method getFeed that fetchs all images and story entries from
       // the database.
       // Post parameters: title, content and userId of the new story entry
-      app.get('/feed', (req, res) => {
-        database.getFeed(client.db('socialwebpage'), req, res, () => {
-            db.close();
+      app.get('/feed', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                database.getFeed(client.db('socialwebpage'), req, res, authData.userid, () => {
+                    db.close();
+                });
+
+            }
         });
       });
 
@@ -257,6 +266,7 @@ MongoClient.connect(url, function(err, client) {
       // images for the user id in the query to the react application.
       // Get prameter: userId of the respective user
       app.get('/image/list', verifyToken, (req, res) => {
+          
         if(req.query.username) {
             let username = req.query.username;
             database.listImagesForUsername(client.db('socialwebpage'), req, res, username, () => {
@@ -278,6 +288,53 @@ MongoClient.connect(url, function(err, client) {
         }
       });
 
+      //----------------------Delete Story Entry----------------------//
+      //
+      // Calls the method deleteStoryEntry that deletes a story entry
+      // from the database.
+      app.post('/story/delete', verifyToken, (req, res) => {
+
+        // check if the current user is also the author of this story entry
+        // if no, the user does not have the rights to delete this story
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const storyId = JSON.stringify(req.body);
+
+                database.deleteStoryEntryById(client.db('socialwebpage'), res, storyId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
+
+      //----------------------Delete Image----------------------//
+      //
+      // Calls the method deleteImage that deletes an image from the database.
+      app.post('/image/delete', verifyToken, (req, res) => {
+
+        // check if the current user is also the author of this story entry
+        // if no, the user does not have the rights to delete this story
+        
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const imageId = JSON.stringify(req.body);
+
+                database.deleteImageById(client.db('socialwebpage'), res, imageId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
+
       //----------------------Update user----------------------//
       app.put('/user/edit', verifyToken, (req, res) => {
           jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -295,6 +352,50 @@ MongoClient.connect(url, function(err, client) {
               }
           });
       });
+      
+      //----------------------Like Story Entry----------------------//
+      //
+      // Calls the method likeStoryEntryById that add the user to the list of
+      // likes
+      app.post('/story/like', verifyToken, (req, res) => {
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const storyId = JSON.stringify(req.body);
+                const userId = authData.userid;
+                database.likeStoryEntryById(client.db('socialwebpage'), res, storyId, userId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
+
+      //----------------------Like Image----------------------//
+      //
+      // Calls the method likeImageById that add the user to the list of
+      // likes
+      app.post('/image/like', verifyToken, (req, res) => {
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const imageId = JSON.stringify(req.body);
+                const userId = authData.userid;
+                database.likeImageById(client.db('socialwebpage'), res, imageId, userId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
+
+
 
 
       //----------------------xy----------------------//
@@ -307,7 +408,3 @@ MongoClient.connect(url, function(err, client) {
 
 
 
-//==================================================================================================//
-
-//Comments
-// 5aad6d046ad239693bcd29cd
