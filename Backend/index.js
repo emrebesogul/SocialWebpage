@@ -290,7 +290,7 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------Delete Story Entry----------------------//
       //
-      // Calls the method deleteStoryEntry that that deletes a story entry
+      // Calls the method deleteStoryEntry that deletes a story entry
       // from the database.
       app.post('/story/delete', verifyToken, (req, res) => {
 
@@ -314,7 +314,7 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------Delete Image----------------------//
       //
-      // Calls the method deleteImage that that deletes an image from the database.
+      // Calls the method deleteImage that deletes an image from the database.
       app.post('/image/delete', verifyToken, (req, res) => {
 
         // check if the current user is also the author of this story entry
@@ -352,10 +352,11 @@ MongoClient.connect(url, function(err, client) {
               }
           });
       });
+      
       //----------------------Like Story Entry----------------------//
       //
-      // Calls the method deleteStoryEntry that that deletes a story entry
-      // from the database.
+      // Calls the method likeStoryEntryById that add the user to the list of
+      // likes
       app.post('/story/like', verifyToken, (req, res) => {
 
         jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -375,12 +376,10 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------Like Image----------------------//
       //
-      // Calls the method deleteImage that that deletes an image from the database.
+      // Calls the method likeImageById that add the user to the list of
+      // likes
       app.post('/image/like', verifyToken, (req, res) => {
 
-        // check if the current user is also the author of this story entry
-        // if no, the user does not have the rights to delete this story
-        
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -388,8 +387,8 @@ MongoClient.connect(url, function(err, client) {
                 });
             } else {
                 const imageId = JSON.stringify(req.body);
-                
-                database.deleteImageById(client.db('socialwebpage'), res, imageId, () => {
+                const userId = authData.userid;
+                database.likeImageById(client.db('socialwebpage'), res, imageId, userId, () => {
                     db.close();
                 });
             }

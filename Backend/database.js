@@ -492,8 +492,8 @@ var call = module.exports = {
 
   //----------------------Like Story Entry----------------------//
   //
-  // Receives the id of a story entry and of a user and fetchs the array with likes from 
-  // the database. 
+  // Receives the id of a story entry and of a user, fetchs the array with likes from 
+  // the database and add or remove the current user from this array.
   // After that, a message with "true" is send to the react application.
   likeStoryEntryById: function (db, res, storyId, userId) {
 
@@ -539,6 +539,61 @@ var call = module.exports = {
                     message: "Error while updating the story with id: " + storyId
                 }));
                 throw err_update_stories;
+            }
+        });
+        res.send(true);
+    });
+  },
+
+  //----------------------Like Image----------------------//
+  //
+  // Receives the id of an image and of a user, fetchs the array with likes from 
+  // the database and add or remove the current user from this array.
+  // After that, a message with "true" is send to the react application.
+  likeImageById: function (db, res, imageId, userId) {
+
+    db.collection("images").findOne(
+        { 
+            _id : new ObjectId(JSON.parse(imageId).imageId) 
+        }, 
+        (err_find_images, res_find_images) => {
+
+        if (err_find_images) {
+            res.send(JSON.stringify({
+                message: "Error while liking the image with id: " + imageId
+            }));
+            throw err_find_images;
+        }
+        if(res_find_images.liking_users.includes(userId)) {
+            let index = res_find_images.liking_users.indexOf(userId);
+            if (index > -1) {
+                res_find_images.liking_users.splice(index, 1);
+            }
+            else {
+                res.send(JSON.stringify({
+                    message: "Error while liking the image with id: " + userId
+                }));
+                throw err_find_images;
+            }
+        }
+        else {
+            res_find_images.liking_users.push(userId);
+        }
+
+        db.collection("images").update(
+            { 
+                _id : new ObjectId(JSON.parse(imageId).imageId) 
+            },
+            {
+                $set: { liking_users: res_find_images.liking_users }
+            },
+            (err_update_images, res_update_images) => {
+
+            if (err_update_images) {
+                res.send(JSON.stringify({
+                    message: "Error while updating the image with id: " + imageId
+                }));
+                throw err_update_images;
             }
         });
         res.send(true);
@@ -595,10 +650,6 @@ updateUserData: function(db, res, data) {
   //----------------------xy----------------------//
 
 }
-
-  //----------------------currentUserHasLiked----------------------//
-  //
-
 
 function getMonthName (month) {
     const monthNames = [

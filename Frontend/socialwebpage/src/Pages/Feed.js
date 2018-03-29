@@ -5,7 +5,7 @@ import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
 import {checkSession} from '../API/GET/GetMethods';
-import {likeStoryEntryById} from '../API/POST/PostMethods';
+import {likeStoryEntryById, likeImageById} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var arr;
@@ -46,10 +46,10 @@ async handleRate(event, data){
   this.state.entryId = data._id;
 
   if(data.src) {
-    // const response = await likeImage(
-    //   "/image/like",
-    //   this.state.entryId
-    // );
+    const response = await likeImageById(
+      "/image/like",
+      this.state.entryId
+    );
   } 
   else {
     const response = await likeStoryEntryById(

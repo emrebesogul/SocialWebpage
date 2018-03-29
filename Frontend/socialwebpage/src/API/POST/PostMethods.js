@@ -173,3 +173,28 @@ export const likeStoryEntryById=(api, storyId) =>
     });
 }
 
+//----------------------Like Image----------------------//
+export const likeImageById=(api, imageId) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({imageId: imageId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
+

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
+import {likeStoryEntryById, likeImageById} from '../API/POST/PostMethods';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 
@@ -66,6 +67,35 @@ class Profile extends Component {
         }
       }
 
+      async handleRate(event, data){
+        event.preventDefault();
+      
+        this.state.entryId = data._id;
+      
+        if(data.src) {
+          const response = await likeImageById(
+            "/image/like",
+            this.state.entryId
+          );
+        } 
+        else {
+          const response = await likeStoryEntryById(
+            "/story/like",
+            this.state.entryId
+          );
+        }
+       
+      
+        // Redirect to feed if respose is message is true
+        // this.setState({status: response});
+        // if(this.state.status === true) {
+        //     this.setState({ redirectToFeed: true });
+        // } else {
+        //     let errorField = document.getElementById("error-message-upload-story");
+        //     errorField.style.display = "block";
+        // }
+      }
+
     render() {
 
       images = this.state.responseImages;
@@ -94,7 +124,7 @@ class Profile extends Component {
                                 <Image className="image-feed" src={item.src} />
                                 <Card.Content id="card-content">
                                   <Card.Header className="card-header">
-                                      <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
+                                      <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                       </Rating> {item.title}
                                       <div className="ui mini horizontal statistic post-likes">
                                       <div className="value">
@@ -136,7 +166,7 @@ class Profile extends Component {
                                       </div>
                                       <Card.Content id="card-content">
                                         <Card.Header className="card-header">
-                                            <Rating icon='heart' size="large" defaultRating={0} maxRating={1}>
+                                            <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                             </Rating> {item.title}
                                             <div className="ui mini horizontal statistic post-likes">
                                               <div className="value">
