@@ -19,7 +19,6 @@ class ProfileHeader extends Component {
           email: "beast@hpe.com"
         }
         this.api = "/getUserInfo"
-        console.log("Props: ", props)
 
         this.getCurrentUser(props.name);
     }

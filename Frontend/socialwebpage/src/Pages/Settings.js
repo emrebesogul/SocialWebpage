@@ -1,8 +1,60 @@
 import React from 'react';
 import {Icon, Header,  Form, Input, Label, Button } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
+import {getCurrentUserData} from '../API/GET/GetMethods';
+import {updateUserData} from '../API/PUT/PutMethods';
 
 class Settings extends React.Component{
+    constructor() {
+        super();
+
+        this.state = {
+          redirectToLogin: false,
+          username: "Username",
+          firstname: "First name",
+          lastname: "Last name",
+          email: "beast@hpe.com",
+        }
+        this.api = "/getUserInfo"
+        this.apiUpdate = "/user/edit"
+
+        this.getCurrentUserData();
+    }
+
+    async getCurrentUserData() {
+        const response = await getCurrentUserData(this.api);
+        if(response) {
+            this.setState({username: response.username})
+            this.setState({firstname: response.firstname})
+            this.setState({lastname: response.lastname})
+            this.setState({email: response.email})
+        }
+    }
+
+    handleAccountSettings(event) {
+        event.preventDefault();
+
+        let obj = new Object();
+        obj.first_name  = event.target[0].value
+        obj.last_name = event.target[1].value
+        obj.username = event.target[2].value
+        obj.password = event.target[3].value
+        obj.email = event.target[4].value
+        const jsonUserData= JSON.stringify(obj);
+
+        console.log(jsonUserData)
+
+        updateUserData("/user/edit", jsonUserData);
+    }
+
+handleChange(e, attribut) {
+    switch(attribut) {
+      case "firstname": this.setState({"firstname": e.target.value}); break;
+      case "lastname":  this.setState({"lastname": e.target.value}); break;
+      case "username": this.setState({"username": e.target.value}); break;
+      case "email":  this.setState({"email": e.target.value}); break;
+      default: null;
+    }}
 
 
   render(){
@@ -11,6 +63,7 @@ class Settings extends React.Component{
         <div className="feed">
           <Sidebar />
         </div>
+
         <div >
           <div className="settings">
             <div className="account-settings">
@@ -22,25 +75,25 @@ class Settings extends React.Component{
               </Header.Subheader>
               </Header>
 
-              <Form >
+              <Form onSubmit={this.handleAccountSettings}>
 
-                <Form.Field className="account-input" required>
-                  <Label basic className="input-label">First Name</Label>
-                  <Input required  inverted className="account-input-text" placeholder='First name' />
-                  <Label basic className="input-label">Last Name</Label>
-                  <Input required inverted className="account-input-text" placeholder='Last name' />
+                <Form.Field className="account-input" required >
+                  <Label basic className="input-label">First name</Label>
+                  <Input required inverted className="account-input-text" placeholder={this.state.firstname} value={this.state.firstname} onChange={(e) => this.handleChange(e,"firstname")} />
+                  <Label basic className="input-label">Last name</Label>
+                  <Input required inverted className="account-input-text" placeholder={this.state.lastname} value={this.state.lastname} onChange={(e) => this.handleChange(e,"lastname")} />
                 </Form.Field>
 
-                <Form.Field className="account-input" required>
+                <Form.Field className="account-input">
                   <Label basic className="input-label">Username</Label>
-                  <Input required inverted className="account-input-text" placeholder='Username' />
+                  <Input required inverted className="account-input-text" placeholder={this.state.username} value={this.state.username} onChange={(e) => this.handleChange(e,"username")}/>
                   <Label basic className="input-label">Password</Label>
-                  <Input required className="account-input-text" type="password" placeholder='Password' />
+                  <Input className="account-input-text" type="password" placeholder='Enter new password' />
                 </Form.Field>
 
-                <Form.Field className="account-input" required>
+                <Form.Field className="account-input">
                   <Label basic className="input-label">Email</Label>
-                  <Input required inverted className="account-input-text" iconPosition='left' placeholder='Email'>
+                  <Input required inverted className="account-input-text" iconPosition='left' placeholder={this.state.email} value={this.state.email} onChange={(e) => this.handleChange(e,"email")} >
                      <Icon name='at' />
                      <input />
                    </Input>

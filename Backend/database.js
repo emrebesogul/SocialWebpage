@@ -417,6 +417,52 @@ var call = module.exports = {
 
   },
 
+  //----------------------Update User Data at Settings----------------------//
+/*
+db.collection('userlist').update({ _id: ObjectId(userToUpdate)}, req.body, function (err, result) {
+    res.send(
+        (err === null) ? {msg: ''} : {msg: err}
+    );
+});
+*/
+updateUserData: function(db, res, data) {
+    const collectionUsers = db.collection('users');
+
+    const userid = data.userid;
+    const userData = data.userData
+    const hashedPassword = md5(userData.password)
+    //console.log("hashed: ", hashedPassword)
+
+    if(userData.password !== '') {
+        //console.log("Pass1:---",hashedPassword,"---")
+        collectionUsers.update(
+            {_id: ObjectId(userid)},
+            {
+                $set: {
+                    "first_name": userData.first_name,
+                    "last_name": userData.last_name,
+                    "username": userData.username,
+                    "email": userData.email,
+                    "password": hashedPassword
+                }
+            }
+        );
+    } else {
+        //console.log("Pass2:---", userData.password, "---")
+        collectionUsers.update(
+            {_id: ObjectId(userid)},
+            {
+                $set: {
+                    "first_name": userData.first_name,
+                    "last_name": userData.last_name,
+                    "username": userData.username,
+                    "email": userData.email
+                }
+            }
+        );
+    }
+},
+
   //----------------------xy----------------------//
 
 }

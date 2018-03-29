@@ -154,7 +154,7 @@ MongoClient.connect(url, function(err, client) {
       });
 
 
-      
+
       //----------------------Show the Feed----------------------//
       //
       // Calls the method getFeed that fetchs all images and story entries from
@@ -225,7 +225,7 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------List Story Entries in a user profile----------------------//
       //
-      // Calls the method listStoryEntriesForUserId or listStoryEntriesForUsername that 
+      // Calls the method listStoryEntriesForUserId or listStoryEntriesForUsername that
       // returns all story entries for the user id in the query to the react application.
       // Get prameter: userId of the respective user
       app.get('/story/list', verifyToken, (req, res) => {
@@ -253,7 +253,7 @@ MongoClient.connect(url, function(err, client) {
 
       //----------------------List Images in a user profile----------------------//
       //
-      // Calls the method listImagesForUserId or listImagesForUsername that returns all 
+      // Calls the method listImagesForUserId or listImagesForUsername that returns all
       // images for the user id in the query to the react application.
       // Get prameter: userId of the respective user
       app.get('/image/list', verifyToken, (req, res) => {
@@ -278,10 +278,26 @@ MongoClient.connect(url, function(err, client) {
         }
       });
 
+      //----------------------Update user----------------------//
+      app.put('/user/edit', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  const userData = req.body;
+                  const userid = authData.userid
+                  const user = {userData, userid}
+                  database.updateUserData(client.db('socialwebpage'), res, user, () => {
+                       db.close();
+                  });
+              }
+          });
+      });
+
 
       //----------------------xy----------------------//
-
-
 
       app.listen(8000, function() {
           console.log('Listening for API Requests on port 8000...')
