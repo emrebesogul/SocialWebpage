@@ -50,14 +50,14 @@ async handleRate(event, data){
       "/image/like",
       this.state.entryId
     );
-  } 
+  }
   else {
     const response = await likeStoryEntryById(
       "/story/like",
       this.state.entryId
     );
   }
- 
+
 
   // Redirect to feed if respose is message is true
   // this.setState({status: response});
@@ -76,8 +76,7 @@ async handleRate(event, data){
 
         return (
           <div id="main-content">
-            <Image className="logo" src="assets/images/Logo_nobg.png" />
-            <Image className="logo-mobile" src="assets/images/Logo_nobg.png" />
+
             <div className="feed">
                  <Sidebar />
              </div>
