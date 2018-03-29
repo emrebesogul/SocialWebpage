@@ -484,6 +484,17 @@ p {
   left: 1%;
 }
 
+#profile-header{
+  border: solid 1px rgb(242,242,242);
+  width: 65%;
+  border-radius: 3px;
+  margin-left: auto;
+  padding-top: 15px;
+  margin-right: auto;
+  max-width: 830px;
+  box-shadow: -1px 2px 5px #a7a7a743;
+}
+
 /*
   Media Queries
   All media queries for Feed and Profile.

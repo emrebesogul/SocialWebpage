@@ -128,6 +128,9 @@ class Roadmap extends Component {
                         Guestbook
                       </Item.Description>
                       <Item.Description>
+                        Add profile picture
+                      </Item.Description>
+                      <Item.Description>
                         Responsive Design platform-wirde
                       </Item.Description>
                       <Item.Extra>Not started</Item.Extra>
