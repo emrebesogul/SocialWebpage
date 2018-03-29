@@ -41,7 +41,6 @@ class Upload extends Component {
     //Post image to feed
     async handleSubmit(event) {
         event.preventDefault();
-        console.log("clicked now on submit");
 
         this.state.title =  event.target[0].value;
         this.state.content =  event.target[1].value;
@@ -55,8 +54,6 @@ class Upload extends Component {
             this.api,
             fd
         );
-
-        console.log(response);
 
         //Do something with response
         this.setState({message : JSON.parse(response).message});

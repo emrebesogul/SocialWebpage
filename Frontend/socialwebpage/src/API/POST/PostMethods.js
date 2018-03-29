@@ -14,7 +14,6 @@ export const checkUserDataAtLogin=(api, username, password) =>
           contentType: 'application/json',
           data: JSON.stringify({username: username, password: password}),
           success: function(res) {
-              console.log("Response from server: ", res);
               resolve(res);
           },
           error: function(xhr, status, err){
@@ -36,7 +35,6 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
           contentType: 'application/json',
           data: JSON.stringify({firstname: firstname, lastname: lastname, username: username, email: email, password: password, birthday: birthday, gender: gender}),
           success: function(res) {
-              console.log("Response from server: ", res);
               resolve(res);
           },
           error: function(xhr, status, err){
@@ -64,7 +62,6 @@ export const uploadPictureToPlatform=(api, fd) =>
               'Authorization': 'Bearer ' + token
           },
           success: function(res) {
-              console.log("Response from server: ", res);
               resolve(res);
           },
           error: function(xhr, status, err){
@@ -91,7 +88,6 @@ export const uploadStoryToPlatform=(api, title, content, userId) =>
               'Authorization': 'Bearer ' + token
           },
           success: function(res) {
-              console.log("Response from server: ", res);
               resolve(res);
           },
           error: function(xhr, status, err){

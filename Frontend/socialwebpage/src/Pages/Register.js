@@ -31,7 +31,6 @@ class Reqister extends Component {
     //Create account
     async handleSubmit(event) {
         event.preventDefault();
-        console.log("clicked now on submit");
 
         this.state.firstname =  event.target[0].value;
         this.state.lastname =  event.target[1].value;
