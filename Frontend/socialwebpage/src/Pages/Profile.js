@@ -131,20 +131,21 @@ class Profile extends Component {
                           {return(
                             <div key={index} id="profile-card">
                               <Card.Group>
-                              <Card fluid centered>
-                                <div className="username-label">
-                                  <span > @{item.username} </span>
-                                  <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button>
-                                </div>
-                                <Image className="image-feed" src={item.src} />
-                                <Card.Content id="card-content">
-                                  <Card.Header className="card-header">
+                                <Card fluid centered>
+                                  <div className="username-label">
+                                    <span > @{item.username} </span>
+                                    <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button>
+                                  </div>
+                                  <Image className="image-feed" src={item.src} />
+                                  <Card.Content id="card-content">
+                                    <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                       </Rating> {item.title}
-                                      <div className="ui mini horizontal statistic post-likes">
-                                      <div className="value">
-                                        {item.number_of_likes}
-                                      </div>
+                                        <div className="ui mini horizontal statistic post-likes">
+                                          <div className="value">
+                                            {item.number_of_likes}
+                                          </div>
+                                        </div>
                                     </Card.Header>
                                     <Card.Meta className="card-meta">
                                       <span className='date'>
