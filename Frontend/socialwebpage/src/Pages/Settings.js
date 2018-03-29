@@ -14,6 +14,7 @@ class Settings extends React.Component{
           firstname: "First name",
           lastname: "Last name",
           email: "beast@hpe.com",
+          rerender: false
         }
         this.api = "/getUserInfo"
         this.apiUpdate = "/user/edit"
@@ -45,6 +46,8 @@ class Settings extends React.Component{
         console.log(jsonUserData)
 
         updateUserData("/user/edit", jsonUserData);
+
+        this.setState({rerender: true});
     }
 
 handleChange(e, attribut) {
@@ -75,7 +78,7 @@ handleChange(e, attribut) {
               </Header.Subheader>
               </Header>
 
-              <Form onSubmit={this.handleAccountSettings}>
+              <Form onSubmit={this.handleAccountSettings.bind(this)}>
 
                 <Form.Field className="account-input" required >
                   <Label basic className="input-label">First name</Label>

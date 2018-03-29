@@ -41,12 +41,7 @@ class ProfileHeader extends Component {
             this.setState({email: response.email})
         }
 
-        console.log("checking...")
-        console.log(username)
-        console.log(this.state.username)
-
         if(username === this.state.username) {
-            console.log("Different user...", "...", this.state.show)
             this.setState({ show: true});
         }
     }

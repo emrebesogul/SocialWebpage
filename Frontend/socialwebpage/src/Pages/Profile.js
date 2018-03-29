@@ -15,9 +15,11 @@ class Profile extends Component {
       super(props);
 
       this.state = {
+        show: false,
         responseImages: [],
         responseStories: [],
-        redirectToLogin: false
+        redirectToLogin: false,
+        rerender: false
       }
 
       this.apiCheckSession = "/checkSession"
@@ -65,6 +67,9 @@ class Profile extends Component {
               responseImages : responseImages
             });
         }
+        if(username === this.state.responseImages.username) {
+            this.setState({ show: true});
+        }
       }
 
       async handleRate(event, data){
@@ -85,6 +90,7 @@ class Profile extends Component {
           );
         }
 
+        this.forceUpdate();
 
         // Redirect to feed if respose is message is true
         // this.setState({status: response});
@@ -134,7 +140,8 @@ class Profile extends Component {
                                 <Card fluid centered>
                                   <div className="username-label">
                                     <span > @{item.username} </span>
-                                    <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button>
+                                    {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
+
                                   </div>
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
@@ -175,7 +182,10 @@ class Profile extends Component {
                                     <Card fluid centered>
                                       <div className="username-label">
                                         <span > @{item.username} </span>
-                                        <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button>
+
+
+                                        {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
+
                                       </div>
                                       <Card.Content id="card-content">
                                         <Card.Header className="card-header">
