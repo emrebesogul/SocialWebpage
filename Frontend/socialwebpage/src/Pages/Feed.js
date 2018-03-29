@@ -156,7 +156,6 @@ handleRate(){
 
                           </Tab.Pane> },
                           { menuItem: 'Friends', render: () => <Tab.Pane attached={false}>
-                          <div className="settings">
                             <div id="friends">
                               <List className="friend-list" relaxed divided>
                                 <List.Item>
@@ -197,10 +196,9 @@ handleRate(){
                                 </List.Item>
                               </List>
                             </div>
-                          </div>
 
                           </Tab.Pane> },
-                          { menuItem: 'Settings', render: () => <Tab.Pane attached={false}>
+                          { menuItem: 'Notifications', render: () => <Tab.Pane attached={false}>
                             Hello
                           </Tab.Pane> },
                         ]
