@@ -47,7 +47,7 @@ class Settings extends React.Component{
 
         updateUserData("/user/edit", jsonUserData);
 
-        this.setState({rerender: true});
+        window.location.reload();
     }
 
 handleChange(e, attribut) {

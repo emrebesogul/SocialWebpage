@@ -90,8 +90,7 @@ class Profile extends Component {
           );
         }
 
-        this.forceUpdate();
-
+        window.location.reload();
         // Redirect to feed if respose is message is true
         // this.setState({status: response});
         // if(this.state.status === true) {
@@ -107,6 +106,7 @@ class Profile extends Component {
           "/image/delete",
           data._id
         );
+        window.location.reload();
       }
 
       async handleDeleteStoryEntry(event, data) {
@@ -114,6 +114,7 @@ class Profile extends Component {
           "/story/delete",
           data._id
         );
+        window.location.reload();
       }
 
     render() {
