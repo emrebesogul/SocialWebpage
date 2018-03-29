@@ -108,9 +108,6 @@ MongoClient.connect(url, function(err, client) {
 
       //Verify Token
       function verifyToken(req, res, next) {
-          //console.log("verifying token...")
-          //console.log(req);
-          //console.log("Header: ",req.headers.authorization)
           //Get auth header value
           const bearerHeader = req.headers.authorization;
           if(typeof bearerHeader !== 'undefined') {
@@ -129,12 +126,10 @@ MongoClient.connect(url, function(err, client) {
           }
       }
 
-
       //----------------------SESSION DELETE----------------------//
       app.get('/deleteSession', (req, res) => {
           res.status(200).send({ auth: false, token: null });
       });
-
 
       //----------------------LOGIN----------------------//
       app.post('/user/loginUser', (req, res) => {
@@ -144,7 +139,6 @@ MongoClient.connect(url, function(err, client) {
           });
       });
 
-
       //----------------------REGISTER----------------------//
       app.post('/user/create', (req, res) => {
           const newUserData = JSON.stringify(req.body);
@@ -152,8 +146,6 @@ MongoClient.connect(url, function(err, client) {
               db.close();
           });
       });
-
-
 
       //----------------------Show the Feed----------------------//
       //
@@ -174,7 +166,6 @@ MongoClient.connect(url, function(err, client) {
             }
         });
       });
-
 
       //----------------------Upload Image----------------------//
       //
@@ -206,7 +197,6 @@ MongoClient.connect(url, function(err, client) {
 
           }
       });
-
 
       //----------------------Create Story----------------------//
       //
@@ -258,7 +248,6 @@ MongoClient.connect(url, function(err, client) {
             });
         }
       });
-
 
       //----------------------List Images in a user profile----------------------//
       //
@@ -317,9 +306,6 @@ MongoClient.connect(url, function(err, client) {
       // Calls the method deleteImage that deletes an image from the database.
       app.post('/image/delete', verifyToken, (req, res) => {
 
-        // check if the current user is also the author of this story entry
-        // if no, the user does not have the rights to delete this story
-        
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({

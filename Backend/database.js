@@ -56,7 +56,6 @@ var call = module.exports = {
        }
   },
 
-
   //----------------------REGISTER----------------------//
   registerUserToPlatform: function (db, req, res, newUserData) {
       //Select table and parse form input fields
@@ -114,7 +113,6 @@ var call = module.exports = {
           })
         }
   },
-
 
   //----------------------Get Feed----------------------//
   //
@@ -197,7 +195,6 @@ var call = module.exports = {
       });
   },
 
-
   //----------------------Upload Image----------------------//
   //
   // Receives a file from the react application and stores it
@@ -226,7 +223,6 @@ var call = module.exports = {
     }));
 
     },
-
 
   //----------------------Create Story Entry----------------------//
   //
@@ -576,7 +572,6 @@ var call = module.exports = {
         res.send(true);
     });
   },
-
 
   //----------------------Update User Data at Settings----------------------//
 updateUserData: function(db, res, data) {
