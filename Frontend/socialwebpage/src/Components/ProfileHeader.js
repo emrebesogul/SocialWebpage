@@ -47,8 +47,8 @@ class ProfileHeader extends Component {
             <div>
 
                 <div id="profile-header">
-                  <Button> Add Friend
-                    <Icon name="user"/>
+                  <Button size="medium" id="button-add-friend" icon> Add Friend
+                    <Icon className="menu-icons" name="user"/>
                   </Button>
                   <Header as='h2' size="huge" icon textAlign='center'>
                     <Icon name='user' circular />

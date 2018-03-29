@@ -87,18 +87,19 @@ class SidebarProfile extends Component {
                       </Button>
                     </Link>
 
-                    <Link to="/upload">
-                      <Button labelPosition="right" size="medium" id="upload-button" icon>
-                        <Icon className="menu-icons" size="large" name='upload' />
-                        Upload Images
-                      </Button>
-                    </Link>
                     <Link to="/post">
                     <Button labelPosition="right" size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='plus' />
                       Add Story
                     </Button>
                   </Link>
+
+                    <Link to="/upload">
+                      <Button labelPosition="right" size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='upload' />
+                        Upload Image
+                      </Button>
+                    </Link>
 
                   <div className="seperator"></div>
 
