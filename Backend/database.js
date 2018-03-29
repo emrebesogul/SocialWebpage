@@ -2,12 +2,13 @@ var md5 = require('js-md5');
 var session = require('express-session')
 var jwt = require('jsonwebtoken');
 var ObjectId = require('mongodb').ObjectId;
+var fs = require('fs');
 
 var call = module.exports = {
 
 
   //----------------------LOGIN----------------------//
-  checkUserCredentials: function (db, req, res, userCredential,fn) {
+  checkUserCredentials: function (db, req, res, userCredential, fn) {
       //Select table and parse form input fields
       const collection = db.collection('users');
       let username = JSON.parse(userCredential).username;
@@ -118,7 +119,7 @@ var call = module.exports = {
   //----------------------Get Feed----------------------//
   //
   // Sends all story entries and images sorted by date to the react application.
-  getFeed: function (db, req, res) {
+  getFeed: function (db, req, res, userId) {
     db.collection('images').aggregate([
         { $lookup:
            {
@@ -135,6 +136,10 @@ var call = module.exports = {
                 "src": 1,
                 "filename": 1,
                 "number_of_likes": 1,
+                "liking_users": 1,
+                "current_user_has_liked" : {
+                    "$cond": { if: { "$in": [ userId , "$liking_users"] }, then: "1", else: "0" }
+                },
                 date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                 "user_id": 1,
                 "username": {
@@ -157,8 +162,12 @@ var call = module.exports = {
                     {
                         "title" : 1,
                         "content": 1,
-                        date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created",timezone: "Europe/Berlin"}},
                         "number_of_likes": 1,
+                        "liking_users": 1,
+                        "current_user_has_liked" : {
+                            "$cond": { if: { "$in": [ userId , "$liking_users"] }, then: "1", else: "0" }
+                        },
+                        date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created",timezone: "Europe/Berlin"}},
                         "user_id": 1,
                         "username": {
                             "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
@@ -170,10 +179,12 @@ var call = module.exports = {
 
                     res_stories.map(item => {
                         item.date_created = getDate(item.date_created);
+                        item.number_of_likes = item.liking_users.length;
                     });
                     res_images.map(item => {
                         item.date_created = getDate(item.date_created);
-                        item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename
+                        item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
+                        item.number_of_likes = item.liking_users.length;
                     });
 
                     let feed = res_images.concat(res_stories);
@@ -204,7 +215,7 @@ var call = module.exports = {
         "title": title,
         "content": content,
         "filename": filename,
-        "number_of_likes": 0,
+        "liking_users": [],
         "date_created": new Date(),
         "user_id": new ObjectId(userId)
     });
@@ -228,7 +239,7 @@ var call = module.exports = {
     db.collection('stories').insert({
         "title": title,
         "content": content,
-        "number_of_likes": 0,
+        "liking_users": [],
         "date_created": new Date(),
         "user_id": new ObjectId(userId)
     });
@@ -305,6 +316,10 @@ var call = module.exports = {
                 "content": 1,
                 date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                 "number_of_likes": 1,
+                "liking_users" : 1,
+                "current_user_has_liked" : {
+                    "$cond": { if: { "$in": [ userId , "$liking_users"] }, then: "1", else: "0" }
+                },
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
@@ -316,6 +331,7 @@ var call = module.exports = {
         if (err_stories) throw err_stories;
             result_stories.map(item => {
                 item.date_created = getDate(item.date_created);
+                item.number_of_likes = item.liking_users.length;
             });
             res.status(200).send(result_stories);
     });
@@ -343,6 +359,10 @@ var call = module.exports = {
                 "src": 1,
                 "filename": 1,
                 "number_of_likes": 1,
+                "liking_users": 1,
+                "current_user_has_liked" : {
+                    "$cond": { if: { "$in": [ userId , "$liking_users"] }, then: "1", else: "0" }
+                },
                 date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                 "user_id": 1,
                 "username": {
@@ -355,7 +375,8 @@ var call = module.exports = {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
-            item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename
+            item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
+            item.number_of_likes = item.liking_users.length;
         });
             res.status(200).send(result_images);
     });
@@ -416,6 +437,215 @@ var call = module.exports = {
       })
 
   },
+
+  //----------------------Delete Story Entry----------------------//
+  //
+  // Receives the id of a story entry and deletes it from the database. 
+  // After that, a message with "true" is send to the react application.
+  deleteStoryEntryById: function (db, res, storyId) {
+
+    db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, function(err, docs) {
+        if (err) {
+            res.send(JSON.stringify({
+                message: "Error while deleting the story with id: " + storyId
+            }));
+            throw err;
+        }
+        res.send(true);
+    });
+  },
+
+  //----------------------Delete Image---------------------//
+  //
+  // Receives the id of an image and deletes it from the database. 
+  // After that, a message with "true" is send to the react application.
+  deleteImageById: function (db, res, imageId) {
+
+    db.collection("images").findOne({ _id : new ObjectId(JSON.parse(imageId).imageId) }, function(err, docs) {
+        if (err) {
+            res.send(JSON.stringify({
+                message: "Error while deleting the image with id: " + imageId
+            }));
+            throw err;
+        }
+        if(docs !== null) {
+            let path = "./public/uploads/posts/" + docs.filename;
+            fs.unlinkSync(path);
+            
+            db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, function(err, docs) {
+                if (err) {
+                    res.send(JSON.stringify({
+                        message: "Error while deleting the image with id: " + imageId
+                    }));
+                    throw err;
+                }
+                res.send(true);
+            });
+        }
+        else {
+            res.send(false);
+        }
+    });
+
+
+  },
+
+  //----------------------Like Story Entry----------------------//
+  //
+  // Receives the id of a story entry and of a user, fetchs the array with likes from 
+  // the database and add or remove the current user from this array.
+  // After that, a message with "true" is send to the react application.
+  likeStoryEntryById: function (db, res, storyId, userId) {
+
+    db.collection("stories").findOne(
+        { 
+            _id : new ObjectId(JSON.parse(storyId).storyId) 
+        }, 
+        (err_find_stories, res_find_stories) => {
+
+        if (err_find_stories) {
+            res.send(JSON.stringify({
+                message: "Error while liking the story with id: " + storyId
+            }));
+            throw err_find_stories;
+        }
+        if(res_find_stories.liking_users.includes(userId)) {
+            let index = res_find_stories.liking_users.indexOf(userId);
+            if (index > -1) {
+                res_find_stories.liking_users.splice(index, 1);
+            }
+            else {
+                res.send(JSON.stringify({
+                    message: "Error while liking the story with id: " + storyId
+                }));
+                throw err_find_stories;
+            }
+        }
+        else {
+            res_find_stories.liking_users.push(userId);
+        }
+
+        db.collection("stories").update(
+            { 
+                _id : new ObjectId(JSON.parse(storyId).storyId) 
+            },
+            {
+                $set: { liking_users: res_find_stories.liking_users }
+            },
+            (err_update_stories, res_update_stories) => {
+
+            if (err_update_stories) {
+                res.send(JSON.stringify({
+                    message: "Error while updating the story with id: " + storyId
+                }));
+                throw err_update_stories;
+            }
+        });
+        res.send(true);
+    });
+  },
+
+  //----------------------Like Image----------------------//
+  //
+  // Receives the id of an image and of a user, fetchs the array with likes from 
+  // the database and add or remove the current user from this array.
+  // After that, a message with "true" is send to the react application.
+  likeImageById: function (db, res, imageId, userId) {
+
+    db.collection("images").findOne(
+        { 
+            _id : new ObjectId(JSON.parse(imageId).imageId) 
+        }, 
+        (err_find_images, res_find_images) => {
+
+        if (err_find_images) {
+            res.send(JSON.stringify({
+                message: "Error while liking the image with id: " + imageId
+            }));
+            throw err_find_images;
+        }
+        if(res_find_images.liking_users.includes(userId)) {
+            let index = res_find_images.liking_users.indexOf(userId);
+            if (index > -1) {
+                res_find_images.liking_users.splice(index, 1);
+            }
+            else {
+                res.send(JSON.stringify({
+                    message: "Error while liking the image with id: " + userId
+                }));
+                throw err_find_images;
+            }
+        }
+        else {
+            res_find_images.liking_users.push(userId);
+        }
+
+        db.collection("images").update(
+            { 
+                _id : new ObjectId(JSON.parse(imageId).imageId) 
+            },
+            {
+                $set: { liking_users: res_find_images.liking_users }
+            },
+            (err_update_images, res_update_images) => {
+
+            if (err_update_images) {
+                res.send(JSON.stringify({
+                    message: "Error while updating the image with id: " + imageId
+                }));
+                throw err_update_images;
+            }
+        });
+        res.send(true);
+    });
+  },
+
+
+  //----------------------Update User Data at Settings----------------------//
+/*
+db.collection('userlist').update({ _id: ObjectId(userToUpdate)}, req.body, function (err, result) {
+    res.send(
+        (err === null) ? {msg: ''} : {msg: err}
+    );
+});
+*/
+updateUserData: function(db, res, data) {
+    const collectionUsers = db.collection('users');
+
+    const userid = data.userid;
+    const userData = data.userData
+    const hashedPassword = md5(userData.password)
+    //console.log("hashed: ", hashedPassword)
+
+    if(userData.password !== '') {
+        //console.log("Pass1:---",hashedPassword,"---")
+        collectionUsers.update(
+            {_id: ObjectId(userid)},
+            {
+                $set: {
+                    "first_name": userData.first_name,
+                    "last_name": userData.last_name,
+                    "username": userData.username,
+                    "email": userData.email,
+                    "password": hashedPassword
+                }
+            }
+        );
+    } else {
+        //console.log("Pass2:---", userData.password, "---")
+        collectionUsers.update(
+            {_id: ObjectId(userid)},
+            {
+                $set: {
+                    "first_name": userData.first_name,
+                    "last_name": userData.last_name,
+                    "username": userData.username,
+                    "email": userData.email
+                }
+            }
+        );
+    }
+},
 
   //----------------------xy----------------------//
 

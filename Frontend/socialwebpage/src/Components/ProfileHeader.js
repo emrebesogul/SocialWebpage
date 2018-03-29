@@ -19,7 +19,6 @@ class ProfileHeader extends Component {
         }
         this.api = "/getUserInfo"
 
-
         this.getCurrentUser(props.name);
     }
 
