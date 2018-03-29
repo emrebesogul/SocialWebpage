@@ -5,6 +5,7 @@ import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
 import {checkSession} from '../API/GET/GetMethods';
+import {likeStoryEntryById} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var arr;
@@ -39,8 +40,33 @@ class Profile extends Component {
       this.setState({resArr: response});
   }
 
-handleRate(){
-  alert("hello");
+async handleRate(event, data){
+  event.preventDefault();
+
+  this.state.entryId = data._id;
+
+  if(data.src) {
+    // const response = await likeImage(
+    //   "/image/like",
+    //   this.state.entryId
+    // );
+  } 
+  else {
+    const response = await likeStoryEntryById(
+      "/story/like",
+      this.state.entryId
+    );
+  }
+ 
+
+  // Redirect to feed if respose is message is true
+  // this.setState({status: response});
+  // if(this.state.status === true) {
+  //     this.setState({ redirectToFeed: true });
+  // } else {
+  //     let errorField = document.getElementById("error-message-upload-story");
+  //     errorField.style.display = "block";
+  // }
 }
 
 
@@ -90,7 +116,7 @@ handleRate(){
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
-                                      <Rating onClick={this.handleRate} icon='heart' size="large" defaultRating={0} maxRating={1}>
+                                      <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                       </Rating>
                                          {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
