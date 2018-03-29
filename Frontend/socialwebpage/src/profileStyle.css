@@ -109,7 +109,7 @@ div.description{
   Only visible in mobile version (max-width <= 1250px).
 */
 #profile-button-mobile{
-    margin-left: 10px;
+    margin-left: 50px;
     margin-right: 115px;
     left: 0;
     background: none;
@@ -178,6 +178,18 @@ div.ui.pointing.secondary.menu{
   All CSS-specific for Profile site.
 */
 
+.roadmap-item{
+  margin-top: 10px !important;
+  margin-bottom: 20px !important;
+}
+
+.logo{
+  height: 80px;
+  position: fixed !important;
+  right: 3.5% !important;
+  image-rendering: crisp-edges !important;
+}
+
 .ui.segment.active.tab{
   border: none;
   box-shadow: none;
@@ -185,11 +197,27 @@ div.ui.pointing.secondary.menu{
   background-color: rgb(254,254,254) !important;
 }
 
+i.road.huge.icon{
+  margin-right: 20px !important;
+}
+
 #profile-content {
   margin-top: 15px;
   width: 65%;
   max-width: 820px;
   margin: 0 auto;
+}
+
+.milestone{
+  display: inline;
+  margin-bottom: 20px;
+  width: 691px;
+}
+
+#roadmap-steps{
+  margin: 55px auto;
+  display: block;
+  width: 544px;
 }
 
 #profile-header {
@@ -445,6 +473,17 @@ p {
   margin-right: 25px;
 }
 
+
+.logo-mobile{
+  height: 35px;
+  position: absolute !important;
+  z-index: 9990;
+  top: 3px;
+  display: none !important;
+  image-rendering: auto;
+  left: 1%;
+}
+
 /*
   Media Queries
   All media queries for Feed and Profile.
@@ -456,6 +495,14 @@ p {
     max-width: 765px;
     position: relative;
     top: 57px;
+  }
+
+  .logo-mobile{
+    display: inherit !important;
+  }
+
+  .logo{
+    display: none !important;
   }
 
   #upload-button-mobile{
