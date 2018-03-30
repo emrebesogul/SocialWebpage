@@ -90,7 +90,8 @@ class Profile extends Component {
           );
         }
 
-        window.location.reload();
+        //this.forceUpdate();
+        //window.location.reload();
         // Redirect to feed if respose is message is true
         // this.setState({status: response});
         // if(this.state.status === true) {
@@ -124,7 +125,6 @@ class Profile extends Component {
 
         return (
           <div className="feed">
-
               <SidebarProfile />
               <ProfileHeader name={this.property}/>
 
@@ -148,6 +148,8 @@ class Profile extends Component {
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+
+
                                       </Rating> {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">

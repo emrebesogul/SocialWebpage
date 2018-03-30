@@ -8,7 +8,7 @@ import {checkSession} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
-var arr;
+var arr = [];
 
 class Profile extends Component {
 
