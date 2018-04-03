@@ -1,7 +1,8 @@
 import $ from 'jquery';
 import { read_cookie } from 'sfcookies';
 
-var url = "http://localhost:8000";
+var getUrl = window.location;
+var url = getUrl .protocol + "//" + getUrl.hostname + ":8000";
 
 export const updateUserData=(api, jsonUserData)=>{
   return new Promise((resolve, reject) => {
