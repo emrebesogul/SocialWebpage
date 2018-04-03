@@ -412,21 +412,18 @@ MongoClient.connect(url, function(err, client) {
                   });
               } else {
                   const userId = authData.userid;
+                  const requester = authData.username;
                   const recipient = req.body.recipient;
 
-                  database.sendFriendshipRequest(client.db('socialwebpage'), res, userId, recipient);
+                  database.sendFriendshipRequest(client.db('socialwebpage'), res, userId, requester, recipient);
               }
           });
-
       });
-
 
       //----------------------Get friendRequests----------------------//
       // User ONE sends User TWO a friendship request. User TWO can accept or reject
       // If accepted, add to friendship list, else do nothing...
       app.get('/rest/friends/getFriendRequests', verifyToken, (req, res) => {
-          console.log("getFriendRequests")
-
           jwt.verify(req.token, 'secretkey', (err, authData) => {
               if(err) {
                   res.json({

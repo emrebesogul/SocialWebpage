@@ -91,6 +91,9 @@ async handleRate(event, data){
         }
 
         feedPosts = this.state.resFeedPosts;
+        friendRequests = this.state.resFriendsRequests;
+        console.log("feedPosts ", feedPosts)
+        console.log("friendRequests ", friendRequests)
 
         return (
           <div id="main-content">
@@ -170,6 +173,7 @@ async handleRate(event, data){
                                           <Image size="tiny" avatar src='/assets/images/boy.png' />
                                           <List.Content>
                                             <List.Header as='a'>{item.requester} wants to be friends with you.</List.Header>
+                                            <List.Description>{item.time}</List.Description>
                                             <List.Description>4 mutual contacts</List.Description>
                                           </List.Content>
                                           <List.Content floated="right">
