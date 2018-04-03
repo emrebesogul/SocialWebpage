@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Form, Input, Icon  } from 'semantic-ui-react'
+import { Button, Form, Input, Icon, Image  } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom';
 
 import '../style.css';
@@ -81,7 +81,7 @@ class Reqister extends Component {
               </div>
 
               <div id="ourProduct">
-
+                <Image id="logo-image-login" src="/assets/images/logo_high_res.png"/>
               </div>
 
               <div id="formularLogin">
@@ -114,13 +114,8 @@ class Reqister extends Component {
                     </Form.Field>
 
 
-                    <Button inverted className="ui basic" id="login-button-submit" type="submit" animated='fade'>
-                      <Button.Content visible>
+                    <Button  id="login-button-submit" type="submit">
                         Register
-                      </Button.Content>
-                      <Button.Content hidden>
-                        Join the platform!
-                      </Button.Content>
                     </Button>
 
                     <div id="error-message">
