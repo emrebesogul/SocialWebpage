@@ -610,9 +610,41 @@ updateUserData: function(db, res, data) {
 },
 
   //----------------------Friend----------------------//
+  sendFriendshipRequest: function(db, res, userId, recipient) {
+      const collectionUsers = db.collection('users');
+      const collectionfriendRequests = db.collection('users');
 
+      collectionUsers.findOne({"username": recipient}, (err, docs) => {
+          if (err) {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+              throw err;
+          }
 
+          if (docs) {
+              const recipientId = docs._id;
 
+              db.collection('friendRequests').insert({
+                  "requester": ObjectId(userId),
+                  "recipient": recipientId,
+                  "time": Date(),
+                  "status": "open"
+              });
+
+               console.log("Request sent to add new friend...")
+
+               res.send(JSON.stringify({
+                   buttonState: "Request sent"
+               }));
+          }
+          else {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+          }
+      })
+  },
 
   //----------------------xy----------------------//
 

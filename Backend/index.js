@@ -384,7 +384,22 @@ MongoClient.connect(url, function(err, client) {
       //----------------------Friendship relation between users----------------------//
       // User ONE sends User TWO a friendship request. User TWO can accept or reject
       // If accepted, add to friendship list, else do nothing...
+      app.post('/rest/friends/sendFriendshipRequest', verifyToken, (req, res) => {
 
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  const userId = authData.userid;
+                  const recipient = req.body.recipient;
+
+                  database.sendFriendshipRequest(client.db('socialwebpage'), res, userId, recipient);
+              }
+          });
+
+      });
 
 
 

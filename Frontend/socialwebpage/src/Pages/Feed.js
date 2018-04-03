@@ -42,6 +42,14 @@ class Profile extends Component {
       this.setState({resArr: response});
   }
 
+
+
+  async getFriendRequests() {
+
+  }
+
+
+
 async handleRate(event, data){
   event.preventDefault();
 
