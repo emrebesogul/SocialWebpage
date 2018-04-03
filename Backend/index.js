@@ -430,6 +430,7 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
+                  console.log("getFriendRequests")
                   const userId = authData.userid;
                   database.getFriendRequests(client.db('socialwebpage'), res, userId);
               }

@@ -11,7 +11,7 @@ import '../profileStyle.css';
 
 var feedPosts = [];
 var friendRequests = [];
-var friends = [{requester: "Emre"}, {requester: "Johannes"}];
+var friends = [];
 
 class Profile extends Component {
 
@@ -92,8 +92,6 @@ async handleRate(event, data){
 
         feedPosts = this.state.resFeedPosts;
         friendRequests = this.state.resFriendsRequests;
-        console.log("feedPosts ", feedPosts)
-        console.log("friendRequests ", friendRequests)
 
         return (
           <div id="main-content">
@@ -165,7 +163,7 @@ async handleRate(event, data){
                             <div id="friends">
                               <List className="friend-list" relaxed divided>
 
-                                {friends.map((item, index) =>
+                                {friendRequests.map((item, index) =>
                                   {
                                     return(
                                       <div key={index}>
@@ -174,7 +172,7 @@ async handleRate(event, data){
                                           <List.Content>
                                             <List.Header as='a'>{item.requester} wants to be friends with you.</List.Header>
                                             <List.Description>{item.time}</List.Description>
-                                            <List.Description>4 mutual contacts</List.Description>
+                                            <List.Description>444 mutual contacts</List.Description>
                                           </List.Content>
                                           <List.Content floated="right">
                                             <Button>Confirm</Button>
