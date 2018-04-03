@@ -21,7 +21,7 @@ class Login extends Component {
         this.api = '/user/loginUser';
         this.handleSubmit = this.handleSubmit.bind(this);
 
-        this.pageTitle = "Log in to Social Webpage";
+        this.pageTitle = "Ivey";
         document.title = this.pageTitle;
     }
 

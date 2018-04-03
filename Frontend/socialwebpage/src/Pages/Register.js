@@ -24,7 +24,7 @@ class Reqister extends Component {
 
         this.api = '/user/create';
 
-        this.pageTitle = "Reqister to Social Webpage"
+        this.pageTitle = "Reqister to Ivey"
         document.title = this.pageTitle;
     }
 

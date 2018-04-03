@@ -255,7 +255,7 @@ MongoClient.connect(url, function(err, client) {
       // images for the user id in the query to the react application.
       // Get prameter: userId of the respective user
       app.get('/image/list', verifyToken, (req, res) => {
-          
+
         if(req.query.username) {
             let username = req.query.username;
             database.listImagesForUsername(client.db('socialwebpage'), req, res, username, () => {
@@ -338,7 +338,7 @@ MongoClient.connect(url, function(err, client) {
               }
           });
       });
-      
+
       //----------------------Like Story Entry----------------------//
       //
       // Calls the method likeStoryEntryById that add the user to the list of
@@ -381,7 +381,11 @@ MongoClient.connect(url, function(err, client) {
         });
       });
 
+      //----------------------Friendship relation between users----------------------//
+      // User ONE sends User TWO a friendship request. User TWO can accept or reject
+      // If accepted, add to friendship list, else do nothing...
 
+      
 
 
       //----------------------xy----------------------//
@@ -391,6 +395,3 @@ MongoClient.connect(url, function(err, client) {
       })
   }
 })
-
-
-

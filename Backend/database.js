@@ -436,11 +436,11 @@ var call = module.exports = {
 
   //----------------------Delete Story Entry----------------------//
   //
-  // Receives the id of a story entry and deletes it from the database. 
+  // Receives the id of a story entry and deletes it from the database.
   // After that, a message with "true" is send to the react application.
   deleteStoryEntryById: function (db, res, storyId, userId) {
 
-    db.collection("stories").findOne({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => { 
+    db.collection("stories").findOne({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
         if (err) throw err;
         if (docs.user_id == userId) {
             db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
@@ -451,12 +451,12 @@ var call = module.exports = {
         else {
             res.send(false);
         }
-    });    
+    });
   },
 
   //----------------------Delete Image---------------------//
   //
-  // Receives the id of an image and deletes it from the database. 
+  // Receives the id of an image and deletes it from the database.
   // After that, a message with "true" is send to the react application.
   deleteImageById: function (db, res, imageId, userId) {
 
@@ -478,15 +478,15 @@ var call = module.exports = {
 
   //----------------------Like Story Entry----------------------//
   //
-  // Receives the id of a story entry and of a user, fetchs the array with likes from 
+  // Receives the id of a story entry and of a user, fetchs the array with likes from
   // the database and add or remove the current user from this array.
   // After that, a message with "true" is send to the react application.
   likeStoryEntryById: function (db, res, storyId, userId) {
 
     db.collection("stories").findOne(
-        { 
-            _id : new ObjectId(JSON.parse(storyId).storyId) 
-        }, 
+        {
+            _id : new ObjectId(JSON.parse(storyId).storyId)
+        },
         (err_find_stories, res_find_stories) => {
 
         if (err_find_stories) throw err_find_stories;
@@ -504,8 +504,8 @@ var call = module.exports = {
         }
 
         db.collection("stories").update(
-            { 
-                _id : new ObjectId(JSON.parse(storyId).storyId) 
+            {
+                _id : new ObjectId(JSON.parse(storyId).storyId)
             },
             {
                 $set: { liking_users: res_find_stories.liking_users }
@@ -520,15 +520,15 @@ var call = module.exports = {
 
   //----------------------Like Image----------------------//
   //
-  // Receives the id of an image and of a user, fetchs the array with likes from 
+  // Receives the id of an image and of a user, fetchs the array with likes from
   // the database and add or remove the current user from this array.
   // After that, a message with "true" is send to the react application.
   likeImageById: function (db, res, imageId, userId) {
 
     db.collection("images").findOne(
-        { 
-            _id : new ObjectId(JSON.parse(imageId).imageId) 
-        }, 
+        {
+            _id : new ObjectId(JSON.parse(imageId).imageId)
+        },
         (err_find_images, res_find_images) => {
 
         if (err_find_images) {
@@ -554,8 +554,8 @@ var call = module.exports = {
         }
 
         db.collection("images").update(
-            { 
-                _id : new ObjectId(JSON.parse(imageId).imageId) 
+            {
+                _id : new ObjectId(JSON.parse(imageId).imageId)
             },
             {
                 $set: { liking_users: res_find_images.liking_users }
@@ -609,7 +609,13 @@ updateUserData: function(db, res, data) {
     }
 },
 
+  //----------------------Friend----------------------//
+
+
+
+
   //----------------------xy----------------------//
+
 
 }
 
