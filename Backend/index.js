@@ -229,10 +229,20 @@ MongoClient.connect(url, function(err, client) {
       // Get prameter: userId of the respective user
       app.get('/rest/story/list', verifyToken, (req, res) => {
         if(req.query.username) {
-            let username = req.query.username;
-            database.listStoryEntriesForUsername(client.db('socialwebpage'), res, username, () => {
-                db.close();
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    let username = req.query.username;
+                    let currentUserId = authData.userid;
+                    database.listStoryEntriesForUsername(client.db('socialwebpage'), res, username, currentUserId,  () => {
+                        db.close();
+                    });
+                }
             });
+
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
@@ -240,8 +250,8 @@ MongoClient.connect(url, function(err, client) {
                         message: "User is not authorized"
                     });
                 } else {
-                    const userid = authData.userid
-                    database.listStoryEntriesForUserId(client.db('socialwebpage'), res, userid, () => {
+                    const currentUserId = authData.userid;
+                    database.listStoryEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId, () => {
                         db.close();
                     });
                 }
@@ -257,9 +267,18 @@ MongoClient.connect(url, function(err, client) {
       app.get('/rest/image/list', verifyToken, (req, res) => {
 
         if(req.query.username) {
-            let username = req.query.username;
-            database.listImagesForUsername(client.db('socialwebpage'), req, res, username, () => {
-                db.close();
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    let username = req.query.username;
+                    let currentUserId = authData.userid;
+                    database.listImagesForUsername(client.db('socialwebpage'), req, res, username, currentUserId, () => {
+                        db.close();
+                    });
+                }
             });
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -268,8 +287,8 @@ MongoClient.connect(url, function(err, client) {
                         message: "User is not authorized"
                     });
                 } else {
-                    const userid = authData.userid
-                    database.listImagesForUserId(client.db('socialwebpage'), req, res, userid, () => {
+                    const currentUserId = authData.userid;
+                    database.listImagesForUserId(client.db('socialwebpage'), req, res, currentUserId, currentUserId, () => {
                         db.close();
                     });
                 }
