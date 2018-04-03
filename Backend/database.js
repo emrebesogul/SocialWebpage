@@ -247,7 +247,7 @@ var call = module.exports = {
   //
   // Receives the name of a user, fetchs the corresponding user id from the database and
   // calls the method listStoryEntriesForUserId.
-  listStoryEntriesForUsername: function(db, res, username) {
+  listStoryEntriesForUsername: function(db, res, username, currentUserId) {
       const collection = db.collection('users');
       collection.findOne({"username": username}, (err, docs) => {
           if (err) {
@@ -258,7 +258,7 @@ var call = module.exports = {
           }
 
           if (docs) {
-              call.listStoryEntriesForUserId(db, res, docs._id)
+              call.listStoryEntriesForUserId(db, res, docs._id, currentUserId)
           }
           else {
               res.send(JSON.stringify({
@@ -272,7 +272,7 @@ var call = module.exports = {
   //
   // Receives the name of a user, fetchs the corresponding user id from the database and
   // calls the method listImagesForUserId.
-  listImagesForUsername: function(db, req, res, username) {
+  listImagesForUsername: function(db, req, res, username, currentUserId) {
     const collection = db.collection('users');
     collection.findOne({"username": username}, (err, docs) => {
         if (err) {
@@ -283,7 +283,7 @@ var call = module.exports = {
         }
 
         if (docs) {
-            call.listImagesForUserId(db, req, res, docs._id)
+            call.listImagesForUserId(db, req, res, docs._id, currentUserId)
         }
         else {
             res.send(JSON.stringify({
@@ -297,7 +297,7 @@ var call = module.exports = {
   //
   // Receives the userId of a user and sends all story entries of this user
   // to the react application. These story entries are sorted by date.
-  listStoryEntriesForUserId: function (db, res, userId) {
+  listStoryEntriesForUserId: function (db, res, userId, currentUserId) {
     db.collection('stories').aggregate([
         { $match : { user_id : new ObjectId(userId) } },
         { $lookup:
@@ -315,7 +315,7 @@ var call = module.exports = {
                 "number_of_likes": 1,
                 "liking_users" : 1,
                 "current_user_has_liked" : {
-                    "$cond": { if: { "$in": [ userId , "$liking_users"] }, then: "1", else: "0" }
+                    "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
                 },
                 "user_id": 1,
                 "username": {
@@ -338,7 +338,7 @@ var call = module.exports = {
   //
   // Receives the userId of a user and sends all images of this user
   // to the react application. These images are sorted by date.
-  listImagesForUserId: function (db, req, res, userId) {
+  listImagesForUserId: function (db, req, res, userId, currentUserId) {
     db.collection('images').aggregate([
         { $match : { user_id : new ObjectId(userId) } },
         { $lookup:
@@ -358,7 +358,7 @@ var call = module.exports = {
                 "number_of_likes": 1,
                 "liking_users": 1,
                 "current_user_has_liked" : {
-                    "$cond": { if: { "$in": [ userId , "$liking_users"] }, then: "1", else: "0" }
+                    "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
                 },
                 date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                 "user_id": 1,
