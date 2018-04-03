@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById} from '../API/POST/PostMethods';
+import { Redirect } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 
@@ -119,6 +120,11 @@ class Profile extends Component {
       }
 
     render() {
+
+    const { redirectToLogin } = this.state;
+    if (redirectToLogin) {
+        return <Redirect to='/login' />;
+    }
 
       images = this.state.responseImages;
       stories = this.state.responseStories;

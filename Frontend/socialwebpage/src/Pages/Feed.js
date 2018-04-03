@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Rating, List, Button } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
@@ -15,23 +15,25 @@ class Profile extends Component {
   constructor() {
       super();
 
-      this.getfeeddata();
-
       this.state = {
+        redirectToLogin: false,
         resArr: []
       }
 
       this.apiCheckSession = "/checkSession";
 
-        this.pageTitle = "Recent posts and updates...";
-        document.title = this.pageTitle;
+      this.checkThisSession();
+      this.getfeeddata();
+
+      this.pageTitle = "Recent posts and updates...";
+      document.title = this.pageTitle;
   }
 
   async checkThisSession() {
-      const response = await checkSession(this.apiCheckSession);
-      if(response.message !== "User is authorized") {
-          this.setState({redirectToLogin: true})
-      }
+    const response = await checkSession(this.apiCheckSession);
+    if(response.message !== "User is authorized") {
+        this.setState({redirectToLogin: true})
+    }
   }
 
 
@@ -71,6 +73,10 @@ async handleRate(event, data){
 
 
     render() {
+        const { redirectToLogin } = this.state;
+        if (redirectToLogin) {
+            return <Redirect to='/login' />;
+        }
 
         arr = this.state.resArr;
 
