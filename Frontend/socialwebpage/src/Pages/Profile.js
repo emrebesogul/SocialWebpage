@@ -161,6 +161,9 @@ class Profile extends Component {
                                           <div className="value">
                                             {item.number_of_likes}
                                           </div>
+                                          <div className="label">
+                                            Likes
+                                          </div>
                                         </div>
                                     </Card.Header>
                                     <Card.Meta className="card-meta">
