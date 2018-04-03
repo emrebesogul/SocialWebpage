@@ -647,7 +647,9 @@ updateUserData: function(db, res, data) {
   },
 
   //----------------------xy----------------------//
-
+  //getFriendRequests => where recipient is userid and status open
+  // if decline: status = rejected
+  // if status = accepted
 
 }
 
