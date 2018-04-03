@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Icon, Header, Button} from 'semantic-ui-react'
 
 import {getCurrentUser} from '../API/GET/GetMethods';
-import {sendFriendshipRequest} from '../API/GET/GetMethods';
+import {sendFriendshipRequest} from '../API/POST/PostMethods';
 
 import '../profileStyle.css';
 
@@ -52,7 +52,8 @@ class ProfileHeader extends Component {
 
     async doSomethingWithUser() {
 
-
+        const response = await sendFriendshipRequest(this.apiFriendshipRequest);
+        alert(response)
     }
 
 
