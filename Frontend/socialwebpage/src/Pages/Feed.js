@@ -10,7 +10,7 @@ import '../profileStyle.css';
 
 var feedPosts = [];
 var friendRequests = [];
-var friends = [];
+var friends = [{requester: "Emre"}, {requester: "Johannes"}];
 
 class Profile extends Component {
 
@@ -97,7 +97,7 @@ async handleRate(event, data){
                           <Link to="/upload">
                             <Button  size="medium" id="upload-button-mobile" icon>
                               <Icon className="menu-icons" name='upload' />
-                              Upload Content
+                              Upload Image
                             </Button>
                           </Link>
                           <Link to="/post">
@@ -154,7 +154,7 @@ async handleRate(event, data){
                             <div id="friends">
                               <List className="friend-list" relaxed divided>
 
-                                {friendRequests.map((item, index) =>
+                                {friends.map((item, index) =>
                                   {
                                     return(
                                       <div key={index}>
@@ -174,29 +174,29 @@ async handleRate(event, data){
                                   }
                                 )}
                               </List>
+
                               <div className="seperator"></div>
 
-                                <List className="friend-list" relaxed divided>
-                                  {friendRequests.map((item, index) =>
-                                    {
-                                      return(
-                                        <div key={index}>
-                                          <List.Item>
-                                            <Image size="tiny" avatar src='/assets/images/boy.png' />
-                                            <List.Content>
-                                              <List.Header as='a'>{item.requester}</List.Header>
-                                              <List.Description>4 mutual contacts</List.Description>
-                                            </List.Content>
-                                            <List.Content floated="right">
-                                              <Button>Confirm</Button>
-                                              <Button>Decline</Button>
-                                            </List.Content>
-                                          </List.Item>
-                                        </div>
-                                      )
-                                    }
-                                  )}
-                                </List>
+                              <List className="friend-list" relaxed divided>
+                                {friends.map((item, index) =>
+                                  {
+                                    return(
+                                      <div key={index}>
+                                        <List.Item>
+                                          <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                          <List.Content>
+                                            <List.Header as='a'>{item.requester}</List.Header>
+                                            <List.Description>4 mutual contacts</List.Description>
+                                          </List.Content>
+                                          <List.Content floated="right">
+                                            <Button>Delete Friend</Button>
+                                          </List.Content>
+                                        </List.Item>
+                                      </div>
+                                    )
+                                  }
+                                )}
+                              </List>
                             </div>
 
                           </Tab.Pane> },

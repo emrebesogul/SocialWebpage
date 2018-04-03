@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Form, Input } from 'semantic-ui-react';
+import { Button, Form, Input, Image } from 'semantic-ui-react';
 import { Link, Redirect } from 'react-router-dom';
 import { bake_cookie } from 'sfcookies';
 
@@ -68,6 +68,7 @@ class Login extends Component {
               </div>
 
               <div id="ourProduct">
+                <Image id="logo-image-login" src="/assets/images/logo_high_res.png"/>
               </div>
 
               <div id="formularLogin">
@@ -79,13 +80,8 @@ class Login extends Component {
                       <Input className="login-input-text" type="password" placeholder='Password' name="password" />
                     </Form.Field>
 
-                    <Button inverted className="ui basic" id="login-button-submit" type="submit" animated='fade'>
-                      <Button.Content visible>
-                        Login
-                      </Button.Content>
-                      <Button.Content hidden>
-                        Enter the platform!
-                      </Button.Content>
+                    <Button id="login-button-submit" type="submit">
+                      Login
                     </Button>
 
                     <div id="error-message">
