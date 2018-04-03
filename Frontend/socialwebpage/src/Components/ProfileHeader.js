@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Icon, Header, Button} from 'semantic-ui-react'
 
 import {getCurrentUser} from '../API/GET/GetMethods';
+import {sendFriendshipRequest} from '../API/GET/GetMethods';
 
 import '../profileStyle.css';
 
@@ -19,6 +20,7 @@ class ProfileHeader extends Component {
           email: "beast@hpe.com"
         }
         this.api = "/getUserInfo"
+        this.apiFriendshipRequest = "/sendFriendshipRequest"
 
         this.getCurrentUser(props.name);
     }
@@ -46,9 +48,11 @@ class ProfileHeader extends Component {
         }
     }
 
+    //alert("You want to add " + this.state.username + " to your friendlist?")
 
-    doSomethingWithUser() {
-        alert("You want to add " + this.state.username + " to your friendlist?")
+    async doSomethingWithUser() {
+
+
     }
 
 

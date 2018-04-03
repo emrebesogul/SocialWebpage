@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { read_cookie } from 'sfcookies';
 
 var getUrl = window.location;
-var url = "http://" + getUrl.hostname + ":8000";
+var url = getUrl.protocol + "//" + getUrl.hostname + ":8000/rest";
 
 //----------------------LOGIN----------------------//
 export const checkUserDataAtLogin=(api, username, password) =>
@@ -186,6 +186,31 @@ export const likeImageById=(api, imageId) =>
           cache: false,
           contentType: 'application/json',
           data: JSON.stringify({imageId: imageId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
+
+//----------------------Add Friend----------------------//
+export const sendFriendshipRequest=(api, reciepent) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({token: token, reciepent: reciepent}),
           headers: {
               'Authorization': 'Bearer ' + token
           },
