@@ -161,7 +161,7 @@ async handleRate(event, data){
                           </Tab.Pane> },
                           { menuItem: 'Friends', render: () => <Tab.Pane attached={false}>
                             <div id="friends">
-                                {friends.map((item, index) =>
+                                {friendRequests.map((item, index) =>
                                   {
                                     return(
                                       <div key={index}>
