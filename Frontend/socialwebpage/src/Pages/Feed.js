@@ -161,52 +161,51 @@ async handleRate(event, data){
                           </Tab.Pane> },
                           { menuItem: 'Friends', render: () => <Tab.Pane attached={false}>
                             <div id="friends">
-                              <List className="friend-list" relaxed divided>
-
-                                {friendRequests.map((item, index) =>
-                                  {
-                                    return(
-                                      <div key={index}>
-                                        <List.Item>
-                                          <Image size="tiny" avatar src='/assets/images/boy.png' />
-                                          <List.Content>
-                                            <List.Header as='a'>{item.requester} wants to be friends with you.</List.Header>
-                                            <List.Description>{item.time}</List.Description>
-                                            <List.Description>444 mutual contacts</List.Description>
-                                          </List.Content>
-                                          <List.Content floated="right">
-                                            <Button>Confirm</Button>
-                                            <Button>Decline</Button>
-                                          </List.Content>
-                                        </List.Item>
-                                      </div>
-                                    )
-                                  }
-                                )}
-                              </List>
-
-                              <div className="seperator"></div>
-
-                              <List className="friend-list" relaxed divided>
                                 {friends.map((item, index) =>
                                   {
                                     return(
                                       <div key={index}>
-                                        <List.Item>
-                                          <Image size="tiny" avatar src='/assets/images/boy.png' />
-                                          <List.Content>
-                                            <List.Header as='a'>{item.requester}</List.Header>
-                                            <List.Description>4 mutual contacts</List.Description>
-                                          </List.Content>
-                                          <List.Content floated="right">
-                                            <Button>Delete Friend</Button>
-                                          </List.Content>
-                                        </List.Item>
+                                        <List  divided relaxed verticalAlign='middle'>
+                                          <List.Item>
+                                            <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                            <List.Content>
+                                              <List.Header as='a'>{item.requester} wants to be friends with you.</List.Header>
+                                              <List.Description>4 mutual contacts</List.Description>
+                                            </List.Content>
+                                            <List.Content floated="right">
+                                              <Button>Confirm</Button>
+                                              <Button>Decline</Button>
+                                            </List.Content>
+                                          </List.Item>
+                                        </List>
                                       </div>
                                     )
                                   }
                                 )}
-                              </List>
+
+                              <div className="seperator">
+                              </div>
+
+                                {friends.map((item, index) =>
+                                  {
+                                    return(
+                                      <div key={index}>
+                                        <List  divided relaxed verticalAlign='middle'>
+                                          <List.Item>
+                                            <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                            <List.Content>
+                                              <List.Header as='a'>{item.requester}</List.Header>
+                                              <List.Description>4 mutual contacts</List.Description>
+                                            </List.Content>
+                                            <List.Content floated="right">
+                                              <Button>Delete Friend</Button>
+                                            </List.Content>
+                                          </List.Item>
+                                        </List>
+                                      </div>
+                                    )
+                                  }
+                                )}
                             </div>
 
                           </Tab.Pane> },
