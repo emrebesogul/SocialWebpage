@@ -17,38 +17,40 @@ var call = module.exports = {
 
       if(!username || !password) {
           res.send(JSON.stringify({
-              message: "Felder ausfüllen..."
+              message: "The fields are required."
           }));
        } else {
            //Check username and password
            if (username != null && password != null) {
                collection.findOne({"username": username}, (err, docs) => {
                    if (err) {
+                       console.log(username, " tried to login")
                        res.send(JSON.stringify({
-                           message: "User not found"
+                           message: "Sorry, your password is incorrect. Please check again."
                        }));
                        throw err;
                    }
 
                    if (docs) {
                        if(passwordHashed == docs.password) {
-                           console.log("Correct credentials");
                            jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
+                               console.log("Correct credentials! Login from user: ", docs.username)
                                res.send(JSON.stringify({
                                    message : "Correct credentials",
                                    token,
                                }));
                            });
                        } else {
-                           console.log("Password wrong");
+                           console.log(username, " tried to login")
                            res.send(JSON.stringify({
-                               message: "Password wrong"
+                               message: "Sorry, your password is incorrect. Please check again."
                            }));
                        }
                    }
                    else {
+                       console.log(username, " tried to login")
                        res.send(JSON.stringify({
-                           message: "User not found"
+                           message: "Sorry, your password is incorrect. Please check again."
                        }));
                    }
                })
@@ -79,7 +81,7 @@ var call = module.exports = {
 
               if(docs) {
                   res.send(JSON.stringify({
-                      message: "Username already taken"
+                      message: "This username is not available. Please try another one."
                   }));
               } else {
                   collection.findOne({"email": email}, (err, docs) => {
@@ -88,13 +90,13 @@ var call = module.exports = {
                       }
                       if(docs) {
                           res.send(JSON.stringify({
-                              message: "E-Mail already given"
+                              message: "This email is not available. Please try another one."
                           }));
                       } else {
-                          console.log("User created!");
-
+                          console.log("User created: ", username);
                           res.send(JSON.stringify({
-                              message: "User successfully created"
+                              message: "User successfully created",
+                              messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
                           }));
 
                           collection.insert({
@@ -217,7 +219,7 @@ var call = module.exports = {
         "date_created": new Date(),
         "user_id": new ObjectId(userId)
     });
-
+    console.log("Image was uploaded to server...")
     res.send(JSON.stringify({
         message: "Image uploaded"
     }));
@@ -233,6 +235,7 @@ var call = module.exports = {
     let content = JSON.parse(file.storyData).content;
     let userId = file.userid;
 
+    console.log("Story was uploaded to server...")
     db.collection('stories').insert({
         "title": title,
         "content": content,
@@ -580,6 +583,8 @@ updateUserData: function(db, res, data) {
     const userid = data.userid;
     const userData = data.userData
     const hashedPassword = md5(userData.password)
+
+    console.log(userData.username, " changed successfully its user data")
 
     if(userData.password !== '') {
         collectionUsers.update(

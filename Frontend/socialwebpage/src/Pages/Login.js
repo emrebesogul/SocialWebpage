@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Form, Input, Image } from 'semantic-ui-react';
+import { Button, Form, Input, Image, Message } from 'semantic-ui-react';
 import { Link, Redirect } from 'react-router-dom';
 import { bake_cookie } from 'sfcookies';
 
@@ -10,6 +10,7 @@ class Login extends Component {
         super();
 
         this.state = {
+          showMessage: false,
           username: "",
           userID: "",
           password: "",
@@ -45,9 +46,7 @@ class Login extends Component {
             this.setState({ redirectToFeed: true });
         } else {
             //Error messages
-            let errorField = document.getElementById("error-message");
-            let messageText = "<b>"+this.state.message+"</b>";
-            errorField.innerHTML = messageText;
+            this.setState({ showMessage: true });
         }
     }
 
@@ -79,6 +78,8 @@ class Login extends Component {
                     <Form.Field required>
                       <Input className="login-input-text" type="password" placeholder='Password' name="password" />
                     </Form.Field>
+
+                    {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 
                     <Button id="login-button-submit" type="submit">
                       Login
