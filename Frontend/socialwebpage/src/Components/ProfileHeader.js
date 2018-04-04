@@ -17,10 +17,13 @@ class ProfileHeader extends Component {
           username: "Username",
           firstname: "First name",
           lastname: "Last name",
-          email: "beast@hpe.com"
+          email: "beast@hpe.com",
+
+          //ButtonState variiert je nachdem, ob sie freunde sind, anfrage raus ist oder status anders ist
+          buttonState: "Add Friend"
         }
         this.api = "/getUserInfo"
-        this.apiFriendshipRequest = "/sendFriendshipRequest"
+        this.apiFriendshipRequest = "/friends/sendFriendshipRequest"
 
         this.getCurrentUser(props.name);
     }
@@ -48,12 +51,11 @@ class ProfileHeader extends Component {
         }
     }
 
-    //alert("You want to add " + this.state.username + " to your friendlist?")
-
     async doSomethingWithUser() {
 
-        const response = await sendFriendshipRequest(this.apiFriendshipRequest);
-        alert(response)
+        const response = await sendFriendshipRequest(this.apiFriendshipRequest, this.state.username);
+        this.setState({buttonState: JSON.parse(response).buttonState})
+
     }
 
 
@@ -64,7 +66,7 @@ class ProfileHeader extends Component {
                 <div id="profile-header">
 
                   <div>
-                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>Add Friend<Icon name="user"/></Button> : null}
+                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>Add User<Icon name="user"/></Button> : null}
                   </div>
 
 

@@ -5,12 +5,13 @@ import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
 import {checkSession} from '../API/GET/GetMethods';
+import {getFriendRequests} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var feedPosts = [];
 var friendRequests = [];
-var friends = [{requester: "Emre"}, {requester: "Johannes"}];
+var friends = [];
 
 class Profile extends Component {
 
@@ -28,6 +29,7 @@ class Profile extends Component {
 
       this.checkThisSession();
       this.getfeeddata();
+      this.getFriendRequests();
 
       this.pageTitle = "Recent posts and updates...";
       document.title = this.pageTitle;
@@ -45,6 +47,12 @@ class Profile extends Component {
       const response = await fetchFeedData("/feed");
       this.setState({resFeedPosts: response});
   }
+
+  async getFriendRequests() {
+      const response = await getFriendRequests("/friends/getFriendRequests");
+      this.setState({resFriendsRequests: response});
+  }
+
 
 async handleRate(event, data){
   event.preventDefault();
@@ -83,6 +91,7 @@ async handleRate(event, data){
         }
 
         feedPosts = this.state.resFeedPosts;
+        friendRequests = this.state.resFriendsRequests;
 
         return (
           <div id="main-content">

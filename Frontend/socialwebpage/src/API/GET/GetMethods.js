@@ -154,3 +154,27 @@ export const fetchFeedData=(api) =>
         });
     });
 }
+
+//----------------------Get Feed----------------------//
+export const getFriendRequests=(api) =>
+{
+    return new Promise((resolve, reject) => {
+      var token = read_cookie('token')
+        $.ajax({
+          url: url + api,
+          type: "GET",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify(),
+          headers: {
+            'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}

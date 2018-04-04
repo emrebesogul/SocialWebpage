@@ -200,7 +200,7 @@ export const likeImageById=(api, imageId) =>
 }
 
 //----------------------Add Friend----------------------//
-export const sendFriendshipRequest=(api, reciepent) =>
+export const sendFriendshipRequest=(api, recipient) =>
 {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
@@ -210,7 +210,7 @@ export const sendFriendshipRequest=(api, reciepent) =>
           type: "POST",
           cache: false,
           contentType: 'application/json',
-          data: JSON.stringify({token: token, reciepent: reciepent}),
+          data: JSON.stringify({token: token, recipient: recipient}),
           headers: {
               'Authorization': 'Bearer ' + token
           },

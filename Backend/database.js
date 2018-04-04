@@ -610,14 +610,62 @@ updateUserData: function(db, res, data) {
 },
 
   //----------------------Friend----------------------//
+  sendFriendshipRequest: function(db, res, userId, requester, recipient) {
+      const collectionUsers = db.collection('users');
 
+      collectionUsers.findOne({"username": recipient}, (err, docs) => {
+          if (err) {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+              throw err;
+          }
 
+          if (docs) {
+              const recipientId = docs._id;
+              const recipient = docs.username;
 
+              db.collection('friendRequests').insert({
+                  "requester": requester,
+                  "requesterId": ObjectId(userId),
+                  "recipient": recipient,
+                  "recipientId": recipientId,
+                  "time": Date(),
+                  "status": "open"
+              });
+
+               console.log("Request sent to add new friend...")
+
+               res.send(JSON.stringify({
+                   buttonState: "Request sent"
+               }));
+          }
+          else {
+              res.send(JSON.stringify({
+                  message: "User not found"
+              }));
+          }
+      })
+  },
 
   //----------------------xy----------------------//
+  //getFriendRequests => where recipient is userid and status open
+  // if decline: status = rejected
+  // if status = accepted
+  getFriendRequests: function(db, res, userId) {
+      const collectionfriendRequests = db.collection('friendRequests');
+      const collectionUsers = db.collection('users');
 
+      collectionfriendRequests.find({"status": "open", "recipientId": ObjectId(userId)}).toArray((err, docs) => {
+          if (err) throw err;
+          if (docs) {
+              console.log(docs)
+              res.status(200).send(docs);
+          }
+      })
 
-}
+    }
+  }
 
 function getMonthName (month) {
     const monthNames = [
