@@ -10,10 +10,9 @@ const uuid = require('uuid/v4');
 const jwt = require('jsonwebtoken');
 
 
-
-//==================================================================================================//
 // create application/json parser
 const jsonParser = bodyParser.json();
+
 const database = require('./database');
 const url = 'mongodb://127.0.0.1:27017/socialwebpage';
 
@@ -32,11 +31,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage});
 
+app.use(express.static('public'));
+
 
 
 //==================================================================================================//
-app.use(express.static('public'));
 
+
+
+
+//==================================================================================================//
 //Enable CORS
 app.use(cors());
 
@@ -131,13 +135,17 @@ MongoClient.connect(url, function(err, client) {
       //----------------------LOGIN----------------------//
       app.post('/rest/user/loginUser', (req, res) => {
           const userCredential = JSON.stringify(req.body);
-          database.checkUserCredentials(client.db('socialwebpage'), req, res, userCredential);
+          database.checkUserCredentials(client.db('socialwebpage'), req, res, userCredential, function(){
+              db.close();
+          });
       });
 
       //----------------------REGISTER----------------------//
       app.post('/rest/user/create', (req, res) => {
           const newUserData = JSON.stringify(req.body);
-          database.registerUserToPlatform(client.db('socialwebpage'), req, res, newUserData);
+          database.registerUserToPlatform(client.db('socialwebpage'), req, res, newUserData, function(){
+              db.close();
+          });
       });
 
       //----------------------Show the Feed----------------------//
@@ -161,6 +169,10 @@ MongoClient.connect(url, function(err, client) {
       });
 
       //----------------------Upload Image----------------------//
+      //
+      // Calls the method uploadImageToPlatform that insert the new image
+      // to the database.
+      // Post parameters: title, content and userId of the new story entry
       app.post('/rest/image/create', verifyToken, upload.single('theImage'), (req, res) => {
           if (!req.file) {
             res.send(JSON.stringify({
@@ -177,7 +189,10 @@ MongoClient.connect(url, function(err, client) {
                       const fileDataInfo = JSON.stringify(req.body);
                       const userid = authData.userid
                       const file = {fileData, fileDataInfo, userid}
-                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file);
+                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file, function(){
+                          db.close();
+                      });
+
                   }
               });
 
@@ -424,6 +439,107 @@ MongoClient.connect(url, function(err, client) {
 
       });
 
+
+      // ------------------------------------Guestbook--------------------------------------//
+
+      //------------------------------Create Guestbook Entry--------------------------------//
+      //
+      // Calls the method createGuestbookEntry that insert the information of a new story
+      // to the database.
+      // Post parameters: title, content and owner name of the new guestbook entry
+      app.post('/rest/guestbook/create', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const title = req.body.title;
+                const content = req.body.content;
+                const ownerName = req.body.ownerName;
+                const authorId = authData.userid;
+                database.createGuestbookEntry(client.db('socialwebpage'), res, title, content, ownerName, authorId, () => {
+                    db.close();
+                });  
+            }
+        });
+      });
+
+      //----------------------List Guestbook Entries in a user profile----------------------//
+      //
+      // Calls the method listGuestbookEntriesForUserId or listGuestbookEntriesForUsername that
+      // returns all guestbook entries for the user id in the query to the react application.
+      app.get('/rest/guestbook/list', verifyToken, (req, res) => {
+        if(req.query.username) {
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    const username = req.query.username;
+                    const currentUserId = authData.userid;
+                    database.listGuestbookEntriesForUsername(client.db('socialwebpage'), res, username, currentUserId,  () => {
+                        db.close();
+                    });
+                }
+            });
+
+        } else {
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    const currentUserId = authData.userid;
+                    database.listGuestbookEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId, () => {
+                        db.close();
+                    });
+                }
+            });
+        }
+      });
+
+      //----------------------Like Guestbook Entry----------------------//
+      //
+      // Calls the method likeGuestbookEntryById that add the user to the list of
+      // likes
+      app.post('/rest/guestbook/like', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const guestbookEntryId = req.body;
+                const userId = authData.userid;
+                database.likeGuestbookEntryById(client.db('socialwebpage'), res, guestbookEntryId, userId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
+
+      //----------------------Delete Guestbook Entry----------------------//
+      //
+      // Calls the method deleteGuestbookEntryById that deletes a story entry
+      // from the database.
+      app.post('/rest/guestbook/delete', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const guestbookEntryId = req.body;
+                const userId = authData.userid;
+                database.deleteGuestbookEntryById(client.db('socialwebpage'), res, guestbookEntryId, userId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
 
       //----------------------xy----------------------//
 

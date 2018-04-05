@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Input, Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
-import { checkSession, getStoryForUserId, getImagesForUserId, getCurrentUser} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById} from '../API/POST/PostMethods';
+import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
+import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry} from '../API/POST/PostMethods';
 import { Redirect } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
@@ -10,7 +10,7 @@ import '../profileStyle.css';
 
 var images = [];
 var stories = [];
-var guestbookEntries = [{author: "Jimmy", title:"Hallo Welt", content: "Hallo meine Freunde"}, {author: "Steve",title: "Mama sita", content: "Übelst geil hier"}];
+var guestbookEntries = [];
 
 class Profile extends Component {
   constructor(props) {
@@ -20,20 +20,22 @@ class Profile extends Component {
         show: false,
         responseImages: [],
         responseStories: [],
+        responseGuestbookEntries: [],
+        newGuestbookEntryTitle: "",
+        newGuestbookEntryContent: "",
         redirectToLogin: false,
         rerender: false
       }
 
       this.apiCheckSession = "/checkSession"
       this.apiDeleteSession = "/deleteSession";
-
       this.apiStories = "/story/list";
       this.apiImages = "/image/list";
       this.apiUser = "/getUserInfo"
+      this.apiGuestbookEntries = "/guestbook/list";
 
-      this.api = "/story/list";
       this.property = props.match.params.username;
-
+      this.ownerName = props.match.params.username;
       this.getProfileData(this.property);
       this.checkThisSession();
 
@@ -56,9 +58,11 @@ class Profile extends Component {
         if(username === undefined) {
             const responseStories = await getStoryForUserId(this.apiStories);
             const responseImages = await getImagesForUserId(this.apiImages);
+            const responseGuestbookEntries = await getGuestbookEntriesForUserId(this.apiGuestbookEntries);
             this.setState({
               responseStories : responseStories,
-              responseImages : responseImages
+              responseImages : responseImages,
+              responseGuestbookEntries : responseGuestbookEntries
             });
 
             const responseMyData = await checkSession(this.apiCheckSession);
@@ -78,11 +82,14 @@ class Profile extends Component {
         } else {
             let apiStoriesWithUsername = this.apiStories + "?username=" + username;
             let apiImagesWithUsername = this.apiImages + "?username=" + username;
+            let apiGuestbookEntriesWithUsername = this.apiGuestbookEntries + "?username=" + username;
             const responseStories = await getStoryForUserId(apiStoriesWithUsername);
             const responseImages = await getImagesForUserId(apiImagesWithUsername);
+            const responseGuestbookEntries = await getGuestbookEntriesForUserId(apiGuestbookEntriesWithUsername);
             this.setState({
               responseStories : responseStories,
-              responseImages : responseImages
+              responseImages : responseImages,
+              responseGuestbookEntries : responseGuestbookEntries
             });
 
             const responseMyData = await checkSession(this.apiCheckSession);
@@ -118,17 +125,6 @@ class Profile extends Component {
             this.state.entryId
           );
         }
-
-        //this.forceUpdate();
-        //window.location.reload();
-        // Redirect to feed if respose is message is true
-        // this.setState({status: response});
-        // if(this.state.status === true) {
-        //     this.setState({ redirectToFeed: true });
-        // } else {
-        //     let errorField = document.getElementById("error-message-upload-story");
-        //     errorField.style.display = "block";
-        // }
       }
 
       async handleDeleteImage(event, data) {
@@ -147,6 +143,20 @@ class Profile extends Component {
         window.location.reload();
       }
 
+      async handleCreateGuestbookEntry(event) {
+        event.preventDefault();
+
+        this.state.newGuestbookEntryTitle =  event.target[0].value;
+        this.state.newGuestbookEntryContent =  event.target[1].value;
+
+        const response = await createGuestbookentry(
+          "/guestbook/create",
+            this.state.newGuestbookEntryTitle,
+            this.state.newGuestbookEntryContent,
+            this.ownerName
+        );
+      }
+
     render() {
 
     const { redirectToLogin } = this.state;
@@ -156,6 +166,7 @@ class Profile extends Component {
 
       images = this.state.responseImages;
       stories = this.state.responseStories;
+      guestbookEntries = this.state.responseGuestbookEntries;
 
         return (
           <div className="feed">
@@ -264,9 +275,9 @@ class Profile extends Component {
                                   <Comment>
                                     <Comment.Avatar src='/assets/images/boy.png' />
                                     <Comment.Content>
-                                      <Comment.Author as='a'>"{item.title}", posted by {item.author}</Comment.Author>
+                                      <Comment.Author as='a'>"{item.title}", posted by {item.username}</Comment.Author>
                                       <Comment.Metadata>
-                                        <div>Today at 5:42PM</div>
+                                        <div>{item.date_created}</div>
                                           <Rating icon='heart' size="large"  maxRating={1}>
                                           </Rating>
                                           <Button>Delete</Button>
@@ -280,7 +291,6 @@ class Profile extends Component {
                                           </div>
                                       </Comment.Metadata>
                                       <Comment.Text>{item.content}</Comment.Text>
-
                                     </Comment.Content>
                                   </Comment>
                                 </Comment.Group>
@@ -288,13 +298,13 @@ class Profile extends Component {
                             )
                           })}
 
-                           <Form reply id="guestbook-reply">
+                           <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                              <Form.Field>
                                <label>Title of your guestbook entry</label>
                                <Input placeholder="Titel"/>
                              </Form.Field>
                              <Form.TextArea autoHeight rows="3" />
-                             <Button content='Add Reply' labelPosition='left' icon='edit' />
+                             <Button content='Add Reply' labelPosition='left' icon='edit' type="submit" />
                            </Form>
                         </div>
 
