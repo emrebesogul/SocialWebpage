@@ -7,12 +7,13 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const uuid = require('uuid/v4');
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 
+
+//==================================================================================================//
 // create application/json parser
 const jsonParser = bodyParser.json();
-
 const database = require('./database');
 const url = 'mongodb://127.0.0.1:27017/socialwebpage';
 
@@ -31,16 +32,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage});
 
+
+
+//==================================================================================================//
 app.use(express.static('public'));
 
-
-
-//==================================================================================================//
-
-
-
-
-//==================================================================================================//
 //Enable CORS
 app.use(cors());
 
@@ -134,17 +130,13 @@ MongoClient.connect(url, function(err, client) {
       //----------------------LOGIN----------------------//
       app.post('/rest/user/loginUser', (req, res) => {
           const userCredential = JSON.stringify(req.body);
-          database.checkUserCredentials(client.db('socialwebpage'), req, res, userCredential, function(){
-              db.close();
-          });
+          database.checkUserCredentials(client.db('socialwebpage'), req, res, userCredential);
       });
 
       //----------------------REGISTER----------------------//
       app.post('/rest/user/create', (req, res) => {
           const newUserData = JSON.stringify(req.body);
-          database.registerUserToPlatform(client.db('socialwebpage'), req, res, newUserData, function(){
-              db.close();
-          });
+          database.registerUserToPlatform(client.db('socialwebpage'), req, res, newUserData);
       });
 
       //----------------------Show the Feed----------------------//
@@ -168,10 +160,6 @@ MongoClient.connect(url, function(err, client) {
       });
 
       //----------------------Upload Image----------------------//
-      //
-      // Calls the method uploadImageToPlatform that insert the new image
-      // to the database.
-      // Post parameters: title, content and userId of the new story entry
       app.post('/rest/image/create', verifyToken, upload.single('theImage'), (req, res) => {
           if (!req.file) {
             res.send(JSON.stringify({
@@ -188,10 +176,7 @@ MongoClient.connect(url, function(err, client) {
                       const fileDataInfo = JSON.stringify(req.body);
                       const userid = authData.userid
                       const file = {fileData, fileDataInfo, userid}
-                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file, function(){
-                          db.close();
-                      });
-
+                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file);
                   }
               });
 

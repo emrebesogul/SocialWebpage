@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Form, Input, Icon, Image  } from 'semantic-ui-react'
+import { Button, Form, Input, Icon, Image, Message  } from 'semantic-ui-react'
 import { Link, Redirect } from 'react-router-dom';
 
 import '../style.css';
@@ -11,6 +11,8 @@ class Reqister extends Component {
         super();
 
         this.state = {
+          showMessageSuccess: false,
+          showMessageError: false,
           firstname: "",
           lastname: "",
           username: "",
@@ -19,7 +21,7 @@ class Reqister extends Component {
           birthday: "",
           gender: "",
           message: "",
-          redirectToLogin: false
+          messageDetail: ""
         }
 
         this.api = '/user/create';
@@ -53,24 +55,19 @@ class Reqister extends Component {
 
         //Do something with response
         this.setState({message : JSON.parse(response).message});
+        this.setState({messageDetail : JSON.parse(response).message});
 
         if(this.state.message === "User successfully created") {
-            alert("Account was successfully set up. Please login to join the platform.");
-            this.setState({ redirectToLogin: true });
+            this.setState({ showMessageSuccess: true });
+            this.setState({ showMessageError: false });
         } else {
             //Error messages
-            let errorField = document.getElementById("error-message");
-            let messageText = "<b>"+this.state.message+"</b>";
-            errorField.innerHTML = messageText;
+            this.setState({ showMessageSuccess: false });
+            this.setState({ showMessageError: true });
         }
     }
 
     render() {
-        const { redirectToLogin } = this.state;
-         if (redirectToLogin) {
-           return <Redirect to='/login' />;
-         }
-
         return (
           <div id ="body-div">
 
@@ -113,6 +110,8 @@ class Reqister extends Component {
                       <Input className="login-input-text" placeholder='Gender: Male/Female' />
                     </Form.Field>
 
+                    {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
+                    {this.state.showMessageSuccess ? <div><Message color='green'><p>{this.state.messageDetail}<br /><Link to="/login">Sign Up</Link></p></Message></div> : null}
 
                     <Button  id="login-button-submit" type="submit">
                         Register

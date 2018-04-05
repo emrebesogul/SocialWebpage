@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {  Redirect } from 'react-router-dom';
-import { Button, Form, Input } from 'semantic-ui-react'
+import { Button, Form, Input, Message } from 'semantic-ui-react'
 import SidebarProfile from '../Components/SidebarProfile'
 import Dropzone from 'react-dropzone'
 import FormData from 'form-data';
@@ -15,6 +15,7 @@ class Upload extends Component {
         super();
 
         this.state = {
+          showMessage: false,
           files: [],
           title: "",
           content: "",
@@ -62,9 +63,7 @@ class Upload extends Component {
             this.setState({ redirectToFeed: true });
         } else {
             //Error messages
-            let errorField = document.getElementById("error-message");
-            let messageText = "<b>"+this.state.message+"</b>";
-            errorField.innerHTML = messageText;
+            this.setState({ showMessage: true });
         }
 
     }
@@ -103,8 +102,20 @@ class Upload extends Component {
                       <span className="input-label-upload"> Select the file you want to share</span>
 
                       <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
-                          <p>Try dropping a picture here, or click to select a picture to upload.</p>
+                          <p>Try dropping one picture here, or click to select one picture to upload.</p>
                       </Dropzone>
+
+                      <aside>
+                        <h4 >Dropped picture</h4>
+                        <ul>
+                          {
+                            this.state.files.map(f => <li key={f.name}>{f.name}</li>)
+                          }
+                        </ul>
+                      </aside>
+
+                      <div>{this.state.files.map((file) => <img width="200" height="200" src={file.preview} /> )}</div>
+                      {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 
                       <Button className="button-upload" type="submit">Post</Button>
 

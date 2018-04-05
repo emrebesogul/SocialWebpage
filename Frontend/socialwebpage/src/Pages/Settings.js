@@ -1,5 +1,5 @@
 import React from 'react';
-import {Icon, Header,  Form, Input, Label, Button } from 'semantic-ui-react'
+import {Icon, Header,  Form, Input, Label, Button, Message } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
 import {getCurrentUserData} from '../API/GET/GetMethods';
 import {updateUserData} from '../API/PUT/PutMethods';
@@ -9,11 +9,15 @@ class Settings extends React.Component{
         super();
 
         this.state = {
+          showMessageSuccess: false,
+          showMessageError: false,
           redirectToLogin: false,
           username: "Username",
           firstname: "First name",
           lastname: "Last name",
           email: "beast@hpe.com",
+          message: "",
+          messageDetail: "",
           rerender: false
         }
         this.api = "/getUserInfo"
@@ -43,11 +47,9 @@ class Settings extends React.Component{
         obj.email = event.target[4].value
         const jsonUserData= JSON.stringify(obj);
 
-        console.log(jsonUserData)
-
         updateUserData("/user/edit", jsonUserData);
 
-        window.location.reload();
+        this.setState({ showMessageSuccess: true });
     }
 
 handleChange(e, attribut) {
@@ -101,6 +103,8 @@ handleChange(e, attribut) {
                      <input />
                    </Input>
                 </Form.Field>
+
+                {this.state.showMessageSuccess ? <div><Message color='green'><p>User data was updated successfully.</p></Message></div> : null}
 
                 <Button id="button-upload">Save</Button>
               </Form>

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
-import { Button, Form, Input, TextArea } from 'semantic-ui-react'
+import { Button, Form, Input, TextArea, Message } from 'semantic-ui-react'
 import {uploadStoryToPlatform} from '../API/POST/PostMethods';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import SidebarProfile from '../Components/SidebarProfile'
@@ -12,6 +12,7 @@ class PostText extends Component {
         super();
 
         this.state = {
+          showMessage: false,
           title: "",
           content: "",
           redirectToFeed: false,
@@ -57,8 +58,7 @@ class PostText extends Component {
         if(this.state.status === true) {
             this.setState({ redirectToFeed: true });
         } else {
-            let errorField = document.getElementById("error-message-upload-story");
-            errorField.style.display = "block";
+            this.setState({ showMessage: true });
         }
 
     }
@@ -88,6 +88,8 @@ class PostText extends Component {
                   <TextArea required className="input-upload"></TextArea>
                   <Button className="button-upload" type="submit">Post</Button>
                   <span id="error-message-upload-story">Upload failed. Try again later</span>
+
+                  {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
                 </Form>
             </div>
           </div>
