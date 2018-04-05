@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
+import { Tab, Card, Image, Comment, Rating, Form, Button, Input } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById} from '../API/POST/PostMethods';
 import { Redirect } from 'react-router-dom';
@@ -8,8 +8,9 @@ import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
 
-var images;
-var stories;
+var images = [];
+var stories = [];
+var guestbookEntries = [{author: "Jimmy", title:"Hallo Welt", content: "Hallo meine Freunde"}, {author: "Steve",title: "Mama sita", content: "Übelst geil hier"}];
 
 class Profile extends Component {
   constructor(props) {
@@ -195,9 +196,7 @@ class Profile extends Component {
                                       <div className="username-label">
                                         <span > @{item.username} </span>
 
-
                                         {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
-
                                       </div>
                                       <Card.Content id="card-content">
                                         <Card.Header className="card-header">
@@ -229,76 +228,40 @@ class Profile extends Component {
 
                         </Tab.Pane> },
                         { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>
-                        <div className="settings">
-                        <Comment.Group className="account-settings profile-comments">
-                           <Comment>
-                             <Comment.Avatar src='/assets/images/boy.png' />
-                             <Comment.Content>
-                               <Comment.Author as='a'>Matt</Comment.Author>
-                               <Comment.Metadata>
-                                 <div>Today at 5:42PM</div>
-                               </Comment.Metadata>
-                               <Comment.Text>How artistic!</Comment.Text>
-                               <Comment.Actions>
-                                 <Comment.Action>Reply</Comment.Action>
-                               </Comment.Actions>
-                             </Comment.Content>
-                           </Comment>
+                        <div id="guestbook">
 
-                           <Comment>
-                             <Comment.Avatar src='/assets/images/boy.png' />
-                             <Comment.Content>
-                               <Comment.Author as='a'>Elliot Fu</Comment.Author>
-                               <Comment.Metadata>
-                                 <div>Yesterday at 12:30AM</div>
-                               </Comment.Metadata>
-                               <Comment.Text>
-                                 <p>This has been very useful for my research. Thanks as well!</p>
-                               </Comment.Text>
-                               <Comment.Actions>
-                                 <Comment.Action>Reply</Comment.Action>
-                               </Comment.Actions>
-                             </Comment.Content>
-                             <Comment.Group>
-                               <Comment>
-                                 <Comment.Avatar src='/assets/images/girl.png' />
-                                 <Comment.Content>
-                                   <Comment.Author as='a'>Jenny Hess</Comment.Author>
-                                   <Comment.Metadata>
-                                     <div>Just now</div>
-                                   </Comment.Metadata>
-                                   <Comment.Text>
-                                     Elliot you are always so right :)
-                                   </Comment.Text>
-                                   <Comment.Actions>
-                                     <Comment.Action>Reply</Comment.Action>
-                                   </Comment.Actions>
-                                 </Comment.Content>
-                               </Comment>
-                             </Comment.Group>
-                           </Comment>
+                          {guestbookEntries.map((item, index) => {
+                            return(
+                              <div key={index}>
+                                <Comment.Group>
+                                  <Comment>
+                                    <Comment.Avatar src='/assets/images/boy.png' />
+                                    <Comment.Content>
+                                      <Comment.Author as='a'>"{item.title}", posted by {item.author}</Comment.Author>
+                                      <Comment.Metadata>
+                                        <div>Today at 5:42PM</div>
+                                      </Comment.Metadata>
+                                      <Comment.Text>{item.content}</Comment.Text>
 
-                           <Comment>
-                             <Comment.Avatar src='/assets/images/girl.png' />
-                             <Comment.Content>
-                               <Comment.Author as='a'>Joe Henderson</Comment.Author>
-                               <Comment.Metadata>
-                                 <div>5 days ago</div>
-                               </Comment.Metadata>
-                               <Comment.Text>
-                                 Dude, this is awesome. Thanks so much
-                               </Comment.Text>
-                               <Comment.Actions>
-                                 <Comment.Action>Reply</Comment.Action>
-                               </Comment.Actions>
-                             </Comment.Content>
-                           </Comment>
+                                        <Comment.Actions>
+                                         <Comment.Action>Reply</Comment.Action>
+                                       </Comment.Actions>
 
-                           <Form reply>
+                                    </Comment.Content>
+                                  </Comment>
+                                </Comment.Group>
+                              </div>
+                            )
+                          })}
+
+                           <Form reply id="guestbook-reply">
+                             <Form.Field>
+                               <label>Title of your guestbook entry</label>
+                               <Input placeholder="Titel"/>
+                             </Form.Field>
                              <Form.TextArea autoHeight rows="3" />
                              <Button content='Add Reply' labelPosition='left' icon='edit' />
                            </Form>
-                          </Comment.Group>
                         </div>
 
                         </Tab.Pane> },
