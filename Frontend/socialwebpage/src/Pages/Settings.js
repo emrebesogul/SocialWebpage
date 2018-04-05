@@ -1,6 +1,7 @@
 import React from 'react';
 import {Icon, Header,  Form, Input, Label, Button, Message } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
+import Dropzone from '../Components/Dropzone'
 import {getCurrentUserData} from '../API/GET/GetMethods';
 import {updateUserData} from '../API/PUT/PutMethods';
 
@@ -18,7 +19,8 @@ class Settings extends React.Component{
           email: "beast@hpe.com",
           message: "",
           messageDetail: "",
-          rerender: false
+          rerender: false,
+          files: []
         }
         this.api = "/getUserInfo"
         this.apiUpdate = "/user/edit"
@@ -60,6 +62,12 @@ handleChange(e, attribut) {
       case "email":  this.setState({"email": e.target.value}); break;
       default: null;
     }}
+
+    onDrop(files) {
+      this.setState({
+        files: files
+      });
+    }
 
 
   render(){
@@ -115,9 +123,33 @@ handleChange(e, attribut) {
               <Icon name='user' id="settings-icon" />
               Profile Settings
               <Header.Subheader>
-                Manage your profile settings and set e-mail preferences.
+                Manage your profile settings and set your profile picture
               </Header.Subheader>
               </Header>
+
+              <span className="input-label-upload"> Select your profile picture</span>
+
+              <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+                  <p>Drop your profile picture here, or click to select one to upload.</p>
+              </Dropzone>
+
+              <aside>
+
+                <ul>
+                  {
+                    this.state.files.map(f => <li key={f.name}>{f.name}</li>)
+                  }
+                </ul>
+              </aside>
+
+              <div>{this.state.files.map((file, index) => <img key={index} width="200" height="200" src={file.preview} /> )}</div>
+              {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
+
+              <Button className="button-upload" type="submit">Update</Button>
+
+              <div id="error-message">
+              </div>
+
             </div>
           </div>
         </div>

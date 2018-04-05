@@ -240,12 +240,19 @@ class Profile extends Component {
                                       <Comment.Author as='a'>"{item.title}", posted by {item.author}</Comment.Author>
                                       <Comment.Metadata>
                                         <div>Today at 5:42PM</div>
+                                          <Rating icon='heart' size="large"  maxRating={1}>
+                                          </Rating>
+                                          <Button>Delete</Button>
+                                            <div className="ui mini horizontal statistic post-likes">
+                                              <div className="value">
+                                                {item.number_of_likes}
+                                              </div>
+                                              <div className="label">
+                                                Likes
+                                              </div>
+                                          </div>
                                       </Comment.Metadata>
                                       <Comment.Text>{item.content}</Comment.Text>
-
-                                        <Comment.Actions>
-                                         <Comment.Action>Reply</Comment.Action>
-                                       </Comment.Actions>
 
                                     </Comment.Content>
                                   </Comment>
