@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
+import { Input, Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById} from '../API/POST/PostMethods';
 import { Redirect } from 'react-router-dom';
