@@ -100,7 +100,7 @@ class SidebarProfile extends Component {
                     <Link to="/upload">
                       <Button labelPosition="right" size="medium" id="upload-button" icon>
                         <Icon className="menu-icons" size="large" name='upload' />
-                        Upload Image
+                        Add Image
                       </Button>
                     </Link>
 

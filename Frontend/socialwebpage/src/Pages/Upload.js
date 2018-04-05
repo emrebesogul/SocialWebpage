@@ -99,6 +99,10 @@ class Upload extends Component {
                       <span className="input-label-upload"> Add description...</span>
                       <Input className="input-upload" type="text"/>
 
+                      <span className="input-label-upload">
+                        File size has a limit of 4 megabytes.
+                      </span>
+
                       <span className="input-label-upload"> Select the file you want to share</span>
 
                       <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
@@ -114,7 +118,7 @@ class Upload extends Component {
                         </ul>
                       </aside>
 
-                      <div>{this.state.files.map((file) => <img width="200" height="200" src={file.preview} /> )}</div>
+                      <div>{this.state.files.map((file, index) => <img key={index} width="200" height="200" src={file.preview} /> )}</div>
                       {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 
                       <Button className="button-upload" type="submit">Post</Button>
@@ -122,7 +126,7 @@ class Upload extends Component {
                       <div id="error-message">
                       </div>
                 </Form>
-
+                <p></p>
             </div>
           </div>
       </div>

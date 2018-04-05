@@ -82,10 +82,10 @@ class PostText extends Component {
                   <h2>Post a new story</h2>
                   <span className="input-label-upload"> Enter the title of your new story</span>
 
-                  <Input required className="input-upload" type="text"/>
+                  <Input className="input-upload" type="text"/>
 
                   <span className="input-label-upload"> What story do you want to share?</span>
-                  <TextArea required className="input-upload"></TextArea>
+                  <TextArea required className="input-upload" type="text"></TextArea>
                   <Button className="button-upload" type="submit">Post</Button>
                   <span id="error-message-upload-story">Upload failed. Try again later</span>
 

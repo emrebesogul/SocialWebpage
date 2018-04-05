@@ -106,7 +106,7 @@ async handleRate(event, data){
                           <Link to="/upload">
                             <Button  size="medium" id="upload-button-mobile" icon>
                               <Icon className="menu-icons" name='upload' />
-                              Upload Image
+                              Add Image
                             </Button>
                           </Link>
                           <Link to="/post">
@@ -122,7 +122,7 @@ async handleRate(event, data){
                                 <Card fluid centered>
                                   <div className="username-label">
                                     <Link to={`/profile/${item.username}`}>
-                                        <span > @{item.username} </span>
+                                        <span id="username-label-content" > @{item.username} </span>
                                     </Link>
                                   </div>
 
