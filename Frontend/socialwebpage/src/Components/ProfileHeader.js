@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { Icon, Header, Button} from 'semantic-ui-react'
-
-import {getCurrentUser} from '../API/GET/GetMethods';
+import {getCurrentUser, checkSession} from '../API/GET/GetMethods';
 import {sendFriendshipRequest} from '../API/POST/PostMethods';
 
 import '../profileStyle.css';
@@ -24,6 +23,7 @@ class ProfileHeader extends Component {
         }
         this.api = "/getUserInfo"
         this.apiFriendshipRequest = "/friends/sendFriendshipRequest"
+        this.apiCheckSession = "/checkSession"
 
         this.getCurrentUser(props.name);
     }
@@ -37,6 +37,14 @@ class ProfileHeader extends Component {
             this.setState({lastname: response.lastname})
             this.setState({email: response.email})
 
+            const responseMyData = await checkSession(this.apiCheckSession);
+
+            if(responseMyData.username == this.state.username) {
+                this.setState({ show: false});
+            } else {
+                this.setState({ show: true});
+            }
+
         } else {
             let api = this.api + "?username=" + username;
             const response = await getCurrentUser(api);
@@ -44,11 +52,17 @@ class ProfileHeader extends Component {
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
             this.setState({email: response.email})
+
+            const responseMyData = await checkSession(this.apiCheckSession);
+
+            if(responseMyData.username == this.state.username) {
+                this.setState({ show: false});
+            } else {
+                this.setState({ show: true});
+            }
         }
 
-        if(username === this.state.username) {
-            this.setState({ show: true});
-        }
+
     }
 
     async doSomethingWithUser() {

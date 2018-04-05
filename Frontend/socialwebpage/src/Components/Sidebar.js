@@ -41,7 +41,9 @@ class Sidebar extends Component {
         this.setState({ redirectToLogin: true });
     }
 
-
+    reloadPage() {
+        window.location.reload();
+    }
 
     render() {
         const { redirectToLogin } = this.state;
@@ -75,7 +77,7 @@ class Sidebar extends Component {
                   <h4 id="welcome-label-header"></h4>
 
                     <Link to="/profile">
-                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon onClick={this.reloadPage}>
                         <Icon className="menu-icons" size="large" name='user' />
                         {this.state.username}
                       </Button>

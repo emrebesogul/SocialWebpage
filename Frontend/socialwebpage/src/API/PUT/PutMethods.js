@@ -7,7 +7,6 @@ var url = getUrl.protocol + "//" + getUrl.hostname + ":8000/rest";
 export const updateUserData=(api, jsonUserData)=>{
   return new Promise((resolve, reject) => {
       var token = read_cookie('token')
-      console.log(api)
       $.ajax({
         url: url + api,
         contentType: "application/json",

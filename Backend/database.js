@@ -8,10 +8,10 @@ var call = module.exports = {
 
 
   //----------------------LOGIN----------------------//
-  checkUserCredentials: function (db, req, res, userCredential, fn) {
+  checkUserCredentials: function (db, req, res, userCredential) {
       //Select table and parse form input fields
       const collection = db.collection('users');
-      let username = JSON.parse(userCredential).username;
+      let username = (JSON.parse(userCredential).username).trim();
       let password = JSON.parse(userCredential).password;
       let passwordHashed = md5(password);
 
@@ -73,47 +73,113 @@ var call = module.exports = {
       let passwordHashed = md5(password);
 
       //Check username and password
-      if (username != null && password != null) {
-          collection.findOne({"username": username}, (err, docs) => {
-              if (err) {
-                  throw err;
-              }
+      if(username !== null && password !== null) {
+          //Check valid email => we will fake it but normally there are npm that validate the email
+          const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+          if(email !== null) {
+              if(email.match(mailformat)) {
+                  // Check valid date format
+                  if(birthday.length !== 0) {
+                      const dateformat = /(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/](19|20)\d\d/;
+                      //const dateformat = /(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d/;
+                      if(birthday.match(dateformat)) {
+                          collection.findOne({"username": username}, (err, docs) => {
+                              if (err) {
+                                  throw err;
+                              }
 
-              if(docs) {
-                  res.send(JSON.stringify({
-                      message: "This username is not available. Please try another one."
-                  }));
-              } else {
-                  collection.findOne({"email": email}, (err, docs) => {
-                      if (err) {
-                          throw err;
-                      }
-                      if(docs) {
-                          res.send(JSON.stringify({
-                              message: "This email is not available. Please try another one."
-                          }));
-                      } else {
-                          console.log("User created: ", username);
-                          res.send(JSON.stringify({
-                              message: "User successfully created",
-                              messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
-                          }));
+                              if(docs) {
+                                  res.send(JSON.stringify({
+                                      message: "This username is not available. Please try another one."
+                                  }));
+                              } else {
+                                  collection.findOne({"email": email}, (err, docs) => {
+                                      if (err) {
+                                          throw err;
+                                      }
+                                      if(docs) {
+                                          res.send(JSON.stringify({
+                                              message: "This email is not available. Please try another one."
+                                          }));
+                                      } else {
+                                          console.log("User created: ", username);
+                                          res.send(JSON.stringify({
+                                              message: "User successfully created",
+                                              messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
+                                          }));
 
-                          collection.insert({
-                              "first_name": firstname,
-                              "last_name": lastname,
-                              "username": username,
-                              "email": email,
-                              "password": passwordHashed,
-                              "birthday": birthday,
-                              "gender": gender,
+                                          collection.insert({
+                                              "first_name": firstname,
+                                              "last_name": lastname,
+                                              "username": username,
+                                              "email": email,
+                                              "password": passwordHashed,
+                                              "birthday": birthday,
+                                              "gender": gender,
+                                          })
+                                      }
+                                  })
+                              }
+
                           })
+                      } else {
+                          res.send(JSON.stringify({
+                              message: "Please enter correct date format: dd/mm/yyyy."
+                          }));
                       }
-                  })
-              }
+                  } else {
+                      collection.findOne({"username": username}, (err, docs) => {
+                          if (err) {
+                              throw err;
+                          }
 
-          })
-        }
+                          if(docs) {
+                              res.send(JSON.stringify({
+                                  message: "This username is not available. Please try another one."
+                              }));
+                          } else {
+                              collection.findOne({"email": email}, (err, docs) => {
+                                  if (err) {
+                                      throw err;
+                                  }
+                                  if(docs) {
+                                      res.send(JSON.stringify({
+                                          message: "This email is not available. Please try another one."
+                                      }));
+                                  } else {
+                                      console.log("User created: ", username);
+                                      res.send(JSON.stringify({
+                                          message: "User successfully created",
+                                          messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
+                                      }));
+
+                                      collection.insert({
+                                          "first_name": firstname,
+                                          "last_name": lastname,
+                                          "username": username,
+                                          "email": email,
+                                          "password": passwordHashed,
+                                          "birthday": birthday,
+                                          "gender": gender,
+                                      })
+                                  }
+                              })
+                          }
+
+                      })
+                  }
+              } else {
+                  res.send(JSON.stringify({
+                      message: "You have entered an invalid email address."
+                  }));
+              }
+          } else {
+              res.send(JSON.stringify({
+                  message: "Username and Password is required."
+              }));
+          }
+      }
+
   },
 
   //----------------------Get Feed----------------------//
@@ -583,35 +649,125 @@ updateUserData: function(db, res, data) {
     const userid = data.userid;
     const userData = data.userData
     const hashedPassword = md5(userData.password)
+    let username = (userData.username).trim();
+    var checkUsername = false;
+    var checkEmail = false;
 
-    console.log(userData.username, " changed successfully its user data")
+    collectionUsers.findOne({"username": username}, (err, docs) => {
+        if (err) {
+            throw err;
+        }
 
-    if(userData.password !== '') {
-        collectionUsers.update(
-            {_id: ObjectId(userid)},
-            {
-                $set: {
-                    "first_name": userData.first_name,
-                    "last_name": userData.last_name,
-                    "username": userData.username,
-                    "email": userData.email,
-                    "password": hashedPassword
-                }
+        if(docs) {
+            if(docs._id == userid) {
+                // Username is same => no update => check for email
+                collectionUsers.findOne({"email": userData.email}, (err, docs) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    if(docs) {
+                        if(docs._id == userid) {
+                            // Email is same => no update => update fields
+                            console.log(username, " changed successfully its user data")
+                            if(userData.password !== '') {
+                                collectionUsers.update(
+                                    {_id: ObjectId(userid)},
+                                    {
+                                        $set: {
+                                            "first_name": userData.first_name,
+                                            "last_name": userData.last_name,
+                                            "username": username,
+                                            "email": userData.email,
+                                            "password": hashedPassword
+                                        }
+                                    }
+                                );
+                            } else {
+                                collectionUsers.update(
+                                    {_id: ObjectId(userid)},
+                                    {
+                                        $set: {
+                                            "first_name": userData.first_name,
+                                            "last_name": userData.last_name,
+                                            "username": username,
+                                            "email": userData.email
+                                        }
+                                    }
+                                );
+                            }
+                            res.send(JSON.stringify({
+                                message: "User data successfully updated."
+                            }));
+                          }
+                    } else {
+                        console.log(docs)
+                        // Email is already given
+                        res.send(JSON.stringify({
+                            message: "This email is not available. Please try another one."
+                        }));
+                    }
+                })
+            } else {
+                console.log("loool", docs)
+                console.log(userid)
+                // Username is already given
+                res.send(JSON.stringify({
+                    message: "This username is not available. Please try another one."
+                }));
             }
-        );
-    } else {
-        collectionUsers.update(
-            {_id: ObjectId(userid)},
-            {
-                $set: {
-                    "first_name": userData.first_name,
-                    "last_name": userData.last_name,
-                    "username": userData.username,
-                    "email": userData.email
+        } else {
+            //Check email
+            collectionUsers.findOne({"email": userData.email}, (err, docs) => {
+                if (err) {
+                    throw err;
                 }
-            }
-        );
-    }
+
+                if(docs) {
+                    if(docs._id == userid) {
+                        // Email is same => no update => update fields
+                        console.log(userData.username, " changed successfully its user data")
+                        if(userData.password !== '') {
+                            collectionUsers.update(
+                                {_id: ObjectId(userid)},
+                                {
+                                    $set: {
+                                        "first_name": userData.first_name,
+                                        "last_name": userData.last_name,
+                                        "username": username,
+                                        "email": userData.email,
+                                        "password": hashedPassword
+                                    }
+                                }
+                            );
+                        } else {
+                            collectionUsers.update(
+                                {_id: ObjectId(userid)},
+                                {
+                                    $set: {
+                                        "first_name": userData.first_name,
+                                        "last_name": userData.last_name,
+                                        "username": username,
+                                        "email": userData.email
+                                    }
+                                }
+                            );
+                        }
+                        res.send(JSON.stringify({
+                            message: "User data successfully updated."
+                        }));
+                      }
+                } else {
+                    console.log(docs)
+                    // Email is already given
+                    res.send(JSON.stringify({
+                        message: "This email is not available. Please try another one."
+                    }));
+                }
+            })
+        }
+    })
+
 },
 
   //----------------------Friend----------------------//

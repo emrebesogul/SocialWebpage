@@ -10,7 +10,7 @@ class Settings extends React.Component{
         super();
 
         this.state = {
-          showMessageSuccess: false,
+          showMessage: false,
           showMessageError: false,
           redirectToLogin: false,
           username: "Username",
@@ -38,7 +38,7 @@ class Settings extends React.Component{
         }
     }
 
-    handleAccountSettings(event) {
+    async handleAccountSettings(event) {
         event.preventDefault();
 
         let obj = new Object();
@@ -49,9 +49,16 @@ class Settings extends React.Component{
         obj.email = event.target[4].value
         const jsonUserData= JSON.stringify(obj);
 
-        updateUserData("/user/edit", jsonUserData);
-
-        this.setState({ showMessageSuccess: true });
+        const response = await updateUserData("/user/edit", jsonUserData);
+        this.setState({ message: JSON.parse(response).message });
+        if(this.state.message === "User data successfully updated.") {
+            this.setState({ showMessageSuccess: true });
+            this.setState({ showMessageError: false });
+        } else {
+            //Error messages
+            this.setState({ showMessageSuccess: false });
+            this.setState({ showMessageError: true });
+        }
     }
 
 handleChange(e, attribut) {
@@ -112,7 +119,8 @@ handleChange(e, attribut) {
                    </Input>
                 </Form.Field>
 
-                {this.state.showMessageSuccess ? <div><Message color='green'><p>User data was updated successfully.</p></Message></div> : null}
+                {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
+                {this.state.showMessageSuccess ? <Message color='green'><p>{this.state.message}<br /></p></Message> : null}
 
                 <Button id="button-upload">Save</Button>
               </Form>

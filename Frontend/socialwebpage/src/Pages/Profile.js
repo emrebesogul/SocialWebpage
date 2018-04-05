@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { Tab, Card, Image, Comment, Rating, Form, Button, Input } from 'semantic-ui-react'
-import { checkSession, getStoryForUserId, getImagesForUserId} from '../API/GET/GetMethods';
+import { Input, Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
+import { checkSession, getStoryForUserId, getImagesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById} from '../API/POST/PostMethods';
 import { Redirect } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
@@ -29,6 +29,7 @@ class Profile extends Component {
 
       this.apiStories = "/story/list";
       this.apiImages = "/image/list";
+      this.apiUser = "/getUserInfo"
 
       this.api = "/story/list";
       this.property = props.match.params.username;
@@ -59,6 +60,21 @@ class Profile extends Component {
               responseStories : responseStories,
               responseImages : responseImages
             });
+
+            const responseMyData = await checkSession(this.apiCheckSession);
+
+            const response = await getCurrentUser(this.apiUser);
+            this.setState({username: response.username})
+
+            console.log(responseMyData.username)
+            console.log(this.state.username)
+
+            if(responseMyData.username == this.state.username) {
+                this.setState({ show: true});
+            } else {
+                this.setState({ show: false});
+            }
+
         } else {
             let apiStoriesWithUsername = this.apiStories + "?username=" + username;
             let apiImagesWithUsername = this.apiImages + "?username=" + username;
@@ -68,10 +84,21 @@ class Profile extends Component {
               responseStories : responseStories,
               responseImages : responseImages
             });
+
+            const responseMyData = await checkSession(this.apiCheckSession);
+
+            let api = this.apiUser + "?username=" + username;
+            const response = await getCurrentUser(api);
+            this.setState({username: response.username})
+
+            if(responseMyData.username == this.state.username) {
+                this.setState({ show: true});
+            } else {
+                this.setState({ show: false});
+            }
         }
-        if(username === this.state.responseImages.username) {
-            this.setState({ show: true});
-        }
+
+
       }
 
       async handleRate(event, data){
