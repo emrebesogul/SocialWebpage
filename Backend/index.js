@@ -96,7 +96,8 @@ MongoClient.connect(url, function(err, client) {
                   });
               } else {
                   res.json({
-                      message: "User is authorized"
+                      message: "User is authorized",
+                      username: authData.username
                   });
               }
           });

@@ -41,6 +41,9 @@ class SidebarProfile extends Component {
       this.setState({ redirectToLogin: true });
   }
 
+  reloadPage() {
+      window.location.reload();
+  }
 
     render() {
         const { redirectToLogin } = this.state;
@@ -51,8 +54,8 @@ class SidebarProfile extends Component {
         return (
             <div>
 
-              <Image className="logo" src="assets/images/Logo_nobg.png" />
-              <Image className="logo-mobile" src="assets/images/Logo_nobg.png" />
+                <Image className="logo" src="../assets/images/Logo_nobg.png" />
+                <Image className="logo-mobile" src="../assets/images/Logo_nobg.png" />
 
               <div id="mobile-header">
                 <Link to="/">
@@ -74,7 +77,7 @@ class SidebarProfile extends Component {
                   <h4 id="welcome-label-header"></h4>
 
                     <Link to="/profile">
-                      <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Button labelPosition="right"  size="medium" id="upload-button" icon onClick={this.reloadPage}>
                         <Icon className="menu-icons" size="large" name='user' />
                         {this.state.username}
                       </Button>

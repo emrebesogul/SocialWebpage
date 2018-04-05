@@ -106,7 +106,7 @@ class Reqister extends Component {
                     </Form.Field>
 
                     <Form.Field>
-                      <Input className="login-input-text" placeholder='Birthday: dd-mm-yy' />
+                      <Input className="login-input-text" placeholder='Birthday: dd/mm/yyyy' />
                       <Input className="login-input-text" placeholder='Gender: Male/Female' />
                     </Form.Field>
 

@@ -2,12 +2,11 @@ import $ from 'jquery';
 import { read_cookie } from 'sfcookies';
 
 var getUrl = window.location;
-var url = getUrl.protocol + "//" + getUrl.hostname + "/rest";
+var url = getUrl.protocol + "//" + getUrl.hostname + ":8000/rest";
 
 export const updateUserData=(api, jsonUserData)=>{
   return new Promise((resolve, reject) => {
       var token = read_cookie('token')
-      console.log(api)
       $.ajax({
         url: url + api,
         contentType: "application/json",
