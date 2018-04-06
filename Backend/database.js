@@ -931,10 +931,10 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
   // Receives the id of a guestbook entry and of a user, fetchs the array with likes from
   // the database and add or remove the current user from this array.
   // After that, a message with "true" is send to the react application.
-  likeGuestbookEntryById: function (db, res, guestbookEntryId, userId) {
+  likeGuestbookEntryById: function (db, res, guestbookData, userId) {
     db.collection("guestbookEntries").findOne(
         {
-            _id : new ObjectId(guestbookEntryId)
+            _id : new ObjectId(guestbookData.guestbookEntryId)
         },
         (err_find_guestbook_entries, res_find_guestbook_entries) => {
 
@@ -953,7 +953,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
         }
         db.collection("guestbookEntries").update(
             {
-                _id : new ObjectId(guestbookEntryId)
+                _id : new ObjectId(guestbookData.guestbookEntryId)
             },
             {
                 $set: { liking_users: res_find_guestbook_entries.liking_users }
@@ -970,12 +970,12 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
   //
   // Receives the id of a guestbook entry and deletes it from the database.
   // After that, a message with "true" is send to the react application.
-  deleteGuestbookEntryById: function (db, res, guestbookEntryId, userId) {
-    db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookEntryId) }, (err, docs) => {
-        if (err) throw err;
-        if (docs.user_id == userId) {
-            db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookEntryId) }, (err, docs) => {
-                if (err) throw err;
+  deleteGuestbookEntryById: function (db, res, guestbookData, userId) {
+    db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
+        if (err_find_guestbook_entries) throw err_find_guestbook_entries;
+        if (res_find_guestbook_entries.owner_id == userId) {
+            db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
+                if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
                 res.send(true);
             });
         }

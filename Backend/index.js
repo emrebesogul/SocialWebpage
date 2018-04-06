@@ -512,9 +512,9 @@ MongoClient.connect(url, function(err, client) {
                     message: "User is not authorized"
                 });
             } else {
-                const guestbookEntryId = req.body;
+                const guestbookData = req.body;
                 const userId = authData.userid;
-                database.likeGuestbookEntryById(client.db('socialwebpage'), res, guestbookEntryId, userId, () => {
+                database.likeGuestbookEntryById(client.db('socialwebpage'), res, guestbookData, userId, () => {
                     db.close();
                 });
             }
@@ -532,9 +532,9 @@ MongoClient.connect(url, function(err, client) {
                     message: "User is not authorized"
                 });
             } else {
-                const guestbookEntryId = req.body;
+                const guestbookData = req.body;
                 const userId = authData.userid;
-                database.deleteGuestbookEntryById(client.db('socialwebpage'), res, guestbookEntryId, userId, () => {
+                database.deleteGuestbookEntryById(client.db('socialwebpage'), res, guestbookData, userId, () => {
                     db.close();
                 });
             }

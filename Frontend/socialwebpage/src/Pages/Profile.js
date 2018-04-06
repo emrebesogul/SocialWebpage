@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Input, Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry} from '../API/POST/PostMethods';
+import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById} from '../API/POST/PostMethods';
 import { Redirect } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
@@ -70,9 +70,6 @@ class Profile extends Component {
             const response = await getCurrentUser(this.apiUser);
             this.setState({username: response.username})
 
-            console.log(responseMyData.username)
-            console.log(this.state.username)
-
             if(responseMyData.username == this.state.username) {
                 this.setState({ show: true});
             } else {
@@ -104,43 +101,6 @@ class Profile extends Component {
                 this.setState({ show: false});
             }
         }
-
-
-      }
-
-      async handleRate(event, data){
-        event.preventDefault();
-
-        this.state.entryId = data._id;
-
-        if(data.src) {
-          const response = await likeImageById(
-            "/image/like",
-            this.state.entryId
-          );
-        }
-        else {
-          const response = await likeStoryEntryById(
-            "/story/like",
-            this.state.entryId
-          );
-        }
-      }
-
-      async handleDeleteImage(event, data) {
-        const response = await deleteImageById(
-          "/image/delete",
-          data._id
-        );
-        window.location.reload();
-      }
-
-      async handleDeleteStoryEntry(event, data) {
-        const response = await deleteStoryEntryById(
-          "/story/delete",
-          data._id
-        );
-        window.location.reload();
       }
 
       async handleCreateGuestbookEntry(event) {
@@ -155,6 +115,44 @@ class Profile extends Component {
             this.state.newGuestbookEntryContent,
             this.ownerName
         );
+        window.location.reload();
+      }
+
+      async handleRateStoryEntry(event, data){
+        event.preventDefault();
+        this.state.entryId = data._id;
+        const response = await likeStoryEntryById("/story/like",this.state.entryId);
+      }
+
+      async handleRateImage(event, data){
+        event.preventDefault();
+        this.state.entryId = data._id;
+        const response = await likeImageById("/image/like",this.state.entryId);
+      }
+
+      async handleRateGuestbookEntry(event, data){
+        event.preventDefault();
+        this.state.entryId = data._id;
+        const response = await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
+        window.location.reload();
+      }
+
+      async handleDeleteImage(event, data) {
+        const response = await deleteImageById(
+          "/image/delete",
+          data._id
+        );
+        window.location.reload();
+      }
+
+      async handleDeleteStoryEntry(event, data) {
+        const response = await deleteStoryEntryById("/story/delete", data._id);
+        window.location.reload();
+      }
+
+      async handleDeleteGuestbookEntry(event, data) {
+        const response = await deleteGuestbookEntryById("/guestbook/delete",data._id);
+        window.location.reload();
       }
 
     render() {
@@ -192,9 +190,7 @@ class Profile extends Component {
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
-
-
+                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                       </Rating> {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">
@@ -238,7 +234,7 @@ class Profile extends Component {
                                       </div>
                                       <Card.Content id="card-content">
                                         <Card.Header className="card-header">
-                                            <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                            <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                             </Rating> {item.title}
                                             <div className="ui mini horizontal statistic post-likes">
                                               <div className="value">
@@ -278,9 +274,9 @@ class Profile extends Component {
                                       <Comment.Author as='a'>"{item.title}", posted by {item.username}</Comment.Author>
                                       <Comment.Metadata>
                                         <div>{item.date_created}</div>
-                                          <Rating icon='heart' size="large"  maxRating={1}>
-                                          </Rating>
-                                          <Button>Delete</Button>
+                                        <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                        </Rating>
+                                          {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
                                             <div className="ui mini horizontal statistic post-likes">
                                               <div className="value">
                                                 {item.number_of_likes}
