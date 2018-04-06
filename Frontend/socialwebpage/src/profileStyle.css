@@ -9,8 +9,39 @@ body {
   All Buttons styled on Feed, Profile sites.
 */
 
+
 #main-content{
   background-color: rgb(255,255,255) !important;
+}
+
+#comment-content{
+  margin-top: 15px !important;
+  margin-left: -37px;
+  border: 1px solid rgb(230, 230, 230);
+  /* padding-top: 10px; */
+  padding: 15px 20px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 2px #c3c3c354;
+}
+
+#comment-metadata{
+  margin-left: 27px !important;
+}
+
+#comment-avatar{
+   margin-left: 20px;
+    margin-top: 14px;
+    height: 50px;
+    border-radius: 50%;
+    /* border: 1px solid grey; */
+    width: 50px;
+    margin-right: 20px;
+}
+
+div.comment {
+  margin-top: 15px !important;
+  width: 96% !important;
+  margin-left: 10px !important;
 }
 
 #guestbook-reply{
@@ -238,6 +269,13 @@ i.road.huge.icon{
   width: 65%;
   max-width: 820px;
   margin: 0 auto;
+}
+
+div.ui.compact.menu{
+  margin-left: 143px;
+  background: none;
+  border: none !important;
+  font-weight: 700;
 }
 
 .milestone{
@@ -592,6 +630,12 @@ img.ui.image.image-feed{
       top: 57px;
     }
 
+    div.comment {
+      margin-top: 5px;
+      width: 100% !important;
+      margin-left: 0 !important;
+    }
+
     .logo-mobile{
       display: inherit !important;
     }
@@ -688,6 +732,18 @@ img.ui.image.image-feed{
       margin-top: 9px;
     }
 
+    #guestbook{
+      width: 103%  !important;
+    margin-left: -10px !important;
+    margin-top: -20px !important;
+    border: none !important;
+    box-shadow: none !important;
+    }
+
+    #guestbook-reply{
+      width: 90% !important;
+    }
+
     #logout-button-mobile{
       margin-top: 9px;
     }
@@ -730,6 +786,10 @@ img.ui.image.image-feed{
       border-radius: 0px !important;
       color: rgb(20,21,22) !important;
       transition: all 0.2s;
+    }
+
+    #profile-header{
+      margin-bottom: 8px !important;
     }
 }
 

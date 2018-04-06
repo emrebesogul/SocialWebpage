@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Icon, Button, Image } from 'semantic-ui-react'
+import { Icon, Button, Image, Menu, Dropdown } from 'semantic-ui-react'
 
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import {getCurrentUser} from '../API/GET/GetMethods';
@@ -58,6 +58,7 @@ class Sidebar extends Component {
               <Image className="logo-mobile" src="assets/images/Logo_nobg.png" />
 
               <div id="mobile-header">
+
                 <Link to="/profile">
                   <Button circular size="medium" id="profile-button-mobile" icon>
                     <Icon className="menu-icons" name='user' />

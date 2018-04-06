@@ -269,30 +269,34 @@ class Profile extends Component {
                               <div key={index}>
                                 <Comment.Group>
                                   <Comment>
-                                    <Comment.Avatar src='/assets/images/boy.png' />
+                                    <Comment.Avatar src='/assets/images/boy.png' id="comment-avatar" />
                                     <Comment.Content>
-                                      <Comment.Author as='a'>"{item.title}", posted by {item.username}</Comment.Author>
-                                      <Comment.Metadata>
+                                      <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                      </Rating> <span>&nbsp;</span>
+                                      <div className="ui mini horizontal statistic post-likes">
+                                        <div className="value">
+                                          {item.number_of_likes}
+                                        </div>
+                                        <div className="label">
+                                          Likes
+                                        </div>
+                                      </div>
+                                      <Comment.Author as='a'><h3><i>{item.title}</i></h3></Comment.Author>
+                                      <Comment.Author>posted by {item.username}</Comment.Author>
+                                      <Comment.Metadata id="comment-metadata">
                                         <div>{item.date_created}</div>
-                                        <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
-                                        </Rating>
-                                          {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
-                                            <div className="ui mini horizontal statistic post-likes">
-                                              <div className="value">
-                                                {item.number_of_likes}
-                                              </div>
-                                              <div className="label">
-                                                Likes
-                                              </div>
-                                          </div>
                                       </Comment.Metadata>
-                                      <Comment.Text>{item.content}</Comment.Text>
+                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
+
+                                      <Comment.Text id="comment-content">{item.content}</Comment.Text>
                                     </Comment.Content>
                                   </Comment>
                                 </Comment.Group>
                               </div>
                             )
                           })}
+
+                          <div id="seperator"></div>
 
                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                              <Form.Field>
