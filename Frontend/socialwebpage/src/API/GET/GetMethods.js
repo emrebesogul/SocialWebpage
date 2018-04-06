@@ -179,3 +179,26 @@ export const getFriendRequests=(api) =>
         });
     });
 }
+
+//----------------------Get guestbook entries----------------------//
+export const getGuestbookEntriesForUserId=(api)=>{
+  return new Promise((resolve, reject) => {
+    var token = read_cookie('token')
+    $.ajax({
+      url: url + api,
+      type: "GET",
+      cache: false,
+      contentType: 'application/json',
+      data: 'json',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      success: function(res) {
+          resolve(res);
+      },
+      error: function(xhr, status, err){
+          reject(err);
+      }
+    });
+  });
+}
