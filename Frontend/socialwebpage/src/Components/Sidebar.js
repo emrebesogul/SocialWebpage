@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Icon, Button, Image } from 'semantic-ui-react'
+import { Icon, Button, Image, Menu, Dropdown } from 'semantic-ui-react'
 
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import {getCurrentUser} from '../API/GET/GetMethods';
@@ -54,21 +54,60 @@ class Sidebar extends Component {
         return (
             <div>
 
-              <Image className="logo" src="assets/images/Logo_nobg.png" />
-              <Image className="logo-mobile" src="assets/images/Logo_nobg.png" />
+              <Link to="/"> <Image className="logo" src="assets/images/Logo_nobg.png" /></Link>
+              <Link to="/"><Image className="logo-mobile" src="assets/images/Logo_nobg.png" /></Link>
 
               <div id="mobile-header">
+
+                <Menu size="large" className="mobile-menu">
+                 <Dropdown  item icon='content'>
+                   <Dropdown.Menu>
+                    <Link to="/profile">
+                     <Dropdown.Item onClick={this.reloadPage} >
+                       <Icon name="user"/> {this.state.username}
+                     </Dropdown.Item>
+                    </Link>
+                    <Link to="/">
+                     <Dropdown.Item>
+                        <Icon name="feed"/> Feed
+                     </Dropdown.Item>
+                    </Link>
+                    <Link to="/settings">
+                     <Dropdown.Item>
+                         <Icon name="setting"/> Settings
+                     </Dropdown.Item>
+                    </Link>
+                    <Link to="/about">
+                     <Dropdown.Item>
+                        <Icon name="legal"/> Legal
+                     </Dropdown.Item>
+                    </Link>
+                    <Link to="/about">
+                     <Dropdown.Item>
+                        <Icon name="users"/> About
+                     </Dropdown.Item>
+                    </Link>
+                     <Dropdown.Item onClick={this.handleLogout.bind(this)}>
+                        <Icon name="log out"/>Logout
+                     </Dropdown.Item>
+                   </Dropdown.Menu>
+                 </Dropdown>
+               </Menu>
+
+               {/*
                 <Link to="/profile">
                   <Button circular size="medium" id="profile-button-mobile" icon>
                     <Icon className="menu-icons" name='user' />
                     Profile
                   </Button>
-                </Link>
+                </Link> */}
 
-                <Button circular size="medium" id="logout-button-mobile" icon onClick={this.handleLogout.bind(this)}>
-                    <Icon className="menu-icons" name='log out' />
-                    Log out
-                </Button>
+                <Link to="/post">
+                  <Button circular size="medium" id="logout-button-mobile" icon>
+                      <Icon className="menu-icons" name='plus' />
+                      Add Post
+                  </Button>
+                </Link>
 
               </div>
 
@@ -120,7 +159,14 @@ class Sidebar extends Component {
                     </Button>
                   </Link>
 
-                  <Link to="/profile">
+                  <Link to="/about">
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='legal' />
+                      Legal
+                    </Button>
+                  </Link>
+
+                  <Link to="/about">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='group' />
                       About Us

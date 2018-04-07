@@ -825,7 +825,166 @@ updateUserData: function(db, res, data) {
           }
       })
 
-    }
+    },
+
+    
+  // ----------------------------------------Guestbook------------------------------------------//
+  
+  //-----------------------------------Create Guestbook Entry-----------------------------------//
+  //
+  // Receives the titel and the content of a guestbook and inserts it to the database.
+  // After that, a message with "true" is send to the react application.
+  createGuestbookEntry: function (db, res, title, content, ownerName, authorId) {
+    if(ownerName) {
+        db.collection('users').findOne({"username": ownerName}, (err_user, res_user) => {
+            if (err_user) throw err_user;
+    
+            if (res_user && (res_user._id != authorId)) {
+                db.collection('guestbookEntries').insert({
+                    "title": title,
+                    "content": content,
+                    "liking_users": [],
+                    "date_created": new Date(),
+                    "owner_id": new ObjectId(res_user._id),
+                    "author_id": new ObjectId(authorId),
+                });
+                res.send(true);
+            }
+            else {
+                console.log("It is not possible to post a guestbook entry on the own profile!");
+                res.send(false);
+            }
+        })
+    } else {
+        console.log("It is not possible to post a guestbook entry on the own profile!");
+        res.send(false);
+    }    
+  },
+
+  //----------------------List Guestbook Entries in Profile for a Username----------------------//
+  //
+  // Receives the name of a user, fetchs the corresponding user id from the database and
+  // calls the method listGuestbookEntriesForUserId.
+  listGuestbookEntriesForUsername: function(db, res, username, currentUserId) {
+    db.collection('users').findOne({"username": username}, (err, docs) => {
+        if (err) {
+            res.send(JSON.stringify({
+                message: "User not found"
+            }));
+            throw err;
+        }
+
+        if (docs) {
+            call.listGuestbookEntriesForUserId(db, res, docs._id, currentUserId)
+        }
+        else {
+            res.send(JSON.stringify({
+                message: "User not found"
+            }));
+        }
+    })
+},
+
+//----------------------List Guestbook Entries in Profile----------------------//
+//
+// Receives the userId of a user and sends all guestbook entries of this user
+// to the react application. These story entries are sorted by date.
+listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
+  db.collection('guestbookEntries').aggregate([
+      { $match : { owner_id : new ObjectId(userId) } },
+      { $lookup:
+         {
+           from: "users",
+           localField: "author_id",
+           foreignField: "_id",
+           as: "author"
+         }
+       },
+       { $project : {
+              "title" : 1,
+              "content": 1,
+              date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+              "number_of_likes": 1,
+              "liking_users" : 1,
+              "current_user_has_liked" : {
+                  "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+              },
+              "user_id": 1,
+              "username": {
+                  "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
+              }
+          }
+       },
+       { $sort : { "date_created" : -1 } }
+      ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
+      if (err_guestbook_entries) throw err_guestbook_entries;
+        res_guestbook_entries.map(item => {
+              item.date_created = getDate(item.date_created);
+              item.number_of_likes = item.liking_users.length;
+          });
+          res.status(200).send(res_guestbook_entries);
+  });
+},
+
+  //----------------------Like Guestbook Entry----------------------//
+  //
+  // Receives the id of a guestbook entry and of a user, fetchs the array with likes from
+  // the database and add or remove the current user from this array.
+  // After that, a message with "true" is send to the react application.
+  likeGuestbookEntryById: function (db, res, guestbookData, userId) {
+    db.collection("guestbookEntries").findOne(
+        {
+            _id : new ObjectId(guestbookData.guestbookEntryId)
+        },
+        (err_find_guestbook_entries, res_find_guestbook_entries) => {
+
+        if (err_find_guestbook_entries) throw err_find_guestbook_entries;
+        if (res_find_guestbook_entries.liking_users.includes(userId)) {
+            let index = res_find_guestbook_entries.liking_users.indexOf(userId);
+            if (index > -1) {
+                res_find_guestbook_entries.liking_users.splice(index, 1);
+            }
+            else {
+                throw err_find_guestbook_entries;
+            }
+        }
+        else {
+            res_find_guestbook_entries.liking_users.push(userId);
+        }
+        db.collection("guestbookEntries").update(
+            {
+                _id : new ObjectId(guestbookData.guestbookEntryId)
+            },
+            {
+                $set: { liking_users: res_find_guestbook_entries.liking_users }
+            },
+            (err_update_guestbook_entries, res_update_guestbook_entries) => {
+
+            if (err_update_guestbook_entries) throw err_update_guestbook_entries;
+        });
+        res.send(true);
+    });
+  },
+
+  //----------------------Delete Guestbook Entry----------------------//
+  //
+  // Receives the id of a guestbook entry and deletes it from the database.
+  // After that, a message with "true" is send to the react application.
+  deleteGuestbookEntryById: function (db, res, guestbookData, userId) {
+    db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
+        if (err_find_guestbook_entries) throw err_find_guestbook_entries;
+        if (res_find_guestbook_entries.owner_id == userId) {
+            db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
+                if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
+                res.send(true);
+            });
+        }
+        else {
+            res.send(false);
+        }
+    });
+  },
+
   }
 
 function getMonthName (month) {

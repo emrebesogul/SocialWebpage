@@ -9,8 +9,70 @@ body {
   All Buttons styled on Feed, Profile sites.
 */
 
+
 #main-content{
   background-color: rgb(255,255,255) !important;
+}
+
+.mobile-menu:hover{
+
+}
+
+div.ui.item.dropdown::before{
+  width: 0 !important;
+}
+
+div.menu.transition{
+  width: 170px;
+  border-radius: 3px !important;
+  margin-top: 0px;
+  border: rgb(10,10,10) !important;
+  height: 285px;
+  -webkit-box-shadow: 1px 1px 6px 1px #bdbdbda5 !important;
+  box-shadow: 1px 3px 6px 0px #bdbdbda5 !important;
+}
+
+div.item::before{
+  width: 0 !important;
+}
+
+.mobile-menu{
+  width: 48px;
+  margin-top: 1px !important;
+  position: fixed;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#comment-content{
+  margin-top: 15px !important;
+  margin-left: -37px;
+  border: 1px solid rgb(230, 230, 230);
+  /* padding-top: 10px; */
+  padding: 15px 20px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 2px #c3c3c354;
+}
+
+#comment-metadata{
+  margin-left: 27px !important;
+}
+
+#comment-avatar{
+   margin-left: 20px;
+    margin-top: 14px;
+    height: 50px;
+    border-radius: 50%;
+    /* border: 1px solid grey; */
+    width: 50px;
+    margin-right: 20px;
+}
+
+div.comment {
+  margin-top: 15px !important;
+  width: 96% !important;
+  margin-left: 10px !important;
 }
 
 #guestbook-reply{
@@ -41,6 +103,17 @@ a{
   color: rgb(35,35,35) !important;
 }
 
+.ui.menu .ui.dropdown.item .menu .item:not(.filtered){
+  margin-bottom: 4px !important;
+  transition: all 0.19s ease-out !important;
+}
+
+.ui.menu .ui.dropdown.item .menu .item:not(.filtered):hover{
+  background-color: rgb(220,220,220) !important;
+    transition: all 0.14s ease-in !important;
+}
+
+
 /*
   Sidebar with menu functions. Visible on every page.
 */
@@ -54,7 +127,7 @@ a{
   max-width: 230px;
   text-align: center;
   border-radius: 2px;
-  height: 480px;
+  height: 525px;
   padding-top: 10px;
   color: rgb(30,30,30);
   background: #fefefe;
@@ -151,7 +224,7 @@ h2.ui.huge.icon.center.aligned.header{
 
 #delete-button{
   float: right;
-  margin-top: -8px;
+  margin-top: -8px !important;
   margin-right: 17px;
 }
 
@@ -233,11 +306,36 @@ i.road.huge.icon{
   margin-right: 20px !important;
 }
 
+#about-logo{
+  width: 55%;
+  margin-left: auto;
+  max-width: 400px;
+  margin-right: auto;
+  min-width: 200px;
+  margin-bottom: 20px;
+}
+
+.about-text{
+  width: 65%;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 200px;
+  max-width: 600px;
+  text-align: justify;
+}
+
 #profile-content {
   margin-top: 15px;
   width: 65%;
   max-width: 820px;
   margin: 0 auto;
+}
+
+div.ui.compact.menu{
+  margin-left: 143px;
+  background: none;
+  border: none !important;
+  font-weight: 700;
 }
 
 .milestone{
@@ -559,7 +657,8 @@ img.ui.image.image-feed{
   top: 3px;
   display: none !important;
   image-rendering: auto;
-  left: 1%;
+  left: 50%;
+  margin-left: -36px;
 }
 
 #profile-header{
@@ -590,6 +689,12 @@ img.ui.image.image-feed{
       max-width: 765px;
       position: relative;
       top: 57px;
+    }
+
+    div.comment {
+      margin-top: 5px;
+      width: 100% !important;
+      margin-left: 0 !important;
     }
 
     .logo-mobile{
@@ -673,19 +778,45 @@ img.ui.image.image-feed{
     }
 }
 
+/*-------------------------------------------------------
+            Media Queries to 765px.
+-------------------------------------------------------*/
+
 @media only screen and (max-width: 765px){
     #feed-card{
       margin-bottom: 0px;
       margin-top: 10px;
     }
 
+    .mobile-menu{
+      margin-top: 8px !important;
+    }
+
+    .about-text{
+      width: 75%;
+    }
+
     .logo-mobile{
-      margin-top: 4px;
+      margin-top: 2px;
+      height: 40px;
+      margin-left: -40px;
     }
 
     #profile-button-mobile{
       margin-left: 40px;
       margin-top: 9px;
+    }
+
+    #guestbook{
+      width: 103%  !important;
+    margin-left: -10px !important;
+    margin-top: -20px !important;
+    border: none !important;
+    box-shadow: none !important;
+    }
+
+    #guestbook-reply{
+      width: 90% !important;
     }
 
     #logout-button-mobile{
@@ -730,6 +861,10 @@ img.ui.image.image-feed{
       border-radius: 0px !important;
       color: rgb(20,21,22) !important;
       transition: all 0.2s;
+    }
+
+    #profile-header{
+      margin-bottom: 8px !important;
     }
 }
 

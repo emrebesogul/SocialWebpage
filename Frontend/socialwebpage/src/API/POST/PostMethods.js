@@ -223,3 +223,79 @@ export const sendFriendshipRequest=(api, recipient) =>
         });
     });
 }
+
+//----------------------Create Guestbook Entry----------------------//
+export const createGuestbookentry=(api, title, content, ownerName) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({title: title, content: content, ownerName: ownerName}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              console.log(err);
+              reject(err);
+          }
+        });
+    });
+}
+
+//----------------------Delete Guestbook Entry----------------------//
+export const deleteGuestbookEntryById=(api, guestbookEntryId) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({guestbookEntryId: guestbookEntryId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
+
+//----------------------Like Guestbook Entry----------------------//
+export const likeGuestbookEntryById=(api, guestbookEntryId) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({guestbookEntryId: guestbookEntryId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
