@@ -99,7 +99,7 @@ class ProfileHeader extends Component {
                   <Header as='h2' size="huge" icon textAlign='center'>
                     <div>
                         <Icon name='user' circular >
-                            {this.state.pictureExists ? <div><Image src={this.state.picture} /> </div> : null}
+                            {this.state.pictureExists ? <div><Image src={this.state.picture} /> </div> : <div></div> }
                             {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button" circular icon="delete" size="small">D</Button> : null}
                         </Icon>
                     </div>
