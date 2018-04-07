@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import { Icon, Header, Button} from 'semantic-ui-react'
+import { Icon, Header, Button, Image} from 'semantic-ui-react'
 import {getCurrentUser, checkSession} from '../API/GET/GetMethods';
 import {sendFriendshipRequest} from '../API/POST/PostMethods';
 
 import '../profileStyle.css';
-
 
 class ProfileHeader extends Component {
     constructor(props) {
@@ -17,6 +16,8 @@ class ProfileHeader extends Component {
           firstname: "First name",
           lastname: "Last name",
           email: "beast@hpe.com",
+          picture: "",
+          pictureExists: false,
 
           //ButtonState variiert je nachdem, ob sie freunde sind, anfrage raus ist oder status anders ist
           buttonState: "Add Friend"
@@ -36,6 +37,7 @@ class ProfileHeader extends Component {
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
             this.setState({email: response.email})
+            this.setState({picture: response.picture})
 
             const responseMyData = await checkSession(this.apiCheckSession);
 
@@ -52,6 +54,7 @@ class ProfileHeader extends Component {
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
             this.setState({email: response.email})
+            this.setState({picture: response.picture})
 
             const responseMyData = await checkSession(this.apiCheckSession);
 
@@ -61,8 +64,10 @@ class ProfileHeader extends Component {
                 this.setState({ show: true});
             }
         }
-
-
+        console.log(this.state.picture)
+        if(this.state.picture !== ("http://" + window.location.hostname + ":8000/uploads/posts/")) {
+            this.setState({pictureExists: true})
+        }
     }
 
     async doSomethingWithUser() {
@@ -85,7 +90,11 @@ class ProfileHeader extends Component {
 
 
                   <Header as='h2' size="huge" icon textAlign='center'>
-                    <Icon name='user' circular />
+                    <div>
+                        <Icon name='user' circular>
+                            {this.state.pictureExists ? <div><Image src={this.state.picture} /> </div> : null}
+                        </Icon>
+                    </div>
                     <Header.Content>
                       {this.state.username}
                       <Header.Subheader>

@@ -299,3 +299,30 @@ export const likeGuestbookEntryById=(api, guestbookEntryId) =>
         });
     });
 }
+
+//----------------------Upload Profile Picture----------------------//
+export const uploadProfilePic=(api, fd) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: false,
+          processData: false,
+          data: fd,
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              console.log(err);
+              reject(err);
+          }
+        });
+    });
+}

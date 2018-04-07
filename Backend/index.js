@@ -29,6 +29,7 @@ const storage = multer.diskStorage({
   }
 });
 
+
 const upload = multer({ storage: storage});
 
 app.use(express.static('public'));
@@ -71,7 +72,7 @@ MongoClient.connect(url, function(err, client) {
 
           if(req.query.username) {
               let username = req.query.username;
-              database.getOtherUserProfile(client.db('socialwebpage'), res, username, () => {
+              database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, () => {
                   db.close();
               });
           } else {
@@ -82,7 +83,7 @@ MongoClient.connect(url, function(err, client) {
                       });
                   } else {
                       const userid = authData.userid
-                      database.getCurrentUserProfile(client.db('socialwebpage'), res, userid, () => {
+                      database.getCurrentUserProfile(client.db('socialwebpage'), req, res, userid, () => {
                           db.close();
                       });
                   }
@@ -189,6 +190,7 @@ MongoClient.connect(url, function(err, client) {
                       const fileDataInfo = JSON.stringify(req.body);
                       const userid = authData.userid
                       const file = {fileData, fileDataInfo, userid}
+
                       database.uploadImageToPlatform(client.db('socialwebpage'), res, file, function(){
                           db.close();
                       });
@@ -460,7 +462,7 @@ MongoClient.connect(url, function(err, client) {
                 const authorId = authData.userid;
                 database.createGuestbookEntry(client.db('socialwebpage'), res, title, content, ownerName, authorId, () => {
                     db.close();
-                });  
+                });
             }
         });
       });
@@ -540,6 +542,34 @@ MongoClient.connect(url, function(err, client) {
             }
         });
       });
+
+      //----------------------Upload Profile Picture----------------------//
+      app.post('/rest/user/image/create', verifyToken, upload.single('image'), (req, res) => {
+          if (!req.file) {
+            res.send(JSON.stringify({
+                message: "Image could not be uploaded"
+            }));
+          } else {
+              jwt.verify(req.token, 'secretkey', (err, authData) => {
+                  if(err) {
+                      res.json({
+                          message: "User is not authorized"
+                      });
+                  } else {
+                      const fileData = req.file;
+                      const userid = authData.userid
+                      const file = {fileData, userid}
+
+                      database.uploadProfilePic(client.db('socialwebpage'), res, file, function(){
+                          db.close();
+                      });
+                  }
+              });
+
+          }
+      });
+
+
 
       //----------------------xy----------------------//
 

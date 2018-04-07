@@ -1,4 +1,4 @@
-var md5 = require('js-md5');
+var SHA256 = require("crypto-js/sha256");
 var session = require('express-session')
 var jwt = require('jsonwebtoken');
 var ObjectId = require('mongodb').ObjectId;
@@ -13,7 +13,7 @@ var call = module.exports = {
       const collection = db.collection('users');
       let username = (JSON.parse(userCredential).username).trim();
       let password = JSON.parse(userCredential).password;
-      let passwordHashed = md5(password);
+      let passwordHashed = SHA256(password);
 
       if(!username || !password) {
           res.send(JSON.stringify({
@@ -32,7 +32,7 @@ var call = module.exports = {
                    }
 
                    if (docs) {
-                       if(passwordHashed == docs.password) {
+                       if(JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password.words) ) {
                            jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
                                console.log("Correct credentials! Login from user: ", docs.username)
                                res.send(JSON.stringify({
@@ -69,8 +69,10 @@ var call = module.exports = {
       let password = JSON.parse(newUserData).password;
       let birthday = JSON.parse(newUserData).birthday;
       let gender = JSON.parse(newUserData).gender;
+      let profilePicture = "";
+      let friends = [];
 
-      let passwordHashed = md5(password);
+      let passwordHashed = SHA256(password);
 
       //Check username and password
       if(username !== null && password !== null) {
@@ -103,10 +105,6 @@ var call = module.exports = {
                                           }));
                                       } else {
                                           console.log("User created: ", username);
-                                          res.send(JSON.stringify({
-                                              message: "User successfully created",
-                                              messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
-                                          }));
 
                                           collection.insert({
                                               "first_name": firstname,
@@ -116,7 +114,14 @@ var call = module.exports = {
                                               "password": passwordHashed,
                                               "birthday": birthday,
                                               "gender": gender,
+                                              "picture": profilePicture,
+                                              "friends": friends
                                           })
+
+                                          res.send(JSON.stringify({
+                                              message: "User successfully created",
+                                              messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
+                                          }));
                                       }
                                   })
                               }
@@ -161,6 +166,8 @@ var call = module.exports = {
                                           "password": passwordHashed,
                                           "birthday": birthday,
                                           "gender": gender,
+                                          "picture": profilePicture,
+                                          "friends": friends
                                       })
                                   }
                               })
@@ -449,7 +456,7 @@ var call = module.exports = {
   },
 
   //----------------------Get Other User----------------------//
-  getOtherUserProfile: function(db, res, username) {
+  getOtherUserProfile: function(db, req, res, username) {
       const collection = db.collection('users');
       collection.findOne({"username": username}, (err, docs) => {
           if (err) {
@@ -464,7 +471,8 @@ var call = module.exports = {
                   username: docs.username,
                   firstname: docs.first_name,
                   lastname: docs.last_name,
-                  email: docs.email
+                  email: docs.email,
+                  picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
               }));
           }
           else {
@@ -477,7 +485,7 @@ var call = module.exports = {
   },
 
   //----------------------Get Current User----------------------//
-  getCurrentUserProfile: function(db, res, userid) {
+  getCurrentUserProfile: function(db, req, res, userid) {
       const collection = db.collection('users');
       collection.findOne({"_id": ObjectId(userid)},(err, docs) => {
           if (err) {
@@ -492,7 +500,8 @@ var call = module.exports = {
                   username: docs.username,
                   firstname: docs.first_name,
                   lastname: docs.last_name,
-                  email: docs.email
+                  email: docs.email,
+                  picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
               }));
           }
           else {
@@ -648,7 +657,7 @@ updateUserData: function(db, res, data) {
 
     const userid = data.userid;
     const userData = data.userData
-    const hashedPassword = md5(userData.password)
+    const hashedPassword = SHA256(userData.password)
     let username = (userData.username).trim();
     var checkUsername = false;
     var checkEmail = false;
@@ -827,9 +836,9 @@ updateUserData: function(db, res, data) {
 
     },
 
-    
+
   // ----------------------------------------Guestbook------------------------------------------//
-  
+
   //-----------------------------------Create Guestbook Entry-----------------------------------//
   //
   // Receives the titel and the content of a guestbook and inserts it to the database.
@@ -838,7 +847,7 @@ updateUserData: function(db, res, data) {
     if(ownerName) {
         db.collection('users').findOne({"username": ownerName}, (err_user, res_user) => {
             if (err_user) throw err_user;
-    
+
             if (res_user && (res_user._id != authorId)) {
                 db.collection('guestbookEntries').insert({
                     "title": title,
@@ -858,7 +867,7 @@ updateUserData: function(db, res, data) {
     } else {
         console.log("It is not possible to post a guestbook entry on the own profile!");
         res.send(false);
-    }    
+    }
   },
 
   //----------------------List Guestbook Entries in Profile for a Username----------------------//
@@ -985,7 +994,32 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
     });
   },
 
-  }
+  //----------------------Upload Profile Picture----------------------//
+  uploadProfilePic: function (db, res, file) {
+    const collectionUsers = db.collection('users');
+    const fileData = file.fileData;
+    const userid = file.userid;
+
+    let filename = fileData.filename;
+    let userId = userid;
+
+    collectionUsers.update({_id: ObjectId(userid)},
+        {
+            $set: {
+                "picture": filename
+            }
+        }
+    )
+
+    console.log("Profile Pic was uploaded to server...")
+    res.send(JSON.stringify({
+        message: "Image uploaded"
+    }));
+
+    },
+
+
+}
 
 function getMonthName (month) {
     const monthNames = [
