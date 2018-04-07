@@ -122,7 +122,7 @@ handleChange(e, attribut) {
                 {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
                 {this.state.showMessageSuccess ? <Message color='green'><p>{this.state.message}<br /></p></Message> : null}
 
-                <Button id="button-upload">Save</Button>
+                <Button className="button-upload">Save</Button>
               </Form>
 
             </div>

@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { Button, Form, Input, TextArea, Message } from 'semantic-ui-react'
 import {uploadStoryToPlatform} from '../API/POST/PostMethods';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
-import SidebarProfile from '../Components/SidebarProfile'
+import SidebarProfile from '../Components/Sidebar'
 
 import '../profileStyle.css';
 
