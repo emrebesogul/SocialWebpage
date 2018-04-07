@@ -1019,9 +1019,6 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
   },
 
     //----------------------Delete Profile Pic---------------------//
-    //
-    // Receives the id of an image and deletes it from the database.
-    // After that, a message with "true" is send to the react application.
     deleteProfilePic: function (db, res, userId) {
 
         const collectionUsers = db.collection('users');
@@ -1033,12 +1030,11 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                 }));
                 throw err;
             }
-
             if (docs) {
                 //Delete image from Server
                 let path = "./public/uploads/posts/" + docs.picture;
                 fs.unlinkSync(path);
-
+                
                 //Delete from database
                 collectionUsers.update({ _id : new ObjectId(userId) },
                     {
@@ -1049,7 +1045,6 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                 );
 
                 console.log(docs.username, " deleted his Profile Picture")
-
                 res.send(JSON.stringify({
                     message: "Profile Pic deleted"
                 }));

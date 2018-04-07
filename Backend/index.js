@@ -29,19 +29,14 @@ const storage = multer.diskStorage({
   }
 });
 
-
 const upload = multer({ storage: storage});
 
+
+
+
+//==================================================================================================//
 app.use(express.static('public'));
 
-
-
-//==================================================================================================//
-
-
-
-
-//==================================================================================================//
 //Enable CORS
 app.use(cors());
 
@@ -67,7 +62,27 @@ MongoClient.connect(url, function(err, client) {
       console.log("Successfully connected to MongoDB");
       app.use(bodyParser.json());
 
-      //----------------------SESSION CHECK----------------------//
+      //Verify Token Function
+      function verifyToken(req, res, next) {
+          //Get auth header value
+          const bearerHeader = req.headers.authorization;
+          if(typeof bearerHeader !== 'undefined') {
+              //Split at the space
+              const bearer = bearerHeader.split(' ');
+              const bearerToken = bearer[1];
+              //Set the Token
+              req.token = bearerToken;
+              //Next middleware
+              next();
+          } else {
+              //Forbidden
+              res.json({
+                  message: "User is not authorized"
+              });
+          }
+      }
+
+      //----------------------CHECK SESSION----------------------//
       app.get('/rest/getUserInfo', verifyToken, (req, res) => {
 
           if(req.query.username) {
@@ -89,7 +104,6 @@ MongoClient.connect(url, function(err, client) {
                   }
               });
           }
-
       });
 
       //----------------------SESSION CHECK----------------------//
@@ -107,26 +121,6 @@ MongoClient.connect(url, function(err, client) {
               }
           });
       });
-
-      //Verify Token
-      function verifyToken(req, res, next) {
-          //Get auth header value
-          const bearerHeader = req.headers.authorization;
-          if(typeof bearerHeader !== 'undefined') {
-              //Split at the space
-              const bearer = bearerHeader.split(' ');
-              const bearerToken = bearer[1];
-              //Set the Token
-              req.token = bearerToken;
-              //Next middleware
-              next();
-          } else {
-              //Forbidden
-              res.json({
-                  message: "User is not authorized"
-              });
-          }
-      }
 
       //----------------------SESSION DELETE----------------------//
       app.get('/rest/deleteSession', (req, res) => {
@@ -170,10 +164,6 @@ MongoClient.connect(url, function(err, client) {
       });
 
       //----------------------Upload Image----------------------//
-      //
-      // Calls the method uploadImageToPlatform that insert the new image
-      // to the database.
-      // Post parameters: title, content and userId of the new story entry
       app.post('/rest/image/create', verifyToken, upload.single('theImage'), (req, res) => {
           if (!req.file) {
             res.send(JSON.stringify({
@@ -191,13 +181,9 @@ MongoClient.connect(url, function(err, client) {
                       const userid = authData.userid
                       const file = {fileData, fileDataInfo, userid}
 
-                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file, function(){
-                          db.close();
-                      });
-
+                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file);
                   }
               });
-
           }
       });
 
@@ -354,9 +340,7 @@ MongoClient.connect(url, function(err, client) {
                   const userData = req.body;
                   const userid = authData.userid
                   const user = {userData, userid}
-                  database.updateUserData(client.db('socialwebpage'), res, user, () => {
-                       db.close();
-                  });
+                  database.updateUserData(client.db('socialwebpage'), res, user);
               }
           });
       });
@@ -560,9 +544,7 @@ MongoClient.connect(url, function(err, client) {
                       const userid = authData.userid
                       const file = {fileData, userid}
 
-                      database.uploadProfilePic(client.db('socialwebpage'), res, file, function(){
-                          db.close();
-                      });
+                      database.uploadProfilePic(client.db('socialwebpage'), res, file);
                   }
               });
 
@@ -589,6 +571,7 @@ MongoClient.connect(url, function(err, client) {
 
 
       //----------------------xy----------------------//
+
 
       app.listen(8000, function() {
           console.log('Listening for API Requests on port 8000...')
