@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Icon, Header, Button, Image} from 'semantic-ui-react'
 import {getCurrentUser, checkSession} from '../API/GET/GetMethods';
-import {sendFriendshipRequest} from '../API/POST/PostMethods';
+import {sendFriendshipRequest, deleteProfilePic} from '../API/POST/PostMethods';
 
 import '../profileStyle.css';
 
@@ -70,6 +70,13 @@ class ProfileHeader extends Component {
         }
     }
 
+    async handleDeleteProfilePic(event) {
+      const response = await deleteProfilePic(
+        "/user/delete/picture"
+      );
+      window.location.reload();
+    }
+
     async doSomethingWithUser() {
 
         const response = await sendFriendshipRequest(this.apiFriendshipRequest, this.state.username);
@@ -91,8 +98,9 @@ class ProfileHeader extends Component {
 
                   <Header as='h2' size="huge" icon textAlign='center'>
                     <div>
-                        <Icon name='user' circular>
+                        <Icon name='user' circular >
                             {this.state.pictureExists ? <div><Image src={this.state.picture} /> </div> : null}
+                            {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button" circular icon="delete" size="small">D</Button> : null}
                         </Icon>
                     </div>
                     <Header.Content>

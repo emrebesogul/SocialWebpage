@@ -326,3 +326,30 @@ export const uploadProfilePic=(api, fd) =>
         });
     });
 }
+
+//----------------------Delete Profile Picture----------------------//
+export const deleteProfilePic=(api, username) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: false,
+          processData: false,
+          data: username,
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              console.log(err);
+              reject(err);
+          }
+        });
+    });
+}

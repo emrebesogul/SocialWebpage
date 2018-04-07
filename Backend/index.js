@@ -569,6 +569,23 @@ MongoClient.connect(url, function(err, client) {
           }
       });
 
+      //----------------------Delete Profile Pic----------------------//
+      //
+      // Calls the method deleteImage that deletes an image from the database.
+      app.post('/rest/user/delete/picture', verifyToken, (req, res) => {
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const userId = authData.userid;
+                database.deleteProfilePic(client.db('socialwebpage'), res, userId);
+            }
+        });
+      });
+
 
 
       //----------------------xy----------------------//
