@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {  Redirect } from 'react-router-dom';
 import { Button, Form, Input, Message } from 'semantic-ui-react'
-import SidebarProfile from '../Components/SidebarProfile'
+import SidebarProfile from '../Components/Sidebar'
 import Dropzone from 'react-dropzone'
 import FormData from 'form-data';
 

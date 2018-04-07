@@ -3,7 +3,7 @@ import { Input, Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById} from '../API/POST/PostMethods';
 import { Redirect } from 'react-router-dom';
-import SidebarProfile from '../Components/SidebarProfile'
+import SidebarProfile from '../Components/Sidebar'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
@@ -230,7 +230,7 @@ class Profile extends Component {
                                       <div className="username-label">
                                         <span > @{item.username} </span>
 
-                                        {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
+                                        {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} id="delete-button" className="button-upload" circular icon="delete" size="small"></Button> : null}
                                       </div>
                                       <Card.Content id="card-content">
                                         <Card.Header className="card-header">
@@ -296,7 +296,7 @@ class Profile extends Component {
                             )
                           })}
 
-                          <div id="seperator"></div>
+                          <div className="seperator"></div>
 
                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                              <Form.Field>
@@ -304,7 +304,7 @@ class Profile extends Component {
                                <Input placeholder="Titel"/>
                              </Form.Field>
                              <Form.TextArea autoHeight rows="3" />
-                             <Button content='Add Reply' labelPosition='left' icon='edit' type="submit" />
+                             <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
                            </Form>
                         </div>
 

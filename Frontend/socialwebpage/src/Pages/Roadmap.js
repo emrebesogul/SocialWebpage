@@ -100,7 +100,7 @@ class Roadmap extends Component {
                       <Item.Description>
                         Settings
                       </Item.Description>
-                      <Item.Extra>In Progress</Item.Extra>
+                      <Item.Extra>Finished</Item.Extra>
                     </Item.Content>
                   </Item>
 
@@ -133,7 +133,7 @@ class Roadmap extends Component {
                       <Item.Description>
                         Responsive Design platform-wirde
                       </Item.Description>
-                      <Item.Extra>Not started</Item.Extra>
+                      <Item.Extra>In Progress</Item.Extra>
                     </Item.Content>
                   </Item>
 
