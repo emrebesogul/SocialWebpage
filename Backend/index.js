@@ -94,7 +94,7 @@ MongoClient.connect(url, function(err, client) {
                   } else {
                       const myUsername = authData.username
                       let username = req.query.username;
-                      database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, myUsername);                  
+                      database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, myUsername);
                   }
               });
 
@@ -423,9 +423,22 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
-                  console.log("getFriendRequests")
                   const userId = authData.userid;
                   database.getFriendRequests(client.db('socialwebpage'), res, userId);
+              }
+          });
+
+      });
+
+      //----------------------Decline friendRequests----------------------//
+      app.post('/rest/friends/declineFriendRequest', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  database.deleteFriendshipRequest(client.db('socialwebpage'), req.body.requester, req.body.recipient, res);
               }
           });
 

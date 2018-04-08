@@ -868,6 +868,16 @@ updateUserData: function(db, res, data) {
 
     },
 
+    //----------------------xy----------------------//
+    deleteFriendshipRequest: function(db, requester, recipient , res) {
+        const collectionfriendRequests = db.collection('friendRequests');
+
+        collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
+            if (err) throw err;
+            res.send(true);
+        });
+    },
+
 
   // ----------------------------------------Guestbook------------------------------------------//
 

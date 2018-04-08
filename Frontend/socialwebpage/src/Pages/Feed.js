@@ -6,7 +6,7 @@ import Sidebar from '../Components/Sidebar'
 
 import {checkSession} from '../API/GET/GetMethods';
 import {getFriendRequests} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById} from '../API/POST/PostMethods';
+import {likeStoryEntryById, likeImageById, deleteFriendshipRequest} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var feedPosts = [];
@@ -53,6 +53,24 @@ class Profile extends Component {
       this.setState({resFriendsRequests: response});
   }
 
+  async confirmFriendRequest() {
+      //Set state of status to accepted
+      //Add both to friends: []
+
+  }
+
+  async declineFriendRequest(e, item) {
+      //Set state of status to rejected
+      //Delete from friendRequests collection
+      const response = await deleteFriendshipRequest(
+          "/friends/declineFriendRequest",
+          item.requester,
+          item.recipient
+      );
+      if(response) {
+          window.location.reload();
+      }
+  }
 
 async handleRate(event, data){
   event.preventDefault();
@@ -173,8 +191,8 @@ async handleRate(event, data){
                                               <List.Description>4 mutual contacts</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
-                                              <Button>Confirm</Button>
-                                              <Button>Decline</Button>
+                                              <Button onClick={this.confirmFriendRequest}>Confirm</Button>
+                                              <Button onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
                                             </List.Content>
                                           </List.Item>
                                         </List>
