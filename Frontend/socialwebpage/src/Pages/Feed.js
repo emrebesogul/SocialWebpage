@@ -85,8 +85,8 @@ class Profile extends Component {
       }
   }
 
-  async deleteFriendt(e, item) {
-      alert("You really want to delete friend?")
+  async deleteFriend(e, item) {
+      alert("You really want to delete friend?");
   }
 
 async handleRate(event, data){

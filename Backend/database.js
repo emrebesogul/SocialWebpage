@@ -866,7 +866,6 @@ updateUserData: function(db, res, data) {
       collectionfriendRequests.find({"status": "open", "recipientId": ObjectId(userId)}).toArray((err, docs) => {
           if (err) throw err;
           if (docs) {
-              console.log(docs)
               res.status(200).send(docs);
           }
       })
