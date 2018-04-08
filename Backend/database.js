@@ -456,7 +456,7 @@ var call = module.exports = {
   },
 
   //----------------------Get Other User----------------------//
-  getOtherUserProfile: function(db, req, res, username) {
+  getOtherUserProfile: function(db, req, res, username, myUsername) {
       const collection = db.collection('users');
       collection.findOne({"username": username}, (err, docs) => {
           if (err) {
@@ -467,13 +467,32 @@ var call = module.exports = {
           }
 
           if (docs) {
-              res.send(JSON.stringify({
-                  username: docs.username,
-                  firstname: docs.first_name,
-                  lastname: docs.last_name,
-                  email: docs.email,
-                  picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
-              }));
+
+              //Check if they are alredy friends or friend request is on its way
+              db.collection('friendRequests').findOne( {$or: [ {"requester": myUsername, "recipient": username}, {"requester": username, "recipient": myUsername} ]}, (err, docs2) => {
+                  // If already sent, means request was send, dont send it
+                  if(err) throw err;
+
+                  var buttonState = "";
+
+                  if (docs2) {
+                      buttonState = "Request processing";
+                  } else if((docs.friends).includes(myUsername)) {
+                      buttonState = "Undo Friend";
+                  } else {
+                      buttonState = "Add Friend";
+                  }
+
+                  res.send(JSON.stringify({
+                      username: docs.username,
+                      firstname: docs.first_name,
+                      lastname: docs.last_name,
+                      email: docs.email,
+                      picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture,
+                      buttonState: buttonState
+                  }));
+              })
+
           }
           else {
               res.send(JSON.stringify({
@@ -795,20 +814,33 @@ updateUserData: function(db, res, data) {
               const recipientId = docs._id;
               const recipient = docs.username;
 
-              db.collection('friendRequests').insert({
-                  "requester": requester,
-                  "requesterId": ObjectId(userId),
-                  "recipient": recipient,
-                  "recipientId": recipientId,
-                  "time": Date(),
-                  "status": "open"
-              });
+              //Check if request is already sent... (open status) A to B and B to A
+              //If not, send request... (put in db)
 
-               console.log("Request sent to add new friend...")
+              db.collection('friendRequests').findOne({"requester": requester, "recipient": recipient}, (err, docs) => {
+                  // If already sent, means request was send, dont send it
+                  if(err) throw err;
+                  if (docs) {
+                      res.send(JSON.stringify({
+                          buttonState: "Undo Friend"
+                      }));
+                  } else {
+                      console.log("Request sent to add new friend...")
 
-               res.send(JSON.stringify({
-                   buttonState: "Request sent"
-               }));
+                      res.send(JSON.stringify({
+                          buttonState: "Request sent"
+                      }));
+
+                      db.collection('friendRequests').insert({
+                          "requester": requester,
+                          "requesterId": ObjectId(userId),
+                          "recipient": recipient,
+                          "recipientId": recipientId,
+                          "time": Date(),
+                          "status": "open"
+                      });
+                  }
+              })
           }
           else {
               res.send(JSON.stringify({
@@ -1034,7 +1066,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                 //Delete image from Server
                 let path = "./public/uploads/posts/" + docs.picture;
                 fs.unlinkSync(path);
-                
+
                 //Delete from database
                 collectionUsers.update({ _id : new ObjectId(userId) },
                     {

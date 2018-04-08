@@ -86,10 +86,18 @@ MongoClient.connect(url, function(err, client) {
       app.get('/rest/getUserInfo', verifyToken, (req, res) => {
 
           if(req.query.username) {
-              let username = req.query.username;
-              database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, () => {
-                  db.close();
+              jwt.verify(req.token, 'secretkey', (err, authData) => {
+                  if(err) {
+                      res.json({
+                          message: "User is not authorized"
+                      });
+                  } else {
+                      const myUsername = authData.username
+                      let username = req.query.username;
+                      database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, myUsername);                  
+                  }
               });
+
           } else {
               jwt.verify(req.token, 'secretkey', (err, authData) => {
                   if(err) {
@@ -98,9 +106,7 @@ MongoClient.connect(url, function(err, client) {
                       });
                   } else {
                       const userid = authData.userid
-                      database.getCurrentUserProfile(client.db('socialwebpage'), req, res, userid, () => {
-                          db.close();
-                      });
+                      database.getCurrentUserProfile(client.db('socialwebpage'), req, res, userid);
                   }
               });
           }

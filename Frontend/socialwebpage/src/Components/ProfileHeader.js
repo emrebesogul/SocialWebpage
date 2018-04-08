@@ -20,7 +20,7 @@ class ProfileHeader extends Component {
           pictureExists: false,
 
           //ButtonState variiert je nachdem, ob sie freunde sind, anfrage raus ist oder status anders ist
-          buttonState: "Add Friend"
+          buttonState: "Loading"
         }
         this.api = "/getUserInfo"
         this.apiFriendshipRequest = "/friends/sendFriendshipRequest"
@@ -55,6 +55,7 @@ class ProfileHeader extends Component {
             this.setState({lastname: response.lastname})
             this.setState({email: response.email})
             this.setState({picture: response.picture})
+            this.setState({buttonState: response.buttonState})
 
             const responseMyData = await checkSession(this.apiCheckSession);
 
@@ -79,8 +80,11 @@ class ProfileHeader extends Component {
 
     async doSomethingWithUser() {
 
-        const response = await sendFriendshipRequest(this.apiFriendshipRequest, this.state.username);
-        this.setState({buttonState: JSON.parse(response).buttonState})
+        // Send friendship request to user
+        if(this.state.buttonState == "Add Friend") {
+            const response = await sendFriendshipRequest(this.apiFriendshipRequest, this.state.username);
+            this.setState({buttonState: JSON.parse(response).buttonState})
+        }
 
     }
 
@@ -92,7 +96,7 @@ class ProfileHeader extends Component {
                 <div id="profile-header">
 
                   <div>
-                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>Add User<Icon name="user"/></Button> : null}
+                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>{this.state.buttonState}<Icon name="user"/></Button> : null}
                   </div>
 
 
