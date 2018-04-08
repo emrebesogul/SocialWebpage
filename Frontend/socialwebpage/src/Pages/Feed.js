@@ -205,7 +205,12 @@ async handleRate(event, data){
                                           <List.Item>
                                             <Image size="tiny" avatar src='/assets/images/boy.png' />
                                             <List.Content>
-                                              <List.Header as='a'>{item.requester} wants to be friends with you.</List.Header>
+                                              <List.Header as='a'>
+                                                  <Link to={`/profile/${item.requester}`}>
+                                                      <span>{item.requester} </span>
+                                                  </Link>
+                                                   wants to be friends with you.
+                                              </List.Header>
                                               <List.Description>4 mutual contacts</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
@@ -230,7 +235,11 @@ async handleRate(event, data){
                                           <List.Item>
                                             <Image size="tiny" avatar src='/assets/images/boy.png' />
                                             <List.Content>
-                                              <List.Header as='a'>{item}</List.Header>
+                                              <List.Header as='a'>
+                                                  <Link to={`/profile/${item}`}>
+                                                      {item}
+                                                  </Link>
+                                              </List.Header>
                                               <List.Description>4 mutual contacts</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
