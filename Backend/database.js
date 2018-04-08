@@ -479,14 +479,11 @@ var call = module.exports = {
                       if(docs2.status == "open") {
                           buttonState = "Request processing";
                       } else if((docs.friends).includes(myUsername)) {
-                          console.log("Undo Friend")
                           buttonState = "Undo Friend";
                       } else {
                           buttonState = "Add Friend";
                       }
                   }
-
-                  console.log(buttonState)
 
                   res.send(JSON.stringify({
                       username: docs.username,
@@ -935,7 +932,7 @@ updateUserData: function(db, res, data) {
         collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
-                res.send(docs.friends)
+                res.send(docs)
             }
         })
     },

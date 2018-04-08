@@ -56,7 +56,7 @@ class Profile extends Component {
 
   async getFriends() {
       const response = await getFriends("/friends/getFriends");
-      this.setState({resFriends: response})
+      this.setState({resFriends: response.friends})
   }
 
   async confirmFriendRequest(e, item) {
