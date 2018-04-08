@@ -476,12 +476,17 @@ var call = module.exports = {
                   var buttonState = "";
 
                   if (docs2) {
-                      buttonState = "Request processing";
-                  } else if((docs.friends).includes(myUsername)) {
-                      buttonState = "Undo Friend";
-                  } else {
-                      buttonState = "Add Friend";
+                      if(docs2.status == "open") {
+                          buttonState = "Request processing";
+                      } else if((docs.friends).includes(myUsername)) {
+                          console.log("Undo Friend")
+                          buttonState = "Undo Friend";
+                      } else {
+                          buttonState = "Add Friend";
+                      }
                   }
+
+                  console.log(buttonState)
 
                   res.send(JSON.stringify({
                       username: docs.username,
@@ -869,6 +874,54 @@ updateUserData: function(db, res, data) {
     },
 
     //----------------------xy----------------------//
+    confirmFriendshipRequest: function(db, requester, recipient , res) {
+        const collectionfriendRequests = db.collection('friendRequests');
+        const collectionUsers = db.collection('users');
+
+        // Set status to accepted
+        //Delete from database
+        collectionfriendRequests.update({"requester": requester, "recipient": recipient},
+            {
+                $set: {
+                    "status": "accepted"
+                }
+            }
+        );
+
+        // Add to friendlist of both array.push()
+        collectionUsers.findOne({"username": requester}, (err, docs) => {
+            if(err) throw err;
+            if(docs) {
+                var friendlist = docs.friends;
+                friendlist.push(recipient);
+                collectionUsers.update({"username": requester},
+                    {
+                        $set: {
+                            "friends": friendlist
+                        }
+                    }
+                );
+            }
+        });
+
+        collectionUsers.findOne({"username": recipient}, (err, docs) => {
+            if(err) throw err;
+            if(docs) {
+                var friendlist = docs.friends;
+                friendlist.push(requester);
+                collectionUsers.update({"username": recipient},
+                    {
+                        $set: {
+                            "friends": friendlist
+                        }
+                    }
+                );
+            }
+        });
+        res.send(true);
+    },
+
+    //----------------------xy----------------------//
     deleteFriendshipRequest: function(db, requester, recipient , res) {
         const collectionfriendRequests = db.collection('friendRequests');
 
@@ -876,6 +929,16 @@ updateUserData: function(db, res, data) {
             if (err) throw err;
             res.send(true);
         });
+    },
+
+    getFriends: function(db, res, userId) {
+        const collectionUsers = db.collection('users');
+        collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                res.send(docs.friends)
+            }
+        })
     },
 
 

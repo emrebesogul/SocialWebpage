@@ -430,6 +430,20 @@ MongoClient.connect(url, function(err, client) {
 
       });
 
+      //----------------------Confirm friendRequests----------------------//
+      app.post('/rest/friends/confirmFriendRequest', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  database.confirmFriendshipRequest(client.db('socialwebpage'), req.body.requester, req.body.recipient, res);
+              }
+          });
+
+      });
+
       //----------------------Decline friendRequests----------------------//
       app.post('/rest/friends/declineFriendRequest', verifyToken, (req, res) => {
           jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -444,6 +458,19 @@ MongoClient.connect(url, function(err, client) {
 
       });
 
+      //----------------------Get friends----------------------//
+      app.get('/rest/friends/getFriends', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  const userId = authData.userid;
+                  database.getFriends(client.db('socialwebpage'), res, userId);
+              }
+          });
+      });
 
       // ------------------------------------Guestbook--------------------------------------//
 

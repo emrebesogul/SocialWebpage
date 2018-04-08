@@ -225,7 +225,7 @@ export const sendFriendshipRequest=(api, recipient) =>
 }
 
 //----------------------Confirm Friendship----------------------//
-export const confirmFriendshipRequest=(api, recipient) =>
+export const confirmFriendshipRequest=(api, requester, recipient) =>
 {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
@@ -235,7 +235,7 @@ export const confirmFriendshipRequest=(api, recipient) =>
           type: "POST",
           cache: false,
           contentType: 'application/json',
-          data: JSON.stringify({token: token, recipient: recipient}),
+          data: JSON.stringify({requester: requester, recipient: recipient}),
           headers: {
               'Authorization': 'Bearer ' + token
           },
