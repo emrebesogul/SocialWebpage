@@ -75,7 +75,9 @@ class ProfileHeader extends Component {
       const response = await deleteProfilePic(
         "/user/delete/picture"
       );
-      window.location.reload();
+      if(response) {
+        window.location.reload();  
+      }
     }
 
     async doSomethingWithUser() {

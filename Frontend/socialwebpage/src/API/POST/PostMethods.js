@@ -116,7 +116,7 @@ export const deleteStoryEntryById=(api, storyId) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -141,7 +141,7 @@ export const deleteImageById=(api, imageId) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -166,7 +166,7 @@ export const likeStoryEntryById=(api, storyId) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -191,7 +191,7 @@ export const likeImageById=(api, imageId) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -216,7 +216,7 @@ export const sendFriendshipRequest=(api, recipient) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -241,7 +241,7 @@ export const confirmFriendshipRequest=(api, requester, recipient) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -268,7 +268,7 @@ export const deleteFriendshipRequest=(api, requester, recipient) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -319,7 +319,7 @@ export const deleteGuestbookEntryById=(api, guestbookEntryId) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -344,7 +344,7 @@ export const likeGuestbookEntryById=(api, guestbookEntryId) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
