@@ -76,7 +76,7 @@ class ProfileHeader extends Component {
         "/user/delete/picture"
       );
       if(response) {
-        window.location.reload();  
+        window.location.reload();
       }
     }
 
@@ -101,14 +101,11 @@ class ProfileHeader extends Component {
                       {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>{this.state.buttonState}<Icon name="user"/></Button> : null}
                   </div>
 
-
-                  <Header as='h2' size="huge" icon textAlign='center'>
-                    <div>
-                        <Icon name='user' circular >
-                            {this.state.pictureExists ? <div><Image src={this.state.picture} /> </div> : <div></div> }
-                            {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button" circular icon="delete" size="small">D</Button> : null}
-                        </Icon>
+                    <div >
+                            {this.state.pictureExists ? <div><Image id="profile-header-picture" src={this.state.picture} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
+                            {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
                     </div>
+                    <Header as='h2' size="huge" icon textAlign='center'>
                     <Header.Content>
                       {this.state.username}
                       <Header.Subheader>
