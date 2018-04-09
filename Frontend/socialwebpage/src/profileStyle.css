@@ -223,9 +223,9 @@ h2.ui.huge.icon.center.aligned.header{
 }
 
 #delete-button-profile-picture{
-  position: absolute;
-  top: 20px;
-  right: 2%;
+  position: relative;
+  top: 0px;
+  right: -93%;
 }
 
 #profile-header-picture{
@@ -706,6 +706,12 @@ img.ui.image.image-feed{
 /--------------------------------------------------*/
 
 @media only screen and (max-width: 1250px) {
+    #delete-button-profile-picture{
+      top: 20px;
+      right: 2%;
+      position: absolute;
+    }
+
     #feed-content{
       width: 100% !important;
       max-width: 765px;
