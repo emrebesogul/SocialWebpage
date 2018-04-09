@@ -1145,18 +1145,37 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
     let filename = fileData.filename;
     let userId = userid;
 
-    collectionUsers.update({_id: ObjectId(userid)},
-        {
-            $set: {
-                "picture": filename
-            }
+    collectionUsers.findOne({ _id : new ObjectId(userId)}, (err, docs) => {
+        if (err) {
+            res.send(JSON.stringify({
+                message: "User not found"
+            }));
+            throw err;
         }
-    )
+        if (docs) {
+            //Delete old image from Server
+            console.log(docs.picture)
 
-    console.log("Profile Pic was uploaded to server...")
-    res.send(JSON.stringify({
-        message: "Image uploaded"
-    }));
+            if(docs.picture !== "") {
+                console.log(docs.picture)
+                let path = "./public/uploads/posts/" + docs.picture;
+                fs.unlinkSync(path);
+            }
+
+            collectionUsers.update({_id: ObjectId(userId)},
+                {
+                    $set: {
+                        "picture": filename
+                    }
+                }
+            )
+            console.log("Profile Pic was uploaded to server...")
+
+            res.send(JSON.stringify({
+                message: "Image uploaded"
+            }));
+        }
+    })
 
   },
 
