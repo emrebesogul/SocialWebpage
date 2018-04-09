@@ -120,7 +120,7 @@ class Upload extends Component {
                         </ul>
                       </aside>
 
-                      <div>{this.state.files.map((file, index) => <img key={index} width="200" height="200" src={file.preview} /> )}</div>
+                      <div>{this.state.files.map((file, index) => <img key={index} width="200" height="200" alt="preview" src={file.preview} /> )}</div>
                       {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 
                       <Button className="button-upload" type="submit">Post</Button>

@@ -1,6 +1,5 @@
 import Dropzone from 'react-dropzone'
-import React, {Component} from 'react';
-import { Image } from 'semantic-ui-react'
+import React from 'react';
 
 class Basic extends React.Component {
   constructor() {
