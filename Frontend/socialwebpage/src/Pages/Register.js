@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Button, Form, Input, Icon, Image, Message  } from 'semantic-ui-react'
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import '../style.css';
 

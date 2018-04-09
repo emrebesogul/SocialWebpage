@@ -70,7 +70,7 @@ class Profile extends Component {
             const response = await getCurrentUser(this.apiUser);
             this.setState({username: response.username})
 
-            if(responseMyData.username == this.state.username) {
+            if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
             } else {
                 this.setState({ show: false});
@@ -95,7 +95,7 @@ class Profile extends Component {
             const response = await getCurrentUser(api);
             this.setState({username: response.username})
 
-            if(responseMyData.username == this.state.username) {
+            if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
             } else {
                 this.setState({ show: false});

@@ -39,7 +39,7 @@ class ProfileHeader extends Component {
 
             const responseMyData = await checkSession(this.apiCheckSession);
 
-            if(responseMyData.username == this.state.username) {
+            if(responseMyData.username === this.state.username) {
                 this.setState({ show: false});
             } else {
                 this.setState({ show: true});
@@ -55,7 +55,7 @@ class ProfileHeader extends Component {
 
             const responseMyData = await checkSession(this.apiCheckSession);
 
-            if(responseMyData.username == this.state.username) {
+            if(responseMyData.username === this.state.username) {
                 this.setState({ show: false});
             } else {
                 this.setState({ show: true});

@@ -41,7 +41,7 @@ class Settings extends React.Component{
     async handleAccountSettings(event) {
         event.preventDefault();
 
-        let obj = new Object();
+        let obj = {};
         obj.first_name  = event.target[0].value
         obj.last_name = event.target[1].value
         obj.username = event.target[2].value
@@ -150,7 +150,7 @@ handleChange(e, attribut) {
                 </ul>
               </aside>
 
-              <div>{this.state.files.map((file, index) => <img key={index} width="200" height="200" src={file.preview} /> )}</div>
+              <div>{this.state.files.map((file, index) => <img key={index} alt="preview" width="200" height="200" src={file.preview} /> )}</div>
               {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 
               <Button className="button-upload" type="submit">Update</Button>
