@@ -43,7 +43,7 @@ class Settings extends React.Component{
     async handleAccountSettings(event) {
         event.preventDefault();
 
-        let obj = new Object();
+        let obj = {};
         obj.first_name  = event.target[0].value
         obj.last_name = event.target[1].value
         obj.username = event.target[2].value
@@ -75,7 +75,7 @@ class Settings extends React.Component{
             this.apiUploadProfilePic,
             fd
         );
-        
+
         //Do something with response
         this.setState({message : JSON.parse(response).message});
 
