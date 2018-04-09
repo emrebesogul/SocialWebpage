@@ -492,7 +492,8 @@ var call = module.exports = {
                       firstname: docs.first_name,
                       lastname: docs.last_name,
                       email: docs.email,
-                      picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture,
+                      picture: docs.picture,
+                      pictureURL: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture,
                       buttonState: buttonState
                   }));
               })
@@ -524,7 +525,8 @@ var call = module.exports = {
                   firstname: docs.first_name,
                   lastname: docs.last_name,
                   email: docs.email,
-                  picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
+                  picture: docs.picture,
+                  pictureURL: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
               }));
           }
           else {
@@ -1154,8 +1156,6 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
         }
         if (docs) {
             //Delete old image from Server
-            console.log(docs.picture)
-
             if(docs.picture !== "") {
                 console.log(docs.picture)
                 let path = "./public/uploads/posts/" + docs.picture;
@@ -1205,7 +1205,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                     }
                 );
 
-                console.log(docs.username, " deleted his Profile Picture")
+                console.log(docs.username, " deleted his Profile Picture and uploaded new one")
                 res.send(JSON.stringify({
                     message: "Profile Pic deleted"
                 }));
