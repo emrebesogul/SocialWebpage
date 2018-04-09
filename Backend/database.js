@@ -731,7 +731,6 @@ updateUserData: function(db, res, data) {
                             }));
                           }
                     } else {
-                        console.log(docs)
                         // Email is already given
                         res.send(JSON.stringify({
                             message: "This email is not available. Please try another one."
@@ -739,8 +738,6 @@ updateUserData: function(db, res, data) {
                     }
                 })
             } else {
-                console.log("loool", docs)
-                console.log(userid)
                 // Username is already given
                 res.send(JSON.stringify({
                     message: "This username is not available. Please try another one."
@@ -788,7 +785,6 @@ updateUserData: function(db, res, data) {
                         }));
                       }
                 } else {
-                    console.log(docs)
                     // Email is already given
                     res.send(JSON.stringify({
                         message: "This email is not available. Please try another one."
