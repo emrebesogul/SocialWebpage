@@ -480,9 +480,9 @@ var call = module.exports = {
                   var buttonState = "";
 
                   if ((docs.friends).includes(myUsername)) {
-                      buttonState = "Delete Friend";
+                      buttonState = "You are alredy Friends";
                   } else if (docs2) {
-                      buttonState = "Cancel Request";
+                      buttonState = "Request sent";
                   } else {
                       buttonState = "Add Friend";
                   }

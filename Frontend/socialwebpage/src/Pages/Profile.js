@@ -3,7 +3,7 @@ import { Input, Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById} from '../API/POST/PostMethods';
 import { Redirect } from 'react-router-dom';
-import SidebarProfile from '../Components/Sidebar'
+import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';

@@ -8,7 +8,7 @@ import {getCurrentUser} from '../API/GET/GetMethods';
 import '../profileStyle.css';
 
 
-class Sidebar extends Component {
+class SidebarProfile extends Component {
     constructor() {
         super();
 
@@ -42,7 +42,7 @@ class Sidebar extends Component {
     }
 
     reloadPage() {
-        //window.location.reload();
+        window.location.reload();
         //this.forceUpdate();
     }
 
@@ -189,4 +189,4 @@ class Sidebar extends Component {
 
 }
 
-export default Sidebar;
+export default SidebarProfile;
