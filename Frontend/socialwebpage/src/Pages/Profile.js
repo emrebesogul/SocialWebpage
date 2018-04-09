@@ -296,7 +296,6 @@ class Profile extends Component {
                             )
                           })}
 
-                          <div className="seperator"></div>
 
                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                              <Form.Field>

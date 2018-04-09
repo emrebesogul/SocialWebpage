@@ -101,9 +101,10 @@ class ProfileHeader extends Component {
                       {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>{this.state.buttonState}<Icon name="user"/></Button> : null}
                   </div>
 
-                    <div >
-                            {this.state.pictureExists ? <div><Image id="profile-header-picture" src={this.state.picture} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
-                            {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
+                    <div>
+                        {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
+                        {this.state.pictureExists ? <div><Image id="profile-header-picture" src={this.state.picture} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
+
                     </div>
                     <Header as='h2' size="huge" icon textAlign='center'>
                     <Header.Content>
