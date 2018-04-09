@@ -1192,8 +1192,58 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                 }));
             }
         })
+    },
 
+    // --------------------------Update Story Entries----------------------------//
+    
+    //------------------------------Get Story Entry------------------------------//
+    //
+    // Recieves the id of a story and the id of the current user and returns the
+    // information of the story if the current user is the author of this story.
+    getStoryEntry: function (db, res, storyId, storyTitle, storyContent, currentUserId) {
+        db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err_find_story_entries, res_find_story_entries) => {
+            if (err_find_story_entries) throw err_find_story_entries;
+            if (res_find_story_entries) {
+                if (res_find_story_entries.user_id == currentUserId) {
+                    res.status(200).send(res_find_story_entries);
+                } else {
+                    res.status(401).send(JSON.stringify({
+                        message: "User is not authorized to update this story entry"
+                    }));
+                }     
+            } else {
+                res.status(404).send(JSON.stringify({
+                    message: "Can't find a story with id: " + storyId
+                }));
+            }
+        });
+    },
 
+    //----------------------------Update Story Entry-----------------------------//
+    //
+    // Recieves the id of a story, the id of the current user and the new data of 
+    // this story entry that should be updated.
+    // Returns true if the update was successful and false otherwise.
+    updateStoryEntry: function (db, res, storyId, storyTitle, storyContent, currentUserId) {
+        db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err_find_story_entries, res_find_story_entries) => {
+            if (err_find_story_entries) throw err_find_story_entries;
+            if (res_find_story_entries && res_find_story_entries.user_id == currentUserId) {
+                db.collection("stories").update(
+                    {_id: ObjectId(storyId)},
+                    {
+                        $set: {
+                            "title": storyTitle,
+                            "content": storyContent
+                        }
+                    }, (err_update_guestbook_entries, res_update_guestbook_entries) => {
+                        if (err_update_guestbook_entries) throw err_update_guestbook_entries;
+                        res.status(200).send(true);
+                    }
+                );   
+            } else {
+                res.status(404).send(false);
+            }
+        });
     },
 
 

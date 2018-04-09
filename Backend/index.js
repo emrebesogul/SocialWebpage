@@ -629,6 +629,49 @@ MongoClient.connect(url, function(err, client) {
         });
       });
 
+      
+    // --------------------------Update Story Entries----------------------------//
+  
+    //---------------------------Get Story Entry By ID---------------------------//
+    //
+    // Calls the method getStoryEntry that returns the information of the
+    // desired story entry.
+    app.post('/rest/story/getEntry', verifyToken, (req, res) => {
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                let storyId = req.body.storyId;
+                let currentUserId = authData.userid;
+                database.getStoryEntry(client.db('socialwebpage'), res, storyId, currentUserId, () => {
+                    db.close();
+                });
+            }
+        });
+    });
+
+    //----------------------Update Story Entry----------------------//
+    app.put('/rest/story/edit', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                let storyId = req.body.storyId;
+                let storyTitle = req.body.storyTitle;
+                let storyContent = req.body.storyContent;
+                let currentUserId = authData.userid;
+                database.updateStoryEntry(client.db('socialwebpage'), res, storyId, storyTitle, storyContent, currentUserId, () => {
+                        db.close();
+                });
+            }
+        });
+    });
+
 
 
       //----------------------xy----------------------//
