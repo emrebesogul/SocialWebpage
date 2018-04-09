@@ -475,14 +475,17 @@ var call = module.exports = {
 
                   var buttonState = "";
 
-                  if (docs2) {
-                      if(docs2.status == "open") {
+                  if ((docs.friends).includes(myUsername)) {
+                      console.log("We are friends...")
+                      buttonState = "Undo Friend";
+                  } else if (docs2) {
+                      if (docs2.status == "open") {
+                          console.log("I want to be friends...")
                           buttonState = "Request processing";
-                      } else if((docs.friends).includes(myUsername)) {
-                          buttonState = "Undo Friend";
-                      } else {
-                          buttonState = "Add Friend";
                       }
+                  } else {
+                      console.log("We are not friends...")
+                      buttonState = "Add Friend";
                   }
 
                   res.send(JSON.stringify({
