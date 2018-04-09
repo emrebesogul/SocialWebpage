@@ -18,7 +18,6 @@ export const checkUserDataAtLogin=(api, username, password) =>
               resolve(res);
           },
           error: function(xhr, status, err){
-              console.log(err);
               reject(err);
           }
         });
@@ -39,7 +38,6 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
               resolve(res);
           },
           error: function(xhr, status, err){
-              console.log(err);
               reject(err);
           }
         });
@@ -66,7 +64,6 @@ export const uploadPictureToPlatform=(api, fd) =>
               resolve(res);
           },
           error: function(xhr, status, err){
-              console.log(err);
               reject(err);
           }
         });
@@ -92,7 +89,6 @@ export const uploadStoryToPlatform=(api, title, content, userId) =>
               resolve(res);
           },
           error: function(xhr, status, err){
-              console.log(err);
               reject(err);
           }
         });
@@ -255,8 +251,6 @@ export const deleteFriendshipRequest=(api, requester, recipient) =>
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
 
-        console.log(api)
-
         $.ajax({
           url: url + api,
           type: "POST",
@@ -295,7 +289,6 @@ export const createGuestbookentry=(api, title, content, ownerName) =>
               resolve(res);
           },
           error: function(xhr, status, err){
-              console.log(err);
               reject(err);
           }
         });
@@ -372,7 +365,6 @@ export const uploadProfilePic=(api, fd) =>
               resolve(res);
           },
           error: function(xhr, status, err){
-              console.log(err);
               reject(err);
           }
         });
@@ -399,7 +391,31 @@ export const deleteProfilePic=(api, username) =>
               resolve(res);
           },
           error: function(xhr, status, err){
-              console.log(err);
+              reject(err);
+          }
+        });
+    });
+}
+
+//----------------------Delete Friend----------------------//
+export const deleteFriend=(api, userToDelete) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({userToDelete: userToDelete}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
               reject(err);
           }
         });

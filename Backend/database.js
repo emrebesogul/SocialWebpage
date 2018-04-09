@@ -469,24 +469,29 @@ var call = module.exports = {
           if (docs) {
 
               //Check if they are alredy friends or friend request is on its way
-              db.collection('friendRequests').findOne( {$or: [ {"requester": myUsername, "recipient": username}, {"requester": username, "recipient": myUsername} ]}, (err, docs2) => {
+              db.collection('friendRequests').findOne({ $and : [
+                      {$or: [ {"requester": myUsername, "recipient": username}, {"requester": username, "recipient": myUsername} ]},
+                      {"status": "open"}
+                  ]},
+                  (err, docs2) => {
                   // If already sent, means request was send, dont send it
                   if(err) throw err;
 
                   var buttonState = "";
 
                   if ((docs.friends).includes(myUsername)) {
-                      console.log("We are friends...")
-                      buttonState = "Undo Friend";
+                      console.log("test 1")
+                      buttonState = "Delete Friend";
                   } else if (docs2) {
-                      if (docs2.status == "open") {
-                          console.log("I want to be friends...")
-                          buttonState = "Request processing";
-                      }
+                      console.log(docs2)
+                      console.log("test 3")
+                      buttonState = "Cancel Request";
                   } else {
-                      console.log("We are not friends...")
+                      console.log("test 4")
                       buttonState = "Add Friend";
                   }
+
+                  console.log("buttonState: ", buttonState)
 
                   res.send(JSON.stringify({
                       username: docs.username,
@@ -931,9 +936,52 @@ updateUserData: function(db, res, data) {
         collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
-                res.send(docs)
+                res.send(docs.friends.sort())
             }
         })
+    },
+
+    deleteFriend: function(db, res, userId, userToDelete) {
+        const collectionUsers = db.collection('users');
+
+        //Delete friend from first user
+        collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                // Find and remove item from an array
+                var i = (docs.friends).indexOf(userToDelete);
+                if(i != -1) {
+                	(docs.friends).splice(i, 1);
+                }
+                collectionUsers.update({_id : ObjectId(userId)},
+                    {
+                        $set: {
+                            "friends": docs.friends
+                        }
+                    }
+                );
+
+                //Delete friend from second user
+                collectionUsers.findOne({username : userToDelete}, (err, docs2) => {
+                    if(err) throw err;
+                    if (docs2) {
+                        // Find and remove item from an array
+                        var j = (docs2.friends).indexOf(docs.username);
+                        if(j != -1) {
+                            (docs2.friends).splice(j, 1);
+                        }
+                        collectionUsers.update({username: userToDelete},
+                            {
+                                $set: {
+                                    "friends": docs2.friends
+                                }
+                            }
+                        );
+                        res.send(true);
+                    }
+                });
+            }
+        });
     },
 
 

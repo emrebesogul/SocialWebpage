@@ -6,7 +6,7 @@ import Sidebar from '../Components/Sidebar'
 
 import {checkSession} from '../API/GET/GetMethods';
 import {getFriendRequests, getFriends} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest} from '../API/POST/PostMethods';
+import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var feedPosts = [];
@@ -56,7 +56,7 @@ class Profile extends Component {
 
   async getFriends() {
       const response = await getFriends("/friends/getFriends");
-      this.setState({resFriends: response.friends})
+      this.setState({resFriends: response})
   }
 
   async confirmFriendRequest(e, item) {
@@ -86,7 +86,13 @@ class Profile extends Component {
   }
 
   async deleteFriend(e, item) {
-      alert("You really want to delete friend?");
+      const response = await deleteFriend(
+          "/friends/deleteFriend",
+          item
+      );
+      if(response) {
+          window.location.reload();
+      }
   }
 
 async handleRate(event, data){

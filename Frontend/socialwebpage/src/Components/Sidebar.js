@@ -43,6 +43,7 @@ class Sidebar extends Component {
 
     reloadPage() {
         window.location.reload();
+        //this.forceUpdate();
     }
 
     render() {
@@ -63,7 +64,7 @@ class Sidebar extends Component {
                  <Dropdown  item icon='content'>
                    <Dropdown.Menu>
                     <Link to="/profile">
-                     <Dropdown.Item onClick={this.reloadPage} >
+                     <Dropdown.Item onClick={this.reloadPage.bind(this)} >
                        <Icon name="user"/> {this.state.username}
                      </Dropdown.Item>
                     </Link>

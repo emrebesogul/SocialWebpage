@@ -472,6 +472,21 @@ MongoClient.connect(url, function(err, client) {
           });
       });
 
+      //----------------------Delete friend----------------------//
+      app.post('/rest/friends/deleteFriend', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  const userId = authData.userid;
+                  const userToDelete = req.body.userToDelete;
+                  database.deleteFriend(client.db('socialwebpage'), res, userId, userToDelete);
+              }
+          });
+      });
+
       // ------------------------------------Guestbook--------------------------------------//
 
       //------------------------------Create Guestbook Entry--------------------------------//

@@ -88,6 +88,11 @@ class ProfileHeader extends Component {
             this.setState({buttonState: JSON.parse(response).buttonState})
         }
 
+        // Delete friendship request to user
+        if(this.state.buttonState == "Delete Friend") {
+            alert("You really want to delete xy friend?");
+        }
+
     }
 
 
