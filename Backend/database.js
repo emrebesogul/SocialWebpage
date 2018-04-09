@@ -480,18 +480,12 @@ var call = module.exports = {
                   var buttonState = "";
 
                   if ((docs.friends).includes(myUsername)) {
-                      console.log("test 1")
                       buttonState = "Delete Friend";
                   } else if (docs2) {
-                      console.log(docs2)
-                      console.log("test 3")
                       buttonState = "Cancel Request";
                   } else {
-                      console.log("test 4")
                       buttonState = "Add Friend";
                   }
-
-                  console.log("buttonState: ", buttonState)
 
                   res.send(JSON.stringify({
                       username: docs.username,
