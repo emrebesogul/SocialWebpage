@@ -5,8 +5,8 @@ import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
 import {checkSession} from '../API/GET/GetMethods';
-import {getFriendRequests} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById} from '../API/POST/PostMethods';
+import {getFriendRequests, getFriends} from '../API/GET/GetMethods';
+import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var feedPosts = [];
@@ -29,6 +29,7 @@ class Profile extends Component {
 
       this.checkThisSession();
       this.getfeeddata();
+      this.getFriends();
       this.getFriendRequests();
 
       this.pageTitle = "Recent posts and updates...";
@@ -53,6 +54,40 @@ class Profile extends Component {
       this.setState({resFriendsRequests: response});
   }
 
+  async getFriends() {
+      const response = await getFriends("/friends/getFriends");
+      this.setState({resFriends: response.friends})
+  }
+
+  async confirmFriendRequest(e, item) {
+      //Set state of status to accepted
+      //Add both to friends: []
+      const response = await confirmFriendshipRequest(
+          "/friends/confirmFriendRequest",
+          item.requester,
+          item.recipient
+      );
+      if(response) {
+          window.location.reload();
+      }
+  }
+
+  async declineFriendRequest(e, item) {
+      //Set state of status to rejected
+      //Delete from friendRequests collection
+      const response = await deleteFriendshipRequest(
+          "/friends/declineFriendRequest",
+          item.requester,
+          item.recipient
+      );
+      if(response) {
+          window.location.reload();
+      }
+  }
+
+  async deleteFriend(e, item) {
+      alert("You really want to delete friend?");
+  }
 
 async handleRate(event, data){
   event.preventDefault();
@@ -92,6 +127,7 @@ async handleRate(event, data){
 
         feedPosts = this.state.resFeedPosts;
         friendRequests = this.state.resFriendsRequests;
+        friends = this.state.resFriends;
 
         return (
           <div id="main-content">
@@ -169,12 +205,17 @@ async handleRate(event, data){
                                           <List.Item>
                                             <Image size="tiny" avatar src='/assets/images/boy.png' />
                                             <List.Content>
-                                              <List.Header as='a'>{item.requester} wants to be friends with you.</List.Header>
+                                              <List.Header as='a'>
+                                                  <Link to={`/profile/${item.requester}`}>
+                                                      <span>{item.requester} </span>
+                                                  </Link>
+                                                   wants to be friends with you.
+                                              </List.Header>
                                               <List.Description>4 mutual contacts</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
-                                              <Button>Confirm</Button>
-                                              <Button>Decline</Button>
+                                              <Button onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
+                                              <Button onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
                                             </List.Content>
                                           </List.Item>
                                         </List>
@@ -194,11 +235,15 @@ async handleRate(event, data){
                                           <List.Item>
                                             <Image size="tiny" avatar src='/assets/images/boy.png' />
                                             <List.Content>
-                                              <List.Header as='a'>{item.requester}</List.Header>
+                                              <List.Header as='a'>
+                                                  <Link to={`/profile/${item}`}>
+                                                      {item}
+                                                  </Link>
+                                              </List.Header>
                                               <List.Description>4 mutual contacts</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
-                                              <Button>Delete Friend</Button>
+                                                <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
                                             </List.Content>
                                           </List.Item>
                                         </List>

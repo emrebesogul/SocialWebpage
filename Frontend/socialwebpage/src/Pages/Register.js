@@ -55,7 +55,7 @@ class Reqister extends Component {
 
         //Do something with response
         this.setState({message : JSON.parse(response).message});
-        this.setState({messageDetail : JSON.parse(response).message});
+        this.setState({messageDetail : JSON.parse(response).messageDetails});
 
         if(this.state.message === "User successfully created") {
             this.setState({ showMessageSuccess: true });

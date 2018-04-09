@@ -1,4 +1,4 @@
-var md5 = require('js-md5');
+var SHA256 = require("crypto-js/sha256");
 var session = require('express-session')
 var jwt = require('jsonwebtoken');
 var ObjectId = require('mongodb').ObjectId;
@@ -13,7 +13,7 @@ var call = module.exports = {
       const collection = db.collection('users');
       let username = (JSON.parse(userCredential).username).trim();
       let password = JSON.parse(userCredential).password;
-      let passwordHashed = md5(password);
+      let passwordHashed = SHA256(password);
 
       if(!username || !password) {
           res.send(JSON.stringify({
@@ -32,7 +32,7 @@ var call = module.exports = {
                    }
 
                    if (docs) {
-                       if(passwordHashed == docs.password) {
+                       if(JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password.words) ) {
                            jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
                                console.log("Correct credentials! Login from user: ", docs.username)
                                res.send(JSON.stringify({
@@ -69,8 +69,10 @@ var call = module.exports = {
       let password = JSON.parse(newUserData).password;
       let birthday = JSON.parse(newUserData).birthday;
       let gender = JSON.parse(newUserData).gender;
+      let profilePicture = "";
+      let friends = [];
 
-      let passwordHashed = md5(password);
+      let passwordHashed = SHA256(password);
 
       //Check username and password
       if(username !== null && password !== null) {
@@ -103,10 +105,6 @@ var call = module.exports = {
                                           }));
                                       } else {
                                           console.log("User created: ", username);
-                                          res.send(JSON.stringify({
-                                              message: "User successfully created",
-                                              messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
-                                          }));
 
                                           collection.insert({
                                               "first_name": firstname,
@@ -116,7 +114,14 @@ var call = module.exports = {
                                               "password": passwordHashed,
                                               "birthday": birthday,
                                               "gender": gender,
+                                              "picture": profilePicture,
+                                              "friends": friends
                                           })
+
+                                          res.send(JSON.stringify({
+                                              message: "User successfully created",
+                                              messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
+                                          }));
                                       }
                                   })
                               }
@@ -161,6 +166,8 @@ var call = module.exports = {
                                           "password": passwordHashed,
                                           "birthday": birthday,
                                           "gender": gender,
+                                          "picture": profilePicture,
+                                          "friends": friends
                                       })
                                   }
                               })
@@ -449,7 +456,7 @@ var call = module.exports = {
   },
 
   //----------------------Get Other User----------------------//
-  getOtherUserProfile: function(db, res, username) {
+  getOtherUserProfile: function(db, req, res, username, myUsername) {
       const collection = db.collection('users');
       collection.findOne({"username": username}, (err, docs) => {
           if (err) {
@@ -460,12 +467,34 @@ var call = module.exports = {
           }
 
           if (docs) {
-              res.send(JSON.stringify({
-                  username: docs.username,
-                  firstname: docs.first_name,
-                  lastname: docs.last_name,
-                  email: docs.email
-              }));
+
+              //Check if they are alredy friends or friend request is on its way
+              db.collection('friendRequests').findOne( {$or: [ {"requester": myUsername, "recipient": username}, {"requester": username, "recipient": myUsername} ]}, (err, docs2) => {
+                  // If already sent, means request was send, dont send it
+                  if(err) throw err;
+
+                  var buttonState = "";
+
+                  if (docs2) {
+                      if(docs2.status == "open") {
+                          buttonState = "Request processing";
+                      } else if((docs.friends).includes(myUsername)) {
+                          buttonState = "Undo Friend";
+                      } else {
+                          buttonState = "Add Friend";
+                      }
+                  }
+
+                  res.send(JSON.stringify({
+                      username: docs.username,
+                      firstname: docs.first_name,
+                      lastname: docs.last_name,
+                      email: docs.email,
+                      picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture,
+                      buttonState: buttonState
+                  }));
+              })
+
           }
           else {
               res.send(JSON.stringify({
@@ -477,7 +506,7 @@ var call = module.exports = {
   },
 
   //----------------------Get Current User----------------------//
-  getCurrentUserProfile: function(db, res, userid) {
+  getCurrentUserProfile: function(db, req, res, userid) {
       const collection = db.collection('users');
       collection.findOne({"_id": ObjectId(userid)},(err, docs) => {
           if (err) {
@@ -492,7 +521,8 @@ var call = module.exports = {
                   username: docs.username,
                   firstname: docs.first_name,
                   lastname: docs.last_name,
-                  email: docs.email
+                  email: docs.email,
+                  picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
               }));
           }
           else {
@@ -648,7 +678,7 @@ updateUserData: function(db, res, data) {
 
     const userid = data.userid;
     const userData = data.userData
-    const hashedPassword = md5(userData.password)
+    const hashedPassword = SHA256(userData.password)
     let username = (userData.username).trim();
     var checkUsername = false;
     var checkEmail = false;
@@ -786,20 +816,33 @@ updateUserData: function(db, res, data) {
               const recipientId = docs._id;
               const recipient = docs.username;
 
-              db.collection('friendRequests').insert({
-                  "requester": requester,
-                  "requesterId": ObjectId(userId),
-                  "recipient": recipient,
-                  "recipientId": recipientId,
-                  "time": Date(),
-                  "status": "open"
-              });
+              //Check if request is already sent... (open status) A to B and B to A
+              //If not, send request... (put in db)
 
-               console.log("Request sent to add new friend...")
+              db.collection('friendRequests').findOne({"requester": requester, "recipient": recipient}, (err, docs) => {
+                  // If already sent, means request was send, dont send it
+                  if(err) throw err;
+                  if (docs) {
+                      res.send(JSON.stringify({
+                          buttonState: "Undo Friend"
+                      }));
+                  } else {
+                      console.log("Request sent to add new friend...")
 
-               res.send(JSON.stringify({
-                   buttonState: "Request sent"
-               }));
+                      res.send(JSON.stringify({
+                          buttonState: "Request sent"
+                      }));
+
+                      db.collection('friendRequests').insert({
+                          "requester": requester,
+                          "requesterId": ObjectId(userId),
+                          "recipient": recipient,
+                          "recipientId": recipientId,
+                          "time": Date(),
+                          "status": "open"
+                      });
+                  }
+              })
           }
           else {
               res.send(JSON.stringify({
@@ -820,16 +863,83 @@ updateUserData: function(db, res, data) {
       collectionfriendRequests.find({"status": "open", "recipientId": ObjectId(userId)}).toArray((err, docs) => {
           if (err) throw err;
           if (docs) {
-              console.log(docs)
               res.status(200).send(docs);
           }
       })
 
     },
 
-    
+    //----------------------xy----------------------//
+    confirmFriendshipRequest: function(db, requester, recipient , res) {
+        const collectionfriendRequests = db.collection('friendRequests');
+        const collectionUsers = db.collection('users');
+
+        // Set status to accepted
+        //Delete from database
+        collectionfriendRequests.update({"requester": requester, "recipient": recipient},
+            {
+                $set: {
+                    "status": "accepted"
+                }
+            }
+        );
+
+        // Add to friendlist of both array.push()
+        collectionUsers.findOne({"username": requester}, (err, docs) => {
+            if(err) throw err;
+            if(docs) {
+                var friendlist = docs.friends;
+                friendlist.push(recipient);
+                collectionUsers.update({"username": requester},
+                    {
+                        $set: {
+                            "friends": friendlist
+                        }
+                    }
+                );
+            }
+        });
+
+        collectionUsers.findOne({"username": recipient}, (err, docs) => {
+            if(err) throw err;
+            if(docs) {
+                var friendlist = docs.friends;
+                friendlist.push(requester);
+                collectionUsers.update({"username": recipient},
+                    {
+                        $set: {
+                            "friends": friendlist
+                        }
+                    }
+                );
+            }
+        });
+        res.send(true);
+    },
+
+    //----------------------xy----------------------//
+    deleteFriendshipRequest: function(db, requester, recipient , res) {
+        const collectionfriendRequests = db.collection('friendRequests');
+
+        collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
+            if (err) throw err;
+            res.send(true);
+        });
+    },
+
+    getFriends: function(db, res, userId) {
+        const collectionUsers = db.collection('users');
+        collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                res.send(docs)
+            }
+        })
+    },
+
+
   // ----------------------------------------Guestbook------------------------------------------//
-  
+
   //-----------------------------------Create Guestbook Entry-----------------------------------//
   //
   // Receives the titel and the content of a guestbook and inserts it to the database.
@@ -838,7 +948,7 @@ updateUserData: function(db, res, data) {
     if(ownerName) {
         db.collection('users').findOne({"username": ownerName}, (err_user, res_user) => {
             if (err_user) throw err_user;
-    
+
             if (res_user && (res_user._id != authorId)) {
                 db.collection('guestbookEntries').insert({
                     "title": title,
@@ -858,7 +968,7 @@ updateUserData: function(db, res, data) {
     } else {
         console.log("It is not possible to post a guestbook entry on the own profile!");
         res.send(false);
-    }    
+    }
   },
 
   //----------------------List Guestbook Entries in Profile for a Username----------------------//
@@ -985,7 +1095,68 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
     });
   },
 
-  }
+  //----------------------Upload Profile Picture----------------------//
+  uploadProfilePic: function (db, res, file) {
+    const collectionUsers = db.collection('users');
+    const fileData = file.fileData;
+    const userid = file.userid;
+
+    let filename = fileData.filename;
+    let userId = userid;
+
+    collectionUsers.update({_id: ObjectId(userid)},
+        {
+            $set: {
+                "picture": filename
+            }
+        }
+    )
+
+    console.log("Profile Pic was uploaded to server...")
+    res.send(JSON.stringify({
+        message: "Image uploaded"
+    }));
+
+  },
+
+    //----------------------Delete Profile Pic---------------------//
+    deleteProfilePic: function (db, res, userId) {
+
+        const collectionUsers = db.collection('users');
+
+        collectionUsers.findOne({ _id : new ObjectId(userId)}, (err, docs) => {
+            if (err) {
+                res.send(JSON.stringify({
+                    message: "User not found"
+                }));
+                throw err;
+            }
+            if (docs) {
+                //Delete image from Server
+                let path = "./public/uploads/posts/" + docs.picture;
+                fs.unlinkSync(path);
+
+                //Delete from database
+                collectionUsers.update({ _id : new ObjectId(userId) },
+                    {
+                        $set: {
+                            "picture": ""
+                        }
+                    }
+                );
+
+                console.log(docs.username, " deleted his Profile Picture")
+                res.send(JSON.stringify({
+                    message: "Profile Pic deleted"
+                }));
+            }
+        })
+
+
+    },
+
+
+}
 
 function getMonthName (month) {
     const monthNames = [

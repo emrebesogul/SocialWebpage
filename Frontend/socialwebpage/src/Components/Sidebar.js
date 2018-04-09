@@ -54,8 +54,8 @@ class Sidebar extends Component {
         return (
             <div>
 
-              <Link to="/"> <Image className="logo" src="assets/images/Logo_nobg.png" /></Link>
-              <Link to="/"><Image className="logo-mobile" src="assets/images/Logo_nobg.png" /></Link>
+              <Link to="/"> <Image className="logo" src="../assets/images/Logo_nobg.png" /></Link>
+              <Link to="/"><Image className="logo-mobile" src="../assets/images/Logo_nobg.png" /></Link>
 
               <div id="mobile-header">
 
@@ -113,7 +113,6 @@ class Sidebar extends Component {
 
               <div className="feed-header">
                 <div id="welcome-label">
-                  <h4 id="welcome-label-header"></h4>
 
                     <Link to="/profile">
                       <Button labelPosition="right"  size="medium" id="upload-button" icon onClick={this.reloadPage}>

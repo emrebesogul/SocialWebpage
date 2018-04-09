@@ -51,6 +51,8 @@ class Upload extends Component {
         fd.append('title', this.state.title);
         fd.append('content', this.state.content);
 
+        console.log(fd)
+
         const response = await uploadPictureToPlatform(
             this.api,
             fd

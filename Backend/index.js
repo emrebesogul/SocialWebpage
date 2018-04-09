@@ -31,16 +31,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage});
 
+
+
+
+//==================================================================================================//
 app.use(express.static('public'));
 
-
-
-//==================================================================================================//
-
-
-
-
-//==================================================================================================//
 //Enable CORS
 app.use(cors());
 
@@ -66,48 +62,7 @@ MongoClient.connect(url, function(err, client) {
       console.log("Successfully connected to MongoDB");
       app.use(bodyParser.json());
 
-      //----------------------SESSION CHECK----------------------//
-      app.get('/rest/getUserInfo', verifyToken, (req, res) => {
-
-          if(req.query.username) {
-              let username = req.query.username;
-              database.getOtherUserProfile(client.db('socialwebpage'), res, username, () => {
-                  db.close();
-              });
-          } else {
-              jwt.verify(req.token, 'secretkey', (err, authData) => {
-                  if(err) {
-                      res.json({
-                          message: "User is not authorized"
-                      });
-                  } else {
-                      const userid = authData.userid
-                      database.getCurrentUserProfile(client.db('socialwebpage'), res, userid, () => {
-                          db.close();
-                      });
-                  }
-              });
-          }
-
-      });
-
-      //----------------------SESSION CHECK----------------------//
-      app.get('/rest/checkSession', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  res.json({
-                      message: "User is authorized",
-                      username: authData.username
-                  });
-              }
-          });
-      });
-
-      //Verify Token
+      //Verify Token Function
       function verifyToken(req, res, next) {
           //Get auth header value
           const bearerHeader = req.headers.authorization;
@@ -126,6 +81,52 @@ MongoClient.connect(url, function(err, client) {
               });
           }
       }
+
+      //----------------------CHECK SESSION----------------------//
+      app.get('/rest/getUserInfo', verifyToken, (req, res) => {
+
+          if(req.query.username) {
+              jwt.verify(req.token, 'secretkey', (err, authData) => {
+                  if(err) {
+                      res.json({
+                          message: "User is not authorized"
+                      });
+                  } else {
+                      const myUsername = authData.username
+                      let username = req.query.username;
+                      database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, myUsername);
+                  }
+              });
+
+          } else {
+              jwt.verify(req.token, 'secretkey', (err, authData) => {
+                  if(err) {
+                      res.json({
+                          message: "User is not authorized"
+                      });
+                  } else {
+                      const userid = authData.userid
+                      database.getCurrentUserProfile(client.db('socialwebpage'), req, res, userid);
+                  }
+              });
+          }
+      });
+
+      //----------------------SESSION CHECK----------------------//
+      app.get('/rest/checkSession', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  res.json({
+                      message: "User is authorized",
+                      username: authData.username
+                  });
+              }
+          });
+      });
 
       //----------------------SESSION DELETE----------------------//
       app.get('/rest/deleteSession', (req, res) => {
@@ -169,10 +170,6 @@ MongoClient.connect(url, function(err, client) {
       });
 
       //----------------------Upload Image----------------------//
-      //
-      // Calls the method uploadImageToPlatform that insert the new image
-      // to the database.
-      // Post parameters: title, content and userId of the new story entry
       app.post('/rest/image/create', verifyToken, upload.single('theImage'), (req, res) => {
           if (!req.file) {
             res.send(JSON.stringify({
@@ -189,13 +186,10 @@ MongoClient.connect(url, function(err, client) {
                       const fileDataInfo = JSON.stringify(req.body);
                       const userid = authData.userid
                       const file = {fileData, fileDataInfo, userid}
-                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file, function(){
-                          db.close();
-                      });
 
+                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file);
                   }
               });
-
           }
       });
 
@@ -352,9 +346,7 @@ MongoClient.connect(url, function(err, client) {
                   const userData = req.body;
                   const userid = authData.userid
                   const user = {userData, userid}
-                  database.updateUserData(client.db('socialwebpage'), res, user, () => {
-                       db.close();
-                  });
+                  database.updateUserData(client.db('socialwebpage'), res, user);
               }
           });
       });
@@ -431,7 +423,6 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
-                  console.log("getFriendRequests")
                   const userId = authData.userid;
                   database.getFriendRequests(client.db('socialwebpage'), res, userId);
               }
@@ -439,6 +430,47 @@ MongoClient.connect(url, function(err, client) {
 
       });
 
+      //----------------------Confirm friendRequests----------------------//
+      app.post('/rest/friends/confirmFriendRequest', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  database.confirmFriendshipRequest(client.db('socialwebpage'), req.body.requester, req.body.recipient, res);
+              }
+          });
+
+      });
+
+      //----------------------Decline friendRequests----------------------//
+      app.post('/rest/friends/declineFriendRequest', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  database.deleteFriendshipRequest(client.db('socialwebpage'), req.body.requester, req.body.recipient, res);
+              }
+          });
+
+      });
+
+      //----------------------Get friends----------------------//
+      app.get('/rest/friends/getFriends', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  const userId = authData.userid;
+                  database.getFriends(client.db('socialwebpage'), res, userId);
+              }
+          });
+      });
 
       // ------------------------------------Guestbook--------------------------------------//
 
@@ -460,7 +492,7 @@ MongoClient.connect(url, function(err, client) {
                 const authorId = authData.userid;
                 database.createGuestbookEntry(client.db('socialwebpage'), res, title, content, ownerName, authorId, () => {
                     db.close();
-                });  
+                });
             }
         });
       });
@@ -541,7 +573,51 @@ MongoClient.connect(url, function(err, client) {
         });
       });
 
+      //----------------------Upload Profile Picture----------------------//
+      app.post('/rest/user/image/create', verifyToken, upload.single('image'), (req, res) => {
+          if (!req.file) {
+            res.send(JSON.stringify({
+                message: "Image could not be uploaded"
+            }));
+          } else {
+              jwt.verify(req.token, 'secretkey', (err, authData) => {
+                  if(err) {
+                      res.json({
+                          message: "User is not authorized"
+                      });
+                  } else {
+                      const fileData = req.file;
+                      const userid = authData.userid
+                      const file = {fileData, userid}
+
+                      database.uploadProfilePic(client.db('socialwebpage'), res, file);
+                  }
+              });
+
+          }
+      });
+
+      //----------------------Delete Profile Pic----------------------//
+      //
+      // Calls the method deleteImage that deletes an image from the database.
+      app.post('/rest/user/delete/picture', verifyToken, (req, res) => {
+
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const userId = authData.userid;
+                database.deleteProfilePic(client.db('socialwebpage'), res, userId);
+            }
+        });
+      });
+
+
+
       //----------------------xy----------------------//
+
 
       app.listen(8000, function() {
           console.log('Listening for API Requests on port 8000...')
