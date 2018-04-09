@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Icon, Header, Button, Image} from 'semantic-ui-react'
 import {getCurrentUser, checkSession} from '../API/GET/GetMethods';
-import {sendFriendshipRequest, deleteProfilePic} from '../API/POST/PostMethods';
+import {sendFriendshipRequest, deleteProfilePic, deleteFriend} from '../API/POST/PostMethods';
 
 import '../profileStyle.css';
 
@@ -90,7 +90,13 @@ class ProfileHeader extends Component {
 
         // Delete friendship request to user
         if(this.state.buttonState == "Delete Friend") {
-            alert("You really want to delete xy friend?");
+            const response = await deleteFriend(
+                "/friends/deleteFriend",
+                this.state.username
+            );
+            if(response) {
+                window.location.reload();
+            }
         }
 
     }
