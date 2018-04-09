@@ -12,10 +12,10 @@ class ProfileHeader extends Component {
         this.state = {
           show: false,
           redirectToLogin: false,
-          username: "Username",
-          firstname: "First name",
-          lastname: "Last name",
-          email: "beast@hpe.com",
+          username: "",
+          firstname: "",
+          lastname: "",
+          email: "",
           picture: "",
           pictureExists: false,
 
@@ -76,7 +76,7 @@ class ProfileHeader extends Component {
         "/user/delete/picture"
       );
       if(response) {
-        window.location.reload();  
+        window.location.reload();
       }
     }
 

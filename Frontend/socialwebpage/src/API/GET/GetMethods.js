@@ -21,7 +21,6 @@ export const getCurrentUser=(api)=>{
           resolve(data);
         },
         error: function(xhr, status, err){
-          console.log(err)
           reject(err);
         }
     });
