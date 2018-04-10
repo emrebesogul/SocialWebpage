@@ -211,7 +211,7 @@ async handleRate(event, data){
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                            <Image className="feed-interaction-user-image" size="tiny" avatar src='/assets/images/boy.png' />
                                             <List.Content>
                                               <List.Header as='a'>
                                                   <Link to={`/profile/${item.requester}`}>

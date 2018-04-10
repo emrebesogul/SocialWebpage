@@ -268,6 +268,12 @@ h2.ui.huge.icon.center.aligned.header{
   margin-left: 40px;
 }
 
+.feed-interaction-user-image{
+  border: 1px solid rgb(223, 222, 222) !important;
+  padding: 4px;
+  box-shadow: inset 0 0 2px 1px #b0b0b085  !important;
+}
+
 div.ui.centered.fluid.card {
   border-radius: 2px;
   box-shadow: 0px 1px 6px 1px #cfcfcf;
