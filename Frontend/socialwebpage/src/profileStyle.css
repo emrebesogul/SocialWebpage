@@ -478,6 +478,17 @@ div.ui.compact.menu{
   box-shadow: 2px 2px 2px rgba(200,200,200, 0.4);
 }
 
+div.ui.item.dropdown{
+  margin-top: -1px !important;
+}
+
+div.ui.active.visible.item.dropdown{
+  background: rgb(65, 65, 65);
+  margin-top: -1px !important;
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.95);
+}
+
 #mobile-header{
   display: none;
   position: fixed;
@@ -588,8 +599,8 @@ a.item:hover {
   background: rgb(242,243,243);
   color: rgb(38,38,38);
   position: relative;
-  left: 13px;
-  top: 205px;
+  left: 15px;
+  bottom: 10px;
   transition: all 0.19s ease-out !important;
 }
 
@@ -816,6 +827,23 @@ img.ui.image.image-feed{
       margin-top: 10px;
     }
 
+    div.ui.item.dropdown{
+      height: 54px !important;
+      margin-top: -8px !important;
+      width: 58px;
+    }
+
+    div.ui.active.visible.item.dropdown{
+      height: 54px !important;
+      margin-top: -8px !important;
+      width: 58px;
+    }
+
+    #profile-header-picture{
+      height: 180px;
+      width: 180px;
+    }
+
     .mobile-menu{
       margin-top: 8px !important;
     }
@@ -849,6 +877,7 @@ img.ui.image.image-feed{
 
     #logout-button-mobile{
       margin-top: 9px;
+      margin-right: 5px;
     }
 
     #mobile-header{
@@ -909,7 +938,9 @@ img.ui.image.image-feed{
     }
 
     #button-add-friend{
-      top: 0px;
+      position: inherit;
+      display: block;
+      margin: 10px auto;
     }
 
     #button-upload {

@@ -230,8 +230,6 @@ async handleRate(event, data){
                                   }
                                 )}
 
-                              <div className="seperator">
-                              </div>
 
                                 {friends.map((item, index) =>
                                   {
@@ -241,7 +239,7 @@ async handleRate(event, data){
                                           <List.Item>
                                             <Image size="tiny" avatar src='/assets/images/boy.png' />
                                             <List.Content>
-                                              <List.Header as='a'>
+                                              <List.Header >
                                                   <Link to={`/profile/${item}`}>
                                                       {item}
                                                   </Link>
@@ -261,7 +259,32 @@ async handleRate(event, data){
 
                           </Tab.Pane> },
                           { menuItem: 'Notifications', render: () => <Tab.Pane attached={false}>
-                            Hello
+                            <div id="friends">
+                                  {friends.map((item, index) =>
+                                    {
+                                      return(
+                                        <div key={index}>
+                                          <List  divided relaxed verticalAlign='middle'>
+                                            <List.Item>
+                                              <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                              <List.Content>
+                                                <List.Header >
+                                                    <Link to={`/profile/${item}`}>
+                                                        {item}
+                                                    </Link>
+                                                </List.Header>
+                                                <List.Description>4 mutual contacts</List.Description>
+                                              </List.Content>
+                                              <List.Content floated="right">
+                                                  <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
+                                              </List.Content>
+                                            </List.Item>
+                                          </List>
+                                        </div>
+                                      )
+                                    }
+                                  )}
+                              </div>
                           </Tab.Pane> },
                         ]
                         } />
