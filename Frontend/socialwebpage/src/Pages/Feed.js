@@ -13,7 +13,7 @@ var feedPosts = [];
 var friendRequests = [];
 var friends = [];
 
-class Profile extends Component {
+class Feed extends Component {
 
   constructor() {
       super();
@@ -114,6 +114,7 @@ async handleRate(event, data){
   }
 
 
+
   // Redirect to feed if respose is message is true
   // this.setState({status: response});
   // if(this.state.status === true) {
@@ -163,8 +164,9 @@ async handleRate(event, data){
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
+                                    <Image src="/assets/images/boy.png" className="user-card-avatar"/>
                                     <Link to={`/profile/${item.username}`}>
-                                        <span id="username-label-content" > @{item.username} </span>
+                                      <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
                                   </div>
 
@@ -209,7 +211,7 @@ async handleRate(event, data){
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                            <Image className="feed-interaction-user-image" size="tiny" avatar src='/assets/images/boy.png' />
                                             <List.Content>
                                               <List.Header as='a'>
                                                   <Link to={`/profile/${item.requester}`}>
@@ -230,8 +232,6 @@ async handleRate(event, data){
                                   }
                                 )}
 
-                              <div className="seperator">
-                              </div>
 
                                 {friends.map((item, index) =>
                                   {
@@ -241,7 +241,7 @@ async handleRate(event, data){
                                           <List.Item>
                                             <Image size="tiny" avatar src='/assets/images/boy.png' />
                                             <List.Content>
-                                              <List.Header as='a'>
+                                              <List.Header >
                                                   <Link to={`/profile/${item}`}>
                                                       {item}
                                                   </Link>
@@ -261,7 +261,32 @@ async handleRate(event, data){
 
                           </Tab.Pane> },
                           { menuItem: 'Notifications', render: () => <Tab.Pane attached={false}>
-                            Hello
+                            <div id="friends">
+                                  {friends.map((item, index) =>
+                                    {
+                                      return(
+                                        <div key={index}>
+                                          <List  divided relaxed verticalAlign='middle'>
+                                            <List.Item>
+                                              <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                              <List.Content>
+                                                <List.Header >
+                                                    <Link to={`/profile/${item}`}>
+                                                        {item}
+                                                    </Link>
+                                                </List.Header>
+                                                <List.Description>4 mutual contacts</List.Description>
+                                              </List.Content>
+                                              <List.Content floated="right">
+                                                  <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
+                                              </List.Content>
+                                            </List.Item>
+                                          </List>
+                                        </div>
+                                      )
+                                    }
+                                  )}
+                              </div>
                           </Tab.Pane> },
                         ]
                         } />
@@ -271,4 +296,4 @@ async handleRate(event, data){
     }
 }
 
-export default Profile;
+export default Feed;
