@@ -110,9 +110,6 @@ class ProfileHeader extends Component {
 
                 <div id="profile-header">
 
-                  <div>
-                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>{this.state.buttonState}<Icon name="user"/></Button> : null}
-                  </div>
 
                     <div>
                         {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
@@ -130,6 +127,9 @@ class ProfileHeader extends Component {
                       </Header.Subheader>
                     </Header.Content>
                   </Header>
+                  <div>
+                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>{this.state.buttonState}<Icon name="user"/></Button> : null}
+                  </div>
                 </div>
 
             </div>

@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import { Input, Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
+import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById} from '../API/POST/PostMethods';
-import { Redirect } from 'react-router-dom';
-import SidebarProfile from '../Components/SidebarProfile'
+import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById} from '../API/POST/PostMethods';
+import { Redirect, Link } from 'react-router-dom';
+import SidebarProfile from '../Components/Sidebar'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
+import { updateStoryEntry } from '../API/PUT/PutMethods';
 
 var images = [];
 var stories = [];
@@ -24,7 +25,10 @@ class Profile extends Component {
         newGuestbookEntryTitle: "",
         newGuestbookEntryContent: "",
         redirectToLogin: false,
-        rerender: false
+        rerender: false,
+        updateItemId: "",
+        statusUpdateStoryEntry: false,
+        showUpdateStoryErrorMessage: false
       }
 
       this.apiCheckSession = "/checkSession"
@@ -138,10 +142,7 @@ class Profile extends Component {
       }
 
       async handleDeleteImage(event, data) {
-        const response = await deleteImageById(
-          "/image/delete",
-          data._id
-        );
+        const response = await deleteImageById("/image/delete",data._id);
         window.location.reload();
       }
 
@@ -153,6 +154,38 @@ class Profile extends Component {
       async handleDeleteGuestbookEntry(event, data) {
         const response = await deleteGuestbookEntryById("/guestbook/delete",data._id);
         window.location.reload();
+      }
+
+      async handleOpenStoryUpdateWindow(event, data) {
+        const response = await getStoryEntryById("/story/getEntry", data._id);
+        if(response) {
+            this.setState({storyTitle: response.title})
+            this.setState({storyContent: response.content})
+        }
+            this.setState({ updateItemId: data._id});
+      }
+
+      handleChangeStoryData(event, data) {
+        switch(data) {
+          case "storyTitle": this.setState({"storyTitle": event.target.value}); break;
+          case "storyContent":  this.setState({"storyContent": event.target.value}); break;
+          default: null;
+        }
+      }
+
+      async handleUpdateStoryEntry(event, data) {
+        event.preventDefault();
+        const storyId = data._id;
+        const title = event.target[0].value;
+        const content = event.target[1].value;
+        const response = await updateStoryEntry("/story/edit", storyId, title, content);
+        this.setState({statusUpdateStoryEntry: response});
+
+        if(this.state.statusUpdateStoryEntry) {
+          this.setState({ updateItemId: ""});
+        } else {
+          this.setState({ showUpdateStoryErrorMessage: true });
+        }
       }
 
     render() {
@@ -179,13 +212,13 @@ class Profile extends Component {
 
                           {images.map((item, index) =>
                           {return(
-                            <div key={index} id="profile-card">
+                            <div key={index} className="profile-card">
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <span > @{item.username} </span>
-                                    {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
-
+                                    <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                    <span className="content-card-username-label"> @{item.username} </span>
+                                    {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                   </div>
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
@@ -224,35 +257,41 @@ class Profile extends Component {
 
                               {stories.map((item, index) =>
                               {return(
-                                <div key={index}>
+                                <div key={index} className="profile-card">
                                   <Card.Group>
                                     <Card fluid centered>
                                       <div className="username-label">
-                                        <span > @{item.username} </span>
-
-                                        {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} id="delete-button" className="button-upload" circular icon="delete" size="small"></Button> : null}
+                                          <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                          <span className="content-card-username-label"> @{item.username} </span>
+                                        {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                        {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
                                       </div>
                                       <Card.Content id="card-content">
-                                        <Card.Header className="card-header">
-                                            <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
-                                            </Rating> {item.title}
-                                            <div className="ui mini horizontal statistic post-likes">
-                                              <div className="value">
-                                                {item.number_of_likes}
-                                              </div>
-                                              <div className="label">
-                                                Likes
-                                              </div>
-                                          </div>
-                                        </Card.Header>
-                                        <Card.Meta className="card-meta">
-                                          <span className='date'>
-                                            {item.date_created}
-                                          </span>
-                                        </Card.Meta>
-                                        <Card.Description>
-                                          {item.content}
-                                        </Card.Description>
+
+                                        <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
+                                          <Card.Header className="card-header">
+                                              <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}></Rating>
+                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : item.title}
+                                                <div className="ui mini horizontal statistic post-likes">
+                                                <div className="value">
+                                                  {item.number_of_likes}
+                                                </div>
+                                                <div className="label">
+                                                  Likes
+                                                </div>
+                                            </div>
+                                          </Card.Header>
+                                          <Card.Meta className="card-meta">
+                                            <span className='date'>
+                                              {item.date_created}
+                                            </span>
+                                          </Card.Meta>
+                                          <Card.Description>
+                                          {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : item.content}
+                                          {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
+                                          {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
+                                          </Card.Description>
+                                        </Form>
                                       </Card.Content>
                                     </Card>
                                   </Card.Group>
@@ -262,12 +301,46 @@ class Profile extends Component {
 
                         </Tab.Pane> },
                         { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>
-                        <div id="guestbook">
+                        <div>
 
                           {guestbookEntries.map((item, index) => {
                             return(
-                              <div key={index}>
-                                <Comment.Group>
+                              <div key={index} className="profile-card">
+                                <Card.Group>
+                                  <Card fluid centered>
+                                    <div className="username-label">
+                                      <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                        <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
+                                          <span className="content-card-username-label"> @{item.username} </span>
+                                        </Link>
+                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                    </div>
+                                    <Card.Content id="card-content">
+                                      <Card.Header className="card-header">
+                                          <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                          </Rating> {item.title}
+                                          <div className="ui mini horizontal statistic post-likes">
+                                            <div className="value">
+                                              {item.number_of_likes}
+                                            </div>
+                                            <div className="label">
+                                              Likes
+                                            </div>
+                                        </div>
+                                      </Card.Header>
+                                      <Card.Meta className="card-meta">
+                                        <span className='date'>
+                                          {item.date_created}
+                                        </span>
+                                      </Card.Meta>
+                                      <Card.Description>
+                                        {item.content}
+                                      </Card.Description>
+                                    </Card.Content>
+                                  </Card>
+                                </Card.Group>
+
+                              {/*  <Comment.Group>
                                   <Comment>
                                     <Comment.Avatar src='/assets/images/boy.png' id="comment-avatar" />
                                     <Comment.Content>
@@ -291,7 +364,7 @@ class Profile extends Component {
                                       <Comment.Text id="comment-content">{item.content}</Comment.Text>
                                     </Comment.Content>
                                   </Comment>
-                                </Comment.Group>
+                                </Comment.Group> */}
                               </div>
                             )
                           })}

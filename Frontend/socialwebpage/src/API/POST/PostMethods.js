@@ -421,3 +421,28 @@ export const deleteFriend=(api, userToDelete) =>
         });
     });
 }
+
+//----------------------Get Story Entry By ID----------------------//
+export const getStoryEntryById=(api, storyId) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({storyId: storyId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          }.bind(this),
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
