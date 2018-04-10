@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Input, Tab, Card, Image, Comment, Rating, Form, Button } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById} from '../API/POST/PostMethods';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import SidebarProfile from '../Components/Sidebar'
 import ProfileHeader from '../Components/ProfileHeader'
 
@@ -155,6 +155,8 @@ class Profile extends Component {
         window.location.reload();
       }
 
+
+
     render() {
 
     const { redirectToLogin } = this.state;
@@ -179,13 +181,13 @@ class Profile extends Component {
 
                           {images.map((item, index) =>
                           {return(
-                            <div key={index} id="profile-card">
+                            <div key={index} className="profile-card">
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <span > @{item.username} </span>
-                                    {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
-
+                                    <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                    <span className="content-card-username-label"> @{item.username} </span>
+                                    {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                   </div>
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
@@ -224,13 +226,13 @@ class Profile extends Component {
 
                               {stories.map((item, index) =>
                               {return(
-                                <div key={index}>
+                                <div key={index} className="profile-card">
                                   <Card.Group>
                                     <Card fluid centered>
                                       <div className="username-label">
-                                        <span > @{item.username} </span>
-
-                                        {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} id="delete-button" className="button-upload" circular icon="delete" size="small"></Button> : null}
+                                          <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                          <span className="content-card-username-label"> @{item.username} </span>
+                                        {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                       </div>
                                       <Card.Content id="card-content">
                                         <Card.Header className="card-header">
@@ -262,12 +264,46 @@ class Profile extends Component {
 
                         </Tab.Pane> },
                         { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>
-                        <div id="guestbook">
+                        <div>
 
                           {guestbookEntries.map((item, index) => {
                             return(
-                              <div key={index}>
-                                <Comment.Group>
+                              <div key={index} className="profile-card">
+                                <Card.Group>
+                                  <Card fluid centered>
+                                    <div className="username-label">
+                                      <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                        <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
+                                          <span className="content-card-username-label"> @{item.username} </span>
+                                        </Link>
+                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                    </div>
+                                    <Card.Content id="card-content">
+                                      <Card.Header className="card-header">
+                                          <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                          </Rating> {item.title}
+                                          <div className="ui mini horizontal statistic post-likes">
+                                            <div className="value">
+                                              {item.number_of_likes}
+                                            </div>
+                                            <div className="label">
+                                              Likes
+                                            </div>
+                                        </div>
+                                      </Card.Header>
+                                      <Card.Meta className="card-meta">
+                                        <span className='date'>
+                                          {item.date_created}
+                                        </span>
+                                      </Card.Meta>
+                                      <Card.Description>
+                                        {item.content}
+                                      </Card.Description>
+                                    </Card.Content>
+                                  </Card>
+                                </Card.Group>
+
+                              {/*  <Comment.Group>
                                   <Comment>
                                     <Comment.Avatar src='/assets/images/boy.png' id="comment-avatar" />
                                     <Comment.Content>
@@ -291,7 +327,7 @@ class Profile extends Component {
                                       <Comment.Text id="comment-content">{item.content}</Comment.Text>
                                     </Comment.Content>
                                   </Comment>
-                                </Comment.Group>
+                                </Comment.Group> */}
                               </div>
                             )
                           })}

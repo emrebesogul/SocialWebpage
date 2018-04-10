@@ -13,7 +13,7 @@ var feedPosts = [];
 var friendRequests = [];
 var friends = [];
 
-class Profile extends Component {
+class Feed extends Component {
 
   constructor() {
       super();
@@ -114,6 +114,7 @@ async handleRate(event, data){
   }
 
 
+
   // Redirect to feed if respose is message is true
   // this.setState({status: response});
   // if(this.state.status === true) {
@@ -163,8 +164,9 @@ async handleRate(event, data){
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
+                                    <Image src="/assets/images/boy.png" className="user-card-avatar"/>
                                     <Link to={`/profile/${item.username}`}>
-                                        <span id="username-label-content" > @{item.username} </span>
+                                      <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
                                   </div>
 
@@ -294,4 +296,4 @@ async handleRate(event, data){
     }
 }
 
-export default Profile;
+export default Feed;

@@ -59,14 +59,16 @@ div.item::before{
   margin-left: 27px !important;
 }
 
-#comment-avatar{
-   margin-left: 20px;
-    margin-top: 14px;
-    height: 50px;
-    border-radius: 50%;
-    /* border: 1px solid grey; */
-    width: 50px;
-    margin-right: 20px;
+.user-card-avatar{
+  height: 36px;
+  padding: 3px;
+  border-radius: 50%;
+  position: relative !important;
+  border: 1px solid rgb(180,180,180);
+  width: 36px;
+  top: -7px;
+  left: -5px;
+  margin-right: 12px !important;
 }
 
 div.comment {
@@ -76,9 +78,11 @@ div.comment {
 }
 
 #guestbook-reply{
-  width: 60%;
-  margin-left: 25px;
-  margin-top: 25px;
+  padding: 2em 3.4em;
+  margin-right: auto;
+  border-radius: 2px;
+  padding-right: 9em;
+  margin-top: 30px;
   margin-bottom: 40px;
 }
 
@@ -94,9 +98,8 @@ div.comment {
   margin-top: -19px;
 }
 
-#profile-card{
-  margin-top: 10px;
-  margin-bottom: 15px;
+.profile-card{
+  margin-bottom: 25px;
 }
 
 a{
@@ -161,7 +164,7 @@ a{
 }
 
 div.description{
-  text-shadow: 1px 1px rgb(247,247,247);
+  color: rgb(20,20,20);
   margin-top: 10px !important;
 }
 
@@ -185,7 +188,7 @@ h2.ui.huge.icon.center.aligned.header{
   border-bottom: solid 1px rgb(213, 213, 213);
   width: 100%;
   padding-top: 11px;
-  height: 40px;
+  height: 45px;
   font-size: 14px;
   color: rgb(33, 33, 32);
   background-color: rgba(240, 240, 240, 0.59);
@@ -248,6 +251,21 @@ h2.ui.huge.icon.center.aligned.header{
   float: right;
   margin-top: -8px !important;
   margin-right: 17px;
+}
+
+.delete-button-guestbook{
+  float: right;
+  position: relative;
+  top: -68px;
+  right: 6px;
+}
+
+.content-card-username-label{
+  top: -34px;
+  position: relative;
+  color: rgb(50,50,50);
+  font-size: 1.08em;
+  margin-left: 40px;
 }
 
 div.ui.centered.fluid.card {
