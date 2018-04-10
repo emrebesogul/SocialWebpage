@@ -160,23 +160,16 @@ class Settings extends React.Component{
               </Header.Subheader>
               </Header>
 
-              <span className="input-label-upload"> Select your profile picture</span>
-
               <Dropzone id="dz-repair" multiple={ false } name="image" acceptedFiles="image/jpeg, image/png" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
-                  <p>Drop your profile picture here, or click to select one to upload.</p>
+                <p><Icon name='user' size="large" id="settings-icon" /> Select your picture for your profile</p>
               </Dropzone>
 
+              <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" src={file.preview} /> )}</div>
               <aside>
-                <h4 >Dropped picture</h4>
-                <ul>
                   {
-                    this.state.files.map(f => <li key={f.name}>{f.name}</li>)
+                    this.state.files.map(f => <span className="upload-image-label" key={f.name}>Uploaded Filename: {f.name}</span>)
                   }
-                </ul>
               </aside>
-
-              <div>{this.state.files.map((file, index) => <img key={index} width="200" height="200" src={file.preview} /> )}</div>
-
               <Button className="button-upload" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
 
               {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
