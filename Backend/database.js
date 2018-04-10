@@ -1200,7 +1200,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
     //
     // Recieves the id of a story and the id of the current user and returns the
     // information of the story if the current user is the author of this story.
-    getStoryEntry: function (db, res, storyId, storyTitle, storyContent, currentUserId) {
+    getStoryEntry: function (db, res, storyId, currentUserId) {
         db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err_find_story_entries, res_find_story_entries) => {
             if (err_find_story_entries) throw err_find_story_entries;
             if (res_find_story_entries) {
