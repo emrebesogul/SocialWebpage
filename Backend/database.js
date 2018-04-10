@@ -932,7 +932,7 @@ updateUserData: function(db, res, data) {
         collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
-                res.send(docs.friends.sort())
+                res.send((docs.friends).sort())
             }
         })
     },
