@@ -321,6 +321,18 @@ div.ui.pointing.secondary.menu{
   transition: all 0.3s;
 }
 
+.edit-button-guestbook{
+  z-index: 99999;
+  top: -68px;
+  right: 10px;
+  position: relative;
+  float: right;
+}
+
+.save-button-guestbook{
+  display: block !important;
+}
+
 /*
   Logout Button for logging out the current user.
   Only visible in mobile version (max-width <= 1250px).
@@ -910,6 +922,8 @@ img.ui.image.image-feed{
 
     #guestbook-reply{
       width: 90% !important;
+      padding: 0;
+      padding-left: 10px;
     }
 
     #logout-button-mobile{

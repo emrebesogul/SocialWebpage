@@ -264,9 +264,10 @@ class Profile extends Component {
                                           <Image src="/assets/images/boy.png" className="user-card-avatar"/>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                        {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
                                       </div>
                                       <Card.Content id="card-content">
-                                      {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} id="delete-button" className="button-upload" circular icon="edit" size="small"></Button> : null}
+
                                         <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
                                           <Card.Header className="card-header">
                                               <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}></Rating>
@@ -287,7 +288,7 @@ class Profile extends Component {
                                           </Card.Meta>
                                           <Card.Description>
                                           {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : item.content}
-                                          {this.state.updateItemId == item._id ? <Button className="button-upload">Save</Button> : null}
+                                          {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
