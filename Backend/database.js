@@ -1046,7 +1046,7 @@ updateUserData: function(db, res, data) {
 //
 // Receives the userId of a user and sends all guestbook entries of this user
 // to the react application. These story entries are sorted by date.
-listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
+listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
   db.collection('guestbookEntries').aggregate([
       { $match : { owner_id : new ObjectId(userId) } },
       { $lookup:
@@ -1069,7 +1069,9 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
               "user_id": 1,
               "username": {
                   "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
-              }
+              },
+              "profile_picture_filename": "$author.picture",
+              "profile_picture_url": 1
           }
        },
        { $sort : { "date_created" : -1 } }
@@ -1078,6 +1080,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
         res_guestbook_entries.map(item => {
               item.date_created = getDate(item.date_created);
               item.number_of_likes = item.liking_users.length;
+              item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
           });
           res.status(200).send(res_guestbook_entries);
   });

@@ -3,7 +3,7 @@ import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById} from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
-import SidebarProfile from '../Components/Sidebar'
+import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
@@ -333,7 +333,7 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                      <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                        <Image className="user-card-avatar" src={item.profile_picture_url} />
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
@@ -404,7 +404,7 @@ class Profile extends Component {
                            </Form>
                            : null }
                         </div>
-                        
+
                         </Tab.Pane> },
                       ]
                       } />
