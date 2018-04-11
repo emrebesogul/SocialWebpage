@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Rating, List, Button } from 'semantic-ui-react'
+import { Tab, Card, Image, Icon, Rating, List, Button, Header } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
@@ -205,6 +205,18 @@ async handleRate(event, data){
                           </Tab.Pane> },
                           { menuItem: 'Friends', render: () => <Tab.Pane attached={false}>
                             <div id="friends">
+                              <div>
+                                <Header as='h2' icon textAlign='center'>
+                                  <Icon name='users' circular />
+                                  <Header.Content>
+                                    Friends
+                                  </Header.Content>
+                                  <Header.Subheader className="feed-subheader">
+                                    View your current friends and manage requests from people you may know.
+
+                                  </Header.Subheader>
+                                </Header>
+                              </div>
                                 {friendRequests.map((item, index) =>
                                   {
                                     return(
@@ -231,8 +243,6 @@ async handleRate(event, data){
                                     )
                                   }
                                 )}
-
-
                                 {friends.map((item, index) =>
                                   {
                                     return(
@@ -259,34 +269,46 @@ async handleRate(event, data){
                                 )}
                             </div>
 
+
                           </Tab.Pane> },
                           { menuItem: 'Notifications', render: () => <Tab.Pane attached={false}>
                             <div id="friends">
-                                  {friends.map((item, index) =>
-                                    {
-                                      return(
-                                        <div key={index}>
-                                          <List  divided relaxed verticalAlign='middle'>
-                                            <List.Item>
-                                              <Image size="tiny" avatar src='/assets/images/boy.png' />
-                                              <List.Content>
-                                                <List.Header >
-                                                    <Link to={`/profile/${item}`}>
-                                                        {item}
-                                                    </Link>
-                                                </List.Header>
-                                                <List.Description>4 mutual contacts</List.Description>
-                                              </List.Content>
-                                              <List.Content floated="right">
-                                                  <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
-                                              </List.Content>
-                                            </List.Item>
-                                          </List>
-                                        </div>
-                                      )
-                                    }
-                                  )}
+                              <div>
+                                <Header as='h2' icon textAlign='center'>
+                                  <Icon name='discussions' circular />
+                                  <Header.Content>
+                                    Notifications
+                                  </Header.Content>
+                                  <Header.Subheader className="feed-subheader">
+                                    Check your notifications and see posts with interaction.
+                                  </Header.Subheader>
+                                </Header>
                               </div>
+                              {friends.map((item, index) =>
+                                {
+                                  return(
+                                    <div key={index}>
+                                      <List  divided relaxed verticalAlign='middle'>
+                                        <List.Item>
+                                          <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                          <List.Content>
+                                            <List.Header >
+                                                <Link to={`/profile/${item}`}>
+                                                    {item}
+                                                </Link>
+                                            </List.Header>
+                                            <List.Description>4 mutual contacts</List.Description>
+                                          </List.Content>
+                                          <List.Content floated="right">
+                                              <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
+                                          </List.Content>
+                                        </List.Item>
+                                      </List>
+                                    </div>
+                                  )
+                                }
+                              )}
+                            </div>
                           </Tab.Pane> },
                         ]
                         } />
