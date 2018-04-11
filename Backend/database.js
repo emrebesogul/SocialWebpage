@@ -256,7 +256,7 @@ var call = module.exports = {
                         item.number_of_likes = item.liking_users.length;
                     });
                     res_images.map(item => {
-                        item.src = "https://" + req.hostname + "/uploads/posts/" + item.filename;
+                        item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
                         item.number_of_likes = item.liking_users.length;
                     });
 
@@ -452,7 +452,7 @@ var call = module.exports = {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
-            item.src = "https://" + req.hostname + "/uploads/posts/" + item.filename;
+            item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
             item.number_of_likes = item.liking_users.length;
         });
             res.status(200).send(result_images);
