@@ -26,10 +26,14 @@ class Upload extends Component {
         this.apiCheckSession = "/checkSession"
         this.api = "/image/create";
 
-        this.checkThisSession();
+        //this.checkThisSession();
 
         this.pageTitle = "Upload an image..."
         document.title = this.pageTitle;
+    }
+
+    componentDidMount() {
+        this.checkThisSession();
     }
 
     async checkThisSession() {

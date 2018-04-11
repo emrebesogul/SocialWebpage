@@ -40,8 +40,8 @@ class Profile extends Component {
 
       this.property = props.match.params.username;
       this.ownerName = props.match.params.username;
-      this.getProfileData(this.property);
-      this.checkThisSession();
+      //this.getProfileData(this.property);
+      //this.checkThisSession();
 
       if(this.property === undefined) {
           this.pageTitle = "My Profile "
@@ -49,6 +49,11 @@ class Profile extends Component {
           this.pageTitle = "Profile of user: " + this.property
       }
       document.title = this.pageTitle;
+  }
+
+  componentDidMount() {
+      this.getProfileData(this.property);
+      this.checkThisSession();
   }
 
     async checkThisSession() {

@@ -20,10 +20,15 @@ class Roadmap extends Component {
         this.apiCheckSession = "/checkSession"
         this.api = "/story/create";
 
-        this.checkThisSession();
+        //this.checkThisSession();
 
         this.pageTitle = "Social Webpage Home"
         document.title = this.pageTitle;
+      }
+
+      componentDidMount() {
+          this.checkThisSession();
+
       }
 
       async checkThisSession() {

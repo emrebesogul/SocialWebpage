@@ -27,7 +27,12 @@ class ProfileHeader extends Component {
         this.apiFriendshipRequest = "/friends/sendFriendshipRequest"
         this.apiCheckSession = "/checkSession"
 
-        this.getCurrentUser(props.name);
+        //this.getCurrentUser(props.name);
+    }
+
+    componentDidMount() {
+        this.getCurrentUser(this.props.name);
+
     }
 
     async getCurrentUser(username) {
