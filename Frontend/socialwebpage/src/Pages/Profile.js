@@ -188,6 +188,11 @@ class Profile extends Component {
         }
       }
 
+      handleCancelUpdateStoryEntry(event, data) {
+        this.setState({ updateItemId: ""});
+      }
+
+
     render() {
 
     const { redirectToLogin } = this.state;
@@ -289,6 +294,7 @@ class Profile extends Component {
                                           <Card.Description>
                                           {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : item.content}
                                           {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
+                                          {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateStoryEntry(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
