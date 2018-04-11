@@ -254,7 +254,7 @@ var call = module.exports = {
                         item.number_of_likes = item.liking_users.length;
                     });
                     res_images.map(item => {
-                        item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
+                        item.src = "https://" + req.hostname + ":8000/uploads/posts/" + item.filename;
                         item.number_of_likes = item.liking_users.length;
                     });
 
@@ -448,7 +448,7 @@ var call = module.exports = {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
-            item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
+            item.src = "https://" + req.hostname + ":8000/uploads/posts/" + item.filename;
             item.number_of_likes = item.liking_users.length;
         });
             res.status(200).send(result_images);
@@ -492,7 +492,7 @@ var call = module.exports = {
                       firstname: docs.first_name,
                       lastname: docs.last_name,
                       email: docs.email,
-                      picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture,
+                      picture: "https://" + req.hostname + ":8000/uploads/posts/" + docs.picture,
                       buttonState: buttonState
                   }));
               })
@@ -524,7 +524,7 @@ var call = module.exports = {
                   firstname: docs.first_name,
                   lastname: docs.last_name,
                   email: docs.email,
-                  picture: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
+                  picture: "https://" + req.hostname + ":8000/uploads/posts/" + docs.picture
               }));
           }
           else {
@@ -1195,7 +1195,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
     },
 
     // --------------------------Update Story Entries----------------------------//
-    
+
     //------------------------------Get Story Entry------------------------------//
     //
     // Recieves the id of a story and the id of the current user and returns the
@@ -1210,7 +1210,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                     res.status(401).send(JSON.stringify({
                         message: "User is not authorized to update this story entry"
                     }));
-                }     
+                }
             } else {
                 res.status(404).send(JSON.stringify({
                     message: "Can't find a story with id: " + storyId
@@ -1221,7 +1221,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
 
     //----------------------------Update Story Entry-----------------------------//
     //
-    // Recieves the id of a story, the id of the current user and the new data of 
+    // Recieves the id of a story, the id of the current user and the new data of
     // this story entry that should be updated.
     // Returns true if the update was successful and false otherwise.
     updateStoryEntry: function (db, res, storyId, storyTitle, storyContent, currentUserId) {
@@ -1239,7 +1239,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                         if (err_update_guestbook_entries) throw err_update_guestbook_entries;
                         res.status(200).send(true);
                     }
-                );   
+                );
             } else {
                 res.status(404).send(false);
             }
