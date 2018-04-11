@@ -258,6 +258,7 @@ class Profile extends Component {
                                     <Card.Meta className="card-meta">
                                       <span className='date'>
                                         {item.date_created}
+                                        {item.updated ? <p>(edited)</p> :  null}
                                       </span>
                                     </Card.Meta>
                                     <Card.Description>
@@ -305,6 +306,7 @@ class Profile extends Component {
                                           <Card.Meta className="card-meta">
                                             <span className='date'>
                                               {item.date_created}
+                                              {item.updated ? <p>(edited)</p> :  null}
                                             </span>
                                           </Card.Meta>
                                           <Card.Description>
@@ -335,11 +337,11 @@ class Profile extends Component {
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
-                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                     </div>
                                     <Card.Content id="card-content">
                                       <Card.Header className="card-header">
-                                          <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                          <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                           </Rating> {item.title}
                                           <div className="ui mini horizontal statistic post-likes">
                                             <div className="value">
@@ -391,7 +393,7 @@ class Profile extends Component {
                             )
                           })}
 
-
+                          {!this.state.show ?
                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                              <Form.Field>
                                <label>Title of your guestbook entry</label>
@@ -400,8 +402,9 @@ class Profile extends Component {
                              <Form.TextArea autoHeight rows="3" />
                              <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
                            </Form>
+                           : null }
                         </div>
-
+                        
                         </Tab.Pane> },
                       ]
                       } />

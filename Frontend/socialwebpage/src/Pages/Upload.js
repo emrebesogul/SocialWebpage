@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {  Redirect } from 'react-router-dom';
-import { Button, Form, Input, Message } from 'semantic-ui-react'
+import { Button, Form, Input, Message, Icon } from 'semantic-ui-react'
 import SidebarProfile from '../Components/Sidebar'
 import Dropzone from 'react-dropzone'
 import FormData from 'form-data';
@@ -95,7 +95,7 @@ class Upload extends Component {
 
             <SidebarProfile />
 
-            <div id="upload-content">
+            <div id="upload-content" >
                 <h2 >Upload new content</h2>
                 <Form onSubmit={this.handleSubmit.bind(this)}>
 
@@ -106,25 +106,20 @@ class Upload extends Component {
                       <Input className="input-upload" type="text"/>
 
                       <span className="input-label-upload">
-                        File size has a limit of 4 megabytes.
+                        Image size has a limit of 4 megabytes.
                       </span>
 
-                      <span className="input-label-upload"> Select the file you want to share</span>
-
                       <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
-                          <p>Try dropping one picture here, or click to select one picture to upload.</p>
+                          <p><Icon name='user' size="large" id="settings-icon" /> Select the image you want to share</p>
                       </Dropzone>
 
+                      <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>
                       <aside>
-                        <h4 >Dropped picture</h4>
-                        <ul>
                           {
-                            this.state.files.map(f => <li key={f.name}>{f.name}</li>)
+                            this.state.files.map(f => <span className="upload-image-label" key={f.name}>Uploaded Filename: {f.name}</span>)
                           }
-                        </ul>
                       </aside>
 
-                      <div>{this.state.files.map((file, index) => <img key={index} width="200" height="200" alt="preview" src={file.preview} /> )}</div>
                       {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 
                       <Button className="button-upload" type="submit">Post</Button>

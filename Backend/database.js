@@ -217,7 +217,8 @@ var call = module.exports = {
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                }
+                },
+                "updated" : 1
             }
          }
         ]).toArray((err_images, res_images) => {
@@ -244,7 +245,8 @@ var call = module.exports = {
                         "user_id": 1,
                         "username": {
                             "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                        }
+                        },
+                        "updated" : 1
                     }
                 }
                 ]).toArray((err_stories, res_stories) => {
@@ -254,7 +256,7 @@ var call = module.exports = {
                         item.number_of_likes = item.liking_users.length;
                     });
                     res_images.map(item => {
-                        item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
+                        item.src = "https://" + req.hostname + "/uploads/posts/" + item.filename;
                         item.number_of_likes = item.liking_users.length;
                     });
 
@@ -314,7 +316,8 @@ var call = module.exports = {
         "content": content,
         "liking_users": [],
         "date_created": new Date(),
-        "user_id": new ObjectId(userId)
+        "user_id": new ObjectId(userId),
+        "updated" : false
     });
     res.send(true);
   },
@@ -396,7 +399,8 @@ var call = module.exports = {
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                }
+                },
+                "updated": 1
             }
          },
          { $sort : { "date_created" : -1 } }
@@ -448,7 +452,7 @@ var call = module.exports = {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
-            item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
+            item.src = "https://" + req.hostname + "/uploads/posts/" + item.filename;
             item.number_of_likes = item.liking_users.length;
         });
             res.status(200).send(result_images);
@@ -1214,7 +1218,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
     },
 
     // --------------------------Update Story Entries----------------------------//
-    
+
     //------------------------------Get Story Entry------------------------------//
     //
     // Recieves the id of a story and the id of the current user and returns the
@@ -1229,7 +1233,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                     res.status(401).send(JSON.stringify({
                         message: "User is not authorized to update this story entry"
                     }));
-                }     
+                }
             } else {
                 res.status(404).send(JSON.stringify({
                     message: "Can't find a story with id: " + storyId
@@ -1240,7 +1244,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
 
     //----------------------------Update Story Entry-----------------------------//
     //
-    // Recieves the id of a story, the id of the current user and the new data of 
+    // Recieves the id of a story, the id of the current user and the new data of
     // this story entry that should be updated.
     // Returns true if the update was successful and false otherwise.
     updateStoryEntry: function (db, res, storyId, storyTitle, storyContent, currentUserId) {
@@ -1252,13 +1256,15 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                     {
                         $set: {
                             "title": storyTitle,
-                            "content": storyContent
+                            "content": storyContent,
+                            "updated" : true
                         }
                     }, (err_update_guestbook_entries, res_update_guestbook_entries) => {
                         if (err_update_guestbook_entries) throw err_update_guestbook_entries;
+
                         res.status(200).send(true);
                     }
-                );   
+                );
             } else {
                 res.status(404).send(false);
             }
