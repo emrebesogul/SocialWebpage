@@ -217,7 +217,8 @@ var call = module.exports = {
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                }
+                },
+                "updated" : 1
             }
          }
         ]).toArray((err_images, res_images) => {
@@ -244,7 +245,8 @@ var call = module.exports = {
                         "user_id": 1,
                         "username": {
                             "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                        }
+                        },
+                        "updated" : 1
                     }
                 }
                 ]).toArray((err_stories, res_stories) => {
@@ -314,7 +316,8 @@ var call = module.exports = {
         "content": content,
         "liking_users": [],
         "date_created": new Date(),
-        "user_id": new ObjectId(userId)
+        "user_id": new ObjectId(userId),
+        "updated" : false
     });
     res.send(true);
   },
@@ -396,7 +399,8 @@ var call = module.exports = {
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                }
+                },
+                "updated": 1
             }
          },
          { $sort : { "date_created" : -1 } }
@@ -1233,10 +1237,12 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                     {
                         $set: {
                             "title": storyTitle,
-                            "content": storyContent
+                            "content": storyContent,
+                            "updated" : true
                         }
                     }, (err_update_guestbook_entries, res_update_guestbook_entries) => {
                         if (err_update_guestbook_entries) throw err_update_guestbook_entries;
+
                         res.status(200).send(true);
                     }
                 );

@@ -189,6 +189,7 @@ async handleRate(event, data){
                                     <Card.Meta className="card-meta">
                                       <span className='date'>
                                         {item.date_created}
+                                        {item.updated ? <p>(edited)</p> :  null}
                                       </span>
                                     </Card.Meta>
                                     <Card.Description>
