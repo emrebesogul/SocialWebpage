@@ -73,6 +73,13 @@ class Profile extends Component {
 
             const response = await getCurrentUser(this.apiUser);
             this.setState({username: response.username})
+            this.setState({picture: response.picture})
+            this.setState({pictureURL: response.pictureURL})
+
+            if(this.state.picture) {
+                this.setState({pictureExists: true})
+            }
+
 
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
