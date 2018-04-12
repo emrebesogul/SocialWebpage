@@ -77,6 +77,16 @@ class Profile extends Component {
               responseGuestbookEntries : responseGuestbookEntries
             });
 
+            responseStories.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+            responseImages.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+            responseGuestbookEntries.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+
             const responseMyData = await checkSession(this.apiCheckSession);
 
             const response = await getCurrentUser(this.apiUser);
@@ -105,6 +115,16 @@ class Profile extends Component {
               responseStories : responseStories,
               responseImages : responseImages,
               responseGuestbookEntries : responseGuestbookEntries
+            });
+
+            responseStories.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+            responseImages.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+            responseGuestbookEntries.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
             });
 
             const responseMyData = await checkSession(this.apiCheckSession);
@@ -139,20 +159,97 @@ class Profile extends Component {
       async handleRateStoryEntry(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const response = await likeStoryEntryById("/story/like",this.state.entryId);
+        const responseStories = await likeStoryEntryById("/story/like",this.state.entryId);
+
+        this.state.responseStories.map(item => {
+          if(item._id === data._id) {
+            if(item.current_user_has_liked == 0) {
+              item.number_of_likes_in_state++;
+              item.current_user_has_liked = 1;
+            } else {
+              item.number_of_likes_in_state--;
+              item.current_user_has_liked = 0;
+            }
+          }
+        });
+        this.setState({responseStories: this.state.responseStories});
       }
 
       async handleRateImage(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const response = await likeImageById("/image/like",this.state.entryId);
+        const responseImages = await likeImageById("/image/like",this.state.entryId);
+
+        this.state.responseImages.map(item => {
+          if(item._id === data._id) {
+            if(item.current_user_has_liked == 0) {
+              item.number_of_likes_in_state++;
+              item.current_user_has_liked = 1;
+            } else {
+              item.number_of_likes_in_state--;
+              item.current_user_has_liked = 0;
+            }
+          }
+        });
+        this.setState({responseImages: this.state.responseImages});
       }
 
       async handleRateGuestbookEntry(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const response = await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
-        window.location.reload();
+        const responseGuestbookEntries = await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
+        
+        this.state.responseGuestbookEntries.map(item => {
+          if(item._id === data._id) {
+            if(item.current_user_has_liked == 0) {
+              item.number_of_likes_in_state++;
+              item.current_user_has_liked = 1;
+            } else {
+              item.number_of_likes_in_state--;
+              item.current_user_has_liked = 0;
+            }
+          }
+        });
+        this.setState({responseGuestbookEntries: this.state.responseGuestbookEntries});
+      }
+
+      getNumberOfLikesOfStoryEntry(currentItem) {
+        let numberOfLikes = 0;
+        this.state.responseStories.map(item => {
+          if(item._id === currentItem._id) {
+            numberOfLikes = item.number_of_likes_in_state;
+          }
+        });
+        if(numberOfLikes == undefined) {
+          numberOfLikes = currentItem.number_of_likes;
+        }
+        return numberOfLikes;
+      }
+
+      getNumberOfLikesOfImage(currentItem) {
+        let numberOfLikes = 0;
+        this.state.responseImages.map(item => {
+          if(item._id === currentItem._id) {
+            numberOfLikes = item.number_of_likes_in_state;
+          }
+        });
+        if(numberOfLikes == undefined) {
+          numberOfLikes = currentItem.number_of_likes;
+        }
+        return numberOfLikes;
+      }
+
+      getNumberOfLikesOfGuestbookEntry(currentItem) {
+        let numberOfLikes = 0;
+        this.state.responseGuestbookEntries.map(item => {
+          if(item._id === currentItem._id) {
+            numberOfLikes = item.number_of_likes_in_state;
+          }
+        });
+        if(numberOfLikes == undefined) {
+          numberOfLikes = currentItem.number_of_likes;
+        }
+        return numberOfLikes;
       }
 
       async handleDeleteImage(event, data) {
@@ -244,11 +341,11 @@ class Profile extends Component {
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
                                       </Rating> {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">
-                                            {item.number_of_likes}
+                                            {this.getNumberOfLikesOfImage(item)}
                                           </div>
                                           <div className="label">
                                             Likes
@@ -292,11 +389,11 @@ class Profile extends Component {
 
                                         <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
                                           <Card.Header className="card-header">
-                                              <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}></Rating>
+                                              <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
                                               {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : item.title}
                                                 <div className="ui mini horizontal statistic post-likes">
                                                 <div className="value">
-                                                  {item.number_of_likes}
+                                                  {this.getNumberOfLikesOfStoryEntry(item)}
                                                 </div>
                                                 <div className="label">
                                                   Likes
@@ -341,11 +438,11 @@ class Profile extends Component {
                                     </div>
                                     <Card.Content id="card-content">
                                       <Card.Header className="card-header">
-                                          <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                          <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
                                           </Rating> {item.title}
                                           <div className="ui mini horizontal statistic post-likes">
                                             <div className="value">
-                                              {item.number_of_likes}
+                                              {item.getNumberOfLikesOfGuestbookEntry(item)}
                                             </div>
                                             <div className="label">
                                               Likes
