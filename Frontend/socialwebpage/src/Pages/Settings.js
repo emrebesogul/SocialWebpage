@@ -14,10 +14,10 @@ class Settings extends React.Component{
           showMessage: false,
           showMessageError: false,
           redirectToLogin: false,
-          username: "Username",
-          firstname: "First name",
-          lastname: "Last name",
-          email: "beast@hpe.com",
+          username: "",
+          firstname: "",
+          lastname: "",
+          email: "",
           message: "",
           messageDetail: "",
           rerender: false,
@@ -27,7 +27,11 @@ class Settings extends React.Component{
         this.apiUpdate = "/user/edit"
         this.apiUploadProfilePic = "/user/image/create"
 
+    }
+
+    componentDidMount() {
         this.getCurrentUserData();
+
     }
 
     async getCurrentUserData() {

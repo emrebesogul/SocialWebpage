@@ -214,7 +214,6 @@ class Profile extends Component {
                       [
                         { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
 
-
                           {images.map((item, index) =>
                           {return(
                             <div key={index} className="profile-card">
