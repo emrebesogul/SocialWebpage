@@ -124,7 +124,7 @@ class ProfileHeader extends Component {
     render() {
         return (
             <div>
-
+                        
                 <div id="profile-header">
 
                   <div className="wrapper"  onClick={((e) => this.handleImageClick(e, false))}>
