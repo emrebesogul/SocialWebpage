@@ -191,13 +191,13 @@ getNumberOfLikes(currentItem) {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <Image className="user-card-avatar" src={"https://gruppe1.testsites.info" + item.profile_picture_url} />
+                                    <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
                                     <Link to={`/profile/${item.username}`}>
                                       <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
                                   </div>
 
-                                  <Image className="image-feed" src={"https://gruppe1.testsites.info" + item.src} />
+                                  <Image className="image-feed" src={"http://localhost:8000" + item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
@@ -251,7 +251,7 @@ getNumberOfLikes(currentItem) {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            <Image className="user-card-avatar" src={"https://gruppe1.testsites.info" + item.profile_picture_url} />
+                                            <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
                                             <List.Content>
                                               <List.Header as='a'>
                                                   <Link to={`/profile/${item.requester}`}>
@@ -277,7 +277,7 @@ getNumberOfLikes(currentItem) {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            <Image className="user-card-avatar" src={"https://gruppe1.testsites.info" + item.profile_picture_url} />
+                                            <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
                                             <List.Content>
                                               <List.Header >
                                                   <Link to={`/profile/${item}`}>
