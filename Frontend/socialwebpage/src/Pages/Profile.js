@@ -73,6 +73,13 @@ class Profile extends Component {
 
             const response = await getCurrentUser(this.apiUser);
             this.setState({username: response.username})
+            this.setState({picture: response.picture})
+            this.setState({pictureURL: response.pictureURL})
+
+            if(this.state.picture) {
+                this.setState({pictureExists: true})
+            }
+
 
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
@@ -98,6 +105,12 @@ class Profile extends Component {
             let api = this.apiUser + "?username=" + username;
             const response = await getCurrentUser(api);
             this.setState({username: response.username})
+            this.setState({picture: response.picture})
+            this.setState({pictureURL: response.pictureURL})
+
+            if(this.state.picture) {
+                this.setState({pictureExists: true})
+            }
 
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
@@ -220,11 +233,12 @@ class Profile extends Component {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+
+                                    {this.state.pictureExists ? <div><Image className="user-card-avatar" src={"http://localhost:8000" + this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
                                     <span className="content-card-username-label"> @{item.username} </span>
                                     {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                   </div>
-                                  <Image className="image-feed" src={item.src} />
+                                  <Image className="image-feed" src={"http://localhost:8000" + item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
@@ -265,7 +279,7 @@ class Profile extends Component {
                                   <Card.Group>
                                     <Card fluid centered>
                                       <div className="username-label">
-                                          <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                          {this.state.pictureExists ? <div><Image className="user-card-avatar" src={"http://localhost:8000" + this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                         {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
@@ -314,7 +328,7 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                      <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                        <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>

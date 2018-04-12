@@ -54,7 +54,7 @@ class Feed extends Component {
 
  async getfeeddata() {
       const response = await fetchFeedData("/feed");
-      this.setState({resFeedPosts: response});    
+      this.setState({resFeedPosts: response});
       response.map(item => {
         item.number_of_likes_in_state = item.number_of_likes;
       });
@@ -81,6 +81,7 @@ class Feed extends Component {
       if(response) {
           window.location.reload();
       }
+
   }
 
   async declineFriendRequest(e, item) {
@@ -190,13 +191,13 @@ getNumberOfLikes(currentItem) {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                    <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
                                     <Link to={`/profile/${item.username}`}>
                                       <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
                                   </div>
 
-                                  <Image className="image-feed" src= {item.src} />
+                                  <Image className="image-feed" src={"http://localhost:8000" + item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
@@ -250,7 +251,7 @@ getNumberOfLikes(currentItem) {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            <Image className="feed-interaction-user-image" size="tiny" avatar src='/assets/images/boy.png' />
+                                            <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
                                             <List.Content>
                                               <List.Header as='a'>
                                                   <Link to={`/profile/${item.requester}`}>
@@ -276,7 +277,7 @@ getNumberOfLikes(currentItem) {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            <Image size="tiny" avatar src='/assets/images/boy.png' />
+                                            <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
                                             <List.Content>
                                               <List.Header >
                                                   <Link to={`/profile/${item}`}>
