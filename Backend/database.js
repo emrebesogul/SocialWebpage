@@ -960,40 +960,14 @@ updateUserData: function(db, res, data) {
 
     getFriends: function(db, res, userId) {
         const collectionUsers = db.collection('users');
-        collectionUsers.findOne(}, (err, docs) => {
+        collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
                 res.send((docs.friends).sort())
             }
         })
 
-        collectionfriendRequests.aggregate([
-            { $match : {_id : ObjectId(userId)} },
-            { $lookup:
-               {
-                 from: "users",
-                 localField: "requesterId",
-                 foreignField: "_id",
-                 as: "user"
-               }
-           },
-           {
-               $project :
-               {
-                   "requester": "$user.username",
-                   "recipient": 1,
-                   "profile_picture_filename": "$user.picture",
-                   "profile_picture_url": 1
-               }
-           }
-       ]).toArray((err, result) => {
-        if (err) throw err;
-          result.map(item => {
-                item.requester = item.requester;
-                item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
-            });
-            res.status(200).send(result);
-        });
+        
     },
 
 
