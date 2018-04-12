@@ -130,7 +130,7 @@ class ProfileHeader extends Component {
                   <div className="wrapper"  onClick={((e) => this.handleImageClick(e, false))}>
                     <div className="wrapper-content">
                       <Button id="profile-image-close-button" onClick={((e) => this.handleImageClick(e, false))} >Hide Image</Button>
-                      <Image src={this.state.pictureURL} id="profile-image-large"/>
+                      <Image src={"http://localhost:8000" + this.state.pictureURL} id="profile-image-large"/>
                     </div>
                   </div>
 
