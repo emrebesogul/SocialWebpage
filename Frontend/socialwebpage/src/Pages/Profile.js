@@ -3,7 +3,7 @@ import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById} from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
-import SidebarProfile from '../Components/Sidebar'
+import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
@@ -28,7 +28,10 @@ class Profile extends Component {
         rerender: false,
         updateItemId: "",
         statusUpdateStoryEntry: false,
-        showUpdateStoryErrorMessage: false
+        showUpdateStoryErrorMessage: false,
+        picture: "",
+        pictureURL: "",
+        pictureExists: false
       }
 
       this.apiCheckSession = "/checkSession"
@@ -40,8 +43,8 @@ class Profile extends Component {
 
       this.property = props.match.params.username;
       this.ownerName = props.match.params.username;
-      this.getProfileData(this.property);
-      this.checkThisSession();
+      //this.getProfileData(this.property);
+      //this.checkThisSession();
 
       if(this.property === undefined) {
           this.pageTitle = "My Profile "
@@ -49,6 +52,11 @@ class Profile extends Component {
           this.pageTitle = "Profile of user: " + this.property
       }
       document.title = this.pageTitle;
+  }
+
+  componentDidMount() {
+      this.getProfileData(this.property);
+      this.checkThisSession();
   }
 
     async checkThisSession() {
@@ -83,11 +91,17 @@ class Profile extends Component {
 
             const response = await getCurrentUser(this.apiUser);
             this.setState({username: response.username})
+            this.setState({picture: response.picture})
+            this.setState({pictureURL: response.pictureURL})
 
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
             } else {
                 this.setState({ show: false});
+            }
+
+            if(this.state.picture) {
+                this.setState({pictureExists: true})
             }
 
         } else {
@@ -303,6 +317,7 @@ class Profile extends Component {
 
         return (
           <div className="feed">
+
               <SidebarProfile />
               <ProfileHeader name={this.property}/>
 
@@ -318,7 +333,8 @@ class Profile extends Component {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+
+                                    {this.state.pictureExists ? <div><Image className="user-card-avatar" src={this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
                                     <span className="content-card-username-label"> @{item.username} </span>
                                     {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                   </div>
@@ -364,7 +380,7 @@ class Profile extends Component {
                                   <Card.Group>
                                     <Card fluid centered>
                                       <div className="username-label">
-                                          <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                          {this.state.pictureExists ? <div><Image className="user-card-avatar" src={this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                         {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
@@ -414,7 +430,7 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                      <Image src="/assets/images/boy.png" className="user-card-avatar"/>
+                                        <Image className="user-card-avatar" src={item.profile_picture_url} />
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
@@ -485,7 +501,7 @@ class Profile extends Component {
                            </Form>
                            : null }
                         </div>
-                        
+
                         </Tab.Pane> },
                       ]
                       } />

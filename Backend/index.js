@@ -542,9 +542,7 @@ MongoClient.connect(url, function(err, client) {
                 } else {
                     const username = req.query.username;
                     const currentUserId = authData.userid;
-                    database.listGuestbookEntriesForUsername(client.db('socialwebpage'), res, username, currentUserId,  () => {
-                        db.close();
-                    });
+                    database.listGuestbookEntriesForUsername(client.db('socialwebpage'), res, username, currentUserId, req);
                 }
             });
 
@@ -556,9 +554,7 @@ MongoClient.connect(url, function(err, client) {
                     });
                 } else {
                     const currentUserId = authData.userid;
-                    database.listGuestbookEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId, () => {
-                        db.close();
-                    });
+                    database.listGuestbookEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId, req);
                 }
             });
         }
@@ -645,9 +641,9 @@ MongoClient.connect(url, function(err, client) {
         });
       });
 
-      
+
     // --------------------------Update Story Entries----------------------------//
-  
+
     //---------------------------Get Story Entry By ID---------------------------//
     //
     // Calls the method getStoryEntry that returns the information of the

@@ -27,13 +27,21 @@ class Feed extends Component {
 
       this.apiCheckSession = "/checkSession";
 
+      //this.checkThisSession();
+      //this.getfeeddata();
+      //this.getFriends();
+      //this.getFriendRequests();
+
+
+      this.pageTitle = "Recent posts and updates...";
+      document.title = this.pageTitle;
+  }
+
+  componentDidMount() {
       this.checkThisSession();
       this.getfeeddata();
       this.getFriends();
       this.getFriendRequests();
-
-      this.pageTitle = "Recent posts and updates...";
-      document.title = this.pageTitle;
   }
 
   async checkThisSession() {

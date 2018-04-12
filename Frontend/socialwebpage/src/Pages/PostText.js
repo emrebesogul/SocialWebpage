@@ -22,10 +22,15 @@ class PostText extends Component {
         this.apiCheckSession = "/checkSession"
         this.api = "/story/create";
 
-        this.checkThisSession();
+        //this.checkThisSession();
 
         this.pageTitle = "Tell us a story..."
         document.title = this.pageTitle;
+    }
+
+    componentDidMount() {
+        this.checkThisSession();
+
     }
 
     async checkThisSession() {

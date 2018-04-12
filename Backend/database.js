@@ -256,7 +256,7 @@ var call = module.exports = {
                         item.number_of_likes = item.liking_users.length;
                     });
                     res_images.map(item => {
-                        item.src = "https://" + req.hostname + "/uploads/posts/" + item.filename;
+                        item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
                         item.number_of_likes = item.liking_users.length;
                     });
 
@@ -452,7 +452,7 @@ var call = module.exports = {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
-            item.src = "https://" + req.hostname + "/uploads/posts/" + item.filename;
+            item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
             item.number_of_likes = item.liking_users.length;
         });
             res.status(200).send(result_images);
@@ -486,7 +486,7 @@ var call = module.exports = {
                   if ((docs.friends).includes(myUsername)) {
                       buttonState = "Delete Friend";
                   } else if (docs2) {
-                      buttonState = "Cancel Request";
+                      buttonState = "Request sent";
                   } else {
                       buttonState = "Add Friend";
                   }
@@ -496,7 +496,8 @@ var call = module.exports = {
                       firstname: docs.first_name,
                       lastname: docs.last_name,
                       email: docs.email,
-                      picture: "https://" + req.hostname + "/uploads/posts/" + docs.picture,
+                      picture: docs.picture,
+                      pictureURL: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture,
                       buttonState: buttonState
                   }));
               })
@@ -528,7 +529,8 @@ var call = module.exports = {
                   firstname: docs.first_name,
                   lastname: docs.last_name,
                   email: docs.email,
-                  picture: "https://" + req.hostname + "/uploads/posts/" + docs.picture
+                  picture: docs.picture,
+                  pictureURL: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
               }));
           }
           else {
@@ -934,7 +936,7 @@ updateUserData: function(db, res, data) {
         collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
-                res.send(docs.friends.sort())
+                res.send((docs.friends).sort())
             }
         })
     },
@@ -1044,7 +1046,7 @@ updateUserData: function(db, res, data) {
 //
 // Receives the userId of a user and sends all guestbook entries of this user
 // to the react application. These story entries are sorted by date.
-listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
+listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
   db.collection('guestbookEntries').aggregate([
       { $match : { owner_id : new ObjectId(userId) } },
       { $lookup:
@@ -1067,7 +1069,9 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
               "user_id": 1,
               "username": {
                   "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
-              }
+              },
+              "profile_picture_filename": "$author.picture",
+              "profile_picture_url": 1
           }
        },
        { $sort : { "date_created" : -1 } }
@@ -1076,6 +1080,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
         res_guestbook_entries.map(item => {
               item.date_created = getDate(item.date_created);
               item.number_of_likes = item.liking_users.length;
+              item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
           });
           res.status(200).send(res_guestbook_entries);
   });
@@ -1149,18 +1154,35 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
     let filename = fileData.filename;
     let userId = userid;
 
-    collectionUsers.update({_id: ObjectId(userid)},
-        {
-            $set: {
-                "picture": filename
-            }
+    collectionUsers.findOne({ _id : new ObjectId(userId)}, (err, docs) => {
+        if (err) {
+            res.send(JSON.stringify({
+                message: "User not found"
+            }));
+            throw err;
         }
-    )
+        if (docs) {
+            //Delete old image from Server
+            if(docs.picture !== "") {
+                console.log(docs.picture)
+                let path = "./public/uploads/posts/" + docs.picture;
+                fs.unlinkSync(path);
+            }
 
-    console.log("Profile Pic was uploaded to server...")
-    res.send(JSON.stringify({
-        message: "Image uploaded"
-    }));
+            collectionUsers.update({_id: ObjectId(userId)},
+                {
+                    $set: {
+                        "picture": filename
+                    }
+                }
+            )
+            console.log("Profile Pic was uploaded to server...")
+
+            res.send(JSON.stringify({
+                message: "Image uploaded"
+            }));
+        }
+    })
 
   },
 
@@ -1190,7 +1212,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
                     }
                 );
 
-                console.log(docs.username, " deleted his Profile Picture")
+                console.log(docs.username, " deleted his Profile Picture and uploaded new one")
                 res.send(JSON.stringify({
                     message: "Profile Pic deleted"
                 }));

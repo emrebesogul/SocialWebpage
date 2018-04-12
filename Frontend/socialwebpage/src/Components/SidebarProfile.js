@@ -8,7 +8,7 @@ import {getCurrentUser} from '../API/GET/GetMethods';
 import '../profileStyle.css';
 
 
-class Sidebar extends Component {
+class SidebarProfile extends Component {
     constructor() {
         super();
 
@@ -42,7 +42,7 @@ class Sidebar extends Component {
     }
 
     reloadPage() {
-        //window.location.reload();
+        window.location.reload();
         //this.forceUpdate();
     }
 
@@ -114,7 +114,7 @@ class Sidebar extends Component {
 
               <div className="feed-header">
                 <div id="welcome-label">
-                  <h2 id="welcome-label-header"></h2>
+                  <h4 id="welcome-label-header"></h4>
                     <Link to="/profile">
                       <Button labelPosition="right"  size="medium" id="upload-button" icon onClick={this.reloadPage}>
                         <Icon className="menu-icons" size="large" name='user' />
@@ -189,4 +189,4 @@ class Sidebar extends Component {
 
 }
 
-export default Sidebar;
+export default SidebarProfile;
