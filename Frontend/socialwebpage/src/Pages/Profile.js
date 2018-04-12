@@ -295,27 +295,19 @@ class Profile extends Component {
         } else {
           this.setState({ showUpdateStoryErrorMessage: true });
         }
+        this.getProfileData(this.property);
       }
 
       handleCancelUpdateStoryEntry(event, data) {
+        this.state.responseStories.map(item => {
+          if(item._id === data._id) {
+            this.setState({"storyTitle": item.title});
+            this.setState({"storyContent": item.content});
+          }
+        });
+
         this.setState({ updateItemId: ""});
       }
-
-      getStoryTitle(currentItem) {
-        let title = this.state.storyTitle
-        if(title == undefined) {
-          title = currentItem.title;
-        }
-        return title;
-      }
-
-      getStoryContent(currentItem) {
-        let content = this.state.storyContent
-        if(content == undefined) {
-          content = currentItem.content;
-        }
-        return content;
-}
 
 
     render() {
@@ -402,7 +394,7 @@ class Profile extends Component {
                                         <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
                                           <Card.Header className="card-header">
                                               <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
-                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : this.getStoryTitle(item)}
+                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : item.title}
                                                 <div className="ui mini horizontal statistic post-likes">
                                                 <div className="value">
                                                   {this.getNumberOfLikesOfStoryEntry(item)}
@@ -419,7 +411,7 @@ class Profile extends Component {
                                             </span>
                                           </Card.Meta>
                                           <Card.Description>
-                                          {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : this.getStoryContent(item)}
+                                          {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : item.content}
                                           {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
                                           {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateStoryEntry(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
