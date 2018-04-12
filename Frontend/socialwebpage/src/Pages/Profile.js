@@ -3,7 +3,7 @@ import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById} from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
-import SidebarProfile from '../Components/Sidebar'
+import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
@@ -130,7 +130,7 @@ class Profile extends Component {
             if(this.state.picture) {
                 this.setState({pictureExists: true})
             }
-            
+
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
             } else {
