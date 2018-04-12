@@ -218,7 +218,9 @@ var call = module.exports = {
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
                 },
-                "updated" : 1
+                "updated" : 1,
+                "profile_picture_filename": "$user.picture",
+                "profile_picture_url": 1
             }
          }
         ]).toArray((err_images, res_images) => {
@@ -246,7 +248,9 @@ var call = module.exports = {
                         "username": {
                             "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
                         },
-                        "updated" : 1
+                        "updated" : 1,
+                        "profile_picture_filename": "$user.picture",
+                        "profile_picture_url": 2
                     }
                 }
                 ]).toArray((err_stories, res_stories) => {
@@ -254,10 +258,12 @@ var call = module.exports = {
 
                     res_stories.map(item => {
                         item.number_of_likes = item.liking_users.length;
+                        item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
                     });
                     res_images.map(item => {
-                        item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
+                        item.src = "/uploads/posts/" + item.filename;
                         item.number_of_likes = item.liking_users.length;
+                        item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
                     });
 
                     let feed = res_images.concat(res_stories);
@@ -452,7 +458,7 @@ var call = module.exports = {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
-            item.src = "http://" + req.hostname + ":8000/uploads/posts/" + item.filename;
+            item.src = "/uploads/posts/" + item.filename;
             item.number_of_likes = item.liking_users.length;
         });
             res.status(200).send(result_images);
@@ -497,7 +503,7 @@ var call = module.exports = {
                       lastname: docs.last_name,
                       email: docs.email,
                       picture: docs.picture,
-                      pictureURL: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture,
+                      pictureURL: "/uploads/posts/" + docs.picture,
                       buttonState: buttonState
                   }));
               })
@@ -530,7 +536,7 @@ var call = module.exports = {
                   lastname: docs.last_name,
                   email: docs.email,
                   picture: docs.picture,
-                  pictureURL: "http://" + req.hostname + ":8000/uploads/posts/" + docs.picture
+                  pictureURL: "/uploads/posts/" + docs.picture
               }));
           }
           else {
@@ -864,14 +870,35 @@ updateUserData: function(db, res, data) {
       const collectionfriendRequests = db.collection('friendRequests');
       const collectionUsers = db.collection('users');
 
-      collectionfriendRequests.find({"status": "open", "recipientId": ObjectId(userId)}).toArray((err, docs) => {
-          if (err) throw err;
-          if (docs) {
-              res.status(200).send(docs);
-          }
-      })
-
+      collectionfriendRequests.aggregate([
+          { $match : {"status": "open", "recipientId": ObjectId(userId)} },
+          { $lookup:
+             {
+               from: "users",
+               localField: "requesterId",
+               foreignField: "_id",
+               as: "user"
+             }
+         },
+         {
+             $project :
+             {
+                 "requester": "$user.username",
+                 "recipient": 1,
+                 "profile_picture_filename": "$user.picture",
+                 "profile_picture_url": 1
+             }
+         }
+     ]).toArray((err, result) => {
+      if (err) throw err;
+        result.map(item => {
+              item.requester = item.requester;
+              item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
+          });
+          res.status(200).send(result);
+      });
     },
+
 
     //----------------------xy----------------------//
     confirmFriendshipRequest: function(db, requester, recipient , res) {
@@ -933,13 +960,42 @@ updateUserData: function(db, res, data) {
 
     getFriends: function(db, res, userId) {
         const collectionUsers = db.collection('users');
-        collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
+        collectionUsers.findOne(}, (err, docs) => {
             if(err) throw err;
             if (docs) {
                 res.send((docs.friends).sort())
             }
         })
+
+        collectionfriendRequests.aggregate([
+            { $match : {_id : ObjectId(userId)} },
+            { $lookup:
+               {
+                 from: "users",
+                 localField: "requesterId",
+                 foreignField: "_id",
+                 as: "user"
+               }
+           },
+           {
+               $project :
+               {
+                   "requester": "$user.username",
+                   "recipient": 1,
+                   "profile_picture_filename": "$user.picture",
+                   "profile_picture_url": 1
+               }
+           }
+       ]).toArray((err, result) => {
+        if (err) throw err;
+          result.map(item => {
+                item.requester = item.requester;
+                item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
+            });
+            res.status(200).send(result);
+        });
     },
+
 
     deleteFriend: function(db, res, userId, userToDelete) {
         const collectionUsers = db.collection('users');
@@ -1080,7 +1136,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         res_guestbook_entries.map(item => {
               item.date_created = getDate(item.date_created);
               item.number_of_likes = item.liking_users.length;
-              item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+              item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
           });
           res.status(200).send(res_guestbook_entries);
   });
