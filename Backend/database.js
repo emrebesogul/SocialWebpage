@@ -458,7 +458,7 @@ var call = module.exports = {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
-            item.src = "/uploads/posts/" + item.filename;
+            item.src = "https://gruppe1.testsites.info/uploads/posts/" + item.filename;
             item.number_of_likes = item.liking_users.length;
         });
             res.status(200).send(result_images);
@@ -967,7 +967,7 @@ updateUserData: function(db, res, data) {
             }
         })
 
-        
+
     },
 
 

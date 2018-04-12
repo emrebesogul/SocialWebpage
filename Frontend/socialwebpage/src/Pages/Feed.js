@@ -197,7 +197,7 @@ getNumberOfLikes(currentItem) {
                                     </Link>
                                   </div>
 
-                                  <Image className="image-feed" src={"https://gruppe1.testsites.info" + item.src} />
+                                  <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
