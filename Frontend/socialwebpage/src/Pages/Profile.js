@@ -8,7 +8,6 @@ import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
 import { updateStoryEntry } from '../API/PUT/PutMethods';
-import { connect } from 'net';
 
 var images = [];
 var stories = [];
@@ -70,17 +69,20 @@ class Profile extends Component {
               responseGuestbookEntries : responseGuestbookEntries
             });
 
+            responseStories.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+            responseImages.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+            responseGuestbookEntries.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+
             const responseMyData = await checkSession(this.apiCheckSession);
 
             const response = await getCurrentUser(this.apiUser);
             this.setState({username: response.username})
-            this.setState({picture: response.picture})
-            this.setState({pictureURL: response.pictureURL})
-
-            if(this.state.picture) {
-                this.setState({pictureExists: true})
-            }
-
 
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
@@ -101,17 +103,21 @@ class Profile extends Component {
               responseGuestbookEntries : responseGuestbookEntries
             });
 
+            responseStories.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+            responseImages.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+            responseGuestbookEntries.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+            });
+
             const responseMyData = await checkSession(this.apiCheckSession);
 
             let api = this.apiUser + "?username=" + username;
             const response = await getCurrentUser(api);
             this.setState({username: response.username})
-            this.setState({picture: response.picture})
-            this.setState({pictureURL: response.pictureURL})
-
-            if(this.state.picture) {
-                this.setState({pictureExists: true})
-            }
 
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
@@ -139,20 +145,97 @@ class Profile extends Component {
       async handleRateStoryEntry(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const response = await likeStoryEntryById("/story/like",this.state.entryId);
+        const responseStories = await likeStoryEntryById("/story/like",this.state.entryId);
+
+        this.state.responseStories.map(item => {
+          if(item._id === data._id) {
+            if(item.current_user_has_liked == 0) {
+              item.number_of_likes_in_state++;
+              item.current_user_has_liked = 1;
+            } else {
+              item.number_of_likes_in_state--;
+              item.current_user_has_liked = 0;
+            }
+          }
+        });
+        this.setState({responseStories: this.state.responseStories});
       }
 
       async handleRateImage(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const response = await likeImageById("/image/like",this.state.entryId);
+        const responseImages = await likeImageById("/image/like",this.state.entryId);
+
+        this.state.responseImages.map(item => {
+          if(item._id === data._id) {
+            if(item.current_user_has_liked == 0) {
+              item.number_of_likes_in_state++;
+              item.current_user_has_liked = 1;
+            } else {
+              item.number_of_likes_in_state--;
+              item.current_user_has_liked = 0;
+            }
+          }
+        });
+        this.setState({responseImages: this.state.responseImages});
       }
 
       async handleRateGuestbookEntry(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const response = await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
-        window.location.reload();
+        const responseGuestbookEntries = await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
+        
+        this.state.responseGuestbookEntries.map(item => {
+          if(item._id === data._id) {
+            if(item.current_user_has_liked == 0) {
+              item.number_of_likes_in_state++;
+              item.current_user_has_liked = 1;
+            } else {
+              item.number_of_likes_in_state--;
+              item.current_user_has_liked = 0;
+            }
+          }
+        });
+        this.setState({responseGuestbookEntries: this.state.responseGuestbookEntries});
+      }
+
+      getNumberOfLikesOfStoryEntry(currentItem) {
+        let numberOfLikes = 0;
+        this.state.responseStories.map(item => {
+          if(item._id === currentItem._id) {
+            numberOfLikes = item.number_of_likes_in_state;
+          }
+        });
+        if(numberOfLikes == undefined) {
+          numberOfLikes = currentItem.number_of_likes;
+        }
+        return numberOfLikes;
+      }
+
+      getNumberOfLikesOfImage(currentItem) {
+        let numberOfLikes = 0;
+        this.state.responseImages.map(item => {
+          if(item._id === currentItem._id) {
+            numberOfLikes = item.number_of_likes_in_state;
+          }
+        });
+        if(numberOfLikes == undefined) {
+          numberOfLikes = currentItem.number_of_likes;
+        }
+        return numberOfLikes;
+      }
+
+      getNumberOfLikesOfGuestbookEntry(currentItem) {
+        let numberOfLikes = 0;
+        this.state.responseGuestbookEntries.map(item => {
+          if(item._id === currentItem._id) {
+            numberOfLikes = item.number_of_likes_in_state;
+          }
+        });
+        if(numberOfLikes == undefined) {
+          numberOfLikes = currentItem.number_of_likes;
+        }
+        return numberOfLikes;
       }
 
       async handleDeleteImage(event, data) {
@@ -206,22 +289,6 @@ class Profile extends Component {
         this.setState({ updateItemId: ""});
       }
 
-      getStoryTitle(currentItem) {
-        let title = this.state.storyTitle
-        if(title == undefined) {
-          title = currentItem.title;
-        }
-        return title;
-      }
-
-      getStoryContent(currentItem) {
-        let content = this.state.storyContent
-        if(content == undefined) {
-          content = currentItem.content;
-        }
-        return content;
-      }
-
 
     render() {
 
@@ -244,25 +311,25 @@ class Profile extends Component {
                       [
                         { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
 
+
                           {images.map((item, index) =>
                           {return(
                             <div key={index} className="profile-card">
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-
-                                    {this.state.pictureExists ? <div><Image className="user-card-avatar" src={"http://localhost:8000" + this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
+                                    <Image src="/assets/images/boy.png" className="user-card-avatar"/>
                                     <span className="content-card-username-label"> @{item.username} </span>
                                     {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                   </div>
-                                  <Image className="image-feed" src={"http://localhost:8000" + item.src} />
+                                  <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
                                       </Rating> {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">
-                                            {item.number_of_likes}
+                                            {this.getNumberOfLikesOfImage(item)}
                                           </div>
                                           <div className="label">
                                             Likes
@@ -272,6 +339,7 @@ class Profile extends Component {
                                     <Card.Meta className="card-meta">
                                       <span className='date'>
                                         {item.date_created}
+                                        {item.updated ? <p>(edited)</p> :  null}
                                       </span>
                                     </Card.Meta>
                                     <Card.Description>
@@ -296,7 +364,7 @@ class Profile extends Component {
                                   <Card.Group>
                                     <Card fluid centered>
                                       <div className="username-label">
-                                          {this.state.pictureExists ? <div><Image className="user-card-avatar" src={"http://localhost:8000" + this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
+                                          <Image src="/assets/images/boy.png" className="user-card-avatar"/>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                         {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
@@ -305,11 +373,11 @@ class Profile extends Component {
 
                                         <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
                                           <Card.Header className="card-header">
-                                              <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}></Rating>
-                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : this.getStoryTitle(item)}
+                                              <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
+                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : item.title}
                                                 <div className="ui mini horizontal statistic post-likes">
                                                 <div className="value">
-                                                  {item.number_of_likes}
+                                                  {this.getNumberOfLikesOfStoryEntry(item)}
                                                 </div>
                                                 <div className="label">
                                                   Likes
@@ -319,10 +387,11 @@ class Profile extends Component {
                                           <Card.Meta className="card-meta">
                                             <span className='date'>
                                               {item.date_created}
+                                              {item.updated ? <p>(edited)</p> :  null}
                                             </span>
                                           </Card.Meta>
                                           <Card.Description>
-                                          {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : this.getStoryContent(item)}
+                                          {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : item.content}
                                           {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
                                           {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateStoryEntry(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
@@ -345,15 +414,15 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                        <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
+                                      <Image src="/assets/images/boy.png" className="user-card-avatar"/>
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
-                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                     </div>
                                     <Card.Content id="card-content">
                                       <Card.Header className="card-header">
-                                          <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                          <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
                                           </Rating> {item.title}
                                           <div className="ui mini horizontal statistic post-likes">
                                             <div className="value">
@@ -396,7 +465,6 @@ class Profile extends Component {
                                         <div>{item.date_created}</div>
                                       </Comment.Metadata>
                                       {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
-
                                       <Comment.Text id="comment-content">{item.content}</Comment.Text>
                                     </Comment.Content>
                                   </Comment>
@@ -405,7 +473,7 @@ class Profile extends Component {
                             )
                           })}
 
-
+                          {!this.state.show ?
                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                              <Form.Field>
                                <label>Title of your guestbook entry</label>
@@ -414,8 +482,9 @@ class Profile extends Component {
                              <Form.TextArea autoHeight rows="3" />
                              <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
                            </Form>
+                           : null }
                         </div>
-
+                        
                         </Tab.Pane> },
                       ]
                       } />
