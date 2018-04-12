@@ -118,13 +118,13 @@ h2.ui.huge.icon.center.aligned.header{
 }
 
 .user-card-avatar{
-  height: 36px;
-  padding: 3px;
+  height: 38px;
+  padding: 2px;
   border-radius: 50%;
   position: relative !important;
-  border: 1px solid rgb(180,180,180);
-  width: 36px;
-  top: -7px;
+  width: 38px;
+  top: -9px;
+  object-fit: cover;
   left: -5px;
   background: white !important;
   margin-right: 12px !important;
@@ -274,7 +274,7 @@ a{
 }
 
 .content-card-username-label{
-  top: -34px;
+  top: -37px;
   position: relative;
   color: rgb(50,50,50);
   font-size: 1.08em;
@@ -365,6 +365,54 @@ div.ui.pointing.secondary.menu{
   top: 40px;
   image-rendering: crisp-edges !important;
 }
+
+/*----------------------------------------------
+    Start Profile Picture Large
+----------------------------------------------*/
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+      to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+      to { opacity: 0; }
+}
+
+.wrapper-content{
+  z-index: 10000;
+}
+
+.wrapper{
+  display: none;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 8999;
+  background: rgba(40,40,40, 0.8);
+}
+
+#profile-image-large{
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: 25px;
+  height: auto;
+  width: 85%;
+  border-radius: 2px;
+  display: block;
+}
+
+#profile-image-close-button{
+  margin-left: 7.5%;
+  margin-top: 2%;
+}
+
+/*----------------------------------------------
+    End Profile Picture Large
+----------------------------------------------*/
 
 .ui.segment.active.tab{
   border: none;
@@ -767,7 +815,7 @@ img.ui.image.image-feed{
 .logo-mobile{
   height: 36px;
   position: fixed !important;
-  z-index: 9990;
+  z-index: 8890;
   top: 3px;
   display: none !important;
   image-rendering: auto;
@@ -802,6 +850,11 @@ img.ui.image.image-feed{
       top: 20px;
       right: 2%;
       position: absolute;
+    }
+
+    #profile-image-large{
+      height: auto;
+      width: 85%;
     }
 
     #feed-content{

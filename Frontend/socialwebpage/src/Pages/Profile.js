@@ -3,7 +3,7 @@ import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById} from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
-import SidebarProfile from '../Components/SidebarProfile'
+import SidebarProfile from '../Components/Sidebar'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
@@ -29,10 +29,7 @@ class Profile extends Component {
         rerender: false,
         updateItemId: "",
         statusUpdateStoryEntry: false,
-        showUpdateStoryErrorMessage: false,
-        picture: "",
-        pictureURL: "",
-        pictureExists: false
+        showUpdateStoryErrorMessage: false
       }
 
       this.apiCheckSession = "/checkSession"
@@ -44,8 +41,8 @@ class Profile extends Component {
 
       this.property = props.match.params.username;
       this.ownerName = props.match.params.username;
-      //this.getProfileData(this.property);
-      //this.checkThisSession();
+      this.getProfileData(this.property);
+      this.checkThisSession();
 
       if(this.property === undefined) {
           this.pageTitle = "My Profile "
@@ -53,11 +50,6 @@ class Profile extends Component {
           this.pageTitle = "Profile of user: " + this.property
       }
       document.title = this.pageTitle;
-  }
-
-  componentDidMount() {
-      this.getProfileData(this.property);
-      this.checkThisSession();
   }
 
     async checkThisSession() {
@@ -78,16 +70,6 @@ class Profile extends Component {
               responseGuestbookEntries : responseGuestbookEntries
             });
 
-            responseStories.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-            responseImages.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-            responseGuestbookEntries.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-
             const responseMyData = await checkSession(this.apiCheckSession);
 
             const response = await getCurrentUser(this.apiUser);
@@ -95,14 +77,15 @@ class Profile extends Component {
             this.setState({picture: response.picture})
             this.setState({pictureURL: response.pictureURL})
 
+            if(this.state.picture) {
+                this.setState({pictureExists: true})
+            }
+
+
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
             } else {
                 this.setState({ show: false});
-            }
-
-            if(this.state.picture) {
-                this.setState({pictureExists: true})
             }
 
         } else {
@@ -118,21 +101,17 @@ class Profile extends Component {
               responseGuestbookEntries : responseGuestbookEntries
             });
 
-            responseStories.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-            responseImages.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-            responseGuestbookEntries.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-
             const responseMyData = await checkSession(this.apiCheckSession);
 
             let api = this.apiUser + "?username=" + username;
             const response = await getCurrentUser(api);
             this.setState({username: response.username})
+            this.setState({picture: response.picture})
+            this.setState({pictureURL: response.pictureURL})
+
+            if(this.state.picture) {
+                this.setState({pictureExists: true})
+            }
 
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
@@ -160,97 +139,20 @@ class Profile extends Component {
       async handleRateStoryEntry(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const responseStories = await likeStoryEntryById("/story/like",this.state.entryId);
-
-        this.state.responseStories.map(item => {
-          if(item._id === data._id) {
-            if(item.current_user_has_liked == 0) {
-              item.number_of_likes_in_state++;
-              item.current_user_has_liked = 1;
-            } else {
-              item.number_of_likes_in_state--;
-              item.current_user_has_liked = 0;
-            }
-          }
-        });
-        this.setState({responseStories: this.state.responseStories});
+        const response = await likeStoryEntryById("/story/like",this.state.entryId);
       }
 
       async handleRateImage(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const responseImages = await likeImageById("/image/like",this.state.entryId);
-
-        this.state.responseImages.map(item => {
-          if(item._id === data._id) {
-            if(item.current_user_has_liked == 0) {
-              item.number_of_likes_in_state++;
-              item.current_user_has_liked = 1;
-            } else {
-              item.number_of_likes_in_state--;
-              item.current_user_has_liked = 0;
-            }
-          }
-        });
-        this.setState({responseImages: this.state.responseImages});
+        const response = await likeImageById("/image/like",this.state.entryId);
       }
 
       async handleRateGuestbookEntry(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const responseGuestbookEntries = await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
-        
-        this.state.responseGuestbookEntries.map(item => {
-          if(item._id === data._id) {
-            if(item.current_user_has_liked == 0) {
-              item.number_of_likes_in_state++;
-              item.current_user_has_liked = 1;
-            } else {
-              item.number_of_likes_in_state--;
-              item.current_user_has_liked = 0;
-            }
-          }
-        });
-        this.setState({responseGuestbookEntries: this.state.responseGuestbookEntries});
-      }
-
-      getNumberOfLikesOfStoryEntry(currentItem) {
-        let numberOfLikes = 0;
-        this.state.responseStories.map(item => {
-          if(item._id === currentItem._id) {
-            numberOfLikes = item.number_of_likes_in_state;
-          }
-        });
-        if(numberOfLikes == undefined) {
-          numberOfLikes = currentItem.number_of_likes;
-        }
-        return numberOfLikes;
-      }
-
-      getNumberOfLikesOfImage(currentItem) {
-        let numberOfLikes = 0;
-        this.state.responseImages.map(item => {
-          if(item._id === currentItem._id) {
-            numberOfLikes = item.number_of_likes_in_state;
-          }
-        });
-        if(numberOfLikes == undefined) {
-          numberOfLikes = currentItem.number_of_likes;
-        }
-        return numberOfLikes;
-      }
-
-      getNumberOfLikesOfGuestbookEntry(currentItem) {
-        let numberOfLikes = 0;
-        this.state.responseGuestbookEntries.map(item => {
-          if(item._id === currentItem._id) {
-            numberOfLikes = item.number_of_likes_in_state;
-          }
-        });
-        if(numberOfLikes == undefined) {
-          numberOfLikes = currentItem.number_of_likes;
-        }
-        return numberOfLikes;
+        const response = await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
+        window.location.reload();
       }
 
       async handleDeleteImage(event, data) {
@@ -334,7 +236,6 @@ class Profile extends Component {
 
         return (
           <div className="feed">
-
               <SidebarProfile />
               <ProfileHeader name={this.property}/>
 
@@ -343,7 +244,6 @@ class Profile extends Component {
                       [
                         { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
 
-
                           {images.map((item, index) =>
                           {return(
                             <div key={index} className="profile-card">
@@ -351,18 +251,18 @@ class Profile extends Component {
                                 <Card fluid centered>
                                   <div className="username-label">
 
-                                    {this.state.pictureExists ? <div><Image className="user-card-avatar" src={this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
+                                    {this.state.pictureExists ? <div><Image className="user-card-avatar" src={"http://localhost:8000" + this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
                                     <span className="content-card-username-label"> @{item.username} </span>
                                     {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                   </div>
-                                  <Image className="image-feed" src={item.src} />
+                                  <Image className="image-feed" src={"http://localhost:8000" + item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                       </Rating> {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">
-                                            {this.getNumberOfLikesOfImage(item)}
+                                            {item.number_of_likes}
                                           </div>
                                           <div className="label">
                                             Likes
@@ -372,7 +272,6 @@ class Profile extends Component {
                                     <Card.Meta className="card-meta">
                                       <span className='date'>
                                         {item.date_created}
-                                        {item.updated ? <p>(edited)</p> :  null}
                                       </span>
                                     </Card.Meta>
                                     <Card.Description>
@@ -397,7 +296,7 @@ class Profile extends Component {
                                   <Card.Group>
                                     <Card fluid centered>
                                       <div className="username-label">
-                                          {this.state.pictureExists ? <div><Image className="user-card-avatar" src={this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
+                                          {this.state.pictureExists ? <div><Image className="user-card-avatar" src={"http://localhost:8000" + this.state.pictureURL} /> </div> : <div><Image src="/assets/images/boy.png" className="user-card-avatar"/></div> }
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                         {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
@@ -406,11 +305,11 @@ class Profile extends Component {
 
                                         <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
                                           <Card.Header className="card-header">
-                                              <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
+                                              <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}></Rating>
                                               {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : this.getStoryTitle(item)}
                                                 <div className="ui mini horizontal statistic post-likes">
                                                 <div className="value">
-                                                  {this.getNumberOfLikesOfStoryEntry(item)}
+                                                  {item.number_of_likes}
                                                 </div>
                                                 <div className="label">
                                                   Likes
@@ -420,7 +319,6 @@ class Profile extends Component {
                                           <Card.Meta className="card-meta">
                                             <span className='date'>
                                               {item.date_created}
-                                              {item.updated ? <p>(edited)</p> :  null}
                                             </span>
                                           </Card.Meta>
                                           <Card.Description>
@@ -447,15 +345,15 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                        <Image className="user-card-avatar" src={item.profile_picture_url} />
+                                        <Image className="user-card-avatar" src={"http://localhost:8000" + item.profile_picture_url} />
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
-                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                     </div>
                                     <Card.Content id="card-content">
                                       <Card.Header className="card-header">
-                                          <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                          <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                           </Rating> {item.title}
                                           <div className="ui mini horizontal statistic post-likes">
                                             <div className="value">
@@ -507,7 +405,7 @@ class Profile extends Component {
                             )
                           })}
 
-                          {!this.state.show ?
+
                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                              <Form.Field>
                                <label>Title of your guestbook entry</label>
@@ -516,7 +414,6 @@ class Profile extends Component {
                              <Form.TextArea autoHeight rows="3" />
                              <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
                            </Form>
-                           : null }
                         </div>
 
                         </Tab.Pane> },
