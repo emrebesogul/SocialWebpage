@@ -170,7 +170,7 @@ async handleRate(event, data){
                                     </Link>
                                   </div>
 
-                                  <Image className="image-feed" src={item.src} />
+                                  <Image className="image-feed" src= {item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
