@@ -289,6 +289,22 @@ class Profile extends Component {
         this.setState({ updateItemId: ""});
       }
 
+      getStoryTitle(currentItem) {
+        let title = this.state.storyTitle
+        if(title == undefined) {
+          title = currentItem.title;
+        }
+        return title;
+      }
+
+      getStoryContent(currentItem) {
+        let content = this.state.storyContent
+        if(content == undefined) {
+          content = currentItem.content;
+        }
+        return content;
+}
+
 
     render() {
 
@@ -322,7 +338,7 @@ class Profile extends Component {
                                     <span className="content-card-username-label"> @{item.username} </span>
                                     {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                   </div>
-                                  <Image className="image-feed" src={item.src} />
+                                  <Image className="image-feed" src={"http://localhost:8000" + item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
@@ -374,7 +390,7 @@ class Profile extends Component {
                                         <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
                                           <Card.Header className="card-header">
                                               <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
-                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : item.title}
+                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : this.getStoryTitle(item)}
                                                 <div className="ui mini horizontal statistic post-likes">
                                                 <div className="value">
                                                   {this.getNumberOfLikesOfStoryEntry(item)}
@@ -391,7 +407,7 @@ class Profile extends Component {
                                             </span>
                                           </Card.Meta>
                                           <Card.Description>
-                                          {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : item.content}
+                                          {this.state.updateItemId == item._id ? <Input required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")} /> : this.getStoryContent(item)}
                                           {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
                                           {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateStoryEntry(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
