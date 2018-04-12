@@ -118,13 +118,13 @@ h2.ui.huge.icon.center.aligned.header{
 }
 
 .user-card-avatar{
-  height: 36px;
-  padding: 3px;
+  height: 38px;
+  padding: 2px;
   border-radius: 50%;
   position: relative !important;
-  border: 1px solid rgb(180,180,180);
-  width: 36px;
-  top: -7px;
+  width: 38px;
+  top: -9px;
+  object-fit: cover;
   left: -5px;
   background: white !important;
   margin-right: 12px !important;
@@ -274,7 +274,7 @@ a{
 }
 
 .content-card-username-label{
-  top: -34px;
+  top: -37px;
   position: relative;
   color: rgb(50,50,50);
   font-size: 1.08em;
