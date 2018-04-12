@@ -55,6 +55,9 @@ class Feed extends Component {
  async getfeeddata() {
       const response = await fetchFeedData("/feed");
       this.setState({resFeedPosts: response});
+      response.map(item => {
+        item.number_of_likes_in_state = item.number_of_likes;
+      });
   }
 
   async getFriendRequests() {
@@ -122,16 +125,31 @@ async handleRate(event, data){
     );
   }
 
+  this.state.resFeedPosts.map(item => {
+    if(item._id === data._id) {
+      if(item.current_user_has_liked == 0) {
+        item.number_of_likes_in_state++;
+        item.current_user_has_liked = 1;
+      } else {
+        item.number_of_likes_in_state--;
+        item.current_user_has_liked = 0;
+      }
+    }
+  });
+  this.setState({resFeedPosts: this.state.resFeedPosts});
+}
 
-
-  // Redirect to feed if respose is message is true
-  // this.setState({status: response});
-  // if(this.state.status === true) {
-  //     this.setState({ redirectToFeed: true });
-  // } else {
-  //     let errorField = document.getElementById("error-message-upload-story");
-  //     errorField.style.display = "block";
-  // }
+getNumberOfLikes(currentItem) {
+  let numberOfLikes = 0;
+  this.state.resFeedPosts.map(item => {
+    if(item._id === currentItem._id) {
+      numberOfLikes = item.number_of_likes_in_state;
+    }
+  });
+  if(numberOfLikes == undefined) {
+    numberOfLikes = currentItem.number_of_likes;
+  }
+  return numberOfLikes;
 }
 
 
@@ -182,12 +200,12 @@ async handleRate(event, data){
                                   <Image className="image-feed" src={"http://localhost:8000" + item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                      <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
                                       </Rating>
                                          {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">
-                                            {item.number_of_likes}
+                                            {this.getNumberOfLikes(item)}
                                           </div>
                                           <div className="label">
                                             Likes

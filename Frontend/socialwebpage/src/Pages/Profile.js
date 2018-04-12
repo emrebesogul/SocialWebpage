@@ -3,7 +3,7 @@ import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById} from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
-import SidebarProfile from '../Components/SidebarProfile'
+import SidebarProfile from '../Components/Sidebar'
 import ProfileHeader from '../Components/ProfileHeader'
 
 import '../profileStyle.css';
@@ -28,10 +28,7 @@ class Profile extends Component {
         rerender: false,
         updateItemId: "",
         statusUpdateStoryEntry: false,
-        showUpdateStoryErrorMessage: false,
-        picture: "",
-        pictureURL: "",
-        pictureExists: false
+        showUpdateStoryErrorMessage: false
       }
 
       this.apiCheckSession = "/checkSession"
@@ -43,8 +40,8 @@ class Profile extends Component {
 
       this.property = props.match.params.username;
       this.ownerName = props.match.params.username;
-      //this.getProfileData(this.property);
-      //this.checkThisSession();
+      this.getProfileData(this.property);
+      this.checkThisSession();
 
       if(this.property === undefined) {
           this.pageTitle = "My Profile "
@@ -52,11 +49,6 @@ class Profile extends Component {
           this.pageTitle = "Profile of user: " + this.property
       }
       document.title = this.pageTitle;
-  }
-
-  componentDidMount() {
-      this.getProfileData(this.property);
-      this.checkThisSession();
   }
 
     async checkThisSession() {
@@ -81,17 +73,11 @@ class Profile extends Component {
 
             const response = await getCurrentUser(this.apiUser);
             this.setState({username: response.username})
-            this.setState({picture: response.picture})
-            this.setState({pictureURL: response.pictureURL})
 
             if(responseMyData.username === this.state.username) {
                 this.setState({ show: true});
             } else {
                 this.setState({ show: false});
-            }
-
-            if(this.state.picture) {
-                this.setState({pictureExists: true})
             }
 
         } else {
@@ -226,7 +212,6 @@ class Profile extends Component {
 
         return (
           <div className="feed">
-
               <SidebarProfile />
               <ProfileHeader name={this.property}/>
 
@@ -234,7 +219,6 @@ class Profile extends Component {
                   <Tab menu={{ secondary: true, pointing: true }} panes={
                       [
                         { menuItem: 'Gallery', render: () => <Tab.Pane attached={false}>
-
 
                           {images.map((item, index) =>
                           {return(
@@ -264,7 +248,6 @@ class Profile extends Component {
                                     <Card.Meta className="card-meta">
                                       <span className='date'>
                                         {item.date_created}
-                                        {item.updated ? <p>(edited)</p> :  null}
                                       </span>
                                     </Card.Meta>
                                     <Card.Description>
@@ -312,7 +295,6 @@ class Profile extends Component {
                                           <Card.Meta className="card-meta">
                                             <span className='date'>
                                               {item.date_created}
-                                              {item.updated ? <p>(edited)</p> :  null}
                                             </span>
                                           </Card.Meta>
                                           <Card.Description>
@@ -343,11 +325,11 @@ class Profile extends Component {
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
-                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                     </div>
                                     <Card.Content id="card-content">
                                       <Card.Header className="card-header">
-                                          <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
+                                          <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
                                           </Rating> {item.title}
                                           <div className="ui mini horizontal statistic post-likes">
                                             <div className="value">
@@ -399,7 +381,7 @@ class Profile extends Component {
                             )
                           })}
 
-                          {!this.state.show ?
+
                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                              <Form.Field>
                                <label>Title of your guestbook entry</label>
@@ -408,7 +390,6 @@ class Profile extends Component {
                              <Form.TextArea autoHeight rows="3" />
                              <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
                            </Form>
-                           : null }
                         </div>
 
                         </Tab.Pane> },
