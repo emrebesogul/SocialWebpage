@@ -46,3 +46,25 @@ export const updateStoryEntry=(api, storyId, storyTitle, storyContent)=>{
     });
   });
 }
+
+//----------------------Update Image----------------------//
+export const updateImage=(api, imageId, imageTitle, imageContent)=>{
+  return new Promise((resolve, reject) => {
+      var token = read_cookie('token')
+      $.ajax({
+        url: url + api,
+        contentType: "application/json",
+        type: "PUT",
+        data: JSON.stringify({imageId: imageId, imageTitle: imageTitle, imageContent: imageContent}),
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(data) {
+          resolve(data);
+        },
+        error: function(xhr, status, err){
+          reject(err);
+        }
+    });
+  });
+}

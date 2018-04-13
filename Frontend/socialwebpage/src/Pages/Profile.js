@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById} from '../API/POST/PostMethods';
+import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById } from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
-
 import '../profileStyle.css';
-import { updateStoryEntry } from '../API/PUT/PutMethods';
+import { updateStoryEntry, updateImage } from '../API/PUT/PutMethods';
 
 var images = [];
 var stories = [];
@@ -28,7 +27,9 @@ class Profile extends Component {
         rerender: false,
         updateItemId: "",
         statusUpdateStoryEntry: false,
-        showUpdateStoryErrorMessage: false
+        showUpdateStoryErrorMessage: false,
+        statusUpdateImage: false,
+        showUpdateImageErrorMessage: false
       }
 
       this.apiCheckSession = "/checkSession"
@@ -309,6 +310,50 @@ class Profile extends Component {
         this.setState({ updateItemId: ""});
       }
 
+      async handleOpenImageUpdateWindow(event, data) {
+        const response = await getImageById("/image/get", data._id);
+        if(response) {
+            this.setState({imageTitle: response.title})
+            this.setState({imageContent: response.content})
+        }
+            this.setState({ updateItemId: data._id});
+      }
+
+      handleChangeImageData(event, data) {
+        switch(data) {
+          case "imageTitle": this.setState({"imageTitle": event.target.value}); break;
+          case "imageContent":  this.setState({"imageContent": event.target.value}); break;
+          default: null;
+        }
+      }
+
+      async handleUpdateImage(event, data) {
+        event.preventDefault();
+        const imageId = data._id;
+        const title = event.target[0].value;
+        const content = event.target[1].value;
+        const response = await updateImage("/image/edit", imageId, title, content);
+        this.setState({statusUpdateImage: response});
+
+        if(this.state.statusUpdateImage) {
+          this.setState({ updateItemId: ""});
+        } else {
+          this.setState({ showUpdateImageErrorMessage: true });
+        }
+        this.getProfileData(this.property);
+      }
+
+      handleCancelUpdateImage(event, data) {
+        this.state.responseImages.map(item => {
+          if(item._id === data._id) {
+            this.setState({"imageTitle": item.title});
+            this.setState({"imageContent": item.content});
+          }
+        });
+
+        this.setState({ updateItemId: ""});
+      }
+
 
     render() {
 
@@ -341,30 +386,36 @@ class Profile extends Component {
                                     <Image src={"http://localhost:8000" + this.state.pictureURL} className="user-card-avatar"/>
                                     <span className="content-card-username-label"> @{item.username} </span>
                                     {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                    {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenImageUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
                                   </div>
                                   <Image className="image-feed" src={"http://localhost:8000" + item.src} />
                                   <Card.Content id="card-content">
-                                    <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
-                                      </Rating> {item.title}
-                                        <div className="ui mini horizontal statistic post-likes">
-                                          <div className="value">
-                                            {this.getNumberOfLikesOfImage(item)}
+                                    <Form onSubmit={((e) => this.handleUpdateImage(e, item))}>
+                                      <Card.Header className="card-header">
+                                        <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
+                                        {this.state.updateItemId == item._id ? <Form.Field><Input  placeholder={this.state.imageTitle} value={this.state.imageTitle} onChange={(e) => this.handleChangeImageData(e,"imageTitle")}/></Form.Field> : item.title}
+                                          <div className="ui mini horizontal statistic post-likes">
+                                            <div className="value">
+                                              {this.getNumberOfLikesOfImage(item)}
+                                            </div>
+                                            <div className="label">
+                                              Likes
+                                            </div>
                                           </div>
-                                          <div className="label">
-                                            Likes
-                                          </div>
-                                        </div>
-                                    </Card.Header>
-                                    <Card.Meta className="card-meta">
-                                      <span className='date'>
-                                        {item.date_created}
-                                        {item.updated ? <p>(edited)</p> :  null}
-                                      </span>
-                                    </Card.Meta>
-                                    <Card.Description>
-                                      {item.content}
-                                    </Card.Description>
+                                      </Card.Header>
+                                      <Card.Meta className="card-meta">
+                                        <span className='date'>
+                                          {item.date_created}
+                                          {item.updated ? <p>(edited)</p> :  null}
+                                        </span>
+                                      </Card.Meta>
+                                      <Card.Description>
+                                        {this.state.updateItemId == item._id ? <Input placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : item.content}
+                                        {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
+                                        {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateImage(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
+                                        {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
+                                      </Card.Description>
+                                    </Form>
                                   </Card.Content>
                                 </Card>
                               </Card.Group>

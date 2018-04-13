@@ -667,7 +667,46 @@ MongoClient.connect(url, function(err, client) {
         });
     });
 
+    // --------------------------Update Images----------------------------//
 
+    //---------------------------Get Image By ID---------------------------//
+    //
+    // Calls the method getImage that returns the information of the
+    // desired image.
+    app.post('/rest/image/get', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                let imageId = req.body.imageId;
+                let currentUserId = authData.userid;
+                database.getImage(client.db('socialwebpage'), res, imageId, currentUserId, () => {
+                    db.close();
+                });
+            }
+        });
+    });
+
+    //----------------------Update Image----------------------//
+    app.put('/rest/image/edit', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                let imageId = req.body.imageId;
+                let imageTitle = req.body.imageTitle;
+                let imageContent = req.body.imageContent;
+                let currentUserId = authData.userid;
+                database.updateImage(client.db('socialwebpage'), res, imageId, imageTitle, imageContent, currentUserId, () => {
+                        db.close();
+                });
+            }
+        });
+    });
 
       //----------------------xy----------------------//
 

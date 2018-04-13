@@ -298,7 +298,8 @@ var call = module.exports = {
         "filename": filename,
         "liking_users": [],
         "date_created": new Date(),
-        "user_id": new ObjectId(userId)
+        "user_id": new ObjectId(userId),
+        "updated" : false
     });
     console.log("Image was uploaded to server...")
     res.send(JSON.stringify({
@@ -450,7 +451,8 @@ var call = module.exports = {
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                }
+                },
+                "updated" : 1
             }
          },
          { $sort : { "date_created" : -1 } }
@@ -1304,7 +1306,59 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         });
     },
 
+    // --------------------------Update Images----------------------------//
 
+    //------------------------------Get Image------------------------------//
+    //
+    // Recieves the id of an image and the id of the current user and returns the
+    // information of the image if the current user is the author of this image.
+    getImage: function (db, res, imageId, currentUserId) {
+        db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
+            if (err_find_images) throw err_find_images;
+            if (res_find_images) {
+                if (res_find_images.user_id == currentUserId) {
+                    res.status(200).send(res_find_images);
+                } else {
+                    res.status(401).send(JSON.stringify({
+                        message: "User is not authorized to get this image"
+                    }));
+                }
+            } else {
+                res.status(404).send(JSON.stringify({
+                    message: "Can't find an image with id: " + imageId
+                }));
+            }
+        });
+    },
+
+    //----------------------------Update Image-----------------------------//
+    //
+    // Recieves the id of an image, the id of the current user and the new data of
+    // this image that should be updated.
+    // Returns true if the update was successful and false otherwise.
+    updateImage: function (db, res, imageId, imageTitle, imageContent, currentUserId) {
+        db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
+            if (err_find_images) throw err_find_images;
+            if (res_find_images && res_find_images.user_id == currentUserId) {
+                db.collection("images").update(
+                    {_id: ObjectId(imageId)},
+                    {
+                        $set: {
+                            "title": imageTitle,
+                            "content": imageContent,
+                            "updated" : true
+                        }
+                    }, (err_update_images, res_update_images) => {
+                        if (err_update_images) throw err_update_images;
+
+                        res.status(200).send(true);
+                    }
+                );
+            } else {
+                res.status(404).send(false);
+            }
+        });
+    },
 }
 
 function getMonthName (month) {
