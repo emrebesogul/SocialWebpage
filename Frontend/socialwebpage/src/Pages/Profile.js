@@ -253,17 +253,17 @@ class Profile extends Component {
 
       async handleDeleteImage(event, data) {
         const response = await deleteImageById("/image/delete",data._id);
-        window.location.reload();
+        this.getProfileData(this.property);
       }
 
       async handleDeleteStoryEntry(event, data) {
         const response = await deleteStoryEntryById("/story/delete", data._id);
-        window.location.reload();
+        this.getProfileData(this.property);
       }
 
       async handleDeleteGuestbookEntry(event, data) {
         const response = await deleteGuestbookEntryById("/guestbook/delete",data._id);
-        window.location.reload();
+        this.getProfileData(this.property);
       }
 
       async handleOpenStoryUpdateWindow(event, data) {
@@ -515,31 +515,6 @@ class Profile extends Component {
                                     </Card.Content>
                                   </Card>
                                 </Card.Group>
-
-                              {/*  <Comment.Group>
-                                  <Comment>
-                                    <Comment.Avatar src='/assets/images/boy.png' id="comment-avatar" />
-                                    <Comment.Content>
-                                      <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
-                                      </Rating> <span>&nbsp;</span>
-                                      <div className="ui mini horizontal statistic post-likes">
-                                        <div className="value">
-                                          {item.number_of_likes}
-                                        </div>
-                                        <div className="label">
-                                          Likes
-                                        </div>
-                                      </div>
-                                      <Comment.Author as='a'><h3><i>{item.title}</i></h3></Comment.Author>
-                                      <Comment.Author>posted by {item.username}</Comment.Author>
-                                      <Comment.Metadata id="comment-metadata">
-                                        <div>{item.date_created}</div>
-                                      </Comment.Metadata>
-                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
-                                      <Comment.Text id="comment-content">{item.content}</Comment.Text>
-                                    </Comment.Content>
-                                  </Comment>
-                                </Comment.Group> */}
                               </div>
                             )
                           })}
@@ -550,7 +525,7 @@ class Profile extends Component {
                                <label>Title of your guestbook entry</label>
                                <Input placeholder="Titel"/>
                              </Form.Field>
-                             <Form.TextArea autoHeight rows="3" />
+                             <Form.TextArea required autoHeight rows="3" />
                              <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
                            </Form>
                            : null }
