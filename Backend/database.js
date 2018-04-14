@@ -32,7 +32,7 @@ var call = module.exports = {
                    }
 
                    if (docs) {
-                       if(JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password.words) ) {
+                       if(JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password) ) {
                            jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
                                console.log("Correct credentials! Login from user: ", docs.username)
                                res.send(JSON.stringify({
@@ -699,22 +699,26 @@ updateUserData: function(db, res, data) {
     var checkUsername = false;
     var checkEmail = false;
 
+    // check for username
     collectionUsers.findOne({"username": username}, (err, docs) => {
         if (err) {
             throw err;
         }
 
+        // username already given, but...
         if(docs) {
+            // username is me...
             if(docs._id == userid) {
-                // Username is same => no update => check for email
+                // Username is same => no update => check for email if email is given
                 collectionUsers.findOne({"email": userData.email}, (err, docs) => {
                     if (err) {
                         throw err;
                     }
 
+                    // If email exists:
                     if(docs) {
                         if(docs._id == userid) {
-                            // Email is same => no update => update fields
+                            // If Email is same as origin users => no update => update fields
                             console.log(username, " changed successfully its user data")
                             if(userData.password !== '') {
                                 collectionUsers.update(
@@ -725,7 +729,7 @@ updateUserData: function(db, res, data) {
                                             "last_name": userData.last_name,
                                             "username": username,
                                             "email": userData.email,
-                                            "password": hashedPassword
+                                            "password": hashedPassword.words
                                         }
                                     }
                                 );
@@ -745,12 +749,46 @@ updateUserData: function(db, res, data) {
                             res.send(JSON.stringify({
                                 message: "User data successfully updated."
                             }));
-                          }
+                        } else {
+                            // Email is already given and is not same with the origin users
+                            res.send(JSON.stringify({
+                                message: "This email is not available222. Please try another one."
+                            }));
+                        }
                     } else {
-                        // Email is already given
+
+                        console.log(username, " changed successfully its user data")
+                        if(userData.password !== '') {
+                            collectionUsers.update(
+                                {_id: ObjectId(userid)},
+                                {
+                                    $set: {
+                                        "first_name": userData.first_name,
+                                        "last_name": userData.last_name,
+                                        "username": username,
+                                        "email": userData.email,
+                                        "password": hashedPassword.words
+                                    }
+                                }
+                            );
+                        } else {
+                            collectionUsers.update(
+                                {_id: ObjectId(userid)},
+                                {
+                                    $set: {
+                                        "first_name": userData.first_name,
+                                        "last_name": userData.last_name,
+                                        "username": username,
+                                        "email": userData.email
+                                    }
+                                }
+                            );
+                        }
                         res.send(JSON.stringify({
-                            message: "This email is not available. Please try another one."
+                            message: "User data successfully updated."
                         }));
+
+
                     }
                 })
             } else {
@@ -760,7 +798,7 @@ updateUserData: function(db, res, data) {
                 }));
             }
         } else {
-            //Check email
+            //Check email because username is new
             collectionUsers.findOne({"email": userData.email}, (err, docs) => {
                 if (err) {
                     throw err;
@@ -799,11 +837,44 @@ updateUserData: function(db, res, data) {
                         res.send(JSON.stringify({
                             message: "User data successfully updated."
                         }));
-                      }
+                    } else {
+                        // Email is already given
+                        res.send(JSON.stringify({
+                            message: "This email is not available. Please try another one."
+                        }));
+                    }
                 } else {
-                    // Email is already given
+
+
+                    console.log(username, " changed successfully its user data")
+                    if(userData.password !== '') {
+                        collectionUsers.update(
+                            {_id: ObjectId(userid)},
+                            {
+                                $set: {
+                                    "first_name": userData.first_name,
+                                    "last_name": userData.last_name,
+                                    "username": username,
+                                    "email": userData.email,
+                                    "password": hashedPassword
+                                }
+                            }
+                        );
+                    } else {
+                        collectionUsers.update(
+                            {_id: ObjectId(userid)},
+                            {
+                                $set: {
+                                    "first_name": userData.first_name,
+                                    "last_name": userData.last_name,
+                                    "username": username,
+                                    "email": userData.email
+                                }
+                            }
+                        );
+                    }
                     res.send(JSON.stringify({
-                        message: "This email is not available. Please try another one."
+                        message: "User data successfully updated."
                     }));
                 }
             })
@@ -969,7 +1040,7 @@ updateUserData: function(db, res, data) {
             }
         })
 
-        
+
     },
 
 
