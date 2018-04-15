@@ -1065,6 +1065,13 @@ updateUserData: function(db, res, data) {
 
     sendFriendlistHelper: function(res, friends, i, friendlistLength) {
         if(i == friendlistLength) {
+            var friendsByName = friends.slice(0);
+            friendsByName.sort(function(a,b) {
+                var x = a.name.toLowerCase();
+                var y = b.name.toLowerCase();
+                return x < y ? -1 : x > y ? 1 : 0;
+            });
+
             res.status(200).send(friends);
         }
     },
