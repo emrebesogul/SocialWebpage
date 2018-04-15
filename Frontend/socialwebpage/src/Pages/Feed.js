@@ -105,7 +105,7 @@ class Feed extends Component {
   async deleteFriend(e, item) {
       const response = await deleteFriend(
           "/friends/deleteFriend",
-          item
+          item.name
       );
       if(response) {
           window.location.reload();
