@@ -383,7 +383,8 @@ class Profile extends Component {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <Image src={"http://localhost:8000" + this.state.pictureURL} className="user-card-avatar"/>
+                                    {this.state.pictureExists ? <div><Image src={"http://localhost:8000" + this.state.pictureURL} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+
                                     <span className="content-card-username-label"> @{item.username} </span>
                                     {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                     {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenImageUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
@@ -435,7 +436,7 @@ class Profile extends Component {
                                   <Card.Group>
                                     <Card fluid centered>
                                       <div className="username-label">
-                                          <Image src={"http://localhost:8000" + this.state.pictureURL}  className="user-card-avatar"/>
+                                          {this.state.pictureExists ? <div><Image src={"http://localhost:8000" + this.state.pictureURL} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                         {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
@@ -485,7 +486,7 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                      <Image src={"http://localhost:8000" + item.profile_picture_url}  className="user-card-avatar"/>
+                                      {item.profile_picture_url !== "/uploads/posts/" ? <div><Image src={"http://localhost:8000" + item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>

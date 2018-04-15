@@ -111,7 +111,7 @@ var call = module.exports = {
                                               "last_name": lastname,
                                               "username": username,
                                               "email": email,
-                                              "password": passwordHashed,
+                                              "password": passwordHashed.words,
                                               "birthday": birthday,
                                               "gender": gender,
                                               "picture": profilePicture,
@@ -163,7 +163,7 @@ var call = module.exports = {
                                           "last_name": lastname,
                                           "username": username,
                                           "email": email,
-                                          "password": passwordHashed,
+                                          "password": passwordHashed.words,
                                           "birthday": birthday,
                                           "gender": gender,
                                           "picture": profilePicture,
@@ -1033,14 +1033,40 @@ updateUserData: function(db, res, data) {
 
     getFriends: function(db, res, userId) {
         const collectionUsers = db.collection('users');
+
         collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
-                res.send((docs.friends).sort())
+                //Get friends and map through them to get profile pic
+                var friendlist = [];
+                var friendlistLength = (docs.friends).length;
+                var friends = [];
+                var i = 0;
+
+                docs.friends.map(item => {
+                    item.friends = item.friends;
+                    collectionUsers.findOne({"username": item}, (err_friends, res_friends) => {
+                        if(err_friends) throw err_friends;
+                        if (res_friends) {
+                            friendlist.push(res_friends);
+                            i++;
+
+                            result = {};
+                            result ["name"] = res_friends.username;
+                            result ["picture"] = res_friends.picture;
+                            friends.push(result);
+                        }
+                        call.sendFriendlistHelper(res, friends, i, friendlistLength);
+                    })
+                })
             }
         })
+    },
 
-
+    sendFriendlistHelper: function(res, friends, i, friendlistLength) {
+        if(i == friendlistLength) {
+            res.status(200).send(friends);
+        }
     },
 
 
@@ -1184,6 +1210,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
               item.date_created = getDate(item.date_created);
               item.number_of_likes = item.liking_users.length;
               item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
+              item.profile_picture_filename = item.profile_picture_filename;
           });
           res.status(200).send(res_guestbook_entries);
   });
