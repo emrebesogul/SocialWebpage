@@ -980,13 +980,9 @@ updateUserData: function(db, res, data) {
 
         // Set status to accepted
         //Delete from database
-        collectionfriendRequests.update({"requester": requester, "recipient": recipient},
-            {
-                $set: {
-                    "status": "accepted"
-                }
-            }
-        );
+        collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
+            if (err) throw err;
+        });
 
         // Add to friendlist of both array.push()
         collectionUsers.findOne({"username": requester}, (err, docs) => {
