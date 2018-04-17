@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Rating, List, Button, Header } from 'semantic-ui-react'
+import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
@@ -12,6 +12,7 @@ import '../profileStyle.css';
 var feedPosts = [];
 var friendRequests = [];
 var friends = [];
+var comments = [];
 
 class Feed extends Component {
 
@@ -227,6 +228,27 @@ getNumberOfLikes(currentItem) {
                                     <Card.Description>
                                       {item.content}
                                     </Card.Description>
+                                    <Header as='h4' dividing>Comments</Header>
+                                    {comments.map((item, index) => {
+                                      return(
+                                        <Comment.Group>
+                                          <Comment>
+                                            <Comment.Avatar src='/assets/images/boy.png' />
+                                            <Comment.Content>
+                                              <Comment.Author as='a'>{item.name}</Comment.Author>
+                                              <Comment.Metadata>
+                                                <div>{item.date}</div>
+                                              </Comment.Metadata>
+                                              <Comment.Text>{item.content}</Comment.Text>
+                                            </Comment.Content>
+                                          </Comment>
+                                        </Comment.Group>
+                                      )
+                                    })}
+                                    <Form reply>
+                                      <Form.TextArea />
+                                      <Button content='Add Reply' labelPosition='left' icon='edit' />
+                                    </Form>
                                   </Card.Content>
                                 </Card>
                               </Card.Group>
