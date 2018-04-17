@@ -131,7 +131,7 @@ class ProfileHeader extends Component {
                     <div className="wrapper-content">
                       <div id="parent_div" >
                         <div id="background"></div>
-                        <div id="textarea">My Text</div>
+                        <div id="textarea"></div>
                       </div>
 
                       <Button id="profile-image-close-button" onClick={((e) => this.handleImageClick(e, false))} >Hide Image</Button>
