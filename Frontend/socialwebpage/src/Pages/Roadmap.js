@@ -138,7 +138,7 @@ class Roadmap extends Component {
                       <Item.Description>
                         Responsive Design platform-wirde
                       </Item.Description>
-                      <Item.Extra>In Progress</Item.Extra>
+                      <Item.Extra>Finished</Item.Extra>
                     </Item.Content>
                   </Item>
 
@@ -146,14 +146,14 @@ class Roadmap extends Component {
                     <Icon size='huge' name="road" />
                     <Item.Content>
                       <Item.Header as='a'>Alpha</Item.Header>
-                      <Item.Meta>From 22.04.2018 </Item.Meta>
+                      <Item.Meta>22.04.2018 - 26.04.2018</Item.Meta>
                       <Item.Description>
                         Notification center
                       </Item.Description>
                       <Item.Description>
                         Comments
                       </Item.Description>
-                      <Item.Extra>Not started</Item.Extra>
+                      <Item.Extra>In Progress</Item.Extra>
                     </Item.Content>
                   </Item>
 
