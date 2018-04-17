@@ -129,6 +129,11 @@ class ProfileHeader extends Component {
 
                   <div className="wrapper"  onClick={((e) => this.handleImageClick(e, false))}>
                     <div className="wrapper-content">
+                      <div id="parent_div" >
+                        <div id="background"></div>
+                        <div id="textarea">My Text</div>
+                      </div>
+
                       <Button id="profile-image-close-button" onClick={((e) => this.handleImageClick(e, false))} >Hide Image</Button>
                       <Image src={"http://localhost:8000" + this.state.pictureURL} id="profile-image-large"/>
                     </div>
