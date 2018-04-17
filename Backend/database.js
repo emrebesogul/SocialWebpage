@@ -258,12 +258,12 @@ var call = module.exports = {
 
                     res_stories.map(item => {
                         item.number_of_likes = item.liking_users.length;
-                        item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
+                        item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
                     });
                     res_images.map(item => {
-                        item.src = "/uploads/posts/" + item.filename;
+                        item.src = "http://localhost:8000/uploads/posts/" + item.filename;
                         item.number_of_likes = item.liking_users.length;
-                        item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
+                        item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
                     });
 
                     let feed = res_images.concat(res_stories);
@@ -460,7 +460,7 @@ var call = module.exports = {
         if (err_images) throw err_images;
         result_images.map(item => {
             item.date_created = getDate(item.date_created);
-            item.src = "/uploads/posts/" + item.filename;
+            item.src = "http://localhost:8000/uploads/posts/" + item.filename;
             item.number_of_likes = item.liking_users.length;
         });
             res.status(200).send(result_images);
@@ -505,7 +505,7 @@ var call = module.exports = {
                       lastname: docs.last_name,
                       email: docs.email,
                       picture: docs.picture,
-                      pictureURL: "/uploads/posts/" + docs.picture,
+                      pictureURL: "http://localhost:8000/uploads/posts/" + docs.picture,
                       buttonState: buttonState
                   }));
               })
@@ -538,7 +538,7 @@ var call = module.exports = {
                   lastname: docs.last_name,
                   email: docs.email,
                   picture: docs.picture,
-                  pictureURL: "/uploads/posts/" + docs.picture
+                  pictureURL: "http://localhost:8000/uploads/posts/" + docs.picture
               }));
           }
           else {
@@ -966,7 +966,7 @@ updateUserData: function(db, res, data) {
       if (err) throw err;
         result.map(item => {
               item.requester = item.requester;
-              item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
+              item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
           });
           res.status(200).send(result);
       });
@@ -1049,8 +1049,9 @@ updateUserData: function(db, res, data) {
 
                             result = {};
                             result ["name"] = res_friends.username;
-                            result ["picture"] = res_friends.picture;
+                            result ["picture"] = "http://localhost:8000/uploads/posts/" +res_friends.picture;
                             friends.push(result);
+
                         }
                         call.sendFriendlistHelper(res, friends, i, friendlistLength);
                     })
@@ -1212,7 +1213,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         res_guestbook_entries.map(item => {
               item.date_created = getDate(item.date_created);
               item.number_of_likes = item.liking_users.length;
-              item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
+              item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
               item.profile_picture_filename = item.profile_picture_filename;
           });
           res.status(200).send(res_guestbook_entries);

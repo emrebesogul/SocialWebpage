@@ -196,13 +196,13 @@ getNumberOfLikes(currentItem) {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    {item.profile_picture_url !== "/uploads/posts/" ? <div><Image src={"http://localhost:8000" + item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                    {item.profile_picture_url !== "/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                     <Link to={`/profile/${item.username}`}>
                                       <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
                                   </div>
 
-                                  <Image className="image-feed" src={"http://localhost:8000" + item.src} />
+                                  <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
@@ -256,7 +256,7 @@ getNumberOfLikes(currentItem) {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.profile_picture_url !== "/uploads/posts/" ? <div><Image src={"http://localhost:8000" + item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                            {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <List.Content>
                                               <List.Header as='a'>
                                                   <Link to={`/profile/${item.requester}`}>
@@ -282,7 +282,7 @@ getNumberOfLikes(currentItem) {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.picture !== "" ? <div><Image src={"http://localhost:8000/uploads/posts/" + item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                            {item.picture !== "" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <List.Content>
                                               <List.Header >
                                                   <Link to={`/profile/${item.name}`}>
@@ -317,27 +317,9 @@ getNumberOfLikes(currentItem) {
                                   </Header.Subheader>
                                 </Header>
                               </div>
-                              {friends.map((item, index) =>
-                                {
-                                  return(
-                                    <div key={index}>
-                                      <List  divided relaxed verticalAlign='middle'>
-                                        <List.Item>
-                                          <Image size="tiny" avatar src='/assets/images/boy.png' />
-                                          <List.Content>
-                                            <List.Header >
 
-                                            </List.Header>
-                                            <List.Description>4 mutual contacts</List.Description>
-                                          </List.Content>
-                                          <List.Content floated="right">
-                                          </List.Content>
-                                        </List.Item>
-                                      </List>
-                                    </div>
-                                  )
-                                }
-                              )}
+                              Hier kommen Notifications
+
                             </div>
                           </Tab.Pane> },
                         ]
