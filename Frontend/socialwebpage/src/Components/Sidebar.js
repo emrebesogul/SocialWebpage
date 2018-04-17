@@ -106,7 +106,7 @@ class Sidebar extends Component {
                 <Link to="/post">
                   <Button circular size="medium" id="logout-button-mobile" icon>
                       <Icon className="menu-icons" name='plus' />
-                      Add Post
+                      Add Story
                   </Button>
                 </Link>
 

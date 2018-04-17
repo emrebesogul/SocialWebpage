@@ -4,7 +4,6 @@ import { Button, Form, Input, Message, Icon } from 'semantic-ui-react'
 import SidebarProfile from '../Components/Sidebar'
 import Dropzone from 'react-dropzone'
 import FormData from 'form-data';
-
 import {checkSession} from '../API/GET/GetMethods';
 import {uploadPictureToPlatform} from '../API/POST/PostMethods';
 
@@ -21,6 +20,8 @@ class Upload extends Component {
           content: "",
           redirectToFeed: false,
           message: "",
+          sourceImage: "",
+          err: ""
         }
 
         this.apiCheckSession = "/checkSession"
@@ -102,7 +103,7 @@ class Upload extends Component {
                       <span className="input-label-upload"> Enter the title of your new post</span>
                       <Input className="input-upload" type="text"/>
 
-                      <span className="input-label-upload"> Add description...</span>
+                      <span className="input-label-upload"> Add a description</span>
                       <Input className="input-upload" type="text"/>
 
                       <span className="input-label-upload">
@@ -119,6 +120,8 @@ class Upload extends Component {
                             this.state.files.map(f => <span className="upload-image-label" key={f.name}>Uploaded Filename: {f.name}</span>)
                           }
                       </aside>
+
+
 
                       {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 

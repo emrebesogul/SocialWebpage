@@ -57,7 +57,7 @@ class Roadmap extends Component {
             </div>
 
             <div id="upload-content">
-              <h2>Roadmap for Scope</h2>
+              <h2>Roadmap for Ivey</h2>
               <div className="milestone">
                 <Item.Group divided relaxed>
                   <Item></Item>
@@ -152,6 +152,9 @@ class Roadmap extends Component {
                       </Item.Description>
                       <Item.Description>
                         Comments
+                      </Item.Description>
+                      <Item.Description>
+                        Add image compression
                       </Item.Description>
                       <Item.Extra>Not started</Item.Extra>
                     </Item.Content>

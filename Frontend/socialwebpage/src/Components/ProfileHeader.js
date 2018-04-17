@@ -124,20 +124,25 @@ class ProfileHeader extends Component {
     render() {
         return (
             <div>
-                        
+
                 <div id="profile-header">
 
                   <div className="wrapper"  onClick={((e) => this.handleImageClick(e, false))}>
                     <div className="wrapper-content">
+                      <div id="parent_div" >
+                        <div id="background"></div>
+                        <div id="textarea">My Text</div>
+                      </div>
+
                       <Button id="profile-image-close-button" onClick={((e) => this.handleImageClick(e, false))} >Hide Image</Button>
-                      <Image src={"http://localhost:8000" + this.state.pictureURL} id="profile-image-large"/>
+                      <Image src={"https://gruppe1.testsites.info" + this.state.pictureURL} id="profile-image-large"/>
                     </div>
                   </div>
 
                     <div>
                         {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
 
-                        {this.state.pictureExists ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={"http://localhost:8000" + this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
+                        {this.state.pictureExists ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={"https://gruppe1.testsites.info" + this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
 
                     </div>
                     <Header as='h2' size="huge" icon textAlign='center'>

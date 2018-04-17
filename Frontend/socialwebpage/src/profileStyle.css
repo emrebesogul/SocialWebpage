@@ -322,11 +322,23 @@ div.ui.pointing.secondary.menu{
 }
 
 .edit-button-guestbook{
-  z-index: 99999;
+  z-index: 999;
   top: -68px;
   right: 10px;
   position: relative;
   float: right;
+}
+
+input:hover {
+  border-bottom: 1px solid rgb(220, 240, 250) !important;
+  transition: all 0.2s !important;
+}
+
+input {
+  border: none !important;
+  border-bottom: 1px solid rgb(220,220,220) !important;
+  -webkit-box-shadow: 0px 2px 9px 1px rgb(231,231,231) !important;
+  box-shadow: 0px 1px 2px 2px rgb(234,234,234) !important;
 }
 
 .save-button-guestbook{
@@ -392,16 +404,17 @@ div.ui.pointing.secondary.menu{
   top: 0;
   left: 0;
   z-index: 8999;
-  background: rgba(40,40,40, 0.8);
+  background: rgba(30,30,30, 0.9);
 }
 
 #profile-image-large{
   margin-left: auto !important;
   margin-right: auto !important;
-  margin-top: 25px;
+  margin-top: -35px;
   height: auto;
-  width: 85%;
+  width: 60%;
   border-radius: 2px;
+  max-width: 880px;
   display: block;
 }
 
@@ -851,6 +864,7 @@ img.ui.image.image-feed{
       right: 2%;
       position: absolute;
     }
+
 
     #profile-image-large{
       height: auto;
