@@ -32,7 +32,7 @@ var call = module.exports = {
                    }
 
                    if (docs) {
-                       if(JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password.words) ) {
+                       if(JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password) ) {
                            jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
                                console.log("Correct credentials! Login from user: ", docs.username)
                                res.send(JSON.stringify({
@@ -111,7 +111,7 @@ var call = module.exports = {
                                               "last_name": lastname,
                                               "username": username,
                                               "email": email,
-                                              "password": passwordHashed,
+                                              "password": passwordHashed.words,
                                               "birthday": birthday,
                                               "gender": gender,
                                               "picture": profilePicture,
@@ -163,7 +163,7 @@ var call = module.exports = {
                                           "last_name": lastname,
                                           "username": username,
                                           "email": email,
-                                          "password": passwordHashed,
+                                          "password": passwordHashed.words,
                                           "birthday": birthday,
                                           "gender": gender,
                                           "picture": profilePicture,
@@ -298,7 +298,8 @@ var call = module.exports = {
         "filename": filename,
         "liking_users": [],
         "date_created": new Date(),
-        "user_id": new ObjectId(userId)
+        "user_id": new ObjectId(userId),
+        "updated" : false
     });
     console.log("Image was uploaded to server...")
     res.send(JSON.stringify({
@@ -450,7 +451,8 @@ var call = module.exports = {
                 "user_id": 1,
                 "username": {
                     "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                }
+                },
+                "updated" : 1
             }
          },
          { $sort : { "date_created" : -1 } }
@@ -697,22 +699,26 @@ updateUserData: function(db, res, data) {
     var checkUsername = false;
     var checkEmail = false;
 
+    // check for username
     collectionUsers.findOne({"username": username}, (err, docs) => {
         if (err) {
             throw err;
         }
 
+        // username already given, but...
         if(docs) {
+            // username is me...
             if(docs._id == userid) {
-                // Username is same => no update => check for email
+                // Username is same => no update => check for email if email is given
                 collectionUsers.findOne({"email": userData.email}, (err, docs) => {
                     if (err) {
                         throw err;
                     }
 
+                    // If email exists:
                     if(docs) {
                         if(docs._id == userid) {
-                            // Email is same => no update => update fields
+                            // If Email is same as origin users => no update => update fields
                             console.log(username, " changed successfully its user data")
                             if(userData.password !== '') {
                                 collectionUsers.update(
@@ -723,7 +729,7 @@ updateUserData: function(db, res, data) {
                                             "last_name": userData.last_name,
                                             "username": username,
                                             "email": userData.email,
-                                            "password": hashedPassword
+                                            "password": hashedPassword.words
                                         }
                                     }
                                 );
@@ -743,12 +749,46 @@ updateUserData: function(db, res, data) {
                             res.send(JSON.stringify({
                                 message: "User data successfully updated."
                             }));
-                          }
+                        } else {
+                            // Email is already given and is not same with the origin users
+                            res.send(JSON.stringify({
+                                message: "This email is not available222. Please try another one."
+                            }));
+                        }
                     } else {
-                        // Email is already given
+
+                        console.log(username, " changed successfully its user data")
+                        if(userData.password !== '') {
+                            collectionUsers.update(
+                                {_id: ObjectId(userid)},
+                                {
+                                    $set: {
+                                        "first_name": userData.first_name,
+                                        "last_name": userData.last_name,
+                                        "username": username,
+                                        "email": userData.email,
+                                        "password": hashedPassword.words
+                                    }
+                                }
+                            );
+                        } else {
+                            collectionUsers.update(
+                                {_id: ObjectId(userid)},
+                                {
+                                    $set: {
+                                        "first_name": userData.first_name,
+                                        "last_name": userData.last_name,
+                                        "username": username,
+                                        "email": userData.email
+                                    }
+                                }
+                            );
+                        }
                         res.send(JSON.stringify({
-                            message: "This email is not available. Please try another one."
+                            message: "User data successfully updated."
                         }));
+
+
                     }
                 })
             } else {
@@ -758,7 +798,7 @@ updateUserData: function(db, res, data) {
                 }));
             }
         } else {
-            //Check email
+            //Check email because username is new
             collectionUsers.findOne({"email": userData.email}, (err, docs) => {
                 if (err) {
                     throw err;
@@ -797,11 +837,44 @@ updateUserData: function(db, res, data) {
                         res.send(JSON.stringify({
                             message: "User data successfully updated."
                         }));
-                      }
+                    } else {
+                        // Email is already given
+                        res.send(JSON.stringify({
+                            message: "This email is not available. Please try another one."
+                        }));
+                    }
                 } else {
-                    // Email is already given
+
+
+                    console.log(username, " changed successfully its user data")
+                    if(userData.password !== '') {
+                        collectionUsers.update(
+                            {_id: ObjectId(userid)},
+                            {
+                                $set: {
+                                    "first_name": userData.first_name,
+                                    "last_name": userData.last_name,
+                                    "username": username,
+                                    "email": userData.email,
+                                    "password": hashedPassword
+                                }
+                            }
+                        );
+                    } else {
+                        collectionUsers.update(
+                            {_id: ObjectId(userid)},
+                            {
+                                $set: {
+                                    "first_name": userData.first_name,
+                                    "last_name": userData.last_name,
+                                    "username": username,
+                                    "email": userData.email
+                                }
+                            }
+                        );
+                    }
                     res.send(JSON.stringify({
-                        message: "This email is not available. Please try another one."
+                        message: "User data successfully updated."
                     }));
                 }
             })
@@ -907,13 +980,9 @@ updateUserData: function(db, res, data) {
 
         // Set status to accepted
         //Delete from database
-        collectionfriendRequests.update({"requester": requester, "recipient": recipient},
-            {
-                $set: {
-                    "status": "accepted"
-                }
-            }
-        );
+        collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
+            if (err) throw err;
+        });
 
         // Add to friendlist of both array.push()
         collectionUsers.findOne({"username": requester}, (err, docs) => {
@@ -960,14 +1029,47 @@ updateUserData: function(db, res, data) {
 
     getFriends: function(db, res, userId) {
         const collectionUsers = db.collection('users');
+
         collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
-                res.send((docs.friends).sort())
+                //Get friends and map through them to get profile pic
+                var friendlist = [];
+                var friendlistLength = (docs.friends).length;
+                var friends = [];
+                var i = 0;
+
+                docs.friends.map(item => {
+                    item.friends = item.friends;
+                    collectionUsers.findOne({"username": item}, (err_friends, res_friends) => {
+                        if(err_friends) throw err_friends;
+                        if (res_friends) {
+                            friendlist.push(res_friends);
+                            i++;
+
+                            result = {};
+                            result ["name"] = res_friends.username;
+                            result ["picture"] = res_friends.picture;
+                            friends.push(result);
+                        }
+                        call.sendFriendlistHelper(res, friends, i, friendlistLength);
+                    })
+                })
             }
         })
+    },
 
+    sendFriendlistHelper: function(res, friends, i, friendlistLength) {
+        if(i == friendlistLength) {
+            var friendsByName = friends.slice(0);
+            friendsByName.sort(function(a,b) {
+                var x = a.name.toLowerCase();
+                var y = b.name.toLowerCase();
+                return x < y ? -1 : x > y ? 1 : 0;
+            });
 
+            res.status(200).send(friends);
+        }
     },
 
 
@@ -1111,6 +1213,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
               item.date_created = getDate(item.date_created);
               item.number_of_likes = item.liking_users.length;
               item.profile_picture_url = "/uploads/posts/" + item.profile_picture_filename;
+              item.profile_picture_filename = item.profile_picture_filename;
           });
           res.status(200).send(res_guestbook_entries);
   });
@@ -1304,7 +1407,59 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         });
     },
 
+    // --------------------------Update Images----------------------------//
 
+    //------------------------------Get Image------------------------------//
+    //
+    // Recieves the id of an image and the id of the current user and returns the
+    // information of the image if the current user is the author of this image.
+    getImage: function (db, res, imageId, currentUserId) {
+        db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
+            if (err_find_images) throw err_find_images;
+            if (res_find_images) {
+                if (res_find_images.user_id == currentUserId) {
+                    res.status(200).send(res_find_images);
+                } else {
+                    res.status(401).send(JSON.stringify({
+                        message: "User is not authorized to get this image"
+                    }));
+                }
+            } else {
+                res.status(404).send(JSON.stringify({
+                    message: "Can't find an image with id: " + imageId
+                }));
+            }
+        });
+    },
+
+    //----------------------------Update Image-----------------------------//
+    //
+    // Recieves the id of an image, the id of the current user and the new data of
+    // this image that should be updated.
+    // Returns true if the update was successful and false otherwise.
+    updateImage: function (db, res, imageId, imageTitle, imageContent, currentUserId) {
+        db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
+            if (err_find_images) throw err_find_images;
+            if (res_find_images && res_find_images.user_id == currentUserId) {
+                db.collection("images").update(
+                    {_id: ObjectId(imageId)},
+                    {
+                        $set: {
+                            "title": imageTitle,
+                            "content": imageContent,
+                            "updated" : true
+                        }
+                    }, (err_update_images, res_update_images) => {
+                        if (err_update_images) throw err_update_images;
+
+                        res.status(200).send(true);
+                    }
+                );
+            } else {
+                res.status(404).send(false);
+            }
+        });
+    },
 }
 
 function getMonthName (month) {

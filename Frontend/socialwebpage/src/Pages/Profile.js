@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
 import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById} from '../API/POST/PostMethods';
+import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById } from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
-
 import '../profileStyle.css';
-import { updateStoryEntry } from '../API/PUT/PutMethods';
+import { updateStoryEntry, updateImage } from '../API/PUT/PutMethods';
 
 var images = [];
 var stories = [];
@@ -28,7 +27,9 @@ class Profile extends Component {
         rerender: false,
         updateItemId: "",
         statusUpdateStoryEntry: false,
-        showUpdateStoryErrorMessage: false
+        showUpdateStoryErrorMessage: false,
+        statusUpdateImage: false,
+        showUpdateImageErrorMessage: false
       }
 
       this.apiCheckSession = "/checkSession"
@@ -252,17 +253,17 @@ class Profile extends Component {
 
       async handleDeleteImage(event, data) {
         const response = await deleteImageById("/image/delete",data._id);
-        window.location.reload();
+        this.getProfileData(this.property);
       }
 
       async handleDeleteStoryEntry(event, data) {
         const response = await deleteStoryEntryById("/story/delete", data._id);
-        window.location.reload();
+        this.getProfileData(this.property);
       }
 
       async handleDeleteGuestbookEntry(event, data) {
         const response = await deleteGuestbookEntryById("/guestbook/delete",data._id);
-        window.location.reload();
+        this.getProfileData(this.property);
       }
 
       async handleOpenStoryUpdateWindow(event, data) {
@@ -301,21 +302,50 @@ class Profile extends Component {
         this.setState({ updateItemId: ""});
       }
 
-      getStoryTitle(currentItem) {
-        let title = this.state.storyTitle
-        if(title == undefined) {
-          title = currentItem.title;
+
+      async handleOpenImageUpdateWindow(event, data) {
+        const response = await getImageById("/image/get", data._id);
+        if(response) {
+            this.setState({imageTitle: response.title})
+            this.setState({imageContent: response.content})
         }
-        return title;
+            this.setState({ updateItemId: data._id});
       }
 
-      getStoryContent(currentItem) {
-        let content = this.state.storyContent
-        if(content == undefined) {
-          content = currentItem.content;
+      handleChangeImageData(event, data) {
+        switch(data) {
+          case "imageTitle": this.setState({"imageTitle": event.target.value}); break;
+          case "imageContent":  this.setState({"imageContent": event.target.value}); break;
+          default: null;
         }
-        return content;
-}
+      }
+
+      async handleUpdateImage(event, data) {
+        event.preventDefault();
+        const imageId = data._id;
+        const title = event.target[0].value;
+        const content = event.target[1].value;
+        const response = await updateImage("/image/edit", imageId, title, content);
+        this.setState({statusUpdateImage: response});
+
+        if(this.state.statusUpdateImage) {
+          this.setState({ updateItemId: ""});
+        } else {
+          this.setState({ showUpdateImageErrorMessage: true });
+        }
+        this.getProfileData(this.property);
+      }
+
+      handleCancelUpdateImage(event, data) {
+        this.state.responseImages.map(item => {
+          if(item._id === data._id) {
+            this.setState({"imageTitle": item.title});
+            this.setState({"imageContent": item.content});
+          }
+        });
+
+        this.setState({ updateItemId: ""});
+      }
 
 
     render() {
@@ -346,33 +376,41 @@ class Profile extends Component {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <Image src={"https://gruppe1.testsites.info" + this.state.pictureURL} className="user-card-avatar"/>
+
+                                    {this.state.pictureExists ? <div><Image src={"http://localhost:8000" + this.state.pictureURL} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+
                                     <span className="content-card-username-label"> @{item.username} </span>
                                     {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                    {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenImageUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
                                   </div>
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
-                                    <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
-                                      </Rating> {item.title}
-                                        <div className="ui mini horizontal statistic post-likes">
-                                          <div className="value">
-                                            {this.getNumberOfLikesOfImage(item)}
+                                    <Form onSubmit={((e) => this.handleUpdateImage(e, item))}>
+                                      <Card.Header className="card-header">
+                                        <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
+                                        {this.state.updateItemId == item._id ? <Form.Field><Input  placeholder={this.state.imageTitle} value={this.state.imageTitle} onChange={(e) => this.handleChangeImageData(e,"imageTitle")}/></Form.Field> : item.title}
+                                          <div className="ui mini horizontal statistic post-likes">
+                                            <div className="value">
+                                              {this.getNumberOfLikesOfImage(item)}
+                                            </div>
+                                            <div className="label">
+                                              Likes
+                                            </div>
                                           </div>
-                                          <div className="label">
-                                            Likes
-                                          </div>
-                                        </div>
-                                    </Card.Header>
-                                    <Card.Meta className="card-meta">
-                                      <span className='date'>
-                                        {item.date_created}
-                                        {item.updated ? <p>(edited)</p> :  null}
-                                      </span>
-                                    </Card.Meta>
-                                    <Card.Description>
-                                      {item.content}
-                                    </Card.Description>
+                                      </Card.Header>
+                                      <Card.Meta className="card-meta">
+                                        <span className='date'>
+                                          {item.date_created}
+                                          {item.updated ? <p>(edited)</p> :  null}
+                                        </span>
+                                      </Card.Meta>
+                                      <Card.Description>
+                                        {this.state.updateItemId == item._id ? <Input placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : item.content}
+                                        {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
+                                        {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateImage(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
+                                        {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
+                                      </Card.Description>
+                                    </Form>
                                   </Card.Content>
                                 </Card>
                               </Card.Group>
@@ -392,7 +430,8 @@ class Profile extends Component {
                                   <Card.Group>
                                     <Card fluid centered>
                                       <div className="username-label">
-                                          <Image src={"https://gruppe1.testsites.info" + this.state.pictureURL}  className="user-card-avatar"/>
+
+                                          {this.state.pictureExists ? <div><Image src={"http://localhost:8000" + this.state.pictureURL} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                         {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
@@ -442,7 +481,8 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                      <Image src={"https://gruppe1.testsites.info" + item.profile_picture_url}  className="user-card-avatar"/>
+                                      {item.profile_picture_url !== "/uploads/posts/" ? <div><Image src={"http://localhost:8000" + item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
@@ -472,31 +512,6 @@ class Profile extends Component {
                                     </Card.Content>
                                   </Card>
                                 </Card.Group>
-
-                              {/*  <Comment.Group>
-                                  <Comment>
-                                    <Comment.Avatar src='/assets/images/boy.png' id="comment-avatar" />
-                                    <Comment.Content>
-                                      <Rating onRate={((e) => this.handleRateGuestbookEntry(e, item))} icon='heart' size="large" defaultRating={item.current_user_has_liked} maxRating={1}>
-                                      </Rating> <span>&nbsp;</span>
-                                      <div className="ui mini horizontal statistic post-likes">
-                                        <div className="value">
-                                          {item.number_of_likes}
-                                        </div>
-                                        <div className="label">
-                                          Likes
-                                        </div>
-                                      </div>
-                                      <Comment.Author as='a'><h3><i>{item.title}</i></h3></Comment.Author>
-                                      <Comment.Author>posted by {item.username}</Comment.Author>
-                                      <Comment.Metadata id="comment-metadata">
-                                        <div>{item.date_created}</div>
-                                      </Comment.Metadata>
-                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))} id="delete-button" circular icon="delete" size="small"></Button> : null}
-                                      <Comment.Text id="comment-content">{item.content}</Comment.Text>
-                                    </Comment.Content>
-                                  </Comment>
-                                </Comment.Group> */}
                               </div>
                             )
                           })}
@@ -507,7 +522,7 @@ class Profile extends Component {
                                <label>Title of your guestbook entry</label>
                                <Input placeholder="Titel"/>
                              </Form.Field>
-                             <Form.TextArea autoHeight rows="3" />
+                             <Form.TextArea required autoHeight rows="3" />
                              <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
                            </Form>
                            : null }

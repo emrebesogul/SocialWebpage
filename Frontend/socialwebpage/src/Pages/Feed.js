@@ -73,9 +73,12 @@ class Feed extends Component {
   async confirmFriendRequest(e, item) {
       //Set state of status to accepted
       //Add both to friends: []
+      console.log(String(item.requester))
+      console.log(item.recipient)
+
       const response = await confirmFriendshipRequest(
           "/friends/confirmFriendRequest",
-          item.requester,
+          String(item.requester),
           item.recipient
       );
       if(response) {
@@ -87,9 +90,11 @@ class Feed extends Component {
   async declineFriendRequest(e, item) {
       //Set state of status to rejected
       //Delete from friendRequests collection
+      console.log(item.requester)
+      console.log(item.recipient)
       const response = await deleteFriendshipRequest(
           "/friends/declineFriendRequest",
-          item.requester,
+          String(item.requester),
           item.recipient
       );
       if(response) {
@@ -100,7 +105,7 @@ class Feed extends Component {
   async deleteFriend(e, item) {
       const response = await deleteFriend(
           "/friends/deleteFriend",
-          item
+          item.name
       );
       if(response) {
           window.location.reload();
@@ -191,7 +196,9 @@ getNumberOfLikes(currentItem) {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    <Image className="user-card-avatar" src={"https://gruppe1.testsites.info" + item.profile_picture_url} />
+
+                                    {item.profile_picture_url !== "/uploads/posts/" ? <div><Image src={"http://localhost:8000" + item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+
                                     <Link to={`/profile/${item.username}`}>
                                       <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
@@ -251,7 +258,8 @@ getNumberOfLikes(currentItem) {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            <Image className="user-card-avatar" src={"https://gruppe1.testsites.info" + item.profile_picture_url} />
+
+                                            {item.profile_picture_url !== "/uploads/posts/" ? <div><Image src={"http://localhost:8000" + item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <List.Content>
                                               <List.Header as='a'>
                                                   <Link to={`/profile/${item.requester}`}>
@@ -277,11 +285,13 @@ getNumberOfLikes(currentItem) {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            <Image className="user-card-avatar" src={"https://gruppe1.testsites.info" + item.profile_picture_url} />
+
+                                            {item.picture !== "" ? <div><Image src={"http://localhost:8000/uploads/posts/" + item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+
                                             <List.Content>
                                               <List.Header >
-                                                  <Link to={`/profile/${item}`}>
-                                                      {item}
+                                                  <Link to={`/profile/${item.name}`}>
+                                                      {item.name}
                                                   </Link>
                                               </List.Header>
                                               <List.Description>4 mutual contacts</List.Description>
@@ -321,14 +331,11 @@ getNumberOfLikes(currentItem) {
                                           <Image size="tiny" avatar src='/assets/images/boy.png' />
                                           <List.Content>
                                             <List.Header >
-                                                <Link to={`/profile/${item}`}>
-                                                    {item}
-                                                </Link>
+
                                             </List.Header>
                                             <List.Description>4 mutual contacts</List.Description>
                                           </List.Content>
                                           <List.Content floated="right">
-                                              <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
                                           </List.Content>
                                         </List.Item>
                                       </List>
