@@ -33,7 +33,7 @@ class Feed extends Component {
       //this.getFriendRequests();
 
 
-      this.pageTitle = "Recent posts and updates...";
+      this.pageTitle = "Ivey";
       document.title = this.pageTitle;
   }
 

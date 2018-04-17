@@ -22,7 +22,7 @@ class Login extends Component {
         this.api = '/user/loginUser';
         this.handleSubmit = this.handleSubmit.bind(this);
 
-        this.pageTitle = "Ivey";
+        this.pageTitle = "Login to Ivey";
         document.title = this.pageTitle;
     }
 

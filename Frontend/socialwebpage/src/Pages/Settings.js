@@ -27,6 +27,8 @@ class Settings extends React.Component{
         this.apiUpdate = "/user/edit"
         this.apiUploadProfilePic = "/user/image/create"
 
+        this.pageTitle = "Settings"
+        document.title = this.pageTitle;
     }
 
     componentDidMount() {
