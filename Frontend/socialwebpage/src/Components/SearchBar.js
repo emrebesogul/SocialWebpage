@@ -41,6 +41,8 @@ const source = _.times(5, () => ({
     return (
           <Search
             className="search-bar"
+            fluid
+            open
             loading={isLoading}
             onResultSelect={this.handleResultSelect}
             onSearchChange={_.debounce(this.handleSearchChange, 500, { leading: true })}

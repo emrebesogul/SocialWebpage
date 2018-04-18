@@ -3,7 +3,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
-
+import SearchBar from '../Components/SearchBar';
 import {checkSession} from '../API/GET/GetMethods';
 import {getFriendRequests, getFriends, getComments} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment} from '../API/POST/PostMethods';
@@ -196,6 +196,7 @@ async getComments() {
                  <Sidebar />
              </div>
                 <div id="feed-content">
+                    
                       <Tab menu={{ secondary: true, pointing: true }} panes={
                         [
                           { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>

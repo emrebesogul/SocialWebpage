@@ -10,6 +10,7 @@ import PostText from './Pages/PostText'
 import Roadmap from './Pages/Roadmap'
 import Settings from './Pages/Settings'
 import About from './Pages/About'
+import Search from './Pages/Search'
 
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
@@ -29,6 +30,7 @@ ReactDOM.render(
             <Route exact path="/roadmap" component={Roadmap}></Route>
             <Route exact path="/settings" component={Settings}></Route>
             <Route exact path="/about" component={About}></Route>
+            <Route exact path="/search" component={Search}></Route>
         </Switch>
     </BrowserRouter>,
 root);
