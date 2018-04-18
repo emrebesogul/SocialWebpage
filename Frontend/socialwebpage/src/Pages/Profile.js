@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message } from 'semantic-ui-react'
+import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message, Header } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById } from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { updateStoryEntry, updateImage } from '../API/PUT/PutMethods';
 var images = [];
 var stories = [];
 var guestbookEntries = [];
+var comments = [];
 
 class Profile extends Component {
   constructor(props) {
@@ -410,6 +411,29 @@ class Profile extends Component {
                                         {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
                                       </Card.Description>
                                     </Form>
+                                    <Header as='h4' dividing>Comments</Header>
+                                    {comments.map((comment, index) => {
+                                      return(
+                                        <Comment.Group>
+                                          {comment.post_id === item._id ?
+                                          <Comment>
+                                            <Comment.Avatar src='/assets/images/boy.png' />
+                                            <Comment.Content>
+                                              <Comment.Author as='a'>{comment.authorName}</Comment.Author>
+                                              <Comment.Metadata>
+                                                <div>{comment.date_created}</div>
+                                              </Comment.Metadata>
+                                              <Comment.Text>{comment.content}</Comment.Text>
+                                            </Comment.Content>
+                                          </Comment>
+                                          : null }
+                                        </Comment.Group>
+                                      )
+                                    })}
+                                    <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                      <Form.TextArea value={this.state.commentInput}/>
+                                      <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                    </Form>
                                   </Card.Content>
                                 </Card>
                               </Card.Group>
@@ -462,6 +486,29 @@ class Profile extends Component {
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
+                                        <Header as='h4' dividing>Comments</Header>
+                                        {comments.map((comment, index) => {
+                                          return(
+                                            <Comment.Group>
+                                              {comment.post_id === item._id ?
+                                              <Comment>
+                                                <Comment.Avatar src='/assets/images/boy.png' />
+                                                <Comment.Content>
+                                                  <Comment.Author as='a'>{comment.authorName}</Comment.Author>
+                                                  <Comment.Metadata>
+                                                    <div>{comment.date_created}</div>
+                                                  </Comment.Metadata>
+                                                  <Comment.Text>{comment.content}</Comment.Text>
+                                                </Comment.Content>
+                                              </Comment>
+                                              : null }
+                                            </Comment.Group>
+                                          )
+                                        })}
+                                        <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                          <Form.TextArea value={this.state.commentInput}/>
+                                          <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                        </Form>
                                       </Card.Content>
                                     </Card>
                                   </Card.Group>
@@ -506,6 +553,29 @@ class Profile extends Component {
                                       <Card.Description>
                                         {item.content}
                                       </Card.Description>
+                                      <Header as='h4' dividing>Comments</Header>
+                                      {comments.map((comment, index) => {
+                                        return(
+                                          <Comment.Group>
+                                            {comment.post_id === item._id ?
+                                            <Comment>
+                                              <Comment.Avatar src='/assets/images/boy.png' />
+                                              <Comment.Content>
+                                                <Comment.Author as='a'>{comment.authorName}</Comment.Author>
+                                                <Comment.Metadata>
+                                                  <div>{comment.date_created}</div>
+                                                </Comment.Metadata>
+                                                <Comment.Text>{comment.content}</Comment.Text>
+                                              </Comment.Content>
+                                            </Comment>
+                                            : null }
+                                          </Comment.Group>
+                                        )
+                                      })}
+                                      <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                        <Form.TextArea value={this.state.commentInput}/>
+                                        <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                      </Form>
                                     </Card.Content>
                                   </Card>
                                 </Card.Group>
