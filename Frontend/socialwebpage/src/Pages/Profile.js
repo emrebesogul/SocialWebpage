@@ -460,7 +460,11 @@ class Profile extends Component {
                                           <Comment>
                                             {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <Comment.Content>
-                                              <Comment.Author as='a'>{comment.authorName}</Comment.Author>
+                                              <Comment.Author as='a'>
+                                                <Link to={`/profile/${comment.authorName}`}>
+                                                  <span className="content-card-username-label"> @{comment.authorName} </span>
+                                                </Link>
+                                              </Comment.Author>
                                               <Comment.Metadata>
                                                 <div>{comment.date_created}</div>
                                               </Comment.Metadata>
@@ -472,7 +476,7 @@ class Profile extends Component {
                                       )
                                     })}
                                     <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                      <Form.TextArea className="commentInput"/>
+                                      <Form.TextArea class="commentInput"/>
                                       <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                     </Form>
                                   </Card.Content>
@@ -535,7 +539,11 @@ class Profile extends Component {
                                               <Comment>
                                                 {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                                 <Comment.Content>
-                                                  <Comment.Author as='a'>{comment.authorName}</Comment.Author>
+                                                  <Comment.Author as='a'>
+                                                    <Link to={`/profile/${comment.authorName}`}>
+                                                      <span className="content-card-username-label"> @{comment.authorName} </span>
+                                                    </Link>
+                                                  </Comment.Author>
                                                   <Comment.Metadata>
                                                     <div>{comment.date_created}</div>
                                                   </Comment.Metadata>
@@ -547,7 +555,7 @@ class Profile extends Component {
                                           )
                                         })}
                                         <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                          <Form.TextArea className="commentInput"/>
+                                          <Form.TextArea class="commentInput"/>
                                           <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                         </Form>
                                       </Card.Content>
@@ -611,7 +619,11 @@ class Profile extends Component {
                                             <Comment>
                                               {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                               <Comment.Content>
-                                                <Comment.Author as='a'>{comment.authorName}</Comment.Author>
+                                                <Comment.Author as='a'>
+                                                  <Link to={`/profile/${comment.authorName}`}>
+                                                    <span className="content-card-username-label"> @{comment.authorName} </span>
+                                                  </Link>
+                                                </Comment.Author>
                                                 <Comment.Metadata>
                                                   <div>{comment.date_created}</div>
                                                 </Comment.Metadata>
@@ -624,7 +636,7 @@ class Profile extends Component {
                                       })}
                                       <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                         <Form.TextArea className="commentInput"/>
-                                        <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                        <Button class="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                       </Form>
                                     </Card.Content>
                                   </Card>
