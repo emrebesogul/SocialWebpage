@@ -217,7 +217,7 @@ async getComments() {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    {item.profile_picture_url !== "/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                    {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                     <Link to={`/profile/${item.username}`}>
                                       <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>

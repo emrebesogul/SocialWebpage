@@ -245,3 +245,22 @@ export const getComments=(api)=>{
     });
   });
 }
+
+//----------------------Get User list----------------------//
+export const getAllUser=(api)=>{
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: url + api,
+      type: "GET",
+      cache: false,
+      contentType: 'application/json',
+      data: 'json',
+      success: function(res) {
+          resolve(res);
+      },
+      error: function(xhr, status, err){
+          reject(err);
+      }
+    });
+  });
+}

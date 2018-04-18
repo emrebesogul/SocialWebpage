@@ -738,6 +738,10 @@ MongoClient.connect(url, function(err, client) {
         });
       });
 
+      //----------------------Get Comments----------------------//
+      app.get('/rest/user/all', (req, res) => {
+          database.getAllUser(client.db('socialwebpage'), res);
+      });
 
       //----------------------xy----------------------//
 

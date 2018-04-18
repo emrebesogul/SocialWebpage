@@ -1504,6 +1504,39 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             res.status(200).send(res_find_comments);
         });
     },
+
+    //----------------------------List all user-----------------------------//
+    getAllUser: function(db, res) {
+        db.collection('users').find({}).toArray(function (err, docs) {
+            if (err) throw err;
+            if (docs) {
+                var userLength = (docs).length;
+                var user = [];
+                var i = 0;
+
+                docs.map(item => {
+                    i++;
+
+                    result = {};
+                    result ["title"] = item.username;
+                    result ["description"] = item.first_name + " " + item.last_name;
+                    if(item.picture !== "") {
+                        result ["image"] = "http://localhost:8000/uploads/posts/" + item.picture;
+                    } else {
+                        result ["image"] = "/assets/images/user.png";
+                    }
+                    user.push(result);
+                });
+                call.sendUserList(res, user, i, userLength);
+            }
+        });
+    },
+    sendUserList: function(res, user, i, userLength) {
+        if(i == userLength) {
+            res.status(200).send(user);
+        }
+    },
+
 }
 
 function getMonthName (month) {
