@@ -470,3 +470,27 @@ export const getImageById=(api, imageId) =>
         });
     });
 }
+
+//----------------------Create Comment----------------------//
+export const createComment=(api, commentData) => {
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({commentData: commentData}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}

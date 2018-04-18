@@ -708,6 +708,37 @@ MongoClient.connect(url, function(err, client) {
         });
     });
 
+      //------------------------------Create Comment--------------------------------//
+      app.post('/rest/comment/create', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const commentData = req.body.commentData;
+                const currentUserId = authData.userid;
+                database.createComment(client.db('socialwebpage'), res, commentData, currentUserId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
+
+      //----------------------Get Comments----------------------//
+      app.get('/rest/comment/list', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                database.getComments(client.db('socialwebpage'), res, req);
+            }
+        });
+      });
+
+
       //----------------------xy----------------------//
 
 
