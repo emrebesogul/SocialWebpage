@@ -336,9 +336,16 @@ input:hover {
 
 input {
   border: none !important;
-border-bottom: 1px solid rgb(230,230,230) !important;
--webkit-box-shadow: 0px 2px 9px 1px rgb(231,231,231) !important;
-box-shadow: 0px 1px 2px 2px rgb(244,244,244) !important;
+  border-bottom: 1px solid rgb(230,230,230) !important;
+  -webkit-box-shadow: 0px 2px 9px 1px rgb(231,231,231) !important;
+  box-shadow: 0px 1px 2px 2px rgb(244,244,244) !important;
+}
+
+textarea {
+  border: none !important;
+  border-bottom: 1px solid rgb(230,230,230) !important;
+  -webkit-box-shadow: 0px 2px 9px 1px rgb(231,231,231) !important;
+  box-shadow: 0px 1px 2px 2px rgb(244,244,244) !important;
 }
 
 .save-button-guestbook{
@@ -502,13 +509,13 @@ div.ui.compact.menu{
 }
 
 div.sub.header.feed-subheader{
-  border-bottom: 1.5px solid rgb(190,205,230) !important;
+  border-bottom: 1.5px solid rgb(240,240,240) !important;
   padding-bottom: 15px !important;
   margin-bottom: 20px !important;
 }
 
 .button-upload{
-  margin-top: 25px !important;
+  margin-top: 15px !important;
   display: block;
   color: rgb(65,65,65) !important;
   transition: all 0.3s;
@@ -997,7 +1004,8 @@ img.ui.image.image-feed{
     }
 
     .about-text{
-      width: 75%;
+      width: 95% !important;
+      max-width: none;
     }
 
     .logo-mobile{
