@@ -2,24 +2,50 @@ import _ from 'lodash'
 import faker from 'faker'
 import React, { Component } from 'react'
 import { Search, Grid, Header } from 'semantic-ui-react'
+import { getAllUser } from '../API/GET/GetMethods';
+import { Redirect } from 'react-router-dom';
 
-const source = _.times(5, () => ({
-  title: faker.company.companyName(),
-  description: faker.company.catchPhrase(),
-  image: faker.internet.avatar(),
-  price: faker.finance.amount(0, 100, 2, '$'),
-}))
+class SearchBar extends Component {
+    constructor() {
+        super();
 
- class SearchBar extends Component {
-  componentWillMount() {
-    this.resetComponent()
+        this.state = {
+            user: "",
+            redirectToProfile: false
+        }
+        //Das Laden der User per Websockets?
+        this.getAllUser();
+    }
+
+    componentWillMount() {
+        this.resetComponent()
+    }
+
+    async getAllUser() {
+        const response = await getAllUser("/user/all");
+        if (response) {
+            this.setState({user: response});
+        }
+    }
+
+    reloadPage() {
+        window.location.reload();
+    }
+
+  resetComponent = () => {
+      console.log("Resetting Searching...")
+      this.setState({ isLoading: false, results: [], value: '' })
   }
 
-  resetComponent = () => this.setState({ isLoading: false, results: [], value: '' })
-
-  handleResultSelect = (e, { result }) => this.setState({ value: result.title })
+  handleResultSelect = (e, { result }) => {
+      console.log("Done Searching...")
+      this.setState({ value: result.title })
+      this.setState({ redirectToProfile: true })
+  }
 
   handleSearchChange = (e, { value }) => {
+    console.log("Searching...")
+
     this.setState({ isLoading: true, value })
 
     setTimeout(() => {
@@ -30,13 +56,19 @@ const source = _.times(5, () => ({
 
       this.setState({
         isLoading: false,
-        results: _.filter(source, isMatch),
+        results: _.filter(this.state.user, isMatch),
       })
     }, 300)
   }
 
   render() {
     const { isLoading, value, results } = this.state
+
+    const { redirectToProfile } = this.state;
+     if (redirectToProfile) {
+       {this.reloadPage()}
+       return <Redirect to={'/profile/'+ this.state.value}/>;
+     }
 
     return (
           <Search

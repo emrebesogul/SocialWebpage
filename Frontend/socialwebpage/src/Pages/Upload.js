@@ -107,7 +107,7 @@ class Upload extends Component {
                       <Input className="input-upload" type="text"/>
 
                       <span className="input-label-upload">
-                        Image size has a limit of 4 megabytes.
+                        Image size has a limit of 6 megabytes.
                       </span>
 
                       <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >

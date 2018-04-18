@@ -156,6 +156,9 @@ class Roadmap extends Component {
                       <Item.Description>
                         Add image compression
                       </Item.Description>
+                      <Item.Description>
+                        Search for user
+                      </Item.Description>
                       <Item.Extra>In Progress</Item.Extra>
                     </Item.Content>
                   </Item>
