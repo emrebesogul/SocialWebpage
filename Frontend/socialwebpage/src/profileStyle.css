@@ -336,9 +336,9 @@ input:hover {
 
 input {
   border: none !important;
-  border-bottom: 1px solid rgb(220,220,220) !important;
-  -webkit-box-shadow: 0px 2px 9px 1px rgb(231,231,231) !important;
-  box-shadow: 0px 1px 2px 2px rgb(234,234,234) !important;
+border-bottom: 1px solid rgb(230,230,230) !important;
+-webkit-box-shadow: 0px 2px 9px 1px rgb(231,231,231) !important;
+box-shadow: 0px 1px 2px 2px rgb(244,244,244) !important;
 }
 
 .save-button-guestbook{

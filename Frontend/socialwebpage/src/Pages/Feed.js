@@ -1,17 +1,18 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Rating, List, Button, Header } from 'semantic-ui-react'
+import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 
 import {checkSession} from '../API/GET/GetMethods';
-import {getFriendRequests, getFriends} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend} from '../API/POST/PostMethods';
+import {getFriendRequests, getFriends, getComments} from '../API/GET/GetMethods';
+import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var feedPosts = [];
 var friendRequests = [];
 var friends = [];
+var comments = [];
 
 class Feed extends Component {
 
@@ -22,7 +23,8 @@ class Feed extends Component {
         redirectToLogin: false,
         resFriendsRequests: [],
         resFriends: [],
-        resFeedPosts: []
+        resFeedPosts: [],
+        resComments: []
       }
 
       this.apiCheckSession = "/checkSession";
@@ -42,6 +44,7 @@ class Feed extends Component {
       this.getfeeddata();
       this.getFriends();
       this.getFriendRequests();
+      this.getComments();
   }
 
   async checkThisSession() {
@@ -157,6 +160,23 @@ getNumberOfLikes(currentItem) {
   return numberOfLikes;
 }
 
+async handleCreateComment(event, data) {
+  let commentData = {
+    "content": event.target[0].value,
+    "postId" : data._id
+  }
+  let response = await createComment("/comment/create", commentData);
+  if(response) {
+    this.getComments();
+    this.setState({commentInput: ""});
+  }
+}
+
+async getComments() {
+  let response = await getComments("/comment/list");
+  this.setState({resComments: response});
+}
+
 
     render() {
         const { redirectToLogin } = this.state;
@@ -167,6 +187,7 @@ getNumberOfLikes(currentItem) {
         feedPosts = this.state.resFeedPosts;
         friendRequests = this.state.resFriendsRequests;
         friends = this.state.resFriends;
+        comments = this.state.resComments;
 
         return (
           <div id="main-content">
@@ -227,6 +248,29 @@ getNumberOfLikes(currentItem) {
                                     <Card.Description>
                                       {item.content}
                                     </Card.Description>
+                                    <Header as='h4' dividing>Comments</Header>
+                                    {comments.map((comment, index) => {         
+                                      return(
+                                        <Comment.Group>
+                                          {comment.post_id === item._id ? 
+                                          <Comment>
+                                            <Comment.Avatar src='/assets/images/boy.png' />
+                                            <Comment.Content>
+                                              <Comment.Author as='a'>{comment.authorName}</Comment.Author>
+                                              <Comment.Metadata>
+                                                <div>{comment.date_created}</div>
+                                              </Comment.Metadata>
+                                              <Comment.Text>{comment.content}</Comment.Text>
+                                            </Comment.Content>
+                                          </Comment>
+                                          : null }
+                                        </Comment.Group>
+                                      )
+                                    })}
+                                    <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                      <Form.TextArea value={this.state.commentInput}/>
+                                      <Button content='Add Reply' labelPosition='left' icon='edit'/>
+                                    </Form>
                                   </Card.Content>
                                 </Card>
                               </Card.Group>
