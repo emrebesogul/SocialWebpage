@@ -45,6 +45,7 @@ div.item::before{
   background: none !important;
   border: none !important;
   box-shadow: none !important;
+  z-index: 800;
 }
 
 .ui.menu .ui.dropdown.item .menu .item:not(.filtered){
@@ -512,6 +513,15 @@ div.sub.header.feed-subheader{
   border-bottom: 1.5px solid rgb(240,240,240) !important;
   padding-bottom: 15px !important;
   margin-bottom: 20px !important;
+}
+
+.search-bar{
+  margin-top: 3px !important;
+  margin-left: 65px !important;
+  width: 65% !important;
+  display: block;
+  min-width: 220px !important;
+  max-width: 400px !important;
 }
 
 .button-upload{
