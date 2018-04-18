@@ -1071,7 +1071,7 @@ updateUserData: function(db, res, data) {
                 return x < y ? -1 : x > y ? 1 : 0;
             });
 
-            res.status(200).send(friends);
+            res.status(200).send(friendsByName);
         }
     },
 
@@ -1533,7 +1533,13 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     },
     sendUserList: function(res, user, i, userLength) {
         if(i == userLength) {
-            res.status(200).send(user);
+            var userByName = user.slice(0);
+            userByName.sort(function(a,b) {
+                var x = a.title.toLowerCase();
+                var y = b.title.toLowerCase();
+                return x < y ? -1 : x > y ? 1 : 0;
+            });
+            res.status(200).send(userByName);
         }
     },
 

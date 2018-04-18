@@ -326,7 +326,7 @@ async getComments() {
                                       <div key={index}>
                                         <List  divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.picture !== "" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <List.Content>
                                               <List.Header >
                                                   <Link to={`/profile/${item.name}`}>
