@@ -472,7 +472,7 @@ class Profile extends Component {
                                       )
                                     })}
                                     <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                      <Form.TextArea class="commentInput"/>
+                                      <Form.TextArea className="commentInput"/>
                                       <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                     </Form>
                                   </Card.Content>
@@ -547,7 +547,7 @@ class Profile extends Component {
                                           )
                                         })}
                                         <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                          <Form.TextArea class="commentInput"/>
+                                          <Form.TextArea className="commentInput"/>
                                           <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                         </Form>
                                       </Card.Content>
@@ -623,7 +623,7 @@ class Profile extends Component {
                                         )
                                       })}
                                       <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea class="commentInput"/>
+                                        <Form.TextArea className="commentInput"/>
                                         <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                       </Form>
                                     </Card.Content>

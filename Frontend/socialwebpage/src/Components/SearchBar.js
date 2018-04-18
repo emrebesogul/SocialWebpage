@@ -33,19 +33,15 @@ class SearchBar extends Component {
     }
 
   resetComponent = () => {
-      console.log("Resetting Searching...")
       this.setState({ isLoading: false, results: [], value: '' })
   }
 
   handleResultSelect = (e, { result }) => {
-      console.log("Done Searching...")
       this.setState({ value: result.title })
       this.setState({ redirectToProfile: true })
   }
 
   handleSearchChange = (e, { value }) => {
-    console.log("Searching...")
-
     this.setState({ isLoading: true, value })
 
     setTimeout(() => {

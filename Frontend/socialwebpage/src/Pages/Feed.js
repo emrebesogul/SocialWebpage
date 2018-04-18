@@ -201,7 +201,7 @@ async getComments() {
                  <Sidebar />
              </div>
                 <div id="feed-content">
-                    
+
                       <Tab menu={{ secondary: true, pointing: true }} panes={
                         [
                           { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
@@ -274,7 +274,7 @@ async getComments() {
                                       )
                                     })}
                                     <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                      <Form.TextArea class="commentInput"/>
+                                      <Form.TextArea className="commentInput"/>
                                       <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                     </Form>
                                   </Card.Content>
