@@ -163,7 +163,7 @@ class Profile extends Component {
         );
         this.getProfileData(this.property);
         this.setState({guestbookEntryTitle: ""});
-        this.setState({guestbookEntryContent: ""});       
+        this.setState({guestbookEntryContent: ""});
       }
 
       handleChangeGuestbookEntryInput(e, attribut) {
@@ -382,7 +382,7 @@ class Profile extends Component {
           }
         }
       }
-      
+
       async getComments() {
         let response = await getComments("/comment/list");
         this.setState({resComments: response});
@@ -458,7 +458,7 @@ class Profile extends Component {
                                         <Comment.Group>
                                           {comment.post_id === item._id ?
                                           <Comment>
-                                            {comment.profile_picture_url !== "/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <Comment.Content>
                                               <Comment.Author as='a'>{comment.authorName}</Comment.Author>
                                               <Comment.Metadata>
@@ -533,7 +533,7 @@ class Profile extends Component {
                                             <Comment.Group>
                                               {comment.post_id === item._id ?
                                               <Comment>
-                                                {comment.profile_picture_url !== "/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                                {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                                 <Comment.Content>
                                                   <Comment.Author as='a'>{comment.authorName}</Comment.Author>
                                                   <Comment.Metadata>
@@ -609,7 +609,7 @@ class Profile extends Component {
                                           <Comment.Group>
                                             {comment.post_id === item._id ?
                                             <Comment>
-                                              {comment.profile_picture_url !== "/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                              {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                               <Comment.Content>
                                                 <Comment.Author as='a'>{comment.authorName}</Comment.Author>
                                                 <Comment.Metadata>

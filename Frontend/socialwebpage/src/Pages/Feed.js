@@ -259,7 +259,7 @@ async getComments() {
                                         <Comment.Group>
                                           {comment.post_id === item._id ?
                                           <Comment>
-                                            {comment.profile_picture_url !== "/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <Comment.Content>
                                               <Comment.Author as='a'>{comment.authorName}</Comment.Author>
                                               <Comment.Metadata>
