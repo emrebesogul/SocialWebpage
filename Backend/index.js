@@ -743,6 +743,24 @@ MongoClient.connect(url, function(err, client) {
           database.getAllUser(client.db('socialwebpage'), res);
       });
 
+      //----------------------Delete Comment----------------------//
+      app.post('/rest/comment/delete', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const commentId = req.body;
+                const userId = authData.userid;
+                database.deleteCommentById(client.db('socialwebpage'), res, commentId, userId, () => {
+                    db.close();
+                });
+            }
+        });
+      });
+
+
       //----------------------xy----------------------//
 
 
