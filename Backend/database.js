@@ -204,6 +204,7 @@ var call = module.exports = {
          },
          { $project :
             {
+                "_id" : 1,
                 "title" : 1,
                 "content": 1,
                 "src": 1,
@@ -236,6 +237,7 @@ var call = module.exports = {
                 },
                 { $project :
                     {
+                        "_id" : 1,
                         "title" : 1,
                         "content": 1,
                         "number_of_likes": 1,
@@ -1459,6 +1461,47 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             } else {
                 res.status(404).send(false);
             }
+        });
+    },
+
+    //----------------------------Create Comment-----------------------------//
+    createComment: function (db, res, commentData, currentUserId) {
+        db.collection('comments').insert({
+            "content": commentData.content,
+            "date_created": new Date(),
+            "post_id": new ObjectId(commentData.postId),
+            "author_id": new ObjectId(currentUserId)
+        });
+        res.send(true);
+    },
+
+    //----------------------------List Comments-----------------------------//
+    getComments: function (db, res) {
+        db.collection("comments").aggregate([
+      { $lookup:
+         {
+           from: "users",
+           localField: "author_id",
+           foreignField: "_id",
+           as: "author"
+         }
+       },
+       { $project : {
+              "content": 1,
+              date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+              "authorName": {
+                  "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
+              },
+              "post_id": 1
+          }
+       },
+       { $sort : { "date_created" : -1 } }
+        ]).toArray( (err_find_comments, res_find_comments) => {
+            if (err_find_comments) throw err_find_comments;
+            res_find_comments.map(item => {
+                item.date_created = getDate(item.date_created);
+            });
+            res.status(200).send(res_find_comments);
         });
     },
 }
