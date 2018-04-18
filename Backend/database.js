@@ -1504,6 +1504,22 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             res.status(200).send(res_find_comments);
         });
     },
+
+  //----------------------Delete Comment----------------------//
+  deleteCommentById: function (db, res, commentId, userId) {
+    db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
+        if (err_find_comments) throw err_find_comments;
+        if (res_find_comments.owner_id == userId) {
+            db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
+                if (err_remove_comments) throw err_remove_comments;
+                res.send(true);
+            });
+        }
+        else {
+            res.send(false);
+        }
+    });
+  },
 }
 
 function getMonthName (month) {
