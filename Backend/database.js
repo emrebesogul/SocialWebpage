@@ -1032,7 +1032,7 @@ updateUserData: function(db, res, data) {
         db.collection('notifications').insert({
             "user": requester,
             "actionUser": recipient,
-            "date_created": "added you as a friend!",
+            "action": "added you as a friend!",
             "date_created": date_created
         });
 
