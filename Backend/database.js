@@ -560,9 +560,14 @@ var call = module.exports = {
     db.collection("stories").findOne({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
         if (err) throw err;
         if (docs.user_id == userId) {
-            db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
-                if (err) throw err;
-                res.send(true);
+            db.collection("comments").remove({ post_id : new ObjectId(JSON.parse(storyId).storyId) }, (err_remove_comments, res_remove_comments) => {
+                if (err_remove_comments) throw err_remove_comments;
+                console.log("Removed " + res_remove_comments.result.n + " comments from the database");
+                db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
+                    if (err) throw err;
+                    console.log("Removed story entry from the database");
+                    res.send(true);
+                });
             });
         }
         else {
@@ -580,11 +585,16 @@ var call = module.exports = {
     db.collection("images").findOne({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_find_images, res_find_images) => {
         if (err_find_images) throw err_find_images;
         if (res_find_images !== null && res_find_images.user_id == userId) {
-            let path = "./public/uploads/posts/" + res_find_images.filename;
-            fs.unlinkSync(path);
-            db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_remove_image, res_remove_image) => {
-                if (err_remove_image) throw err_remove_image;
-                res.send(true);
+            db.collection("comments").remove({ post_id : new ObjectId(JSON.parse(imageId).imageId) }, (err_remove_comments, res_remove_comments) => {
+                if (err_remove_comments) throw err_remove_comments;
+                console.log("Removed " + res_remove_comments.result.n + " comments from the database");
+                let path = "./public/uploads/posts/" + res_find_images.filename;
+                fs.unlinkSync(path);
+                db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_remove_image, res_remove_image) => {
+                    if (err_remove_image) throw err_remove_image;
+                    console.log("Removed image from the database and server");
+                    res.send(true);
+                });
             });
         }
         else {
@@ -1270,9 +1280,14 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
         if (err_find_guestbook_entries) throw err_find_guestbook_entries;
         if (res_find_guestbook_entries.owner_id == userId) {
-            db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
-                if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
-                res.send(true);
+            db.collection("comments").remove({ post_id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_comments, res_remove_comments) => {
+                if (err_remove_comments) throw err_remove_comments;
+                console.log("Removed " + res_remove_comments.result.n + " comments from the database");
+                db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
+                    if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
+                    console.log("Removed guestbook entry from the database");
+                    res.send(true);
+                });
             });
         }
         else {
