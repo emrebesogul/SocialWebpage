@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message, Header } from 'semantic-ui-react'
-import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById } from '../API/POST/PostMethods';
+import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser, getComments } from '../API/GET/GetMethods';
+import { likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById, createComment } from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
@@ -30,7 +30,8 @@ class Profile extends Component {
         statusUpdateStoryEntry: false,
         showUpdateStoryErrorMessage: false,
         statusUpdateImage: false,
-        showUpdateImageErrorMessage: false
+        showUpdateImageErrorMessage: false,
+        resComments: []
       }
 
       this.apiCheckSession = "/checkSession"
@@ -44,6 +45,7 @@ class Profile extends Component {
       this.ownerName = props.match.params.username;
       this.getProfileData(this.property);
       this.checkThisSession();
+      this.getComments();
 
       if(this.property === undefined) {
           this.pageTitle = "My Profile "
@@ -88,6 +90,9 @@ class Profile extends Component {
             this.setState({picture: response.picture})
             this.setState({pictureURL: response.pictureURL})
 
+            this.setState({guestbookEntryTitle: responseGuestbookEntries.title});
+            this.setState({guestbookEntryContent: responseGuestbookEntries.content});
+
             if(this.state.picture) {
                 this.setState({pictureExists: true})
             }
@@ -129,6 +134,9 @@ class Profile extends Component {
             this.setState({picture: response.picture})
             this.setState({pictureURL: response.pictureURL})
 
+            this.setState({guestbookEntryTitle: responseGuestbookEntries.title});
+            this.setState({guestbookEntryContent: responseGuestbookEntries.content});
+
             if(this.state.picture) {
                 this.setState({pictureExists: true})
             }
@@ -153,8 +161,17 @@ class Profile extends Component {
             this.state.newGuestbookEntryContent,
             this.ownerName
         );
-        window.location.reload();
+        this.getProfileData(this.property);
+        this.setState({guestbookEntryTitle: ""});
+        this.setState({guestbookEntryContent: ""});       
       }
+
+      handleChangeGuestbookEntryInput(e, attribut) {
+        switch(attribut) {
+          case "guestbookEntryTitle": this.setState({"guestbookEntryTitle": e.target.value}); break;
+          case "guestbookEntryTitle": this.setState({"guestbookEntryTitle": e.target.value}); break;
+          default: /* nothing to do */;
+    }}
 
       async handleRateStoryEntry(event, data){
         event.preventDefault();
@@ -297,6 +314,7 @@ class Profile extends Component {
         } else {
           this.setState({ showUpdateStoryErrorMessage: true });
         }
+        this.getProfileData(this.property);
       }
 
       handleCancelUpdateStoryEntry(event, data) {
@@ -348,6 +366,28 @@ class Profile extends Component {
         this.setState({ updateItemId: ""});
       }
 
+      async handleCreateComment(event, data) {
+        if(event.target[0].value.trim() != "" && event.target[0].value != null) {
+          let commentData = {
+            "content": event.target[0].value,
+            "postId" : data._id
+          }
+          let response = await createComment("/comment/create", commentData);
+          if(response) {
+            let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
+            commentInputElements.map(item => {
+              item.value = "";
+            })
+            this.getComments();
+          }
+        }
+      }
+      
+      async getComments() {
+        let response = await getComments("/comment/list");
+        this.setState({resComments: response});
+      }
+
 
     render() {
 
@@ -359,6 +399,7 @@ class Profile extends Component {
       images = this.state.responseImages;
       stories = this.state.responseStories;
       guestbookEntries = this.state.responseGuestbookEntries;
+      comments = this.state.resComments;
 
         return (
           <div className="feed">
@@ -417,7 +458,7 @@ class Profile extends Component {
                                         <Comment.Group>
                                           {comment.post_id === item._id ?
                                           <Comment>
-                                            <Comment.Avatar src='/assets/images/boy.png' />
+                                            {comment.profile_picture_url !== "/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <Comment.Content>
                                               <Comment.Author as='a'>{comment.authorName}</Comment.Author>
                                               <Comment.Metadata>
@@ -431,7 +472,7 @@ class Profile extends Component {
                                       )
                                     })}
                                     <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                      <Form.TextArea value={this.state.commentInput}/>
+                                      <Form.TextArea class="commentInput"/>
                                       <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                     </Form>
                                   </Card.Content>
@@ -492,7 +533,7 @@ class Profile extends Component {
                                             <Comment.Group>
                                               {comment.post_id === item._id ?
                                               <Comment>
-                                                <Comment.Avatar src='/assets/images/boy.png' />
+                                                {comment.profile_picture_url !== "/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                                 <Comment.Content>
                                                   <Comment.Author as='a'>{comment.authorName}</Comment.Author>
                                                   <Comment.Metadata>
@@ -506,7 +547,7 @@ class Profile extends Component {
                                           )
                                         })}
                                         <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                          <Form.TextArea value={this.state.commentInput}/>
+                                          <Form.TextArea class="commentInput"/>
                                           <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                         </Form>
                                       </Card.Content>
@@ -523,6 +564,16 @@ class Profile extends Component {
                           {guestbookEntries.map((item, index) => {
                             return(
                               <div key={index} className="profile-card">
+                                {!this.state.show ?
+                                  <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
+                                    <Form.Field>
+                                      <label>Title of your guestbook entry</label>
+                                      <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
+                                    </Form.Field>
+                                    <Form.TextArea required autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
+                                    <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
+                                  </Form>
+                                : null }
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
@@ -559,7 +610,7 @@ class Profile extends Component {
                                           <Comment.Group>
                                             {comment.post_id === item._id ?
                                             <Comment>
-                                              <Comment.Avatar src='/assets/images/boy.png' />
+                                              {comment.profile_picture_url !== "/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                               <Comment.Content>
                                                 <Comment.Author as='a'>{comment.authorName}</Comment.Author>
                                                 <Comment.Metadata>
@@ -573,7 +624,7 @@ class Profile extends Component {
                                         )
                                       })}
                                       <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea value={this.state.commentInput}/>
+                                        <Form.TextArea class="commentInput"/>
                                         <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                       </Form>
                                     </Card.Content>
@@ -582,17 +633,6 @@ class Profile extends Component {
                               </div>
                             )
                           })}
-
-                          {!this.state.show ?
-                           <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
-                             <Form.Field>
-                               <label>Title of your guestbook entry</label>
-                               <Input placeholder="Titel"/>
-                             </Form.Field>
-                             <Form.TextArea required autoHeight rows="3" />
-                             <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
-                           </Form>
-                           : null }
                         </div>
 
                         </Tab.Pane> },
