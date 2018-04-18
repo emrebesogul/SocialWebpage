@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Icon, Button, Image, Menu, Dropdown } from 'semantic-ui-react';
-import SearchBar from '../Components/SearchBar';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import {getCurrentUser} from '../API/GET/GetMethods';
 
@@ -73,6 +72,11 @@ class SidebarProfile extends Component {
                         <Icon name="feed"/> Feed
                      </Dropdown.Item>
                     </Link>
+                    <Link to="/search">
+                     <Dropdown.Item>
+                        <Icon name="search"/> Search
+                     </Dropdown.Item>
+                    </Link>
                     <Link to="/settings">
                      <Dropdown.Item>
                          <Icon name="setting"/> Settings
@@ -101,9 +105,6 @@ class SidebarProfile extends Component {
                       Add Story
                   </Button>
                 </Link>
-
-                <SearchBar />
-                
               </div>
 
               <div className="feed-header">
@@ -134,6 +135,13 @@ class SidebarProfile extends Component {
                       <Button labelPosition="right" size="medium" id="upload-button" icon>
                         <Icon className="menu-icons" size="large" name='upload' />
                         Add Image
+                      </Button>
+                    </Link>
+
+                    <Link to="/search">
+                      <Button labelPosition="right" size="medium" id="upload-button" icon>
+                        <Icon className="menu-icons" size="large" name='search' />
+                        Search
                       </Button>
                     </Link>
 

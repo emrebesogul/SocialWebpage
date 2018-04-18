@@ -33,19 +33,15 @@ class SearchBar extends Component {
     }
 
   resetComponent = () => {
-      console.log("Resetting Searching...")
       this.setState({ isLoading: false, results: [], value: '' })
   }
 
   handleResultSelect = (e, { result }) => {
-      console.log("Done Searching...")
       this.setState({ value: result.title })
       this.setState({ redirectToProfile: true })
   }
 
   handleSearchChange = (e, { value }) => {
-    console.log("Searching...")
-
     this.setState({ isLoading: true, value })
 
     setTimeout(() => {
@@ -73,6 +69,8 @@ class SearchBar extends Component {
     return (
           <Search
             className="search-bar"
+            fluid
+            open
             loading={isLoading}
             onResultSelect={this.handleResultSelect}
             onSearchChange={_.debounce(this.handleSearchChange, 500, { leading: true })}

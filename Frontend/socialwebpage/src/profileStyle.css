@@ -29,7 +29,7 @@ div.menu.transition{
   border-radius: 3px !important;
   margin-top: 0px;
   border: rgb(10,10,10) !important;
-  height: 285px;
+  height: 330px;
   -webkit-box-shadow: 1px 1px 6px 1px #bdbdbda5 !important;
   box-shadow: 1px 3px 6px 0px #bdbdbda5 !important;
 }
@@ -189,7 +189,7 @@ a{
   max-width: 230px;
   text-align: center;
   border-radius: 2px;
-  height: 525px;
+  height: 567px;
   padding-top: 10px;
   color: rgb(30,30,30);
   background: #fefefe;
@@ -335,6 +335,18 @@ input:hover {
   transition: all 0.2s !important;
 }
 
+/*-------------------------------------------------------
+                    Search Bar and Search Site
+-------------------------------------------------------*/
+div.ui.icon.input{
+  width: 100%;
+  height: 45px;
+}
+
+/*-------------------------------------------------------
+            END FOR Search Bar and Search Site
+-------------------------------------------------------*/
+
 input {
   border: none !important;
   border-bottom: 1px solid rgb(230,230,230) !important;
@@ -448,11 +460,19 @@ i.road.huge.icon{
 
 #about-logo{
   width: 55%;
-  margin-left: auto;
   max-width: 400px;
-  margin-right: auto;
-  min-width: 200px;
-  margin-bottom: 20px;
+}
+
+#search-logo{
+  width: 45%;
+  max-width: 340px;
+}
+
+.main-logo{
+  margin-left: auto !important;
+  margin-right: auto !important;
+  min-width: 200px !important;
+  margin-bottom: 20px !important;
 }
 
 .about-text{
@@ -515,17 +535,8 @@ div.sub.header.feed-subheader{
   margin-bottom: 20px !important;
 }
 
-.search-bar{
-  margin-top: 3px !important;
-  margin-left: 65px !important;
-  width: 65% !important;
-  display: block;
-  min-width: 220px !important;
-  max-width: 400px !important;
-}
-
 .button-upload{
-  margin-top: 15px !important;
+  margin-top: 25px !important;
   display: block;
   color: rgb(65,65,65) !important;
   transition: all 0.3s;
@@ -791,6 +802,15 @@ a.item:hover {
   transition: all 0.19s ease-out !important;
 }
 
+.ui.fluid.search .results{
+  width: 100%;
+  box-shadow: 0 1px 4px 1px #e8e8e8 !important;
+  border: 1px solid rgb(230,230,230);
+  margin-top: 20px;
+  border-radius: 2px !important;
+  margin-bottom: 25px;
+}
+
 #upload-content{
   display: block;
   width: 70%;
@@ -798,6 +818,16 @@ a.item:hover {
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+}
+
+#search{
+  display: block;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+  padding-top: 20px;
+  min-width: 300px;
 }
 
 p {
@@ -882,6 +912,9 @@ img.ui.image.image-feed{
       position: absolute;
     }
 
+    #search{
+      padding-top: 70px;
+    }
 
     #profile-image-large{
       height: auto;
@@ -1009,6 +1042,11 @@ img.ui.image.image-feed{
       width: 180px;
     }
 
+    #search{
+      width: 90%;
+
+    }
+
     .mobile-menu{
       margin-top: 8px !important;
     }
@@ -1094,6 +1132,10 @@ img.ui.image.image-feed{
     }
 }
 
+/*--------------------------------------------------
+      Media Queries for up to 580px
+---------------------------------------------------*/
+
 @media only screen and (max-width: 580px) {
     #settings-icon {
       float: left;
@@ -1120,6 +1162,16 @@ img.ui.image.image-feed{
     input {
       width: 100% !important;
       margin-bottom: 10px !important;
+    }
+
+    input.prompt{
+      height: 45px !important;
+      margin-bottom: 0 !important;
+    }
+
+    div.ui.icon.input{
+      width: 100%;
+      height: 45px;
     }
 
     .account-input-text{
