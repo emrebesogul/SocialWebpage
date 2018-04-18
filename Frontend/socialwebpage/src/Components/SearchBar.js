@@ -29,7 +29,6 @@ class SearchBar extends Component {
     }
 
     reloadPage() {
-        window.location.reload();
     }
 
   resetComponent = () => {
