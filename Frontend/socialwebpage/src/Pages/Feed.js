@@ -249,10 +249,10 @@ async getComments() {
                                       {item.content}
                                     </Card.Description>
                                     <Header as='h4' dividing>Comments</Header>
-                                    {comments.map((comment, index) => {         
+                                    {comments.map((comment, index) => {
                                       return(
                                         <Comment.Group>
-                                          {comment.post_id === item._id ? 
+                                          {comment.post_id === item._id ?
                                           <Comment>
                                             <Comment.Avatar src='/assets/images/boy.png' />
                                             <Comment.Content>
@@ -269,7 +269,7 @@ async getComments() {
                                     })}
                                     <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                       <Form.TextArea value={this.state.commentInput}/>
-                                      <Button content='Add Reply' labelPosition='left' icon='edit'/>
+                                      <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                     </Form>
                                   </Card.Content>
                                 </Card>
