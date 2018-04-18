@@ -560,20 +560,19 @@ class Profile extends Component {
                         </Tab.Pane> },
                         { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>
                         <div>
-
+                          {!this.state.show ?
+                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
+                              <Form.Field>
+                                <label>Title of your guestbook entry</label>
+                                <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
+                              </Form.Field>
+                              <Form.TextArea required autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
+                              <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
+                            </Form>
+                          : null }
                           {guestbookEntries.map((item, index) => {
                             return(
                               <div key={index} className="profile-card">
-                                {!this.state.show ?
-                                  <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
-                                    <Form.Field>
-                                      <label>Title of your guestbook entry</label>
-                                      <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
-                                    </Form.Field>
-                                    <Form.TextArea required autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
-                                    <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
-                                  </Form>
-                                : null }
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
