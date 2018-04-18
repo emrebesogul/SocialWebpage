@@ -1,7 +1,6 @@
 import _ from 'lodash'
-import faker from 'faker'
 import React, { Component } from 'react'
-import { Search, Grid, Header } from 'semantic-ui-react'
+import { Search, Header } from 'semantic-ui-react'
 import { getAllUser } from '../API/GET/GetMethods';
 import { Redirect } from 'react-router-dom';
 

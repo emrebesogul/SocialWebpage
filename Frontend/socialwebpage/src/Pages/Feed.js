@@ -5,7 +5,7 @@ import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 import SearchBar from '../Components/SearchBar';
 import {checkSession} from '../API/GET/GetMethods';
-import {getFriendRequests, getFriends, getComments} from '../API/GET/GetMethods';
+import {getFriendRequests, getFriends, getComments, getNotifications} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
@@ -13,6 +13,7 @@ var feedPosts = [];
 var friendRequests = [];
 var friends = [];
 var comments = [];
+var notifications = [];
 
 class Feed extends Component {
 
@@ -24,7 +25,8 @@ class Feed extends Component {
         resFriendsRequests: [],
         resFriends: [],
         resFeedPosts: [],
-        resComments: []
+        resComments: [],
+        resNotifications: []
       }
 
       this.apiCheckSession = "/checkSession";
@@ -45,6 +47,7 @@ class Feed extends Component {
       this.getFriends();
       this.getFriendRequests();
       this.getComments();
+      this.getNotifications();
   }
 
   async checkThisSession() {
@@ -71,6 +74,11 @@ class Feed extends Component {
   async getFriends() {
       const response = await getFriends("/friends/getFriends");
       this.setState({resFriends: response})
+  }
+
+  async getNotifications() {
+      const response = await getNotifications("/user/notifications");
+      this.setState({resNotifications: response})
   }
 
   async confirmFriendRequest(e, item) {
@@ -193,6 +201,7 @@ async getComments() {
         friendRequests = this.state.resFriendsRequests;
         friends = this.state.resFriends;
         comments = this.state.resComments;
+        notifications = this.state.resNotifications;
 
         return (
           <div id="main-content">
@@ -257,7 +266,7 @@ async getComments() {
                                     <Header as='h4' dividing>Comments</Header>
                                     {comments.map((comment, index) => {
                                       return(
-                                        <Comment.Group>
+                                        <Comment.Group key={index}>
                                           {comment.post_id === item._id ?
                                           <Comment>
                                             {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
@@ -368,6 +377,30 @@ async getComments() {
                                 </Header>
                               </div>
 
+                              {notifications.map((item, index) =>
+                                {
+                                  return(
+                                    <div key={index}>
+                                      <List  divided relaxed verticalAlign='middle'>
+                                        <List.Item>
+                                          {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                          <List.Content>
+                                            <List.Header >
+                                                <Link to={`/profile/${item.actionUser}`}>
+                                                    {item.actionUser}
+                                                </Link>
+                                            </List.Header>
+                                            <List.Description>{item.action}</List.Description>
+                                            <List.Description>{item.date_created}</List.Description>
+                                          </List.Content>
+                                          <List.Content floated="right">
+                                          </List.Content>
+                                        </List.Item>
+                                      </List>
+                                    </div>
+                                  )
+                                }
+                              )}
 
                             </div>
                           </Tab.Pane> },
