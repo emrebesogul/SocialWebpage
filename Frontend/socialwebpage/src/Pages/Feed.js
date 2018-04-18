@@ -161,14 +161,19 @@ getNumberOfLikes(currentItem) {
 }
 
 async handleCreateComment(event, data) {
-  let commentData = {
-    "content": event.target[0].value,
-    "postId" : data._id
-  }
-  let response = await createComment("/comment/create", commentData);
-  if(response) {
-    this.getComments();
-    this.setState({commentInput: ""});
+  if(event.target[0].value.trim() != "" && event.target[0].value != null) {
+    let commentData = {
+      "content": event.target[0].value,
+      "postId" : data._id
+    }
+    let response = await createComment("/comment/create", commentData);
+    if(response) {
+      let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
+      commentInputElements.map(item => {
+        item.value = "";
+      })
+      this.getComments();
+    }
   }
 }
 
@@ -254,7 +259,7 @@ async getComments() {
                                         <Comment.Group>
                                           {comment.post_id === item._id ?
                                           <Comment>
-                                            <Comment.Avatar src='/assets/images/boy.png' />
+                                            {comment.profile_picture_url !== "/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                             <Comment.Content>
                                               <Comment.Author as='a'>{comment.authorName}</Comment.Author>
                                               <Comment.Metadata>
@@ -268,7 +273,7 @@ async getComments() {
                                       )
                                     })}
                                     <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                      <Form.TextArea value={this.state.commentInput}/>
+                                      <Form.TextArea class="commentInput"/>
                                       <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                     </Form>
                                   </Card.Content>

@@ -494,3 +494,28 @@ export const createComment=(api, commentData) => {
         });
     });
 }
+
+//----------------------Delete Comment----------------------//
+export const deleteCommentById=(api, commentId) =>
+{
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+
+        $.ajax({
+          url: url + api,
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({commentId: commentId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
