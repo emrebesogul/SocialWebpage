@@ -340,7 +340,6 @@ getNumberOfLikes(currentItem) {
                                 </Header>
                               </div>
 
-                              Hier kommen Notifications
 
                             </div>
                           </Tab.Pane> },
