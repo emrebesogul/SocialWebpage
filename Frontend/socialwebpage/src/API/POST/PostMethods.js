@@ -439,7 +439,7 @@ export const getStoryEntryById=(api, storyId) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }
@@ -463,7 +463,7 @@ export const getImageById=(api, imageId) =>
           },
           success: function(res) {
               resolve(res);
-          }.bind(this),
+          },
           error: function(xhr, status, err){
               reject(err);
           }

@@ -738,7 +738,7 @@ MongoClient.connect(url, function(err, client) {
         });
       });
 
-      //----------------------Get Comments----------------------//
+      //----------------------Get all user----------------------//
       app.get('/rest/user/all', (req, res) => {
           database.getAllUser(client.db('socialwebpage'), res);
       });
@@ -758,6 +758,20 @@ MongoClient.connect(url, function(err, client) {
                 });
             }
         });
+      });
+
+      //----------------------Delete Comment----------------------//
+      app.get('/rest/user/notifications', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                  const username = authData.username;
+                  database.getNotifications(client.db('socialwebpage'), res, username);
+              }
+          });
       });
 
       //----------------------Like Comment----------------------//

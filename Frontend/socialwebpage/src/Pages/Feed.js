@@ -2,10 +2,9 @@ import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
-import Sidebar from '../Components/Sidebar'
-import SearchBar from '../Components/SearchBar';
+import Sidebar from '../Components/Sidebar';
 import {checkSession} from '../API/GET/GetMethods';
-import {getFriendRequests, getFriends, getComments} from '../API/GET/GetMethods';
+import {getFriendRequests, getFriends, getComments, getNotifications} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
@@ -13,6 +12,7 @@ var feedPosts = [];
 var friendRequests = [];
 var friends = [];
 var comments = [];
+var notifications = [];
 
 class Feed extends Component {
 
@@ -24,7 +24,8 @@ class Feed extends Component {
         resFriendsRequests: [],
         resFriends: [],
         resFeedPosts: [],
-        resComments: []
+        resComments: [],
+        resNotifications: []
       }
 
       this.apiCheckSession = "/checkSession";
@@ -45,6 +46,7 @@ class Feed extends Component {
       this.getFriends();
       this.getFriendRequests();
       this.getComments();
+      this.getNotifications();
   }
 
   async checkThisSession() {
@@ -71,6 +73,11 @@ class Feed extends Component {
   async getFriends() {
       const response = await getFriends("/friends/getFriends");
       this.setState({resFriends: response})
+  }
+
+  async getNotifications() {
+      const response = await getNotifications("/user/notifications");
+      this.setState({resNotifications: response})
   }
 
   async confirmFriendRequest(e, item) {
@@ -121,13 +128,13 @@ async handleRate(event, data){
   this.state.entryId = data._id;
 
   if(data.src) {
-    const response = await likeImageById(
+    await likeImageById(
       "/image/like",
       this.state.entryId
     );
   }
   else {
-    const response = await likeStoryEntryById(
+    await likeStoryEntryById(
       "/story/like",
       this.state.entryId
     );
@@ -195,6 +202,7 @@ async getComments() {
         friendRequests = this.state.resFriendsRequests;
         friends = this.state.resFriends;
         comments = this.state.resComments;
+        notifications = this.state.resNotifications;
 
         return (
           <div id="main-content">
@@ -259,16 +267,29 @@ async getComments() {
                                     <Header as='h4' dividing>Comments</Header>
                                     {comments.map((comment, index) => {
                                       return(
-                                        <Comment.Group>
+                                        <Comment.Group key={index}>
                                           {comment.post_id === item._id ?
                                           <Comment>
-                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                            <Comment.Content>
+
+                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                               <Comment.Author as='a'>
                                                 <Link to={`/profile/${comment.authorName}`}>
                                                   <span className="content-card-username-label"> @{comment.authorName} </span>
                                                 </Link>
                                               </Comment.Author>
+                                            <Comment.Content className="comment-content">
+                                              <Button className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button>
+                                              <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                              </Rating>
+                                              <div className="ui mini horizontal statistic post-likes">
+                                                <div className="value">
+                                                  0
+                                                </div>
+                                                <div className="label">
+                                                  Likes
+                                                </div>
+                                              </div>
+                                              <Comment.Author as='a'>{comment.authorName} <br/></Comment.Author>
                                               <Comment.Metadata>
                                                 <div>{comment.date_created}</div>
                                               </Comment.Metadata>
@@ -374,6 +395,30 @@ async getComments() {
                                 </Header>
                               </div>
 
+                              {notifications.map((item, index) =>
+                                {
+                                  return(
+                                    <div key={index}>
+                                      <List  divided relaxed verticalAlign='middle'>
+                                        <List.Item>
+                                          {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                          <List.Content>
+                                            <List.Header >
+                                                <Link to={`/profile/${item.actionUser}`}>
+                                                    {item.actionUser}
+                                                </Link>
+                                            </List.Header>
+                                            <List.Description>{item.action}</List.Description>
+                                            <List.Description>{item.date_created}</List.Description>
+                                          </List.Content>
+                                          <List.Content floated="right">
+                                          </List.Content>
+                                        </List.Item>
+                                      </List>
+                                    </div>
+                                  )
+                                }
+                              )}
 
                             </div>
                           </Tab.Pane> },

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Icon, Button, Image, Menu, Dropdown } from 'semantic-ui-react'
-import SearchBar from '../Components/SearchBar';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import {getCurrentUser} from '../API/GET/GetMethods';
 
@@ -83,7 +82,7 @@ class Sidebar extends Component {
                          <Icon name="setting"/> Settings
                      </Dropdown.Item>
                     </Link>
-                    <Link to="/about">
+                    <Link to="/legal">
                      <Dropdown.Item>
                         <Icon name="legal"/> Legal
                      </Dropdown.Item>
@@ -172,7 +171,7 @@ class Sidebar extends Component {
                     </Button>
                   </Link>
 
-                  <Link to="/about">
+                  <Link to="/legal">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='legal' />
                       Legal

@@ -155,7 +155,7 @@ class Profile extends Component {
         this.state.newGuestbookEntryTitle =  event.target[0].value;
         this.state.newGuestbookEntryContent =  event.target[1].value;
 
-        const response = await createGuestbookentry(
+      await createGuestbookentry(
           "/guestbook/create",
             this.state.newGuestbookEntryTitle,
             this.state.newGuestbookEntryContent,
@@ -169,14 +169,14 @@ class Profile extends Component {
       handleChangeGuestbookEntryInput(e, attribut) {
         switch(attribut) {
           case "guestbookEntryTitle": this.setState({"guestbookEntryTitle": e.target.value}); break;
-          case "guestbookEntryTitle": this.setState({"guestbookEntryTitle": e.target.value}); break;
+          case "guestbookEntryContent": this.setState({"guestbookEntryContent": e.target.value}); break;
           default: /* nothing to do */;
     }}
 
       async handleRateStoryEntry(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const responseStories = await likeStoryEntryById("/story/like",this.state.entryId);
+        await likeStoryEntryById("/story/like",this.state.entryId);
 
         this.state.responseStories.map(item => {
           if(item._id === data._id) {
@@ -195,7 +195,7 @@ class Profile extends Component {
       async handleRateImage(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const responseImages = await likeImageById("/image/like",this.state.entryId);
+        await likeImageById("/image/like",this.state.entryId);
 
         this.state.responseImages.map(item => {
           if(item._id === data._id) {
@@ -214,7 +214,7 @@ class Profile extends Component {
       async handleRateGuestbookEntry(event, data){
         event.preventDefault();
         this.state.entryId = data._id;
-        const responseGuestbookEntries = await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
+        await likeGuestbookEntryById("/guestbook/like",this.state.entryId);
 
         this.state.responseGuestbookEntries.map(item => {
           if(item._id === data._id) {
@@ -270,17 +270,17 @@ class Profile extends Component {
       }
 
       async handleDeleteImage(event, data) {
-        const response = await deleteImageById("/image/delete",data._id);
+        await deleteImageById("/image/delete",data._id);
         this.getProfileData(this.property);
       }
 
       async handleDeleteStoryEntry(event, data) {
-        const response = await deleteStoryEntryById("/story/delete", data._id);
+        await deleteStoryEntryById("/story/delete", data._id);
         this.getProfileData(this.property);
       }
 
       async handleDeleteGuestbookEntry(event, data) {
-        const response = await deleteGuestbookEntryById("/guestbook/delete",data._id);
+        await deleteGuestbookEntryById("/guestbook/delete",data._id);
         this.getProfileData(this.property);
       }
 
@@ -297,7 +297,7 @@ class Profile extends Component {
         switch(data) {
           case "storyTitle": this.setState({"storyTitle": event.target.value}); break;
           case "storyContent":  this.setState({"storyContent": event.target.value}); break;
-          default: null;
+          default: //Nothing to do;
         }
       }
 
@@ -335,7 +335,7 @@ class Profile extends Component {
         switch(data) {
           case "imageTitle": this.setState({"imageTitle": event.target.value}); break;
           case "imageContent":  this.setState({"imageContent": event.target.value}); break;
-          default: null;
+          default: //Nothing to do;
         }
       }
 
