@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Button, Form, Input, Message, Icon, Image } from 'semantic-ui-react'
+import { Image } from 'semantic-ui-react'
 import SidebarProfile from '../Components/Sidebar'
 import {checkSession} from '../API/GET/GetMethods';
 import SearchBar from '../Components/SearchBar';

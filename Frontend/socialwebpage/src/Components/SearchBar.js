@@ -1,7 +1,6 @@
 import _ from 'lodash'
-import faker from 'faker'
 import React, { Component } from 'react'
-import { Search, Grid, Header } from 'semantic-ui-react'
+import { Search } from 'semantic-ui-react'
 import { getAllUser } from '../API/GET/GetMethods';
 import { Redirect } from 'react-router-dom';
 
@@ -62,7 +61,7 @@ class SearchBar extends Component {
 
     const { redirectToProfile } = this.state;
      if (redirectToProfile) {
-       {this.reloadPage()}
+       this.reloadPage()
        return <Redirect to={'/profile/'+ this.state.value}/>;
      }
 

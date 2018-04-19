@@ -101,7 +101,7 @@ class Settings extends React.Component{
           case "lastname":  this.setState({"lastname": e.target.value}); break;
           case "username": this.setState({"username": e.target.value}); break;
           case "email":  this.setState({"email": e.target.value}); break;
-          default: null;
+          default: //Nothing to do;
     }}
 
     onDrop(files) {
@@ -170,7 +170,7 @@ class Settings extends React.Component{
                 <p><Icon name='user' size="large" id="settings-icon" /> Select your picture for your profile</p>
               </Dropzone>
 
-              <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" src={file.preview} /> )}</div>
+              <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>
               <aside>
                   {
                     this.state.files.map(f => <span className="upload-image-label" key={f.name}>Uploaded Filename: {f.name}</span>)

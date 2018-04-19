@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Icon, Button, Image, Menu, Dropdown } from 'semantic-ui-react'
-import SearchBar from '../Components/SearchBar';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import {getCurrentUser} from '../API/GET/GetMethods';
 

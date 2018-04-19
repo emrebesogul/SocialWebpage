@@ -109,15 +109,12 @@ class ProfileHeader extends Component {
 
     async handleImageClick(event, bool){
       let wrapper = document.getElementsByClassName("wrapper");
-      let profile = document.getElementById("profile-content");
       if (bool === true){
         wrapper[0].style.display = "block";
         wrapper[0].style.animation= "fadeIn 0.3s";
-
       }else{
         wrapper[0].style.display = "none";
       }
-
     }
 
 
@@ -134,7 +131,6 @@ class ProfileHeader extends Component {
                         <div id="textarea"></div>
                       </div>
 
-                      <Button id="profile-image-close-button" onClick={((e) => this.handleImageClick(e, false))} >Hide Image</Button>
                       <Image src={this.state.pictureURL} id="profile-image-large"/>
                     </div>
                   </div>
