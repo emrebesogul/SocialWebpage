@@ -997,6 +997,7 @@ var call = module.exports = {
                  "requester": "$user.username",
                  "requesterId": "$user._id",
                  "recipient": 1,
+                 "time": 1,
                  "profile_picture_filename": "$user.picture",
                  "profile_picture_url": 1
              }
@@ -1006,6 +1007,7 @@ var call = module.exports = {
         result.map(item => {
               item.requester = item.requester;
               item.requesterId = item.requesterId;
+              item.date_created = getDate(item.time);
               item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
           });
           res.status(200).send(result);
@@ -1654,21 +1656,45 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     },
 
     //----------------------------List all notifications of a user-----------------------------//
-    getNotifications: function(db, res, username) {
+    getNotifications: function(db, res, userId) {
 
-        db.collection('notifications').find({"user": username}).toArray(function (err, docs) {
-            if (err) throw err;
-            if (docs) {
-                //console.log("docs: ", docs);
-                res.status(200).send(docs);
+        db.collection('notifications').aggregate([
+            { $match: {"whoAmI": ObjectId(userId)}},
+            { $lookup:
+                {
+                    from: "users",
+                    localField: "whoDidAction",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            },
+            {
+                $project :
+                {
+                    "username": "$user.username",
+                    "action": 1,
+                    "date_created": 1,
+                    "userid": "$user._id",
+                    "profile_picture_filename": "$user.picture",
+                    "profile_picture_url": 1
+                }
             }
-        });
+        ]).toArray((err, result) => {
+         if (err) throw err;
+         result.map(item => {
+               item.username = item.username;
+               item.action = item.action;
+               item.date_created = getDate(item.date_created);
+               item.userid = item.userid;
+               item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+           });
+            result.sort((a, b) => {
+                return new Date(b.date_created) - new Date(a.date_created);
+            });
 
-
-    },
-
-
-
+            res.status(200).send(result);
+         });
+       },
 
 }
 

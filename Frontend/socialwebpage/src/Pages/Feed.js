@@ -316,7 +316,7 @@ async getComments() {
                                                   </Link>
                                                    wants to be friends with you.
                                               </List.Header>
-                                              <List.Description>4 mutual contacts</List.Description>
+                                              <List.Description>{item.date_created}</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
                                               <Button onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
@@ -341,7 +341,6 @@ async getComments() {
                                                       {item.name}
                                                   </Link>
                                               </List.Header>
-                                              <List.Description>4 mutual contacts</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
                                                 <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
@@ -376,11 +375,11 @@ async getComments() {
                                     <div key={index}>
                                       <List  divided relaxed verticalAlign='middle'>
                                         <List.Item>
-                                          {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                           <List.Content>
                                             <List.Header >
-                                                <Link to={`/profile/${item.actionUser}`}>
-                                                    {item.actionUser}
+                                                <Link to={`/profile/${item.username}`}>
+                                                    {item.username}
                                                 </Link>
                                             </List.Header>
                                             <List.Description>{item.action}</List.Description>

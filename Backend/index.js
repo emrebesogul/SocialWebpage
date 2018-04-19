@@ -771,8 +771,8 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
-                  const username = authData.username;
-                  database.getNotifications(client.db('socialwebpage'), res, username);
+                  const userId = authData.userid;
+                  database.getNotifications(client.db('socialwebpage'), res, userId);
               }
           });
       });
