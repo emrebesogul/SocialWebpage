@@ -262,41 +262,45 @@ async getComments() {
                                     <Card.Description>
                                       {item.content}
                                     </Card.Description>
-                                    <Header as='h4' dividing>Comments</Header>
-                                    {comments.map((comment, index) => {
-                                      return(
-                                        <Comment.Group key={index}>
-                                          {comment.post_id === item._id ?
-                                          <Comment>
+                                      <Header as='h3' dividing>Comments</Header>
+                                      {comments.map((comment, index) => {
+                                        return(
+                                          <Comment.Group key={index}>
+                                            {comment.post_id === item._id ?
+                                            <Comment className="comment-box">
+                                              {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                              <Comment.Content className="comment-content">
+                                                <div className="comment-header">
+                                                    <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                                </div>
+                                                <div className="ui mini horizontal statistic post-likes">
+                                                  <div className="value">
+                                                    0
+                                                  </div>
+                                                  <div className="label">
+                                                    Likes
+                                                  </div>
+                                                </div>
+                                                <Button className="button-upload delete-button-comment" circular icon="delete" size="small"></Button>
+                                                <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                                </Rating>
+                                                <div className="comment-user-info">
+                                                  <Comment.Metadata>
+                                                    <div>{comment.date_created}</div>
+                                                  </Comment.Metadata>
+                                                </div>
+                                                <Comment.Text>{comment.content}</Comment.Text>
+                                              </Comment.Content>
+                                            </Comment>
+                                            : null }
+                                          </Comment.Group>
+                                        )
+                                      })}
+                                      <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                        <Form.TextArea className="commentInput" placeholder="Add a comment.." />
+                                        <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                      </Form>
 
-                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
-                                            <Comment.Content className="comment-content">
-                                              <Button className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button>
-                                              <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
-                                              </Rating>
-                                              <div className="ui mini horizontal statistic post-likes">
-                                                <div className="value">
-                                                  0
-                                                </div>
-                                                <div className="label">
-                                                  Likes
-                                                </div>
-                                              </div>
-                                              <Comment.Author as='a'>{comment.authorName} <br/></Comment.Author>
-                                              <Comment.Metadata>
-                                                <div>{comment.date_created}</div>
-                                              </Comment.Metadata>
-                                              <Comment.Text>{comment.content}</Comment.Text>
-                                            </Comment.Content>
-                                          </Comment>
-                                          : null }
-                                        </Comment.Group>
-                                      )
-                                    })}
-                                    <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                      <Form.TextArea className="commentInput"/>
-                                      <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
-                                    </Form>
                                   </Card.Content>
                                 </Card>
                               </Card.Group>
