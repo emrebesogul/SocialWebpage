@@ -496,7 +496,11 @@ var call = module.exports = {
                   if ((docs.friends.toString()).includes(userid)) {
                       buttonState = "Delete Friend";
                   } else if (docs2) {
-                      buttonState = "Request sent";
+                      if (docs2.requesterId == userid) {
+                          buttonState = "Your Request was sent";
+                      } else {
+                          buttonState = "Your have a new Request";
+                      }
                   } else {
                       buttonState = "Add Friend";
                   }
