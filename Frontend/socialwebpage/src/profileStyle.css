@@ -60,8 +60,8 @@ div.item::before{
 
 div.comment {
   margin-top: 15px !important;
-  width: 96% !important;
-  margin-left: 10px !important;
+  /*width: 96% !important;
+  margin-left: 10px !important;*/
 }
 
 div.description{
@@ -93,12 +93,12 @@ h2.ui.huge.icon.center.aligned.header{
 
 
 #guestbook-reply{
-  padding: 2em 3.4em;
   margin-right: auto;
   border-radius: 2px;
-  padding-right: 9em;
-  margin-top: 30px;
-  margin-bottom: 40px;
+  padding-right: 10px;
+  padding-left: 10;
+  /* margin-top: 30px; */
+  margin-bottom: 5px;
 }
 
 #guestbook{
@@ -340,21 +340,27 @@ div.ui.comments {
   margin: 0.5em 0;
 }
 
+.comment-likes{
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+}
+
 .comment-header {
   width: 100%;
-  height: 34px;
-  background: rgb(240,240,240);
+  height: 30px;
+  background: rgb(233,233,233);
   position: absolute;
   top: 0;
   left: 0;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
   box-shadow: 0 1px 2px #adadad79;
 }
 
 .comment-author{
   position: absolute;
-  top: 9px;
+  top: 6px;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -367,13 +373,13 @@ div.ui.comments {
 
 .comment-user-info{
   position: absolute;
-  top: 42px;
-  left: 90px;
+  top: 40px;
+  left: 74px;
 }
 
 .comment-box{
   border: 1px solid rgb(220,220,220);
-  border-radius: 10px;
+  border-radius: 3px;
   margin-bottom: 20px !important;
   padding-left: 15px !important;
   padding-top: 10px !important;
@@ -382,14 +388,13 @@ div.ui.comments {
 }
 
 .comments-user-image{
-  height: 67px;
-  width: 67px;
+  height: 58px;
+  width: 58px;
   border: 1px solid rgb(244,244,244);
   display: block;
   -o-object-fit: cover;
   object-fit: cover;
   margin-top: -6px;
-  margin-left: 10px;
   z-index: 100;
   border-radius: 75%;
   -webkit-box-shadow: 0 0 3px #b9b9b9a8;
@@ -398,8 +403,13 @@ div.ui.comments {
 
 .comment-rating{
   position: absolute;
-  top: 9px;
-  left: 5px;
+  top: 6px;
+  left: 40%;
+  transform: translateX(50%);
+}
+
+.comment-content{
+  padding: 1em !important;
 }
 
 /*----------------------------------------------
