@@ -82,7 +82,7 @@ class SidebarProfile extends Component {
                          <Icon name="setting"/> Settings
                      </Dropdown.Item>
                     </Link>
-                    <Link to="/about">
+                    <Link to="/legal">
                      <Dropdown.Item>
                         <Icon name="legal"/> Legal
                      </Dropdown.Item>
@@ -161,7 +161,7 @@ class SidebarProfile extends Component {
                     </Button>
                   </Link>
 
-                  <Link to="/about">
+                  <Link to="/legal">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='legal' />
                       Legal

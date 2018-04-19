@@ -6,7 +6,6 @@ var fs = require('fs');
 
 var call = module.exports = {
 
-
   //----------------------LOGIN----------------------//
   checkUserCredentials: function (db, req, res, userCredential) {
       //Select table and parse form input fields
@@ -991,7 +990,7 @@ updateUserData: function(db, res, data) {
         const collectionUsers = db.collection('users');
 
         // Set status to accepted
-        //Delete from database
+        // Delete from database
         collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
             if (err) throw err;
         });
@@ -1026,6 +1025,17 @@ updateUserData: function(db, res, data) {
                 );
             }
         });
+
+        const action = "added you as a friend!"
+        const date_created = new Date();
+
+        db.collection('notifications').insert({
+            "user": requester,
+            "actionUser": recipient,
+            "action": "added you as a friend!",
+            "date_created": date_created
+        });
+
         res.send(true);
     },
 
@@ -1575,6 +1585,20 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
               res.send(false);
           }
       });
+    },
+
+    //----------------------------List all notifications of a user-----------------------------//
+    getNotifications: function(db, res, username) {
+
+        db.collection('notifications').find({"user": username}).toArray(function (err, docs) {
+            if (err) throw err;
+            if (docs) {
+                console.log("docs: ", docs);
+                res.status(200).send(docs);
+            }
+        });
+
+
     },
 
 }

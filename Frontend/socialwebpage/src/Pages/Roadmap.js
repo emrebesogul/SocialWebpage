@@ -70,7 +70,7 @@ class Roadmap extends Component {
                         Post text to platform (Show posts in feed and profile)
                       </Item.Description>
                       <Item.Description>
-                        Wokring registration and login w/o Exception handling
+                        Working registration and login w/o Exception handling
                       </Item.Description>
                       <Item.Description>
                         First UI implementation
@@ -169,9 +169,6 @@ class Roadmap extends Component {
                       <Item.Header as='a'>Beta</Item.Header>
                       <Item.Meta> TBD </Item.Meta>
                       <Item.Description>
-                        Exception handling in Login/regstration
-                      </Item.Description>
-                      <Item.Description>
                         Clean up code
                       </Item.Description>
                       <Item.Description>
@@ -190,7 +187,7 @@ class Roadmap extends Component {
                       <Item.Header as='a'>Final Release</Item.Header>
                       <Item.Meta> TBD </Item.Meta>
                       <Item.Description>
-                        Exception handling in Login/regstration
+                        Havin fun!
                       </Item.Description>
 
                       <Item.Extra>Not started</Item.Extra>
