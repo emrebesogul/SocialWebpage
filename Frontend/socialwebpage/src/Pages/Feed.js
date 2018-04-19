@@ -273,7 +273,7 @@ async getComments() {
                                                 <div className="comment-header">
                                                     <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
                                                 </div>
-                                                <div className="ui mini horizontal statistic post-likes">
+                                                <div className="ui mini horizontal statistic post-likes comment-likes">
                                                   <div className="value">
                                                     0
                                                   </div>
@@ -281,7 +281,7 @@ async getComments() {
                                                     Likes
                                                   </div>
                                                 </div>
-                                                <Button className="button-upload delete-button-comment" circular icon="delete" size="small"></Button>
+                                                <Button className="button-upload delete-button-comment" circular icon="delete" size="tiny"></Button>
                                                 <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
                                                 </Rating>
                                                 <div className="comment-user-info">
