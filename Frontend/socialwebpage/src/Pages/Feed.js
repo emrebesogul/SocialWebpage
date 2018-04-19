@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
-import Sidebar from '../Components/Sidebar'
-import SearchBar from '../Components/SearchBar';
+import Sidebar from '../Components/Sidebar';
 import {checkSession} from '../API/GET/GetMethods';
 import {getFriendRequests, getFriends, getComments, getNotifications} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment} from '../API/POST/PostMethods';
@@ -129,13 +128,13 @@ async handleRate(event, data){
   this.state.entryId = data._id;
 
   if(data.src) {
-    const response = await likeImageById(
+    await likeImageById(
       "/image/like",
       this.state.entryId
     );
   }
   else {
-    const response = await likeStoryEntryById(
+    await likeStoryEntryById(
       "/story/like",
       this.state.entryId
     );
@@ -269,9 +268,21 @@ async getComments() {
                                         <Comment.Group key={index}>
                                           {comment.post_id === item._id ?
                                           <Comment>
-                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                            <Comment.Content>
-                                              <Comment.Author as='a'>{comment.authorName}</Comment.Author>
+
+                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                            <Comment.Content className="comment-content">
+                                              <Button className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button>
+                                              <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                              </Rating>
+                                              <div className="ui mini horizontal statistic post-likes">
+                                                <div className="value">
+                                                  0
+                                                </div>
+                                                <div className="label">
+                                                  Likes
+                                                </div>
+                                              </div>
+                                              <Comment.Author as='a'>{comment.authorName} <br/></Comment.Author>
                                               <Comment.Metadata>
                                                 <div>{comment.date_created}</div>
                                               </Comment.Metadata>
