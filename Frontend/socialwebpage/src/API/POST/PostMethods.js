@@ -221,7 +221,7 @@ export const sendFriendshipRequest=(api, recipient) =>
 }
 
 //----------------------Confirm Friendship----------------------//
-export const confirmFriendshipRequest=(api, requester, recipient) =>
+export const confirmFriendshipRequest=(api, requesterId) =>
 {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
@@ -231,7 +231,7 @@ export const confirmFriendshipRequest=(api, requester, recipient) =>
           type: "POST",
           cache: false,
           contentType: 'application/json',
-          data: JSON.stringify({requester: requester, recipient: recipient}),
+          data: JSON.stringify({requesterId: requesterId}),
           headers: {
               'Authorization': 'Bearer ' + token
           },
@@ -246,7 +246,7 @@ export const confirmFriendshipRequest=(api, requester, recipient) =>
 }
 
 //----------------------Delete Friendshiprequest----------------------//
-export const deleteFriendshipRequest=(api, requester, recipient) =>
+export const deleteFriendshipRequest=(api, requesterId) =>
 {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
@@ -256,7 +256,7 @@ export const deleteFriendshipRequest=(api, requester, recipient) =>
           type: "POST",
           cache: false,
           contentType: 'application/json',
-          data: JSON.stringify({requester: requester, recipient: recipient}),
+          data: JSON.stringify({requesterId: requesterId}),
           headers: {
               'Authorization': 'Bearer ' + token
           },
@@ -398,7 +398,7 @@ export const deleteProfilePic=(api, username) =>
 }
 
 //----------------------Delete Friend----------------------//
-export const deleteFriend=(api, userToDelete) =>
+export const deleteFriend=(api, friendId) =>
 {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
@@ -408,7 +408,7 @@ export const deleteFriend=(api, userToDelete) =>
           type: "POST",
           cache: false,
           contentType: 'application/json',
-          data: JSON.stringify({userToDelete: userToDelete}),
+          data: JSON.stringify({userToDeleteId: friendId}),
           headers: {
               'Authorization': 'Bearer ' + token
           },

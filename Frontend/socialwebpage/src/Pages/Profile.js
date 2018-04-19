@@ -386,6 +386,7 @@ class Profile extends Component {
       async getComments() {
         let response = await getComments("/comment/list");
         this.setState({resComments: response});
+        console.log("resComments: ", this.state.resComments)
       }
 
 

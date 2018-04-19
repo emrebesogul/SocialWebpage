@@ -12,6 +12,7 @@ class ProfileHeader extends Component {
         this.state = {
           show: false,
           redirectToLogin: false,
+          id: "",
           username: "",
           firstname: "",
           lastname: "",
@@ -57,7 +58,9 @@ class ProfileHeader extends Component {
         } else {
             let api = this.api + "?username=" + username;
             const response = await getCurrentUser(api);
+            console.log(response)
             this.setState({username: response.username})
+            this.setState({id: response.id})
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
             this.setState({email: response.email})
@@ -99,7 +102,7 @@ class ProfileHeader extends Component {
         if(this.state.buttonState == "Delete Friend") {
             const response = await deleteFriend(
                 "/friends/deleteFriend",
-                this.state.username
+                this.state.id
             );
             if(response) {
                 window.location.reload();

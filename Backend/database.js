@@ -468,8 +468,10 @@ var call = module.exports = {
     });
   },
 
+
   //----------------------Get Other User----------------------//
-  getOtherUserProfile: function(db, req, res, username, myUsername) {
+  getOtherUserProfile: function(db, req, res, username, myUsername, userid) {
+
       const collection = db.collection('users');
       collection.findOne({"username": username}, (err, docs) => {
           if (err) {
@@ -480,10 +482,9 @@ var call = module.exports = {
           }
 
           if (docs) {
-
               //Check if they are alredy friends or friend request is on its way
               db.collection('friendRequests').findOne({ $and : [
-                      {$or: [ {"requester": myUsername, "recipient": username}, {"requester": username, "recipient": myUsername} ]},
+                      {$or: [ {"requesterId": ObjectId(userid), "recipientId": ObjectId(docs._id)}, {"requesterId": ObjectId(docs._id), "recipientId": ObjectId(userid)} ]},
                       {"status": "open"}
                   ]},
                   (err, docs2) => {
@@ -492,7 +493,7 @@ var call = module.exports = {
 
                   var buttonState = "";
 
-                  if ((docs.friends).includes(myUsername)) {
+                  if ((docs.friends.toString()).includes(userid)) {
                       buttonState = "Delete Friend";
                   } else if (docs2) {
                       buttonState = "Request sent";
@@ -501,6 +502,7 @@ var call = module.exports = {
                   }
 
                   res.send(JSON.stringify({
+                      id: docs._id,
                       username: docs.username,
                       firstname: docs.first_name,
                       lastname: docs.last_name,
@@ -640,6 +642,20 @@ var call = module.exports = {
 
             if (err_update_stories) throw err_update_stories;
         });
+
+
+
+        //
+        /*
+        const date_created = new Date();
+        db.collection('notifications').insert({
+            "user": requester,
+            "actionUser": recipient,
+            "action": "added you as a friend!",
+            "date_created": date_created
+        });
+        */
+
         res.send(true);
     });
   },
@@ -695,41 +711,90 @@ var call = module.exports = {
                 throw err_update_images;
             }
         });
+
+        /*
+        const date_created = new Date();
+        db.collection('notifications').insert({
+            "user": requester,
+            "actionUser": recipient,
+            "action": "added you as a friend!",
+            "date_created": date_created
+        });
+        */
+
         res.send(true);
     });
   },
 
   //----------------------Update User Data at Settings----------------------//
-updateUserData: function(db, res, data) {
-    const collectionUsers = db.collection('users');
+    updateUserData: function(db, res, data) {
+        const collectionUsers = db.collection('users');
 
-    const userid = data.userid;
-    const userData = data.userData
-    const hashedPassword = SHA256(userData.password)
-    let username = (userData.username).trim();
-    var checkUsername = false;
-    var checkEmail = false;
+        const userid = data.userid;
+        const userData = data.userData
+        const hashedPassword = SHA256(userData.password)
+        let username = (userData.username).trim();
+        var checkUsername = false;
+        var checkEmail = false;
 
-    // check for username
-    collectionUsers.findOne({"username": username}, (err, docs) => {
-        if (err) {
-            throw err;
-        }
+        // check for username
+        collectionUsers.findOne({"username": username}, (err, docs) => {
+            if (err) {
+                throw err;
+            }
 
-        // username already given, but...
-        if(docs) {
-            // username is me...
-            if(docs._id == userid) {
-                // Username is same => no update => check for email if email is given
-                collectionUsers.findOne({"email": userData.email}, (err, docs) => {
-                    if (err) {
-                        throw err;
-                    }
+            // username already given, but...
+            if(docs) {
+                // username is me...
+                if(docs._id == userid) {
+                    // Username is same => no update => check for email if email is given
+                    collectionUsers.findOne({"email": userData.email}, (err, docs) => {
+                        if (err) {
+                            throw err;
+                        }
 
-                    // If email exists:
-                    if(docs) {
-                        if(docs._id == userid) {
-                            // If Email is same as origin users => no update => update fields
+                        // If email exists:
+                        if(docs) {
+                            if(docs._id == userid) {
+                                // If Email is same as origin users => no update => update fields
+                                console.log(username, " changed successfully its user data")
+                                if(userData.password !== '') {
+                                    collectionUsers.update(
+                                        {_id: ObjectId(userid)},
+                                        {
+                                            $set: {
+                                                "first_name": userData.first_name,
+                                                "last_name": userData.last_name,
+                                                "username": username,
+                                                "email": userData.email,
+                                                "password": hashedPassword.words
+                                            }
+                                        }
+                                    );
+                                } else {
+                                    collectionUsers.update(
+                                        {_id: ObjectId(userid)},
+                                        {
+                                            $set: {
+                                                "first_name": userData.first_name,
+                                                "last_name": userData.last_name,
+                                                "username": username,
+                                                "email": userData.email
+                                            }
+                                        }
+                                    );
+                                }
+                                res.send(JSON.stringify({
+                                    message: "User data successfully updated."
+                                }));
+                            } else {
+                                // Email is already given and is not same with the origin users
+                                res.send(JSON.stringify({
+                                    message: "This email is not available222. Please try another one."
+                                }));
+                            }
+                        } else {
+
                             console.log(username, " changed successfully its user data")
                             if(userData.password !== '') {
                                 collectionUsers.update(
@@ -760,65 +825,66 @@ updateUserData: function(db, res, data) {
                             res.send(JSON.stringify({
                                 message: "User data successfully updated."
                             }));
-                        } else {
-                            // Email is already given and is not same with the origin users
+
+
+                        }
+                    })
+                } else {
+                    // Username is already given
+                    res.send(JSON.stringify({
+                        message: "This username is not available. Please try another one."
+                    }));
+                }
+            } else {
+                //Check email because username is new
+                collectionUsers.findOne({"email": userData.email}, (err, docs) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    if(docs) {
+                        if(docs._id == userid) {
+                            // Email is same => no update => update fields
+                            console.log(userData.username, " changed successfully its user data")
+                            if(userData.password !== '') {
+                                collectionUsers.update(
+                                    {_id: ObjectId(userid)},
+                                    {
+                                        $set: {
+                                            "first_name": userData.first_name,
+                                            "last_name": userData.last_name,
+                                            "username": username,
+                                            "email": userData.email,
+                                            "password": hashedPassword
+                                        }
+                                    }
+                                );
+                            } else {
+                                collectionUsers.update(
+                                    {_id: ObjectId(userid)},
+                                    {
+                                        $set: {
+                                            "first_name": userData.first_name,
+                                            "last_name": userData.last_name,
+                                            "username": username,
+                                            "email": userData.email
+                                        }
+                                    }
+                                );
+                            }
                             res.send(JSON.stringify({
-                                message: "This email is not available222. Please try another one."
+                                message: "User data successfully updated."
+                            }));
+                        } else {
+                            // Email is already given
+                            res.send(JSON.stringify({
+                                message: "This email is not available. Please try another one."
                             }));
                         }
                     } else {
 
+
                         console.log(username, " changed successfully its user data")
-                        if(userData.password !== '') {
-                            collectionUsers.update(
-                                {_id: ObjectId(userid)},
-                                {
-                                    $set: {
-                                        "first_name": userData.first_name,
-                                        "last_name": userData.last_name,
-                                        "username": username,
-                                        "email": userData.email,
-                                        "password": hashedPassword.words
-                                    }
-                                }
-                            );
-                        } else {
-                            collectionUsers.update(
-                                {_id: ObjectId(userid)},
-                                {
-                                    $set: {
-                                        "first_name": userData.first_name,
-                                        "last_name": userData.last_name,
-                                        "username": username,
-                                        "email": userData.email
-                                    }
-                                }
-                            );
-                        }
-                        res.send(JSON.stringify({
-                            message: "User data successfully updated."
-                        }));
-
-
-                    }
-                })
-            } else {
-                // Username is already given
-                res.send(JSON.stringify({
-                    message: "This username is not available. Please try another one."
-                }));
-            }
-        } else {
-            //Check email because username is new
-            collectionUsers.findOne({"email": userData.email}, (err, docs) => {
-                if (err) {
-                    throw err;
-                }
-
-                if(docs) {
-                    if(docs._id == userid) {
-                        // Email is same => no update => update fields
-                        console.log(userData.username, " changed successfully its user data")
                         if(userData.password !== '') {
                             collectionUsers.update(
                                 {_id: ObjectId(userid)},
@@ -848,53 +914,14 @@ updateUserData: function(db, res, data) {
                         res.send(JSON.stringify({
                             message: "User data successfully updated."
                         }));
-                    } else {
-                        // Email is already given
-                        res.send(JSON.stringify({
-                            message: "This email is not available. Please try another one."
-                        }));
                     }
-                } else {
+                })
+            }
+        })
 
+    },
 
-                    console.log(username, " changed successfully its user data")
-                    if(userData.password !== '') {
-                        collectionUsers.update(
-                            {_id: ObjectId(userid)},
-                            {
-                                $set: {
-                                    "first_name": userData.first_name,
-                                    "last_name": userData.last_name,
-                                    "username": username,
-                                    "email": userData.email,
-                                    "password": hashedPassword
-                                }
-                            }
-                        );
-                    } else {
-                        collectionUsers.update(
-                            {_id: ObjectId(userid)},
-                            {
-                                $set: {
-                                    "first_name": userData.first_name,
-                                    "last_name": userData.last_name,
-                                    "username": username,
-                                    "email": userData.email
-                                }
-                            }
-                        );
-                    }
-                    res.send(JSON.stringify({
-                        message: "User data successfully updated."
-                    }));
-                }
-            })
-        }
-    })
-
-},
-
-  //----------------------Friend----------------------//
+  //----------------------Send Friend requests----------------------//
   sendFriendshipRequest: function(db, res, userId, requester, recipient) {
       const collectionUsers = db.collection('users');
 
@@ -946,7 +973,7 @@ updateUserData: function(db, res, data) {
       })
   },
 
-  //----------------------xy----------------------//
+  //----------------------get Friendship requests----------------------//
   //getFriendRequests => where recipient is userid and status open
   // if decline: status = rejected
   // if status = accepted
@@ -968,6 +995,7 @@ updateUserData: function(db, res, data) {
              $project :
              {
                  "requester": "$user.username",
+                 "requesterId": "$user._id",
                  "recipient": 1,
                  "profile_picture_filename": "$user.picture",
                  "profile_picture_url": 1
@@ -977,6 +1005,7 @@ updateUserData: function(db, res, data) {
       if (err) throw err;
         result.map(item => {
               item.requester = item.requester;
+              item.requesterId = item.requesterId;
               item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
           });
           res.status(200).send(result);
@@ -984,24 +1013,23 @@ updateUserData: function(db, res, data) {
     },
 
 
-    //----------------------xy----------------------//
-    confirmFriendshipRequest: function(db, requester, recipient , res) {
+    //----------------------Add to friendlist----------------------//
+    confirmFriendshipRequest: function(db, requesterId, recipientId , res) {
         const collectionfriendRequests = db.collection('friendRequests');
         const collectionUsers = db.collection('users');
 
-        // Set status to accepted
         // Delete from database
-        collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
+        collectionfriendRequests.remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
         });
 
         // Add to friendlist of both array.push()
-        collectionUsers.findOne({"username": requester}, (err, docs) => {
+        collectionUsers.findOne({"_id": ObjectId(requesterId)}, (err, docs) => {
             if(err) throw err;
             if(docs) {
                 var friendlist = docs.friends;
-                friendlist.push(recipient);
-                collectionUsers.update({"username": requester},
+                friendlist.push(ObjectId(recipientId));
+                collectionUsers.update({"_id": ObjectId(requesterId)},
                     {
                         $set: {
                             "friends": friendlist
@@ -1011,12 +1039,12 @@ updateUserData: function(db, res, data) {
             }
         });
 
-        collectionUsers.findOne({"username": recipient}, (err, docs) => {
+        collectionUsers.findOne({"_id": ObjectId(recipientId)}, (err, docs) => {
             if(err) throw err;
             if(docs) {
                 var friendlist = docs.friends;
-                friendlist.push(requester);
-                collectionUsers.update({"username": recipient},
+                friendlist.push(ObjectId(requesterId));
+                collectionUsers.update({"_id": ObjectId(recipientId)},
                     {
                         $set: {
                             "friends": friendlist
@@ -1026,12 +1054,10 @@ updateUserData: function(db, res, data) {
             }
         });
 
-        const action = "added you as a friend!"
         const date_created = new Date();
-
         db.collection('notifications').insert({
-            "user": requester,
-            "actionUser": recipient,
+            "whoAmI": ObjectId(requesterId),
+            "whoDidAction": ObjectId(recipientId),
             "action": "added you as a friend!",
             "date_created": date_created
         });
@@ -1039,11 +1065,11 @@ updateUserData: function(db, res, data) {
         res.send(true);
     },
 
-    //----------------------xy----------------------//
-    deleteFriendshipRequest: function(db, requester, recipient , res) {
+    //----------------------Decline Friend request----------------------//
+    deleteFriendshipRequest: function(db, requesterId, recipientId, res) {
         const collectionfriendRequests = db.collection('friendRequests');
 
-        collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
+        collectionfriendRequests.remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
             res.send(true);
         });
@@ -1063,14 +1089,15 @@ updateUserData: function(db, res, data) {
 
                 docs.friends.map(item => {
                     item.friends = item.friends;
-                    collectionUsers.findOne({"username": item}, (err_friends, res_friends) => {
+                    collectionUsers.findOne({"_id": ObjectId(item)}, (err_friends, res_friends) => {
                         if(err_friends) throw err_friends;
-                        if (res_friends) {
+                        if (res_friends != "") {
                             friendlist.push(res_friends);
                             i++;
 
                             result = {};
                             result ["name"] = res_friends.username;
+                            result ["friendId"] = res_friends._id;
                             result ["picture"] = "http://localhost:8000/uploads/posts/" +res_friends.picture;
                             friends.push(result);
 
@@ -1096,43 +1123,60 @@ updateUserData: function(db, res, data) {
     },
 
 
-    deleteFriend: function(db, res, userId, userToDelete) {
+    deleteFriend: function(db, res, userId, userToDeleteId) {
         const collectionUsers = db.collection('users');
 
         //Delete friend from first user
-        collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
+        collectionUsers.findOne({"_id" : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
                 // Find and remove item from an array
-                var i = (docs.friends).indexOf(userToDelete);
+                var i = (docs.friends.toString()).indexOf(ObjectId(userToDeleteId).toString());
+                // -1 if not exists
+                // else place where it exists
+
                 if(i != -1) {
-                	(docs.friends).splice(i, 1);
+                    var S = docs.friends.toString()
+                    S = S.replace(ObjectId(userToDeleteId).toString(), "");
+
+                    var re = /\s*,\s*/;
+                    S = S.split(re);
+                    S = S.filter(String)
                 }
-                collectionUsers.update({_id : ObjectId(userId)},
+                collectionUsers.update({"_id" : ObjectId(userId)},
                     {
                         $set: {
-                            "friends": docs.friends
+                            "friends": S
                         }
                     }
                 );
 
                 //Delete friend from second user
-                collectionUsers.findOne({username : userToDelete}, (err, docs2) => {
+                collectionUsers.findOne({"_id" : ObjectId(userToDeleteId)}, (err, docs2) => {
                     if(err) throw err;
                     if (docs2) {
                         // Find and remove item from an array
-                        var j = (docs2.friends).indexOf(docs.username);
-                        if(j != -1) {
-                            (docs2.friends).splice(j, 1);
+                        var j = (docs2.friends.toString()).indexOf(ObjectId(userId).toString());
+
+                        if(i != -1) {
+                            var S2 = docs2.friends.toString()
+                            S2 = S2.replace(ObjectId(userId).toString(), "");
+                            var re = /\s*,\s*/;
+                            S2 = S2.split(re);
+                            S2 = S2.filter(String)
                         }
-                        collectionUsers.update({username: userToDelete},
+                        collectionUsers.update({"_id": ObjectId(userToDeleteId)},
                             {
                                 $set: {
-                                    "friends": docs2.friends
+                                    "friends": S2
                                 }
                             }
                         );
-                        res.send(true);
+
+                        db.collection('notifications').remove({$or: [ {"whoAmI": ObjectId(userToDeleteId), "whoDidAction": ObjectId(userId)}, {"whoAmI": ObjectId(userId), "whoDidAction": ObjectId(userToDeleteId)} ]}, (err, res_stories) => {
+                            if (err) throw err;
+                            res.send(true);
+                        });
                     }
                 });
             }
@@ -1160,6 +1204,17 @@ updateUserData: function(db, res, data) {
                     "owner_id": new ObjectId(res_user._id),
                     "author_id": new ObjectId(authorId),
                 });
+
+                /*
+                const date_created = new Date();
+                db.collection('notifications').insert({
+                    "user": requester,
+                    "actionUser": recipient,
+                    "action": "added you as a friend!",
+                    "date_created": date_created
+                });
+                */
+
                 res.send(true);
             }
             else {
@@ -1497,6 +1552,17 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             "post_id": new ObjectId(commentData.postId),
             "author_id": new ObjectId(currentUserId)
         });
+
+        /*
+        const date_created = new Date();
+        db.collection('notifications').insert({
+            "user": requester,
+            "actionUser": recipient,
+            "action": "added you as a friend!",
+            "date_created": date_created
+        });
+        */
+
         res.send(true);
     },
 
@@ -1593,13 +1659,16 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         db.collection('notifications').find({"user": username}).toArray(function (err, docs) {
             if (err) throw err;
             if (docs) {
-                console.log("docs: ", docs);
+                //console.log("docs: ", docs);
                 res.status(200).send(docs);
             }
         });
 
 
     },
+
+
+
 
 }
 

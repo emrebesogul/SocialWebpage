@@ -92,8 +92,9 @@ MongoClient.connect(url, function(err, client) {
                       });
                   } else {
                       const myUsername = authData.username
+                      const userid = authData.userid
                       let username = req.query.username;
-                      database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, myUsername);
+                      database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, myUsername, userid);
                   }
               });
 
@@ -437,7 +438,8 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
-                  database.confirmFriendshipRequest(client.db('socialwebpage'), req.body.requester, req.body.recipient, res);
+                  const recipientId = authData.userid;
+                  database.confirmFriendshipRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
               }
           });
 
@@ -451,7 +453,8 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
-                  database.deleteFriendshipRequest(client.db('socialwebpage'), req.body.requester, req.body.recipient, res);
+                  const recipientId = authData.userid;
+                  database.deleteFriendshipRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
               }
           });
 
@@ -480,8 +483,8 @@ MongoClient.connect(url, function(err, client) {
                   });
               } else {
                   const userId = authData.userid;
-                  const userToDelete = req.body.userToDelete;
-                  database.deleteFriend(client.db('socialwebpage'), res, userId, userToDelete);
+                  const userToDeleteId = req.body.userToDeleteId;
+                  database.deleteFriend(client.db('socialwebpage'), res, userId, userToDeleteId);
               }
           });
       });

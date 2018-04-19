@@ -84,13 +84,9 @@ class Feed extends Component {
   async confirmFriendRequest(e, item) {
       //Set state of status to accepted
       //Add both to friends: []
-      console.log(String(item.requester))
-      console.log(item.recipient)
-
       const response = await confirmFriendshipRequest(
           "/friends/confirmFriendRequest",
-          String(item.requester),
-          item.recipient
+          String(item.requesterId)
       );
       if(response) {
           window.location.reload();
@@ -101,12 +97,9 @@ class Feed extends Component {
   async declineFriendRequest(e, item) {
       //Set state of status to rejected
       //Delete from friendRequests collection
-      console.log(item.requester)
-      console.log(item.recipient)
       const response = await deleteFriendshipRequest(
           "/friends/declineFriendRequest",
-          String(item.requester),
-          item.recipient
+          String(item.requesterId)
       );
       if(response) {
           window.location.reload();
@@ -116,7 +109,7 @@ class Feed extends Component {
   async deleteFriend(e, item) {
       const response = await deleteFriend(
           "/friends/deleteFriend",
-          item.name
+          item.friendId
       );
       if(response) {
           window.location.reload();
