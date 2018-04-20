@@ -240,8 +240,7 @@ async getComments() {
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
-                                      </Rating>
+                                      <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}/>
                                          {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">
@@ -262,6 +261,10 @@ async getComments() {
                                     <Card.Description>
                                       {item.content}
                                     </Card.Description>
+                                  </Card.Content>
+                                </Card>
+                                <Card fluid centered className="comment-card">
+                                  <Card.Content>
                                       <Header as='h3' dividing>Comments</Header>
                                       {comments.map((comment, index) => {
                                         return(
@@ -300,7 +303,6 @@ async getComments() {
                                         <Form.TextArea className="commentInput" placeholder="Add a comment.." />
                                         <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                       </Form>
-
                                   </Card.Content>
                                 </Card>
                               </Card.Group>

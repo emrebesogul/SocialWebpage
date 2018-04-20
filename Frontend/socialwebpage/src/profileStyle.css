@@ -387,6 +387,10 @@ div.ui.comments {
   position: relative;
 }
 
+.comment-card {
+  box-shadow: none !important;
+}
+
 .comments-user-image{
   height: 58px;
   width: 58px;
