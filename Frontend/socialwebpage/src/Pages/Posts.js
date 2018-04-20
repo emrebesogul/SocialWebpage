@@ -92,7 +92,7 @@ class Posts extends Component {
   }
 
     async getNotificationData() {
-        let api = "/user/notifications/data/" + this.props.match.params.type + "/" + this.props.match.params.postId;
+        let api = "/user/notifications/data/" + this.props.match.params.type + "/" + this.props.match.params.typeCommented  + "/" + this.props.match.params.postId;
         const response = await getNotificationData(
             api
         );
@@ -133,7 +133,7 @@ class Posts extends Component {
                       Notifications
                     </Header.Content>
                     <Header.Subheader className="feed-subheader">
-                      Check your notifications and see posts with interaction.
+                      Check your notification.
                     </Header.Subheader>
                   </Header>
                 </div>

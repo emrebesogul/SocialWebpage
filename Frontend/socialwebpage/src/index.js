@@ -28,7 +28,7 @@ ReactDOM.render(
             <Route path="/profile/:username?" component={Profile}></Route>
             <Route exact path="/upload" component={Upload}></Route>
             <Route exact path="/post" component={PostText}></Route>
-            <Route exact path="/posts/:type/:postId?" component={Posts}></Route>
+            <Route exact path="/posts/:type/:typeCommented/:postId?" component={Posts}></Route>
             <Route exact path="/" component={Feed}></Route>
             <Route exact path="/roadmap" component={Roadmap}></Route>
             <Route exact path="/settings" component={Settings}></Route>

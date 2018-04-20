@@ -1641,7 +1641,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             "content": commentData.content,
             "date_created": date_created,
             "post_id": new ObjectId(commentData.postId),
-            "author_id": new ObjectId(currentUserId),   // => Derjenige der kommentiert
+            "author_id": new ObjectId(currentUserId),
             "type": "comment"
         });
 
@@ -1706,9 +1706,6 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
 
             }
         });
-
-        // How to get userid? How to get if post is story, image oder guestbook
-
 
         res.send(true);
     },
@@ -1832,6 +1829,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                     "guestbook_id": 1,
                     "liked_guestbook_id": 1,
                     "comment_id": 1,
+                    "typeCommented": 1,
                     "type": 1
                 }
             }
@@ -1848,25 +1846,30 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                if (item.story_id) {
                     item.redirect = true;
                     item.type = "story";
+                    item.typeCommented = item.type;
                     item.linkToPost = item.story_id;
                }
                if (item.image_id) {
                     item.redirect = true;
                     item.type = "image";
+                    item.typeCommented = item.type;
                     item.linkToPost = item.image_id;
                }
                if (item.guestbook_id) {
                     item.redirect = true;
                     item.type = "guestbook";
+                    item.typeCommented = item.type;
                     item.linkToPost = item.guestbook_id;
                }
                if (item.liked_guestbook_id) {
                    item.redirect = true;
+                   item.typeCommented = item.type;
                    item.type = "guestbook";
                    item.linkToPost = item.liked_guestbook_id;
                }
                if (item.comment_id) {
                    item.redirect = true;
+                   item.typeCommented = item.type;
                    item.type = "comment";
                    item.linkToPost = item.comment_id;
                }
