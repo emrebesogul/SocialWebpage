@@ -300,7 +300,9 @@ var call = module.exports = {
         "liking_users": [],
         "date_created": new Date(),
         "user_id": new ObjectId(userId),
-        "updated" : false
+        "updated" : false,
+        "type": "image"
+
     });
     console.log("Image was uploaded to server...")
     res.send(JSON.stringify({
@@ -325,7 +327,8 @@ var call = module.exports = {
         "liking_users": [],
         "date_created": new Date(),
         "user_id": new ObjectId(userId),
-        "updated" : false
+        "updated" : false,
+        "type": "story"
     });
     res.send(true);
   },
@@ -571,6 +574,11 @@ var call = module.exports = {
                 db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
                     if (err) throw err;
                     console.log("Removed story entry from the database");
+
+                    db.collection('notifications').remove({"story_id": ObjectId(JSON.parse(storyId).storyId)}, (err, res_stories) => {
+                        if (err) throw err;
+                    });
+
                     res.send(true);
                 });
             });
@@ -598,6 +606,11 @@ var call = module.exports = {
                 db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_remove_image, res_remove_image) => {
                     if (err_remove_image) throw err_remove_image;
                     console.log("Removed image from the database and server");
+
+                    db.collection('notifications').remove({"image_id": ObjectId(JSON.parse(imageId).imageId)}, (err, res_stories) => {
+                        if (err) throw err;
+                    });
+
                     res.send(true);
                 });
             });
@@ -1247,6 +1260,7 @@ var call = module.exports = {
                     "date_created": date_created,
                     "owner_id": new ObjectId(res_user._id),
                     "author_id": new ObjectId(authorId),
+                    "type": "guestbook"
                 });
 
                 db.collection("guestbookEntries").findOne({"date_created": date_created, "owner_id": new ObjectId(res_user._id), "author_id": new ObjectId(authorId)}, (err, docs) => {
@@ -1621,13 +1635,79 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
 
     //----------------------------Create Comment-----------------------------//
     createComment: function (db, res, commentData, currentUserId) {
+        var date_created = new Date();
+
         db.collection('comments').insert({
             "content": commentData.content,
-            "date_created": new Date(),
+            "date_created": date_created,
             "post_id": new ObjectId(commentData.postId),
-            "author_id": new ObjectId(currentUserId)
+            "author_id": new ObjectId(currentUserId),   // => Derjenige der kommentiert
+            "type": "comment"
         });
 
+        db.collection("comments").findOne({"date_created": date_created, "content": commentData.content, "post_id": ObjectId(commentData.postId), "author_id": ObjectId(currentUserId)}, (err, docs) => {
+            if(err) throw err;
+            if(docs) {
+                db.collection("stories").findOne({"_id": ObjectId(docs.post_id)}, (err_stories, docs_stories) => {
+                    if (err_stories) throw err_stories;
+                    if (docs_stories) {
+                        if (JSON.stringify(docs_stories.user_id) === JSON.stringify(docs.author_id)) {
+
+                        } else {
+                            db.collection('notifications').insert({
+                                "whoAmI": ObjectId(docs_stories.user_id),
+                                "whoDidAction": ObjectId(docs.author_id),
+                                "action": "commented on your "+ docs_stories.type +"!",
+                                "type": docs_stories.type,
+                                "date_created": date_created,
+                                "comment_id": ObjectId(docs._id)
+                            });
+                        }
+                    } else {
+                        db.collection("images").findOne({"_id": ObjectId(docs.post_id)}, (err_images, docs_images) => {
+                            if (err_images) throw err_images;
+                            if (docs_images) {
+                                if (JSON.stringify(docs_images.user_id) === JSON.stringify(docs.author_id)) {
+
+                                } else {
+                                    db.collection('notifications').insert({
+                                        "whoAmI": ObjectId(docs_images.user_id),
+                                        "whoDidAction": ObjectId(docs.author_id),
+                                        "action": "commented on your "+ docs_images.type +"!",
+                                        "type": docs_images.type,
+                                        "date_created": date_created,
+                                        "comment_id": ObjectId(docs._id)
+                                    });
+                                }
+                            } else {
+                                db.collection("guestbookEntries").findOne({"_id": ObjectId(docs.post_id)}, (err_guestbookEntries, docs_guestbookEntries) => {
+                                    if (err_guestbookEntries) throw err_guestbookEntries;
+                                    if (docs_guestbookEntries) {
+                                        if (JSON.stringify(docs_guestbookEntries.owner_id) === JSON.stringify(docs.author_id)) {
+
+                                        } else {
+                                            db.collection('notifications').insert({
+                                                "whoAmI": ObjectId(docs_guestbookEntries.owner_id),
+                                                "whoDidAction": ObjectId(docs.author_id),
+                                                "action": "commented on your "+ docs_guestbookEntries.type +"!",
+                                                "type": docs_guestbookEntries.type,
+                                                "date_created": date_created,
+                                                "comment_id": ObjectId(docs._id)
+                                            });
+                                        }
+                                    } else {
+                                        console.log("Post ID does not exist")
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+
+        // How to get userid? How to get if post is story, image oder guestbook
 
 
         res.send(true);
@@ -1711,6 +1791,11 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
           if (res_find_comments.owner_id == userId) {
               db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
                   if (err_remove_comments) throw err_remove_comments;
+
+                  db.collection('notifications').remove({"comment_id": ObjectId(commentId)}, (err, res_comment_noti) => {
+                      if (err) throw err;
+                  });
+
                   res.send(true);
               });
           }
@@ -1746,6 +1831,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                     "image_id": 1,
                     "guestbook_id": 1,
                     "liked_guestbook_id": 1,
+                    "comment_id": 1,
                     "type": 1
                 }
             }
@@ -1778,6 +1864,11 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                    item.redirect = true;
                    item.type = "guestbook";
                    item.linkToPost = item.liked_guestbook_id;
+               }
+               if (item.comment_id) {
+                   item.redirect = true;
+                   item.type = "comment";
+                   item.linkToPost = item.comment_id;
                }
                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
            });

@@ -162,6 +162,7 @@ getNumberOfLikes(currentItem) {
 }
 
 async handleCreateComment(event, data) {
+
   if(event.target[0].value.trim() != "" && event.target[0].value != null) {
     let commentData = {
       "content": event.target[0].value,
