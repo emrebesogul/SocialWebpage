@@ -777,6 +777,34 @@ MongoClient.connect(url, function(err, client) {
           });
       });
 
+      //----------------------Show specific Notification----------------------//
+      app.get('/rest/user/notifications/data/:type/:postId', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                    const currentUserId = authData.userid;
+                    const postId = req.params.postId;
+                    if(req.params.type == "story") {
+                        database.listStoriesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                    }
+                    else if(req.params.type == "image") {
+                        database.listImagesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                    }
+                    else if(req.params.type == "comment") {
+                        console.log("comment")
+                    }
+                    else if(req.params.type == "guestbook") {
+                        database.listGuestbookEntryForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                    } else {
+                        res.send(false);
+                    }
+              }
+          });
+      });
+
 
       //----------------------xy----------------------//
 
