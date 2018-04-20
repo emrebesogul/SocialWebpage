@@ -7,9 +7,7 @@ import SearchBar from '../Components/SearchBar';
 import {checkSession, getNotificationData, getComments } from '../API/GET/GetMethods';
 import '../profileStyle.css';
 
-var images = [];
-var stories = [];
-var guestbookEntries = [];
+var posts = [];
 var comments = [];
 
 
@@ -19,11 +17,10 @@ class Posts extends Component {
       super(props);
 
       this.state = {
+        showError: false,
         redirectToLogin: false,
         resComments: [],
-        responseStories: [],
-        responseImages: [],
-        responseGuestbookEntries: []
+        responsePost: []
       }
 
       this.apiCheckSession = "/checkSession";
@@ -39,35 +36,9 @@ class Posts extends Component {
 
   }
 
-  getNumberOfLikesOfImage(currentItem) {
+  getNumberOfLikesOfPost(currentItem) {
     let numberOfLikes = 0;
-    this.state.responseImages.map(item => {
-      if(item._id === currentItem._id) {
-        numberOfLikes = item.number_of_likes_in_state;
-      }
-    });
-    if(numberOfLikes == undefined) {
-      numberOfLikes = currentItem.number_of_likes;
-    }
-    return numberOfLikes;
-  }
-
-  getNumberOfLikesOfStoryEntry(currentItem) {
-    let numberOfLikes = 0;
-    this.state.responseStories.map(item => {
-      if(item._id === currentItem._id) {
-        numberOfLikes = item.number_of_likes_in_state;
-      }
-    });
-    if(numberOfLikes == undefined) {
-      numberOfLikes = currentItem.number_of_likes;
-    }
-    return numberOfLikes;
-  }
-
-  getNumberOfLikesOfGuestbookEntry(currentItem) {
-    let numberOfLikes = 0;
-    this.state.responseGuestbookEntries.map(item => {
+    this.state.responsePost.map(item => {
       if(item._id === currentItem._id) {
         numberOfLikes = item.number_of_likes_in_state;
       }
@@ -97,10 +68,10 @@ class Posts extends Component {
             api
         );
         if(response === false) {
-            alert("404")
+            this.setState({showError: true});
         } else {
             this.setState({
-              responseImages : response
+              responsePost : response
             });
         }
     }
@@ -112,10 +83,8 @@ class Posts extends Component {
             return <Redirect to='/login' />;
         }
 
-        images = this.state.responseImages;
-        stories = this.state.responseStories;
+        posts = this.state.responsePost;
         comments = this.state.resComments;
-        guestbookEntries = this.state.responseGuestbookEntries;
 
         return (
           <div id="main-content">
@@ -138,7 +107,7 @@ class Posts extends Component {
                   </Header>
                 </div>
 
-                {images.map((item, index) =>
+                {posts.map((item, index) =>
                 {return(
                     <div key={index} className="profile-card">
                       <Card.Group>
@@ -155,7 +124,7 @@ class Posts extends Component {
                                 {this.state.updateItemId == item._id ? <Form.Field><Input  placeholder={this.state.imageTitle} value={this.state.imageTitle} onChange={(e) => this.handleChangeImageData(e,"imageTitle")}/></Form.Field> : item.title}
                                   <div className="ui mini horizontal statistic post-likes">
                                     <div className="value">
-                                      {this.getNumberOfLikesOfImage(item)}
+                                      {this.getNumberOfLikesOfPost(item)}
                                     </div>
                                     <div className="label">
                                       Likes
@@ -169,8 +138,7 @@ class Posts extends Component {
                                 </span>
                               </Card.Meta>
                               <Card.Description>
-                                {this.state.updateItemId == item._id ? <Input placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : item.content}
-                                {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
+                                {this.state.updateItemId == item._id ? <Input placeholder={this.state.imageContent} value={this.state.imageContent}/> : item.content}
                               </Card.Description>
                             </Form>
                             <Header as='h4' dividing>Comments</Header>
@@ -199,62 +167,7 @@ class Posts extends Component {
                    )
                 })}
 
-
-                {stories.map((item, index) =>
-                {return(
-                  <div key={index} className="profile-card">
-                    <Card.Group>
-                      <Card fluid centered>
-                        <div className="username-label">
-                            {item.profile_picture_url !== "http://localhost:8000/uploads/posts/"? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                            <span className="content-card-username-label"> @{item.username} </span>
-                          {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
-                        </div>
-                        <Card.Content id="card-content">
-
-                          <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
-                            <Card.Header className="card-header">
-                                {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : item.title}
-                                  <div className="ui mini horizontal statistic post-likes">
-                                  <div className="value">
-                                    {this.getNumberOfLikesOfStoryEntry(item)}
-                                  </div>
-                                  <div className="label">
-                                    Likes
-                                  </div>
-                              </div>
-                            </Card.Header>
-                            <Card.Meta className="card-meta">
-                            </Card.Meta>
-                          </Form>
-                          <Header as='h4' dividing>Comments</Header>
-                          {comments.map((comment, index) => {
-                            return(
-                              <Comment.Group>
-                                {comment.post_id === item._id ?
-                                <Comment>
-                                  {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                  <Comment.Content>
-                                    <Comment.Author as='a'>{comment.authorName}</Comment.Author>
-                                    <Comment.Metadata>
-                                      <div>{comment.date_created}</div>
-                                    </Comment.Metadata>
-                                    <Comment.Text>{comment.content}</Comment.Text>
-                                  </Comment.Content>
-                                </Comment>
-                                : null }
-                              </Comment.Group>
-                            )
-                          })}
-                        </Card.Content>
-                      </Card>
-                    </Card.Group>
-                   </div>
-                   )
-                })}
-
-
-
+                {this.state.showError ? <Message size='massive'>404 POST ENTRY NOT FOUND!</Message>: null}
 
             </div>
 

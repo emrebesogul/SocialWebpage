@@ -786,7 +786,10 @@ MongoClient.connect(url, function(err, client) {
                   });
               } else {
                     const currentUserId = authData.userid;
+                    const type = req.params.type;
+                    const typeCommented = req.params.typeCommented;
                     const postId = req.params.postId;
+
                     if(req.params.type == "story") {
                         database.listStoriesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
                     }
