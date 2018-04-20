@@ -382,8 +382,7 @@ async getComments() {
                                                     {item.username}
                                                 </Link>
                                             </List.Header>
-                                            <List.Description>{item.action}</List.Description>
-                                            <List.Description>{item.date_created}</List.Description>
+                                            {item.redirect ? <div><Link to={`/posts/${item.type}/${item.linkToPost}`}><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></Link></div> : <div><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></div> }
                                           </List.Content>
                                           <List.Content floated="right">
                                           </List.Content>

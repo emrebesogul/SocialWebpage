@@ -622,17 +622,42 @@ var call = module.exports = {
         (err_find_stories, res_find_stories) => {
 
         if (err_find_stories) throw err_find_stories;
+        // If user alredy like it...
         if (res_find_stories.liking_users.includes(userId)) {
             let index = res_find_stories.liking_users.indexOf(userId);
             if (index > -1) {
                 res_find_stories.liking_users.splice(index, 1);
+
+                db.collection("stories").findOne({"_id" : ObjectId(JSON.parse(storyId).storyId)}, (err, docs) => {
+                    if(err) throw err;
+                    if(docs) {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your story!", "story_id": ObjectId(JSON.parse(storyId).storyId)}, (err, res_stories) => {
+                            if (err) throw err;
+                        });
+                    }
+                });
             }
             else {
                 throw err_find_stories;
             }
         }
+        // If user did not already liked story
         else {
             res_find_stories.liking_users.push(userId);
+
+            db.collection("stories").findOne({"_id" : ObjectId(JSON.parse(storyId).storyId)}, (err, docs) => {
+                if(err) throw err;
+                if(docs) {
+                    const date_created = new Date();
+                    db.collection('notifications').insert({
+                        "whoAmI": ObjectId(docs.user_id),
+                        "whoDidAction": ObjectId(userId),
+                        "action": "liked your story!",
+                        "date_created": date_created,
+                        "story_id": ObjectId(JSON.parse(storyId).storyId)
+                    });
+                }
+            });
         }
 
         db.collection("stories").update(
@@ -647,18 +672,6 @@ var call = module.exports = {
             if (err_update_stories) throw err_update_stories;
         });
 
-
-
-        //
-        /*
-        const date_created = new Date();
-        db.collection('notifications').insert({
-            "user": requester,
-            "actionUser": recipient,
-            "action": "added you as a friend!",
-            "date_created": date_created
-        });
-        */
 
         res.send(true);
     });
@@ -687,6 +700,15 @@ var call = module.exports = {
             let index = res_find_images.liking_users.indexOf(userId);
             if (index > -1) {
                 res_find_images.liking_users.splice(index, 1);
+
+                db.collection("images").findOne({"_id" : ObjectId(JSON.parse(imageId).imageId)}, (err, docs) => {
+                    if(err) throw err;
+                    if(docs) {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your image!", "image_id": ObjectId(JSON.parse(imageId).imageId)}, (err, res_stories) => {
+                            if (err) throw err;
+                        });
+                    }
+                });
             }
             else {
                 res.send(JSON.stringify({
@@ -697,6 +719,20 @@ var call = module.exports = {
         }
         else {
             res_find_images.liking_users.push(userId);
+
+            db.collection("images").findOne({"_id" : ObjectId(JSON.parse(imageId).imageId)}, (err, docs) => {
+                if(err) throw err;
+                if(docs) {
+                    const date_created = new Date();
+                    db.collection('notifications').insert({
+                        "whoAmI": ObjectId(docs.user_id),
+                        "whoDidAction": ObjectId(userId),
+                        "action": "liked your image!",
+                        "date_created": date_created,
+                        "image_id": ObjectId(JSON.parse(imageId).imageId)
+                    });
+                }
+            });
         }
 
         db.collection("images").update(
@@ -1202,24 +1238,29 @@ var call = module.exports = {
             if (err_user) throw err_user;
 
             if (res_user && (res_user._id != authorId)) {
+                var date_created = new Date();
+
                 db.collection('guestbookEntries').insert({
                     "title": title,
                     "content": content,
                     "liking_users": [],
-                    "date_created": new Date(),
+                    "date_created": date_created,
                     "owner_id": new ObjectId(res_user._id),
                     "author_id": new ObjectId(authorId),
                 });
 
-                /*
-                const date_created = new Date();
-                db.collection('notifications').insert({
-                    "user": requester,
-                    "actionUser": recipient,
-                    "action": "added you as a friend!",
-                    "date_created": date_created
+                db.collection("guestbookEntries").findOne({"date_created": date_created, "owner_id": new ObjectId(res_user._id), "author_id": new ObjectId(authorId)}, (err, docs) => {
+                    if(err) throw err;
+                    if(docs) {
+                        db.collection('notifications').insert({
+                            "whoAmI": ObjectId(res_user._id),
+                            "whoDidAction": ObjectId(authorId),
+                            "action": "created a Guestbook entry on your page!",
+                            "date_created": date_created,
+                            "guestbook_id": ObjectId(docs._id)
+                        });
+                    }
                 });
-                */
 
                 res.send(true);
             }
@@ -1320,6 +1361,15 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             let index = res_find_guestbook_entries.liking_users.indexOf(userId);
             if (index > -1) {
                 res_find_guestbook_entries.liking_users.splice(index, 1);
+
+                db.collection("guestbookEntries").findOne({"_id" : ObjectId(guestbookData.guestbookEntryId)}, (err, docs) => {
+                    if(err) throw err;
+                    if(docs) {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.owner_id), "whoDidAction": ObjectId(userId), "action": "liked your Guestbook entry!", "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err, res_guestbookData) => {
+                            if (err) throw err;
+                        });
+                    }
+                });
             }
             else {
                 throw err_find_guestbook_entries;
@@ -1327,6 +1377,20 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         }
         else {
             res_find_guestbook_entries.liking_users.push(userId);
+
+            db.collection("guestbookEntries").findOne({"_id" : ObjectId(guestbookData.guestbookEntryId)}, (err, docs) => {
+                if(err) throw err;
+                if(docs) {
+                    const date_created = new Date();
+                    db.collection('notifications').insert({
+                        "whoAmI": ObjectId(docs.owner_id),
+                        "whoDidAction": ObjectId(userId),
+                        "action": "liked your Guestbook entry!",
+                        "date_created": date_created,
+                        "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)
+                    });
+                }
+            });
         }
         db.collection("guestbookEntries").update(
             {
@@ -1357,6 +1421,11 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                 db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
                     if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
                     console.log("Removed guestbook entry from the database");
+
+                    db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
+                        if (err_guestbook_delete) throw err_guestbook_delete;
+                    });
+
                     res.send(true);
                 });
             });
@@ -1559,15 +1628,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             "author_id": new ObjectId(currentUserId)
         });
 
-        /*
-        const date_created = new Date();
-        db.collection('notifications').insert({
-            "user": requester,
-            "actionUser": recipient,
-            "action": "added you as a friend!",
-            "date_created": date_created
-        });
-        */
+
 
         res.send(true);
     },
@@ -1680,7 +1741,12 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                     "date_created": 1,
                     "userid": "$user._id",
                     "profile_picture_filename": "$user.picture",
-                    "profile_picture_url": 1
+                    "profile_picture_url": 1,
+                    "story_id": 1,
+                    "image_id": 1,
+                    "guestbook_id": 1,
+                    "liked_guestbook_id": 1,
+                    "type": 1
                 }
             }
         ]).toArray((err, result) => {
@@ -1690,6 +1756,29 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                item.action = item.action;
                item.date_created = getDate(item.date_created);
                item.userid = item.userid;
+               if (item.action == "added you as a friend!") {
+                   item.redirect = false;
+               }
+               if (item.story_id) {
+                    item.redirect = true;
+                    item.type = "story";
+                    item.linkToPost = item.story_id;
+               }
+               if (item.image_id) {
+                    item.redirect = true;
+                    item.type = "image";
+                    item.linkToPost = item.image_id;
+               }
+               if (item.guestbook_id) {
+                    item.redirect = true;
+                    item.type = "guestbook";
+                    item.linkToPost = item.guestbook_id;
+               }
+               if (item.liked_guestbook_id) {
+                   item.redirect = true;
+                   item.type = "guestbook";
+                   item.linkToPost = item.liked_guestbook_id;
+               }
                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
            });
             result.sort((a, b) => {

@@ -55,8 +55,8 @@ class Sidebar extends Component {
         return (
             <div>
 
-              <Link to="/"> <Image className="logo" src="../assets/images/Logo_nobg.png" /></Link>
-              <Link to="/"><Image className="logo-mobile" src="../assets/images/Logo_nobg.png" /></Link>
+              <Link to="/"> <Image className="logo" src="/assets/images/Logo_nobg.png" /></Link>
+              <Link to="/"><Image className="logo-mobile" src="/assets/images/Logo_nobg.png" /></Link>
 
               <div id="mobile-header">
 

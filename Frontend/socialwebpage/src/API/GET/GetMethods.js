@@ -279,7 +279,6 @@ export const getNotifications=(api)=>{
         'Authorization': 'Bearer ' + token
       },
       success: function(res) {
-          console.log(res)
           resolve(res);
       },
       error: function(xhr, status, err){
