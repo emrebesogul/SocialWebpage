@@ -455,19 +455,30 @@ class Profile extends Component {
                                     <Header as='h4' dividing>Comments</Header>
                                     {comments.map((comment, index) => {
                                       return(
-                                        <Comment.Group>
+                                        <Comment.Group key={index}>
                                           {comment.post_id === item._id ?
-                                          <Comment>
-                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                            <Comment.Content>
-                                              <Comment.Author as='a'>
-                                                <Link to={`/profile/${comment.authorName}`}>
-                                                  <span className="content-card-username-label"> @{comment.authorName} </span>
-                                                </Link>
-                                              </Comment.Author>
-                                              <Comment.Metadata>
-                                                <div>{comment.date_created}</div>
-                                              </Comment.Metadata>
+                                          <Comment className="comment-box">
+                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                            <Comment.Content className="comment-content">
+                                              <div className="comment-header">
+                                                  <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                              </div>
+                                              <div className="ui mini horizontal statistic post-likes comment-likes">
+                                                <div className="value">
+                                                  0
+                                                </div>
+                                                <div className="label">
+                                                  Likes
+                                                </div>
+                                              </div>
+                                              <Button className="button-upload delete-button-comment" circular icon="delete" size="tiny"></Button>
+                                              <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                              </Rating>
+                                              <div className="comment-user-info">
+                                                <Comment.Metadata>
+                                                  <div>{comment.date_created}</div>
+                                                </Comment.Metadata>
+                                              </div>
                                               <Comment.Text>{comment.content}</Comment.Text>
                                             </Comment.Content>
                                           </Comment>
@@ -534,19 +545,30 @@ class Profile extends Component {
                                         <Header as='h4' dividing>Comments</Header>
                                         {comments.map((comment, index) => {
                                           return(
-                                            <Comment.Group>
+                                            <Comment.Group key={index}>
                                               {comment.post_id === item._id ?
-                                              <Comment>
-                                                {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                                <Comment.Content>
-                                                  <Comment.Author as='a'>
-                                                    <Link to={`/profile/${comment.authorName}`}>
-                                                      <span className="content-card-username-label"> @{comment.authorName} </span>
-                                                    </Link>
-                                                  </Comment.Author>
-                                                  <Comment.Metadata>
-                                                    <div>{comment.date_created}</div>
-                                                  </Comment.Metadata>
+                                              <Comment className="comment-box">
+                                                {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                                <Comment.Content className="comment-content">
+                                                  <div className="comment-header">
+                                                      <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                                  </div>
+                                                  <div className="ui mini horizontal statistic post-likes comment-likes">
+                                                    <div className="value">
+                                                      0
+                                                    </div>
+                                                    <div className="label">
+                                                      Likes
+                                                    </div>
+                                                  </div>
+                                                  <Button className="button-upload delete-button-comment" circular icon="delete" size="tiny"></Button>
+                                                  <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                                  </Rating>
+                                                  <div className="comment-user-info">
+                                                    <Comment.Metadata>
+                                                      <div>{comment.date_created}</div>
+                                                    </Comment.Metadata>
+                                                  </div>
                                                   <Comment.Text>{comment.content}</Comment.Text>
                                                 </Comment.Content>
                                               </Comment>
@@ -569,14 +591,22 @@ class Profile extends Component {
                         { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>
                         <div>
                           {!this.state.show ?
-                            <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
-                              <Form.Field>
-                                <label>Title of your guestbook entry</label>
-                                <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
-                              </Form.Field>
-                              <Form.TextArea required autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
-                              <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
-                            </Form>
+                            <Card.Group>
+                              <Card fluid centered>
+                                <div className="username-label">
+                                </div>
+                                <Card.Content id="card-content">
+                                  <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
+                                    <Form.Field>
+                                      <label>Title of your guestbook entry</label>
+                                      <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
+                                    </Form.Field>
+                                    <Form.TextArea required autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
+                                    <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
+                                  </Form>
+                                </Card.Content>
+                              </Card>
+                            </Card.Group>
                           : null }
                           {guestbookEntries.map((item, index) => {
                             return(
@@ -614,19 +644,30 @@ class Profile extends Component {
                                       <Header as='h4' dividing>Comments</Header>
                                       {comments.map((comment, index) => {
                                         return(
-                                          <Comment.Group>
+                                          <Comment.Group key={index}>
                                             {comment.post_id === item._id ?
-                                            <Comment>
-                                              {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                              <Comment.Content>
-                                                <Comment.Author as='a'>
-                                                  <Link to={`/profile/${comment.authorName}`}>
-                                                    <span className="content-card-username-label"> @{comment.authorName} </span>
-                                                  </Link>
-                                                </Comment.Author>
-                                                <Comment.Metadata>
-                                                  <div>{comment.date_created}</div>
-                                                </Comment.Metadata>
+                                            <Comment className="comment-box">
+                                              {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                              <Comment.Content className="comment-content">
+                                                <div className="comment-header">
+                                                    <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                                </div>
+                                                <div className="ui mini horizontal statistic post-likes comment-likes">
+                                                  <div className="value">
+                                                    0
+                                                  </div>
+                                                  <div className="label">
+                                                    Likes
+                                                  </div>
+                                                </div>
+                                                <Button className="button-upload delete-button-comment" circular icon="delete" size="tiny"></Button>
+                                                <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                                </Rating>
+                                                <div className="comment-user-info">
+                                                  <Comment.Metadata>
+                                                    <div>{comment.date_created}</div>
+                                                  </Comment.Metadata>
+                                                </div>
                                                 <Comment.Text>{comment.content}</Comment.Text>
                                               </Comment.Content>
                                             </Comment>

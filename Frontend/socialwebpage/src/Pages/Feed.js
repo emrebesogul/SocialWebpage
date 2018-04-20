@@ -318,7 +318,7 @@ async handleDeleteComment(event, data) {
                                                 <div className="comment-header">
                                                     <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
                                                 </div>
-                                                <div className="ui mini horizontal statistic post-likes">
+                                                <div className="ui mini horizontal statistic post-likes comment-likes">
                                                   <div className="value">
                                                   {this.getNumberOfLikesOfComment(comment)}
                                                   </div>
@@ -326,7 +326,7 @@ async handleDeleteComment(event, data) {
                                                     Likes
                                                   </div>
                                                 </div>
-                                                {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="small"></Button> : null }
+                                                {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
                                                 <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
                                                 </Rating>
                                                 <div className="comment-user-info">
