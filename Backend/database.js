@@ -1502,7 +1502,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     },
 
     //----------------------------List Comments-----------------------------//
-    getComments: function (db, res) {
+    getComments: function (db, res, currentUserId) {
         db.collection("comments").aggregate([
       { $lookup:
          {
@@ -1518,11 +1518,15 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
               "authorName": {
                   "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
               },
+              "author_id": 1,
               "post_id": 1,
               "profile_picture_filename": "$author.picture",
               "profile_picture_url": 1,
               "number_of_likes": 1,
-              "liking_users" : 1,
+              "liking_users": 1,
+              "current_user_has_liked" : {
+                  "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+              },
           }
        },
        { $sort : { "date_created" : -1 } }
@@ -1579,7 +1583,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     deleteCommentById: function (db, res, commentId, userId) {
       db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
           if (err_find_comments) throw err_find_comments;
-          if (res_find_comments.owner_id == userId) {
+          if (res_find_comments.author_id == userId) {
               db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
                   if (err_remove_comments) throw err_remove_comments;
                   res.send(true);
