@@ -5,7 +5,7 @@ import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar';
 import {checkSession} from '../API/GET/GetMethods';
 import {getFriendRequests, getFriends, getComments, getNotifications} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment} from '../API/POST/PostMethods';
+import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment, deleteCommentById, likeComment} from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var feedPosts = [];
@@ -51,6 +51,7 @@ class Feed extends Component {
 
   async checkThisSession() {
     const response = await checkSession(this.apiCheckSession);
+    this.setState({currentUserId: response.userId})
     if(response.message !== "User is authorized") {
         this.setState({redirectToLogin: true})
     }
@@ -122,21 +123,19 @@ class Feed extends Component {
       }
   }
 
-async handleRate(event, data){
+async handleRatePost(event, data){
   event.preventDefault();
-
-  this.state.entryId = data._id;
 
   if(data.src) {
     await likeImageById(
       "/image/like",
-      this.state.entryId
+      data._id
     );
   }
   else {
     await likeStoryEntryById(
       "/story/like",
-      this.state.entryId
+      data._id
     );
   }
 
@@ -154,7 +153,7 @@ async handleRate(event, data){
   this.setState({resFeedPosts: this.state.resFeedPosts});
 }
 
-getNumberOfLikes(currentItem) {
+getNumberOfLikesOfPost(currentItem) {
   let numberOfLikes = 0;
   this.state.resFeedPosts.map(item => {
     if(item._id === currentItem._id) {
@@ -187,6 +186,47 @@ async handleCreateComment(event, data) {
 async getComments() {
   let response = await getComments("/comment/list");
   this.setState({resComments: response});
+  response.map(item => {
+    item.number_of_likes_in_state = item.number_of_likes;
+  });
+}
+
+async handleRateComment(event, data) {
+  event.preventDefault();
+
+  await likeComment("/comment/like", data._id);
+  this.state.resComments.map(item => {
+    if(item._id === data._id) {
+      if(item.current_user_has_liked == 0) {
+        item.number_of_likes_in_state++;
+        item.current_user_has_liked = 1;
+      } else {
+        item.number_of_likes_in_state--;
+        item.current_user_has_liked = 0;
+      }
+    }
+  });
+  this.setState({resComments: this.state.resComments});
+}
+
+getNumberOfLikesOfComment(currentItem) {
+  let numberOfLikes = 0;
+  this.state.resComments.map(item => {
+    if(item._id === currentItem._id) {
+      numberOfLikes = item.number_of_likes_in_state;
+    }
+  });
+  if(numberOfLikes == undefined) {
+    numberOfLikes = currentItem.number_of_likes;
+  }
+  return numberOfLikes;
+}
+
+async handleDeleteComment(event, data) {
+  const response = await deleteCommentById("/comment/delete", data._id);
+  if(response) {
+    this.getComments();
+  }
 }
 
 
@@ -240,12 +280,12 @@ async getComments() {
                                   <Image className="image-feed" src={item.src} />
                                   <Card.Content id="card-content">
                                     <Card.Header className="card-header">
-                                      <Rating onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                      <Rating onRate={((e) => this.handleRatePost(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
                                       </Rating>
                                          {item.title}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">
-                                            {this.getNumberOfLikes(item)}
+                                            {this.getNumberOfLikesOfPost(item)}
                                           </div>
                                           <div className="label">
                                             Likes
@@ -269,20 +309,25 @@ async getComments() {
                                             {comment.post_id === item._id ?
                                             <Comment className="comment-box">
                                               {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                              
                                               <Comment.Content className="comment-content">
                                                 <div className="comment-header">
-                                                    <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                                    <Comment.Author className="comment-author" as='a'>
+                                                      <Link to={`/profile/${comment.authorName}`}>
+                                                        {comment.authorName}
+                                                      </Link>
+                                                    </Comment.Author>
                                                 </div>
                                                 <div className="ui mini horizontal statistic post-likes comment-likes">
                                                   <div className="value">
-                                                    0
+                                                  {this.getNumberOfLikesOfComment(comment)}
                                                   </div>
                                                   <div className="label">
                                                     Likes
                                                   </div>
                                                 </div>
-                                                <Button className="button-upload delete-button-comment" circular icon="delete" size="tiny"></Button>
-                                                <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                                {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                                <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
                                                 </Rating>
                                                 <div className="comment-user-info">
                                                   <Comment.Metadata>
@@ -297,7 +342,7 @@ async getComments() {
                                         )
                                       })}
                                       <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea className="commentInput" placeholder="Add a comment.." />
+                                        <Form.TextArea class="commentInput" placeholder="Add a comment.." />
                                         <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                       </Form>
 
