@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message, Header } from 'semantic-ui-react'
 import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser, getComments } from '../API/GET/GetMethods';
-import { likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById, createComment } from '../API/POST/PostMethods';
+import { likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById, createComment, deleteCommentById, likeComment } from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
@@ -57,6 +57,7 @@ class Profile extends Component {
 
     async checkThisSession() {
       const response = await checkSession(this.apiCheckSession);
+      this.setState({currentUserId: response.userId})
       if(response.message !== "User is authorized") {
           this.setState({redirectToLogin: true})
       }
@@ -386,6 +387,46 @@ class Profile extends Component {
       async getComments() {
         let response = await getComments("/comment/list");
         this.setState({resComments: response});
+        response.map(item => {
+          item.number_of_likes_in_state = item.number_of_likes;
+        });
+      }
+
+      async handleRateComment(event, data) {
+        event.preventDefault();
+        await likeComment("/comment/like", data._id);
+        this.state.resComments.map(item => {
+          if(item._id === data._id) {
+            if(item.current_user_has_liked == 0) {
+              item.number_of_likes_in_state++;
+              item.current_user_has_liked = 1;
+            } else {
+              item.number_of_likes_in_state--;
+              item.current_user_has_liked = 0;
+            }
+          }
+        });
+        this.setState({resComments: this.state.resComments});
+      }
+      
+      getNumberOfLikesOfComment(currentItem) {
+        let numberOfLikes = 0;
+        this.state.resComments.map(item => {
+          if(item._id === currentItem._id) {
+            numberOfLikes = item.number_of_likes_in_state;
+          }
+        });
+        if(numberOfLikes == undefined) {
+          numberOfLikes = currentItem.number_of_likes;
+        }
+        return numberOfLikes;
+      }
+      
+      async handleDeleteComment(event, data) {
+        const response = await deleteCommentById("/comment/delete", data._id);
+        if(response) {
+          this.getComments();
+        }
       }
 
 
@@ -465,14 +506,14 @@ class Profile extends Component {
                                               </div>
                                               <div className="ui mini horizontal statistic post-likes comment-likes">
                                                 <div className="value">
-                                                  0
+                                                {this.getNumberOfLikesOfComment(comment)}
                                                 </div>
                                                 <div className="label">
                                                   Likes
                                                 </div>
                                               </div>
-                                              <Button className="button-upload delete-button-comment" circular icon="delete" size="tiny"></Button>
-                                              <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                              {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                              <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
                                               </Rating>
                                               <div className="comment-user-info">
                                                 <Comment.Metadata>
@@ -555,14 +596,14 @@ class Profile extends Component {
                                                   </div>
                                                   <div className="ui mini horizontal statistic post-likes comment-likes">
                                                     <div className="value">
-                                                      0
+                                                    {this.getNumberOfLikesOfComment(comment)}
                                                     </div>
                                                     <div className="label">
                                                       Likes
                                                     </div>
                                                   </div>
-                                                  <Button className="button-upload delete-button-comment" circular icon="delete" size="tiny"></Button>
-                                                  <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                                  {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                                  <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
                                                   </Rating>
                                                   <div className="comment-user-info">
                                                     <Comment.Metadata>
@@ -654,14 +695,14 @@ class Profile extends Component {
                                                 </div>
                                                 <div className="ui mini horizontal statistic post-likes comment-likes">
                                                   <div className="value">
-                                                    0
+                                                  {this.getNumberOfLikesOfComment(comment)}
                                                   </div>
                                                   <div className="label">
                                                     Likes
                                                   </div>
                                                 </div>
-                                                <Button className="button-upload delete-button-comment" circular icon="delete" size="tiny"></Button>
-                                                <Rating className="comment-rating" onRate={((e) => this.handleRate(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                                                {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                                <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
                                                 </Rating>
                                                 <div className="comment-user-info">
                                                   <Comment.Metadata>

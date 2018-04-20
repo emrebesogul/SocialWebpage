@@ -309,14 +309,14 @@ async handleDeleteComment(event, data) {
                                             {comment.post_id === item._id ?
                                             <Comment className="comment-box">
                                               {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
-                                              <Comment.Author as='a'>
-                                                <Link to={`/profile/${comment.authorName}`}>
-                                                  <span className="content-card-username-label"> @{comment.authorName} </span>
-                                                </Link>
-                                              </Comment.Author>
+                                              
                                               <Comment.Content className="comment-content">
                                                 <div className="comment-header">
-                                                    <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                                    <Comment.Author className="comment-author" as='a'>
+                                                      <Link to={`/profile/${comment.authorName}`}>
+                                                        {comment.authorName}
+                                                      </Link>
+                                                    </Comment.Author>
                                                 </div>
                                                 <div className="ui mini horizontal statistic post-likes comment-likes">
                                                   <div className="value">
