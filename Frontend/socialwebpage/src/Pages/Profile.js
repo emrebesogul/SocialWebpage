@@ -408,7 +408,7 @@ class Profile extends Component {
         });
         this.setState({resComments: this.state.resComments});
       }
-      
+
       getNumberOfLikesOfComment(currentItem) {
         let numberOfLikes = 0;
         this.state.resComments.map(item => {
@@ -421,7 +421,7 @@ class Profile extends Component {
         }
         return numberOfLikes;
       }
-      
+
       async handleDeleteComment(event, data) {
         const response = await deleteCommentById("/comment/delete", data._id);
         if(response) {
@@ -717,8 +717,8 @@ class Profile extends Component {
                                         )
                                       })}
                                       <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea className="commentInput"/>
-                                        <Button class="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                        <Form.TextArea class="commentInput"/>
+                                        <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                       </Form>
                                     </Card.Content>
                                   </Card>

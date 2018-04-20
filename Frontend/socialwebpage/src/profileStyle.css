@@ -189,7 +189,7 @@ a{
   max-width: 230px;
   text-align: center;
   border-radius: 2px;
-  height: 567px;
+  height: 477px;
   padding-top: 10px;
   color: rgb(30,30,30);
   background: #fefefe;
@@ -387,6 +387,14 @@ div.ui.comments {
   position: relative;
 }
 
+.comment-card {
+  box-shadow: none !important;
+}
+
+#feed-upload-content{
+  padding: 1em 0;
+}
+
 .comments-user-image{
   height: 58px;
   width: 58px;
@@ -394,7 +402,7 @@ div.ui.comments {
   display: block;
   -o-object-fit: cover;
   object-fit: cover;
-  margin-top: -6px;
+  margin-top: -2px;
   z-index: 100;
   border-radius: 75%;
   -webkit-box-shadow: 0 0 3px #b9b9b9a8;
@@ -654,11 +662,17 @@ div.sub.header.feed-subheader{
   display: block;
 }
 
+#feed-share-text{
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  /* width: 112px; */
+  padding: 0 5px;
+}
+
 .upload-dropzone{
-  width: 36%;
+  width: 135px;
   cursor: pointer;
-  max-width: 290px;
-  min-width: 270px;
   margin-top: 10px;
   padding: 8px;
   padding-bottom: 4px;
@@ -673,7 +687,7 @@ div.sub.header.feed-subheader{
 
 .input-label-upload{
   display: block;
-  margin-top: 40px;
+  margin-top: 25px;
   margin-right: 20px;
 }
 
@@ -900,11 +914,9 @@ a.item:hover {
 
 #upload-content{
   display: block;
-  width: 70%;
-  min-width: 270px;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 94%;
+  padding-left: 25px;
+  margin-bottom: 5px;
 }
 
 #search{
@@ -1090,15 +1102,6 @@ img.ui.image.image-feed{
 
     #mobile-header{
       display: block;
-    }
-
-    #upload-content{
-      top: 53px;
-      position: relative;
-    }
-
-    #upload-content{
-      padding-top: 20px;
     }
 }
 

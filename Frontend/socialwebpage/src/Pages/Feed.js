@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
+import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
 import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar';
+import Dropzone from 'react-dropzone'
 import {checkSession} from '../API/GET/GetMethods';
+import {uploadStoryToPlatform, uploadPictureToPlatform} from '../API/POST/PostMethods';
 import {getFriendRequests, getFriends, getComments, getNotifications} from '../API/GET/GetMethods';
 import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment, deleteCommentById, likeComment} from '../API/POST/PostMethods';
 import '../profileStyle.css';
@@ -25,10 +27,20 @@ class Feed extends Component {
         resFriends: [],
         resFeedPosts: [],
         resComments: [],
-        resNotifications: []
+        resNotifications: [],
+        files: [],
+        showMessage: false,
+        sourceImage: "",
+        err: "",
+        title: "",
+        content: "",
+        redirectToFeed: false,
+        status: false
       }
 
       this.apiCheckSession = "/checkSession";
+      this.apiStoryCreate = "/story/create";
+      this.apiUploadImage = "/image/create";
 
       //this.checkThisSession();
       //this.getfeeddata();
@@ -222,6 +234,60 @@ getNumberOfLikesOfComment(currentItem) {
   return numberOfLikes;
 }
 
+// Upload story
+async handleSubmit(event) {
+  event.preventDefault();
+
+  this.state.title =  event.target[0].value;
+  this.state.content =  event.target[1].value;
+
+  if(this.state.files[0]){
+    const fd = new FormData();
+    fd.append('theImage', this.state.files[0]);
+    fd.append('title', this.state.title);
+    fd.append('content', this.state.content);
+
+    const response = await uploadPictureToPlatform(
+        this.apiUploadImage,
+        fd
+    );
+
+    this.setState({message : JSON.parse(response).message});
+    if(this.state.message === "Image uploaded") {
+        this.setState({ redirectToFeed: true });
+        window.location.reload();
+    } else {
+        //Error messages
+        this.setState({ showMessage: true });
+    }
+
+  }else{
+    const response = await uploadStoryToPlatform(
+        this.apiStoryCreate,
+        this.state.title,
+        this.state.content
+    );
+
+    this.setState({status: response});
+
+    // Redirect to feed if respose is message is true
+
+    if(this.state.status === true) {
+        this.setState({ redirectToFeed: true });
+        window.location.reload();
+    } else {
+        this.setState({ showMessage: true });
+    }
+  }
+
+}
+
+onDrop(files) {
+  this.setState({
+    files: files
+  });
+}
+
 async handleDeleteComment(event, data) {
   const response = await deleteCommentById("/comment/delete", data._id);
   if(response) {
@@ -253,17 +319,42 @@ async handleDeleteComment(event, data) {
                       <Tab menu={{ secondary: true, pointing: true }} panes={
                         [
                           { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
-                          <Link to="/upload">
-                            <Button  size="medium" id="upload-button-mobile" icon>
-                              <Icon className="menu-icons" name='upload' />
-                              Add Image
-                            </Button>
-                          </Link>
-                          <Link to="/post">
-                          <Button  size="medium" id="upload-button-mobile" icon>
-                            <Icon className="menu-icons" name='plus' />
-                            Add Story
-                          </Button></Link>
+                          <div id="feed-card">
+                            <Card.Group>
+                              <Card fluid centered>
+                                <div className="username-label">
+                                  Share something with your friends
+                                </div>
+                                <Card.Content id="feed-upload-content">
+                                  <div id="upload-content">
+                                     <Form onSubmit={this.handleSubmit.bind(this)}>
+                                        <span className="input-label-upload"> Add the title of your new post</span>
+
+                                        <Input className="input-upload" type="text"/>
+
+                                        <span className="input-label-upload"> What story do you want to share?</span>
+                                        <TextArea required className="input-upload" type="text"></TextArea>
+
+                                          <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+                                              <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
+                                          </Dropzone>
+
+                                          <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>
+                                          <aside>
+                                              {
+                                                this.state.files.map(f => <span className="upload-image-label" key={f.name}>Uploaded Filename: {f.name}</span>)
+                                              }
+                                          </aside>
+
+                                          {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
+                                        <Button className="button-upload" type="submit">Post</Button>
+
+                                      </Form>
+                                  </div>
+                                </Card.Content>
+                              </Card>
+                            </Card.Group>
+                          </div>
 
                           {feedPosts.map((item, index) =>
                           {return(
@@ -302,6 +393,10 @@ async handleDeleteComment(event, data) {
                                     <Card.Description>
                                       {item.content}
                                     </Card.Description>
+                                  </Card.Content>
+                                </Card>
+                                <Card fluid centered className="comment-card">
+                                  <Card.Content>
                                       <Header as='h3' dividing>Comments</Header>
                                       {comments.map((comment, index) => {
                                         return(
@@ -309,10 +404,10 @@ async handleDeleteComment(event, data) {
                                             {comment.post_id === item._id ?
                                             <Comment className="comment-box">
                                               {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
-                                              
+
                                               <Comment.Content className="comment-content">
                                                 <div className="comment-header">
-                                                    <Comment.Author className="comment-author" as='a'>
+                                                    <Comment.Author className="comment-author" >
                                                       <Link to={`/profile/${comment.authorName}`}>
                                                         {comment.authorName}
                                                       </Link>
@@ -345,7 +440,6 @@ async handleDeleteComment(event, data) {
                                         <Form.TextArea class="commentInput" placeholder="Add a comment.." />
                                         <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                       </Form>
-
                                   </Card.Content>
                                 </Card>
                               </Card.Group>
