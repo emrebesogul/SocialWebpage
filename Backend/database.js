@@ -1644,79 +1644,75 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             "post_id": new ObjectId(commentData.postId),
             "author_id": new ObjectId(currentUserId),
             "type": "comment"
-        });
+        }, (err, res) => {
+            if (err) throw err;
+            if (res) {
+                if(res.result.ok == 1) {
+                    db.collection("comments").findOne({"date_created": date_created, "content": commentData.content, "post_id": ObjectId(commentData.postId), "author_id": ObjectId(currentUserId)}, (err, docs) => {
+                        if(err) throw err;
+                        if(docs) {
+                            db.collection("stories").findOne({"_id": ObjectId(docs.post_id)}, (err_stories, docs_stories) => {
+                                if (err_stories) throw err_stories;
+                                if (docs_stories) {
+                                    if (JSON.stringify(docs_stories.user_id) === JSON.stringify(docs.author_id)) {
 
-        db.collection("comments").findOne({"date_created": date_created, "content": commentData.content, "post_id": ObjectId(commentData.postId), "author_id": ObjectId(currentUserId)}, (err, docs) => {
-            if(err) throw err;
-            if(docs) {
-                db.collection("stories").findOne({"_id": ObjectId(docs.post_id)}, (err_stories, docs_stories) => {
-                    if (err_stories) throw err_stories;
-                    if (docs_stories) {
-                        if (JSON.stringify(docs_stories.user_id) === JSON.stringify(docs.author_id)) {
+                                    } else {
+                                        db.collection('notifications').insert({
+                                            "whoAmI": ObjectId(docs_stories.user_id),
+                                            "whoDidAction": ObjectId(docs.author_id),
+                                            "action": "commented on your "+ docs_stories.type +"!",
+                                            "type": docs_stories.type,
+                                            "date_created": date_created,
+                                            "comment_id": ObjectId(docs._id)
+                                        });
+                                    }
+                                } else {
+                                    db.collection("images").findOne({"_id": ObjectId(docs.post_id)}, (err_images, docs_images) => {
+                                        if (err_images) throw err_images;
+                                        if (docs_images) {
+                                            if (JSON.stringify(docs_images.user_id) === JSON.stringify(docs.author_id)) {
 
-                        } else {
+                                            } else {
+                                                db.collection('notifications').insert({
+                                                    "whoAmI": ObjectId(docs_images.user_id),
+                                                    "whoDidAction": ObjectId(docs.author_id),
+                                                    "action": "commented on your "+ docs_images.type +"!",
+                                                    "type": docs_images.type,
+                                                    "date_created": date_created,
+                                                    "comment_id": ObjectId(docs._id)
+                                                });
+                                            }
+                                        } else {
+                                            db.collection("guestbookEntries").findOne({"_id": ObjectId(docs.post_id)}, (err_guestbookEntries, docs_guestbookEntries) => {
+                                                if (err_guestbookEntries) throw err_guestbookEntries;
+                                                if (docs_guestbookEntries) {
+                                                    if (JSON.stringify(docs_guestbookEntries.owner_id) === JSON.stringify(docs.author_id)) {
 
-                            db.collection('notifications').insert({
-                                "whoAmI": ObjectId(docs_stories.user_id),
-                                "whoDidAction": ObjectId(docs.author_id),
-                                "action": "commented on your "+ docs_stories.type +"!",
-                                "type": docs_stories.type,
-                                "date_created": date_created,
-                                "comment_id": ObjectId(docs._id)
+                                                    } else {
+                                                        db.collection('notifications').insert({
+                                                            "whoAmI": ObjectId(docs_guestbookEntries.owner_id),
+                                                            "whoDidAction": ObjectId(docs.author_id),
+                                                            "action": "commented on your "+ docs_guestbookEntries.type +"!",
+                                                            "type": docs_guestbookEntries.type,
+                                                            "date_created": date_created,
+                                                            "comment_id": ObjectId(docs._id)
+                                                        });
+                                                    }
+                                                } else {
+                                                    console.log("Post ID does not exist")
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
                             });
-                            res.send(true);
 
                         }
-                    } else {
-                        db.collection("images").findOne({"_id": ObjectId(docs.post_id)}, (err_images, docs_images) => {
-                            if (err_images) throw err_images;
-                            if (docs_images) {
-                                if (JSON.stringify(docs_images.user_id) === JSON.stringify(docs.author_id)) {
-
-                                } else {
-                                    db.collection('notifications').insert({
-                                        "whoAmI": ObjectId(docs_images.user_id),
-                                        "whoDidAction": ObjectId(docs.author_id),
-                                        "action": "commented on your "+ docs_images.type +"!",
-                                        "type": docs_images.type,
-                                        "date_created": date_created,
-                                        "comment_id": ObjectId(docs._id)
-                                    });
-                                    res.send(true);
-
-                                }
-                            } else {
-                                db.collection("guestbookEntries").findOne({"_id": ObjectId(docs.post_id)}, (err_guestbookEntries, docs_guestbookEntries) => {
-                                    if (err_guestbookEntries) throw err_guestbookEntries;
-                                    if (docs_guestbookEntries) {
-                                        if (JSON.stringify(docs_guestbookEntries.owner_id) === JSON.stringify(docs.author_id)) {
-
-                                        } else {
-                                            db.collection('notifications').insert({
-                                                "whoAmI": ObjectId(docs_guestbookEntries.owner_id),
-                                                "whoDidAction": ObjectId(docs.author_id),
-                                                "action": "commented on your "+ docs_guestbookEntries.type +"!",
-                                                "type": docs_guestbookEntries.type,
-                                                "date_created": date_created,
-                                                "comment_id": ObjectId(docs._id)
-                                            });
-                                            res.send(true);
-
-                                        }
-                                    } else {
-                                        console.log("Post ID does not exist")
-                                        res.send(true);
-
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-
+                    });
+                }
             }
         });
-
+        res.send(true);
     },
 
     //----------------------------List Comments-----------------------------//
