@@ -12,7 +12,6 @@ class SearchBar extends Component {
             user: "",
             redirectToProfile: false
         }
-        //Das Laden der User per Websockets?
         this.getAllUser();
     }
 

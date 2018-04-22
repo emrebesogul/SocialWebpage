@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
-import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar';
 import Dropzone from 'react-dropzone'
-import {checkSession} from '../API/GET/GetMethods';
-import {uploadStoryToPlatform, uploadPictureToPlatform} from '../API/POST/PostMethods';
-import {getFriendRequests, getFriends, getComments, getNotifications} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment, deleteCommentById, likeComment} from '../API/POST/PostMethods';
+import { Link, Redirect } from 'react-router-dom';
+import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
+import { fetchFeedData } from '../API/GET/GetMethods';
+import { getCurrentUserData, checkAuthorization } from '../API/GET/GetMethods';
+import { uploadStoryToPlatform, uploadPictureToPlatform } from '../API/POST/PostMethods';
+import { getFriendRequests, getFriends, getComments, getNotifications } from '../API/GET/GetMethods';
+import { likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment, deleteCommentById, likeComment } from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var feedPosts = [];
@@ -38,22 +38,16 @@ class Feed extends Component {
         status: false
       }
 
-      this.apiCheckSession = "/checkSession";
       this.apiStoryCreate = "/story/create";
       this.apiUploadImage = "/image/create";
-
-      //this.checkThisSession();
-      //this.getfeeddata();
-      //this.getFriends();
-      //this.getFriendRequests();
-
 
       this.pageTitle = "Ivey";
       document.title = this.pageTitle;
   }
 
   componentDidMount() {
-      this.checkThisSession();
+      this.checkAuthorization();
+      this.getCurrentUserData();
       this.getfeeddata();
       this.getFriends();
       this.getFriendRequests();
@@ -61,11 +55,17 @@ class Feed extends Component {
       this.getNotifications();
   }
 
-  async checkThisSession() {
-    const response = await checkSession(this.apiCheckSession);
-    this.setState({currentUserId: response.userId})
-    if(response.message !== "User is authorized") {
-        this.setState({redirectToLogin: true})
+  async checkAuthorization() {
+    const userIsAuthorized = await checkAuthorization();
+    if(!userIsAuthorized) {
+      this.setState({redirectToLogin: true})
+    }
+  }
+
+  async getCurrentUserData() {
+    const currentUserData = await getCurrentUserData();
+    if(currentUserData.userId) {
+      this.setState({currentUserId: currentUserData.userId})
     }
   }
 

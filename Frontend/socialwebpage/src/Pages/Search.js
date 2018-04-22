@@ -1,29 +1,28 @@
 import React, {Component} from 'react';
 import { Image } from 'semantic-ui-react'
 import SidebarProfile from '../Components/Sidebar'
-import {checkSession} from '../API/GET/GetMethods';
+import { checkAuthorization } from '../API/GET/GetMethods';
 import SearchBar from '../Components/SearchBar';
 import '../profileStyle.css';
 
 class Search extends Component {
     constructor() {
         super();
-        this.apiCheckSession = "/checkSession"
 
         this.pageTitle = "Search - Ivey"
         document.title = this.pageTitle;
     }
 
     componentDidMount() {
-        this.checkThisSession();
+        this.checkAuthorization();
     }
 
-    async checkThisSession() {
-        const response = await checkSession(this.apiCheckSession);
-        if(response.message !== "User is authorized") {
-            this.setState({redirectToLogin: true})
+    async checkAuthorization() {
+        const userIsAuthorized = await checkAuthorization();
+        if(!userIsAuthorized) {
+          this.setState({redirectToLogin: true})
         }
-    }
+      }
 
     render() {
         return (

@@ -4,29 +4,7 @@ import { read_cookie, delete_cookie } from 'sfcookies';
 var getUrl = window.location;
 var url = getUrl.protocol + "//" + getUrl.hostname + ":8000/rest";
 
-export const getCurrentUser=(api)=>{
-  return new Promise((resolve, reject) => {
-      var token = read_cookie('token')
-
-      $.ajax({
-        url: url + api,
-        dataType: 'json',
-        cache: false,
-        type: "GET",
-        headers: {
-            'Authorization': 'Bearer ' + token
-        },
-        success: function(data) {
-          resolve(data);
-      },
-        error: function(xhr, status, err){
-          reject(err);
-        }
-    });
-  });
-}
-
-export const getCurrentUserData=(api)=>{
+export const getUserData=(api)=>{
   return new Promise((resolve, reject) => {
       var token = read_cookie('token')
 
@@ -48,12 +26,34 @@ export const getCurrentUserData=(api)=>{
   });
 }
 
-export const checkSession=(api)=>{
+export const getCurrentUserData=()=>{
   return new Promise((resolve, reject) => {
       var token = read_cookie('token')
 
       $.ajax({
-        url: url + api,
+        url: url + "/currentUserData",
+        dataType: 'json',
+        cache: false,
+        type: "GET",
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        success: function(data) {
+          resolve(data);
+        },
+        error: function(xhr, status, err){
+          reject(err);
+        }
+    });
+  });
+}
+
+export const checkAuthorization=()=>{
+  return new Promise((resolve, reject) => {
+      var token = read_cookie('token')
+
+      $.ajax({
+        url: url + "/checkAuthorization",
         dataType: 'json',
         cache: false,
         type: "GET",

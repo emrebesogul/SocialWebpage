@@ -1,10 +1,10 @@
 import React from 'react';
-import {Icon, Header,  Form, Input, Label, Button, Message } from 'semantic-ui-react'
+import { Icon, Header,  Form, Input, Label, Button, Message } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
 import Dropzone from 'react-dropzone'
-import {getCurrentUserData} from '../API/GET/GetMethods';
-import {updateUserData} from '../API/PUT/PutMethods';
-import {uploadProfilePic} from '../API/POST/PostMethods';
+import { getUserData } from '../API/GET/GetMethods';
+import { updateUserData } from '../API/PUT/PutMethods';
+import { uploadProfilePic } from '../API/POST/PostMethods';
 
 class Settings extends React.Component{
     constructor() {
@@ -23,7 +23,7 @@ class Settings extends React.Component{
           rerender: false,
           files: []
         }
-        this.api = "/getUserInfo"
+        this.api = "/getUserData"
         this.apiUpdate = "/user/edit"
         this.apiUploadProfilePic = "/user/image/create"
 
@@ -37,7 +37,7 @@ class Settings extends React.Component{
     }
 
     async getCurrentUserData() {
-        const response = await getCurrentUserData(this.api);
+        const response = await getUserData(this.api);
         if(response) {
             this.setState({username: response.username})
             this.setState({firstname: response.firstname})
