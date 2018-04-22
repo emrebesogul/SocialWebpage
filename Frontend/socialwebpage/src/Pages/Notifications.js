@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Tab, Message, Input, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom';
+import { Message, Input, Card, Image, Icon, Button, Header, Comment, Form } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
-import SearchBar from '../Components/SearchBar';
 import { checkAuthorization, getNotificationData, getComments } from '../API/GET/GetMethods';
 import '../profileStyle.css';
 
@@ -39,7 +38,7 @@ class Notifications extends Component {
         numberOfLikes = item.number_of_likes_in_state;
       }
     });
-    if(numberOfLikes == undefined) {
+    if(numberOfLikes === undefined) {
       numberOfLikes = currentItem.number_of_likes;
     }
     return numberOfLikes;
@@ -139,7 +138,7 @@ class Notifications extends Component {
                             <Header as='h4' dividing>Comments</Header>
                             {comments.map((comment, index) => {
                               return(
-                                <Comment.Group>
+                                <Comment.Group key={index}>
                                   {comment.post_id === item._id ?
                                   <Comment>
                                     {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }

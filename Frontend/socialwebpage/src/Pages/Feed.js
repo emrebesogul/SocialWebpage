@@ -400,7 +400,7 @@ async handleDeleteComment(event, data) {
                                         )
                                       })}
                                       <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea class="commentInput" placeholder="Add a comment.." />
+                                        <Form.TextArea className="commentInput" placeholder="Add a comment.." />
                                         <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
                                       </Form>
                                   </Card.Content>
