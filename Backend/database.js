@@ -1228,7 +1228,7 @@ var call = module.exports = {
                             }
                         );
 
-                        db.collection('notifications').remove({$or: [ {"whoAmI": ObjectId(userToDeleteId), "whoDidAction": ObjectId(userId)}, {"whoAmI": ObjectId(userId), "whoDidAction": ObjectId(userToDeleteId)} ]}, (err, res_stories) => {
+                        db.collection('notifications').remove({$or: [ {"whoAmI": ObjectId(userToDeleteId), "whoDidAction": ObjectId(userId)}, {"whoAmI": ObjectId(userId), "whoDidAction": ObjectId(userToDeleteId)} ], "action": "added you as friend!"}, (err, res_stories) => {
                             if (err) throw err;
                             res.send(true);
                         });
@@ -1654,6 +1654,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                         if (JSON.stringify(docs_stories.user_id) === JSON.stringify(docs.author_id)) {
 
                         } else {
+
                             db.collection('notifications').insert({
                                 "whoAmI": ObjectId(docs_stories.user_id),
                                 "whoDidAction": ObjectId(docs.author_id),
@@ -1662,6 +1663,8 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                                 "date_created": date_created,
                                 "comment_id": ObjectId(docs._id)
                             });
+                            res.send(true);
+
                         }
                     } else {
                         db.collection("images").findOne({"_id": ObjectId(docs.post_id)}, (err_images, docs_images) => {
@@ -1678,6 +1681,8 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                                         "date_created": date_created,
                                         "comment_id": ObjectId(docs._id)
                                     });
+                                    res.send(true);
+
                                 }
                             } else {
                                 db.collection("guestbookEntries").findOne({"_id": ObjectId(docs.post_id)}, (err_guestbookEntries, docs_guestbookEntries) => {
@@ -1694,9 +1699,13 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                                                 "date_created": date_created,
                                                 "comment_id": ObjectId(docs._id)
                                             });
+                                            res.send(true);
+
                                         }
                                     } else {
                                         console.log("Post ID does not exist")
+                                        res.send(true);
+
                                     }
                                 });
                             }
@@ -1707,7 +1716,6 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             }
         });
 
-        res.send(true);
     },
 
     //----------------------------List Comments-----------------------------//
@@ -1806,7 +1814,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     getNotifications: function(db, res, userId) {
 
         db.collection('notifications').aggregate([
-            { $match: {"whoAmI": ObjectId(userId)}},
+            { $match: {"whoAmI": ObjectId(userId), "whoDidAction": {"$ne": ObjectId(userId)} }},
             { $lookup:
                 {
                     from: "users",
@@ -1819,6 +1827,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                 $project :
                 {
                     "username": "$user.username",
+                    "id": "$user._id",
                     "action": 1,
                     "date_created": 1,
                     "userid": "$user._id",
@@ -1835,45 +1844,48 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             }
         ]).toArray((err, result) => {
          if (err) throw err;
+
          result.map(item => {
-               item.username = item.username;
-               item.action = item.action;
-               item.date_created = getDate(item.date_created);
-               item.userid = item.userid;
-               if (item.action == "added you as a friend!") {
-                   item.redirect = false;
-               }
-               if (item.story_id) {
+
+                item.username = item.username;
+                item.action = item.action;
+                item.date_created = getDate(item.date_created);
+                item.userid = item.userid;
+                if (item.action == "added you as a friend!") {
+                    item.redirect = false;
+                }
+                if (item.story_id) {
+                     item.redirect = true;
+                     item.type = "story";
+                     item.typeCommented = item.type;
+                     item.linkToPost = item.story_id;
+                }
+                if (item.image_id) {
+                     item.redirect = true;
+                     item.type = "image";
+                     item.typeCommented = item.type;
+                     item.linkToPost = item.image_id;
+                }
+                if (item.guestbook_id) {
+                     item.redirect = true;
+                     item.type = "guestbook";
+                     item.typeCommented = item.type;
+                     item.linkToPost = item.guestbook_id;
+                }
+                if (item.liked_guestbook_id) {
                     item.redirect = true;
-                    item.type = "story";
                     item.typeCommented = item.type;
-                    item.linkToPost = item.story_id;
-               }
-               if (item.image_id) {
-                    item.redirect = true;
-                    item.type = "image";
-                    item.typeCommented = item.type;
-                    item.linkToPost = item.image_id;
-               }
-               if (item.guestbook_id) {
-                    item.redirect = true;
                     item.type = "guestbook";
+                    item.linkToPost = item.liked_guestbook_id;
+                }
+                if (item.comment_id) {
+                    item.redirect = true;
                     item.typeCommented = item.type;
-                    item.linkToPost = item.guestbook_id;
-               }
-               if (item.liked_guestbook_id) {
-                   item.redirect = true;
-                   item.typeCommented = item.type;
-                   item.type = "guestbook";
-                   item.linkToPost = item.liked_guestbook_id;
-               }
-               if (item.comment_id) {
-                   item.redirect = true;
-                   item.typeCommented = item.type;
-                   item.type = "comment";
-                   item.linkToPost = item.comment_id;
-               }
-               item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                    item.type = "comment";
+                    item.linkToPost = item.comment_id;
+                }
+                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+
            });
             result.sort((a, b) => {
                 return new Date(b.date_created) - new Date(a.date_created);
@@ -1883,10 +1895,9 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
          });
        },
 
-
     listImagesForNotificationId: function(db, req, res, type, postId, currentUserId) {
         db.collection('images').aggregate([
-            { $match : { user_id:  ObjectId(currentUserId) } },
+            { $match : { user_id:  ObjectId(currentUserId), "_id": ObjectId(postId) } },
             { $lookup:
                {
                  from: "users",
@@ -1930,9 +1941,60 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         });
     },
 
+    listCommentsForNotificationInImagesId: function(db, req, res, type, commentId, currentUserId) {
+        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                db.collection('images').aggregate([
+                    { $match : { user_id:  ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
+                    { $lookup:
+                       {
+                         from: "users",
+                         localField: "user_id",
+                         foreignField: "_id",
+                         as: "user"
+                       }
+                     },
+                     { $project :
+                        {
+                            "title" : 1,
+                            "content": 1,
+                            "src": 1,
+                            "filename": 1,
+                            "number_of_likes": 1,
+                            "liking_users": 1,
+                            "current_user_has_liked" : {
+                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                            },
+                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                            "user_id": 1,
+                            "username": {
+                                "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                            },
+                            "updated" : 1,
+                            "profile_picture_filename": "$user.picture",
+                            "profile_picture_url": 1
+                        }
+                     },
+                     { $sort : { "date_created" : -1 } }
+                    ]).toArray((err_images, result_images) => {
+                    if (err_images) throw err_images;
+                    result_images.map(item => {
+                        item.date_created = getDate(item.date_created);
+                        item.src = "http://localhost:8000/uploads/posts/" + item.filename;
+                        item.number_of_likes = item.liking_users.length;
+                        item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+
+                    });
+                        res.status(200).send(result_images);
+                });
+            }
+        })
+    },
+
     listStoriesForNotificationId: function(db, req, res, type, postId, currentUserId) {
         db.collection('stories').aggregate([
-            { $match : { user_id: ObjectId(currentUserId) } },
+            { $match : { user_id: ObjectId(currentUserId), "_id": ObjectId(postId) } },
             { $lookup:
                {
                  from: "users",
@@ -1971,9 +2033,55 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         });
     },
 
+    listCommentsForNotificationInStoriesId: function(db, req, res, type, commentId, currentUserId) {
+        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                db.collection('stories').aggregate([
+                    { $match : { user_id: ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
+                    { $lookup:
+                       {
+                         from: "users",
+                         localField: "user_id",
+                         foreignField: "_id",
+                         as: "user"
+                       }
+                     },
+                     { $project : {
+                            "title" : 1,
+                            "content": 1,
+                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                            "number_of_likes": 1,
+                            "liking_users" : 1,
+                            "current_user_has_liked" : {
+                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                            },
+                            "user_id": 1,
+                            "username": {
+                                "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                            },
+                            "updated": 1,
+                            "profile_picture_filename": "$user.picture",
+                            "profile_picture_url": 1
+                        }
+                     },
+                     { $sort : { "date_created" : -1 } }
+                    ]).toArray((err_stories, result_stories) => {
+                    if (err_stories) throw err_stories;
+                        result_stories.map(item => {
+                            item.date_created = getDate(item.date_created);
+                            item.number_of_likes = item.liking_users.length;
+                            item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                        });
+                        res.status(200).send(result_stories);
+                });
+            }
+        })
+    },
+
     listGuestbookEntryForNotificationId: function(db, req, res, type, postId, currentUserId) {
         db.collection('guestbookEntries').aggregate([
-            { $match : { owner_id: ObjectId(currentUserId) } },
+            { $match : { owner_id: ObjectId(currentUserId), "_id": ObjectId(postId) } },
             { $lookup:
                {
                  from: "users",
@@ -2010,6 +2118,52 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                 });
                 res.status(200).send(res_guestbook_entries);
         });
+    },
+
+    listCommentsForNotificationInGuestbooksId: function(db, req, res, type, commentId, currentUserId) {
+        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                db.collection('guestbookEntries').aggregate([
+                    { $match : { owner_id: ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
+                    { $lookup:
+                       {
+                         from: "users",
+                         localField: "author_id",
+                         foreignField: "_id",
+                         as: "author"
+                       }
+                     },
+                     { $project : {
+                            "title" : 1,
+                            "content": 1,
+                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                            "number_of_likes": 1,
+                            "liking_users" : 1,
+                            "current_user_has_liked" : {
+                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                            },
+                            "user_id": 1,
+                            "username": {
+                                "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
+                            },
+                            "profile_picture_filename": "$author.picture",
+                            "profile_picture_url": 1
+                        }
+                     },
+                     { $sort : { "date_created" : -1 } }
+                    ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
+                    if (err_guestbook_entries) throw err_guestbook_entries;
+                      res_guestbook_entries.map(item => {
+                            item.date_created = getDate(item.date_created);
+                            item.number_of_likes = item.liking_users.length;
+                            item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                            item.profile_picture_filename = item.profile_picture_filename;
+                        });
+                        res.status(200).send(res_guestbook_entries);
+                });
+            }
+        })
     },
 
 }

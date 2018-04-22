@@ -797,14 +797,15 @@ MongoClient.connect(url, function(err, client) {
                         database.listImagesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
                     }
                     else if(req.params.type == "comment") {
+                        //Funktioniert noch nicht so ganz richtig!
                         if(req.params.typeCommented == "story") {
-                            database.listStoriesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                            database.listCommentsForNotificationInStoriesId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
                         }
                         else if(req.params.typeCommented == "image") {
-                            database.listImagesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                            database.listCommentsForNotificationInImagesId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
                         }
                         else if(req.params.typeCommented == "guestbook") {
-                            database.listGuestbookEntryForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                            database.listCommentsForNotificationInGuestbooksId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
                         } else {
                             res.send(false);
                         }
