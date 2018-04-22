@@ -473,7 +473,7 @@ var call = module.exports = {
 
 
   //----------------------Get Other User----------------------//
-  getOtherUserProfile: function(db, req, res, username, myUsername, userid) {
+  getUserDataForUsername: function(db, res, username, userid) {
 
       const collection = db.collection('users');
       collection.findOne({"username": username}, (err, docs) => {
@@ -531,7 +531,7 @@ var call = module.exports = {
   },
 
   //----------------------Get Current User----------------------//
-  getCurrentUserProfile: function(db, req, res, userid) {
+  getUserDataForCurrentUser: function(db, res, userid) {
       const collection = db.collection('users');
       collection.findOne({"_id": ObjectId(userid)},(err, docs) => {
           if (err) {
@@ -1451,7 +1451,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
   },
 
   //----------------------Upload Profile Picture----------------------//
-  uploadProfilePic: function (db, res, file) {
+  uploadProfilePicture: function (db, res, file) {
     const collectionUsers = db.collection('users');
     const fileData = file.fileData;
     const userid = file.userid;
@@ -1492,7 +1492,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
   },
 
     //----------------------Delete Profile Pic---------------------//
-    deleteProfilePic: function (db, res, userId) {
+    deleteProfilePicture: function (db, res, userId) {
 
         const collectionUsers = db.collection('users');
 

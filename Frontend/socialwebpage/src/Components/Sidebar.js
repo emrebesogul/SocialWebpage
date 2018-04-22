@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Icon, Button, Image, Menu, Dropdown } from 'semantic-ui-react'
-import {checkSession, deleteSession} from '../API/GET/GetMethods';
-import {getCurrentUser} from '../API/GET/GetMethods';
+import { checkAuthorization, deleteSession } from '../API/GET/GetMethods';
+import { getUserData } from '../API/GET/GetMethods';
 
 import '../profileStyle.css';
 
@@ -15,28 +15,25 @@ class Sidebar extends Component {
           redirectToLogin: false,
           username: ""
         }
-        this.api = "/getUserInfo"
-        this.apiCheckSession = "/checkSession";
-        this.apiDeleteSession = "/deleteSession";
 
-        this.checkThisSession();
+        this.checkAuthorization();
         this.getCurrentUser();
     }
 
-    async checkThisSession() {
-        const response = await checkSession(this.apiCheckSession);
-        if(response.message !== "User is authorized") {
-            this.setState({redirectToLogin: true})
-        }
+    async checkAuthorization() {
+      const userIsAuthorized = await checkAuthorization();
+      if(!userIsAuthorized) {
+        this.setState({redirectToLogin: true})
+      }
     }
 
     async getCurrentUser() {
-        const response = await getCurrentUser(this.api);
+        const response = await getUserData("/getUserData");
         this.setState({username: response.username})
     }
 
     handleLogout() {
-        deleteSession(this.apiDeleteSession);
+        deleteSession();
         this.setState({ redirectToLogin: true });
     }
 

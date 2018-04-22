@@ -4,11 +4,11 @@ import { read_cookie } from 'sfcookies';
 var getUrl = window.location;
 var url = getUrl.protocol + "//" + getUrl.hostname + ":8000/rest";
 
-export const updateUserData=(api, jsonUserData)=>{
+export const updateUserData=(jsonUserData) => {
   return new Promise((resolve, reject) => {
       var token = read_cookie('token')
       $.ajax({
-        url: url + api,
+        url: url + "/user/edit",
         contentType: "application/json",
         type: "PUT",
         data: jsonUserData,
@@ -25,12 +25,11 @@ export const updateUserData=(api, jsonUserData)=>{
   });
 }
 
-//----------------------Update Story Entry----------------------//
-export const updateStoryEntry=(api, storyId, storyTitle, storyContent)=>{
+export const updateStoryEntry=(storyId, storyTitle, storyContent) => {
   return new Promise((resolve, reject) => {
       var token = read_cookie('token')
       $.ajax({
-        url: url + api,
+        url: url + "/story/edit",
         contentType: "application/json",
         type: "PUT",
         data: JSON.stringify({storyId: storyId, storyTitle: storyTitle, storyContent: storyContent}),
@@ -47,12 +46,11 @@ export const updateStoryEntry=(api, storyId, storyTitle, storyContent)=>{
   });
 }
 
-//----------------------Update Image----------------------//
-export const updateImage=(api, imageId, imageTitle, imageContent)=>{
+export const updateImage=(imageId, imageTitle, imageContent) => {
   return new Promise((resolve, reject) => {
       var token = read_cookie('token')
       $.ajax({
-        url: url + api,
+        url: url + "/image/edit",
         contentType: "application/json",
         type: "PUT",
         data: JSON.stringify({imageId: imageId, imageTitle: imageTitle, imageContent: imageContent}),
