@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message, Header } from 'semantic-ui-react'
-import { checkSession, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getCurrentUser, getComments } from '../API/GET/GetMethods';
-import { likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById, createComment, deleteCommentById, likeComment } from '../API/POST/PostMethods';
 import { Redirect, Link } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
 import '../profileStyle.css';
+import { checkAuthorization, getCurrentUserData, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getUserData, getComments } from '../API/GET/GetMethods';
+import { likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById, createComment, deleteCommentById, likeComment } from '../API/POST/PostMethods';
 import { updateStoryEntry, updateImage } from '../API/PUT/PutMethods';
 
 var images = [];
@@ -33,18 +33,17 @@ class Profile extends Component {
         showUpdateImageErrorMessage: false,
         resComments: []
       }
-
-      this.apiCheckSession = "/checkSession"
+      this.apiUser = "/getUserData"
       this.apiDeleteSession = "/deleteSession";
       this.apiStories = "/story/list";
       this.apiImages = "/image/list";
-      this.apiUser = "/getUserInfo"
       this.apiGuestbookEntries = "/guestbook/list";
 
       this.property = props.match.params.username;
       this.ownerName = props.match.params.username;
       this.getProfileData(this.property);
-      this.checkThisSession();
+      this.getCurrentUserData();
+      this.checkAuthorization();
       this.getComments();
 
       if(this.property === undefined) {
@@ -55,13 +54,19 @@ class Profile extends Component {
       document.title = this.pageTitle;
   }
 
-    async checkThisSession() {
-      const response = await checkSession(this.apiCheckSession);
-      this.setState({currentUserId: response.userId})
-      if(response.message !== "User is authorized") {
-          this.setState({redirectToLogin: true})
-      }
+  async checkAuthorization() {
+    const userIsAuthorized = await checkAuthorization();
+    if(!userIsAuthorized) {
+      this.setState({redirectToLogin: true})
     }
+  }
+
+  async getCurrentUserData() {
+    const currentUserData = await getCurrentUserData();
+    if(currentUserData.userId) {
+      this.setState({currentUserId: currentUserData.userId})
+    }
+  }
 
       async getProfileData(username) {
         if(username === undefined) {
@@ -84,9 +89,9 @@ class Profile extends Component {
               item.number_of_likes_in_state = item.number_of_likes;
             });
 
-            const responseMyData = await checkSession(this.apiCheckSession);
+            const currentUserData = await getCurrentUserData();
 
-            const response = await getCurrentUser(this.apiUser);
+            const response = await getUserData(this.apiUser);
             this.setState({username: response.username})
             this.setState({picture: response.picture})
             this.setState({pictureURL: response.pictureURL})
@@ -98,7 +103,7 @@ class Profile extends Component {
                 this.setState({pictureExists: true})
             }
 
-            if(responseMyData.username === this.state.username) {
+            if(currentUserData.username === this.state.username) {
                 this.setState({ show: true});
             } else {
                 this.setState({ show: false});
@@ -127,10 +132,10 @@ class Profile extends Component {
               item.number_of_likes_in_state = item.number_of_likes;
             });
 
-            const responseMyData = await checkSession(this.apiCheckSession);
+            const currentUserData = await getCurrentUserData();
 
             let api = this.apiUser + "?username=" + username;
-            const response = await getCurrentUser(api);
+            const response = await getUserData(api);
             this.setState({username: response.username})
             this.setState({picture: response.picture})
             this.setState({pictureURL: response.pictureURL})
@@ -142,7 +147,7 @@ class Profile extends Component {
                 this.setState({pictureExists: true})
             }
 
-            if(responseMyData.username === this.state.username) {
+            if(currentUserData.username === this.state.username) {
                 this.setState({ show: true});
             } else {
                 this.setState({ show: false});

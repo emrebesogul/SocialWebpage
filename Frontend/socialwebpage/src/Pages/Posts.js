@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Tab, Message, Input, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
-import {fetchFeedData} from '../API/GET/GetMethods';
+import { fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 import SearchBar from '../Components/SearchBar';
-import {checkSession, getNotificationData, getComments } from '../API/GET/GetMethods';
+import { checkAuthorization, getNotificationData, getComments } from '../API/GET/GetMethods';
 import '../profileStyle.css';
 
 var posts = [];
@@ -23,17 +23,14 @@ class Posts extends Component {
         responsePost: []
       }
 
-      this.apiCheckSession = "/checkSession";
-
       this.pageTitle = "Ivey - Posts";
       document.title = this.pageTitle;
   }
 
   componentDidMount() {
-      this.checkThisSession();
+      this.checkAuthorization();
       this.getNotificationData();
       this.getComments();
-
   }
 
   getNumberOfLikesOfPost(currentItem) {
@@ -52,13 +49,12 @@ class Posts extends Component {
   async getComments() {
     let response = await getComments("/comment/list");
     this.setState({resComments: response});
-    console.log("resComments: ", this.state.resComments)
   }
 
-  async checkThisSession() {
-    const response = await checkSession(this.apiCheckSession);
-    if(response.message !== "User is authorized") {
-        this.setState({redirectToLogin: true})
+  async checkAuthorization() {
+    const userIsAuthorized = await checkAuthorization();
+    if(!userIsAuthorized) {
+      this.setState({redirectToLogin: true})
     }
   }
 
