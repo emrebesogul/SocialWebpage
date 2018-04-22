@@ -4,7 +4,7 @@ import Sidebar from '../Components/Sidebar'
 import Dropzone from 'react-dropzone'
 import { getUserData } from '../API/GET/GetMethods';
 import { updateUserData } from '../API/PUT/PutMethods';
-import { uploadProfilePic } from '../API/POST/PostMethods';
+import { uploadProfilePicture } from '../API/POST/PostMethods';
 
 class Settings extends React.Component{
     constructor() {
@@ -23,10 +23,6 @@ class Settings extends React.Component{
           rerender: false,
           files: []
         }
-        this.api = "/getUserData"
-        this.apiUpdate = "/user/edit"
-        this.apiUploadProfilePic = "/user/image/create"
-
         this.pageTitle = "Settings"
         document.title = this.pageTitle;
     }
@@ -37,7 +33,7 @@ class Settings extends React.Component{
     }
 
     async getCurrentUserData() {
-        const response = await getUserData(this.api);
+        const response = await getUserData("/getUserData");
         if(response) {
             this.setState({username: response.username})
             this.setState({firstname: response.firstname})
@@ -57,7 +53,7 @@ class Settings extends React.Component{
         obj.email = event.target[4].value
         const jsonUserData= JSON.stringify(obj);
 
-        const response = await updateUserData("/user/edit", jsonUserData);
+        const response = await updateUserData(jsonUserData);
         this.setState({ message: JSON.parse(response).message });
         if(this.state.message === "User data successfully updated.") {
             this.setState({ showMessageSuccess: true });
@@ -77,10 +73,7 @@ class Settings extends React.Component{
 
         console.log(fd)
 
-        const response = await uploadProfilePic(
-            this.apiUploadProfilePic,
-            fd
-        );
+        const response = await uploadProfilePicture(fd);
 
         //Do something with response
         this.setState({message : JSON.parse(response).message});

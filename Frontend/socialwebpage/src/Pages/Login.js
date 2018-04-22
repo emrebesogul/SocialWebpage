@@ -19,7 +19,6 @@ class Login extends Component {
           redirectToFeed: false
         }
 
-        this.api = '/user/loginUser';
         this.handleSubmit = this.handleSubmit.bind(this);
 
         this.pageTitle = "Login to Ivey";
@@ -33,7 +32,7 @@ class Login extends Component {
         this.state.username =  event.target[0].value;
         this.state.password =  event.target[1].value;
 
-        const response = await checkUserDataAtLogin(this.api, this.state.username, this.state.password);
+        const response = await checkUserDataAtLogin(this.state.username, this.state.password);
 
         //Do something with response
         this.setState({message : JSON.parse(response).message});

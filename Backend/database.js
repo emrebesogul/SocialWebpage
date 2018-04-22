@@ -1451,7 +1451,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
   },
 
   //----------------------Upload Profile Picture----------------------//
-  uploadProfilePic: function (db, res, file) {
+  uploadProfilePicture: function (db, res, file) {
     const collectionUsers = db.collection('users');
     const fileData = file.fileData;
     const userid = file.userid;
@@ -1492,7 +1492,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
   },
 
     //----------------------Delete Profile Pic---------------------//
-    deleteProfilePic: function (db, res, userId) {
+    deleteProfilePicture: function (db, res, userId) {
 
         const collectionUsers = db.collection('users');
 

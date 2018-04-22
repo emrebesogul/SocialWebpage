@@ -15,8 +15,6 @@ class SidebarProfile extends Component {
           redirectToLogin: false,
           username: ""
         }
-        this.api = "/getUserData"
-        this.apiDeleteSession = "/deleteSession";
 
         this.checkAuthorization();
         this.getCurrentUser();
@@ -30,12 +28,12 @@ class SidebarProfile extends Component {
     }
 
     async getCurrentUser() {
-        const response = await getUserData(this.api);
+        const response = await getUserData("/getUserData");
         this.setState({username: response.username})
     }
 
     handleLogout() {
-        deleteSession(this.apiDeleteSession);
+        deleteSession();
         this.setState({ redirectToLogin: true });
     }
 

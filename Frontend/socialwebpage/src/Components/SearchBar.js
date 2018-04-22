@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { Search } from 'semantic-ui-react'
-import { getAllUser } from '../API/GET/GetMethods';
+import { getAllUsers } from '../API/GET/GetMethods';
 import { Redirect } from 'react-router-dom';
 
 class SearchBar extends Component {
@@ -20,7 +20,7 @@ class SearchBar extends Component {
     }
 
     async getAllUser() {
-        const response = await getAllUser("/user/all");
+        const response = await getAllUsers();
         if (response) {
             this.setState({user: response});
         }

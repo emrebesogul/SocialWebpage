@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Tab, Message, Input, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
-import { fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 import SearchBar from '../Components/SearchBar';
 import { checkAuthorization, getNotificationData, getComments } from '../API/GET/GetMethods';
@@ -47,7 +46,7 @@ class Posts extends Component {
   }
 
   async getComments() {
-    let response = await getComments("/comment/list");
+    let response = await getComments();
     this.setState({resComments: response});
   }
 

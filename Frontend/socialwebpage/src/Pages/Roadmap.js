@@ -16,7 +16,6 @@ class Roadmap extends Component {
           redirectToFeed: false,
           status: false
         }
-        this.api = "/story/create";
         this.pageTitle = "Roadmap"
         document.title = this.pageTitle;
       }
@@ -33,7 +32,7 @@ class Roadmap extends Component {
       }
 
       handleLogout() {
-          deleteSession(this.apiDeleteSession);
+          deleteSession();
           this.setState({ redirectToLogin: true });
       }
 

@@ -406,7 +406,7 @@ MongoClient.connect(url, function(err, client) {
       //----------------------Get friendRequests----------------------//
       // User ONE sends User TWO a friendship request. User TWO can accept or reject
       // If accepted, add to friendship list, else do nothing...
-      app.get('/rest/friends/getFriendRequests', verifyToken, (req, res) => {
+      app.get('/rest/friends/getRequests', verifyToken, (req, res) => {
           jwt.verify(req.token, 'secretkey', (err, authData) => {
               if(err) {
                   res.json({
@@ -593,7 +593,7 @@ MongoClient.connect(url, function(err, client) {
                       const userid = authData.userid
                       const file = {fileData, userid}
 
-                      database.uploadProfilePic(client.db('socialwebpage'), res, file);
+                      database.uploadProfilePicture(client.db('socialwebpage'), res, file);
                   }
               });
 
@@ -612,7 +612,7 @@ MongoClient.connect(url, function(err, client) {
                 });
             } else {
                 const userId = authData.userid;
-                database.deleteProfilePic(client.db('socialwebpage'), res, userId);
+                database.deleteProfilePicture(client.db('socialwebpage'), res, userId);
             }
         });
       });
