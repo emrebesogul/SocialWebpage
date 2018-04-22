@@ -61,7 +61,7 @@ var call = module.exports = {
   registerUserToPlatform: function (db, req, res, newUserData) {
       //Select table and parse form input fields
       const collection = db.collection('users');
-      let firstname = JSON.parse(newUserData).username;
+      let firstname = JSON.parse(newUserData).firstname;
       let lastname = JSON.parse(newUserData).lastname;
       let username = JSON.parse(newUserData).username;
       let email = JSON.parse(newUserData).email;
