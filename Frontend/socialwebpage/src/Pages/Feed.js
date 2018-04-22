@@ -37,10 +37,6 @@ class Feed extends Component {
         redirectToFeed: false,
         status: false
       }
-
-      this.apiStoryCreate = "/story/create";
-      this.apiUploadImage = "/image/create";
-
       this.pageTitle = "Ivey";
       document.title = this.pageTitle;
   }
@@ -71,7 +67,7 @@ class Feed extends Component {
 
 
  async getfeeddata() {
-      const response = await fetchFeedData("/feed");
+      const response = await fetchFeedData();
       this.setState({resFeedPosts: response});
       response.map(item => {
         item.number_of_likes_in_state = item.number_of_likes;
@@ -79,50 +75,36 @@ class Feed extends Component {
   }
 
   async getFriendRequests() {
-      const response = await getFriendRequests("/friends/getFriendRequests");
+      const response = await getFriendRequests();
       this.setState({resFriendsRequests: response});
   }
 
   async getFriends() {
-      const response = await getFriends("/friends/getFriends");
+      const response = await getFriends();
       this.setState({resFriends: response})
   }
 
   async getNotifications() {
-      const response = await getNotifications("/user/notifications");
+      const response = await getNotifications();
       this.setState({resNotifications: response})
   }
 
   async confirmFriendRequest(e, item) {
-      //Set state of status to accepted
-      //Add both to friends: []
-      const response = await confirmFriendshipRequest(
-          "/friends/confirmFriendRequest",
-          String(item.requesterId)
-      );
+      const response = await confirmFriendshipRequest(String(item.requesterId));
       if(response) {
           window.location.reload();
       }
-
   }
 
   async declineFriendRequest(e, item) {
-      //Set state of status to rejected
-      //Delete from friendRequests collection
-      const response = await deleteFriendshipRequest(
-          "/friends/declineFriendRequest",
-          String(item.requesterId)
-      );
+      const response = await deleteFriendshipRequest(String(item.requesterId));
       if(response) {
           window.location.reload();
       }
   }
 
   async deleteFriend(e, item) {
-      const response = await deleteFriend(
-          "/friends/deleteFriend",
-          item.friendId
-      );
+      const response = await deleteFriend(item.friendId);
       if(response) {
           window.location.reload();
       }
@@ -132,16 +114,10 @@ async handleRatePost(event, data){
   event.preventDefault();
 
   if(data.src) {
-    await likeImageById(
-      "/image/like",
-      data._id
-    );
+    await likeImageById(data._id);
   }
   else {
-    await likeStoryEntryById(
-      "/story/like",
-      data._id
-    );
+    await likeStoryEntryById(data._id);
   }
 
   this.state.resFeedPosts.map(item => {
@@ -178,7 +154,7 @@ async handleCreateComment(event, data) {
       "content": event.target[0].value,
       "postId" : data._id
     }
-    let response = await createComment("/comment/create", commentData);
+    let response = await createComment(commentData);
     if(response) {
       let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
       commentInputElements.map(item => {
@@ -190,7 +166,7 @@ async handleCreateComment(event, data) {
 }
 
 async getComments() {
-  let response = await getComments("/comment/list");
+  let response = await getComments();
   this.setState({resComments: response});
   response.map(item => {
     item.number_of_likes_in_state = item.number_of_likes;
@@ -200,7 +176,7 @@ async getComments() {
 async handleRateComment(event, data) {
   event.preventDefault();
 
-  await likeComment("/comment/like", data._id);
+  await likeComment(data._id);
   this.state.resComments.map(item => {
     if(item._id === data._id) {
       if(item.current_user_has_liked == 0) {
@@ -241,10 +217,7 @@ async handleSubmit(event) {
     fd.append('title', this.state.title);
     fd.append('content', this.state.content);
 
-    const response = await uploadPictureToPlatform(
-        this.apiUploadImage,
-        fd
-    );
+    const response = await uploadPictureToPlatform(fd);
 
     this.setState({message : JSON.parse(response).message});
     if(this.state.message === "Image uploaded") {
@@ -256,11 +229,7 @@ async handleSubmit(event) {
     }
 
   }else{
-    const response = await uploadStoryToPlatform(
-        this.apiStoryCreate,
-        this.state.title,
-        this.state.content
-    );
+    const response = await uploadStoryToPlatform(this.state.title, this.state.content);
 
     this.setState({status: response});
 
@@ -283,7 +252,7 @@ onDrop(files) {
 }
 
 async handleDeleteComment(event, data) {
-  const response = await deleteCommentById("/comment/delete", data._id);
+  const response = await deleteCommentById(data._id);
   if(response) {
     this.getComments();
   }

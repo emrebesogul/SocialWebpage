@@ -4,12 +4,10 @@ import { read_cookie } from 'sfcookies';
 var getUrl = window.location;
 var url = getUrl.protocol + "//" + getUrl.hostname + ":8000/rest";
 
-//----------------------LOGIN----------------------//
-export const checkUserDataAtLogin=(api, username, password) =>
-{
+export const checkUserDataAtLogin=(username, password) => {
     return new Promise((resolve, reject) => {
         $.ajax({
-          url: url + api,
+          url: url + "/user/loginUser",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -24,12 +22,10 @@ export const checkUserDataAtLogin=(api, username, password) =>
     });
 }
 
-//----------------------REGISTER----------------------//
-export const registerUserToPlatform=(api, firstname, lastname, username, email, password, birthday, gender) =>
-{
+export const registerUserToPlatform=(firstname, lastname, username, email, password, birthday, gender) => {
     return new Promise((resolve, reject) => {
         $.ajax({
-          url: url + api,
+          url: url + "/user/create",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -44,14 +40,11 @@ export const registerUserToPlatform=(api, firstname, lastname, username, email, 
     });
 }
 
-//----------------------Post Image----------------------//
-export const uploadPictureToPlatform=(api, fd) =>
-{
+export const uploadPictureToPlatform=(fd) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/image/create",
           type: "POST",
           cache: false,
           contentType: false,
@@ -70,14 +63,11 @@ export const uploadPictureToPlatform=(api, fd) =>
     });
 }
 
-//----------------------Post Story----------------------//
-export const uploadStoryToPlatform=(api, title, content, userId) =>
-{
+export const uploadStoryToPlatform=(title, content, userId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/story/create",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -95,14 +85,11 @@ export const uploadStoryToPlatform=(api, title, content, userId) =>
     });
 }
 
-//----------------------Delete Story Entry----------------------//
-export const deleteStoryEntryById=(api, storyId) =>
-{
+export const deleteStoryEntryById=(storyId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/story/delete",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -120,14 +107,11 @@ export const deleteStoryEntryById=(api, storyId) =>
     });
 }
 
-//----------------------Delete Image----------------------//
-export const deleteImageById=(api, imageId) =>
-{
+export const deleteImageById=(imageId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/image/delete",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -145,14 +129,11 @@ export const deleteImageById=(api, imageId) =>
     });
 }
 
-//----------------------Like Story----------------------//
-export const likeStoryEntryById=(api, storyId) =>
-{
+export const likeStoryEntryById=(storyId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/story/like",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -170,14 +151,11 @@ export const likeStoryEntryById=(api, storyId) =>
     });
 }
 
-//----------------------Like Image----------------------//
-export const likeImageById=(api, imageId) =>
-{
+export const likeImageById=(imageId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/image/like",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -195,14 +173,11 @@ export const likeImageById=(api, imageId) =>
     });
 }
 
-//----------------------Add Friend----------------------//
-export const sendFriendshipRequest=(api, recipient) =>
-{
+export const sendFriendshipRequest=(recipient) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/friends/sendFriendshipRequest",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -220,14 +195,11 @@ export const sendFriendshipRequest=(api, recipient) =>
     });
 }
 
-//----------------------Confirm Friendship----------------------//
-export const confirmFriendshipRequest=(api, requesterId) =>
-{
+export const confirmFriendshipRequest=(requesterId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/friends/confirmFriendRequest",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -245,14 +217,11 @@ export const confirmFriendshipRequest=(api, requesterId) =>
     });
 }
 
-//----------------------Delete Friendshiprequest----------------------//
-export const deleteFriendshipRequest=(api, requesterId) =>
-{
+export const deleteFriendshipRequest=(requesterId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/friends/declineFriendRequest",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -270,14 +239,11 @@ export const deleteFriendshipRequest=(api, requesterId) =>
     });
 }
 
-//----------------------Create Guestbook Entry----------------------//
-export const createGuestbookentry=(api, title, content, ownerName) =>
-{
+export const createGuestbookentry=(title, content, ownerName) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/guestbook/create",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -295,14 +261,11 @@ export const createGuestbookentry=(api, title, content, ownerName) =>
     });
 }
 
-//----------------------Delete Guestbook Entry----------------------//
-export const deleteGuestbookEntryById=(api, guestbookEntryId) =>
-{
+export const deleteGuestbookEntryById=(guestbookEntryId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/guestbook/delete",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -320,14 +283,11 @@ export const deleteGuestbookEntryById=(api, guestbookEntryId) =>
     });
 }
 
-//----------------------Like Guestbook Entry----------------------//
-export const likeGuestbookEntryById=(api, guestbookEntryId) =>
-{
+export const likeGuestbookEntryById=(guestbookEntryId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/guestbook/like",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -345,14 +305,11 @@ export const likeGuestbookEntryById=(api, guestbookEntryId) =>
     });
 }
 
-//----------------------Upload Profile Picture----------------------//
-export const uploadProfilePic=(api, fd) =>
-{
+export const uploadProfilePicture=(fd) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/user/image/create",
           type: "POST",
           cache: false,
           contentType: false,
@@ -371,19 +328,15 @@ export const uploadProfilePic=(api, fd) =>
     });
 }
 
-//----------------------Delete Profile Picture----------------------//
-export const deleteProfilePic=(api, username) =>
-{
+export const deleteProfilePicture=() => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/user/delete/picture",
           type: "POST",
           cache: false,
           contentType: false,
           processData: false,
-          data: username,
           headers: {
               'Authorization': 'Bearer ' + token
           },
@@ -397,14 +350,11 @@ export const deleteProfilePic=(api, username) =>
     });
 }
 
-//----------------------Delete Friend----------------------//
-export const deleteFriend=(api, friendId) =>
-{
+export const deleteFriend=(friendId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/friends/deleteFriend",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -422,14 +372,11 @@ export const deleteFriend=(api, friendId) =>
     });
 }
 
-//----------------------Get Story Entry By ID----------------------//
-export const getStoryEntryById=(api, storyId) =>
-{
+export const getStoryEntryById=(storyId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/story/getEntry",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -447,13 +394,11 @@ export const getStoryEntryById=(api, storyId) =>
     });
 }
 
-//----------------------Get Image By ID----------------------//
-export const getImageById=(api, imageId) =>
-{
+export const getImageById=(imageId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
         $.ajax({
-          url: url + api,
+          url: url + "/image/get",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -471,13 +416,11 @@ export const getImageById=(api, imageId) =>
     });
 }
 
-//----------------------Create Comment----------------------//
-export const createComment=(api, commentData) => {
+export const createComment=(commentData) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/comment/create",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -495,14 +438,11 @@ export const createComment=(api, commentData) => {
     });
 }
 
-//----------------------Delete Comment----------------------//
-export const deleteCommentById=(api, commentId) =>
-{
+export const deleteCommentById=(commentId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/comment/delete",
           type: "POST",
           cache: false,
           contentType: 'application/json',
@@ -520,13 +460,11 @@ export const deleteCommentById=(api, commentId) =>
     });
 }
 
-export const likeComment=(api, commentId) =>
-{
+export const likeComment=(commentId) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')
-
         $.ajax({
-          url: url + api,
+          url: url + "/comment/like",
           type: "POST",
           cache: false,
           contentType: 'application/json',

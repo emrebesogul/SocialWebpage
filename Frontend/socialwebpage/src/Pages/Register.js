@@ -23,9 +23,6 @@ class Reqister extends Component {
           message: "",
           messageDetail: ""
         }
-
-        this.api = '/user/create';
-
         this.pageTitle = "Reqister to Ivey"
         document.title = this.pageTitle;
     }
@@ -43,7 +40,6 @@ class Reqister extends Component {
         this.state.gender =  event.target[6].value;
 
         const response = await registerUserToPlatform(
-            this.api,
             this.state.firstname,
             this.state.lastname,
             this.state.username,

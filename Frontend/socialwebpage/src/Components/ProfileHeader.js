@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Icon, Header, Button, Image } from 'semantic-ui-react'
 import { getUserData, getCurrentUserData } from '../API/GET/GetMethods';
-import { sendFriendshipRequest, deleteProfilePic, deleteFriend } from '../API/POST/PostMethods';
+import { sendFriendshipRequest, deleteProfilePicture, deleteFriend } from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 class ProfileHeader extends Component {
@@ -21,8 +21,6 @@ class ProfileHeader extends Component {
           pictureExists: false,
           buttonState: "Loading"
         }
-        this.api = "/getUserData"
-        this.apiFriendshipRequest = "/friends/sendFriendshipRequest"
     }
 
     componentDidMount() {
@@ -32,7 +30,7 @@ class ProfileHeader extends Component {
     async getCurrentUser(username) {
 
         if(username === undefined) {
-            const response = await getUserData(this.api);
+            const response = await getUserData("/getUserData");
             this.setState({username: response.username})
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
@@ -49,7 +47,7 @@ class ProfileHeader extends Component {
             }
 
         } else {
-            let api = this.api + "?username=" + username;
+            let api = "/getUserData?username=" + username;
             const response = await getUserData(api);
             this.setState({username: response.username})
             this.setState({id: response.id})
@@ -73,10 +71,8 @@ class ProfileHeader extends Component {
         }
     }
 
-    async handleDeleteProfilePic(event) {
-      const response = await deleteProfilePic(
-        "/user/delete/picture"
-      );
+    async handleDeleteProfilePicture(event) {
+      const response = await deleteProfilePicture();
       if(response) {
         window.location.reload();
       }
@@ -86,16 +82,13 @@ class ProfileHeader extends Component {
 
         // Send friendship request to user
         if(this.state.buttonState == "Add Friend") {
-            const response = await sendFriendshipRequest(this.apiFriendshipRequest, this.state.username);
+            const response = await sendFriendshipRequest(this.state.username);
             this.setState({buttonState: JSON.parse(response).buttonState})
         }
 
         // Delete friendship request to user
         if(this.state.buttonState == "Delete Friend") {
-            const response = await deleteFriend(
-                "/friends/deleteFriend",
-                this.state.id
-            );
+            const response = await deleteFriend(this.state.id);
             if(response) {
                 window.location.reload();
             }
@@ -131,7 +124,7 @@ class ProfileHeader extends Component {
                   </div>
 
                     <div>
-                        {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
+                        {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePicture} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
 
                         {this.state.pictureExists ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
 
