@@ -10,7 +10,7 @@ var posts = [];
 var comments = [];
 
 
-class Posts extends Component {
+class Notifications extends Component {
 
   constructor(props) {
       super(props);
@@ -171,4 +171,4 @@ class Posts extends Component {
     }
 }
 
-export default Posts;
+export default Notifications;
