@@ -5,8 +5,6 @@ import Login from './Pages/Login';
 import Register from './Pages/Register';
 import Profile from './Pages/Profile';
 import Feed from './Pages/Feed';
-import Upload from './Pages/Upload'
-import PostText from './Pages/PostText'
 import Roadmap from './Pages/Roadmap'
 import Settings from './Pages/Settings'
 import About from './Pages/About'

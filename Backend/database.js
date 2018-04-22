@@ -1640,6 +1640,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         db.collection('comments').insert({
             "content": commentData.content,
             "date_created": date_created,
+            "liking_users": [],
             "post_id": new ObjectId(commentData.postId),
             "author_id": new ObjectId(currentUserId),
             "type": "comment"
@@ -1719,7 +1720,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     },
 
     //----------------------------List Comments-----------------------------//
-    getComments: function (db, res) {
+    getComments: function (db, res, currentUserId) {
         db.collection("comments").aggregate([
       { $lookup:
          {
@@ -1735,15 +1736,22 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
               "authorName": {
                   "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
               },
+              "author_id": 1,
               "post_id": 1,
               "profile_picture_filename": "$author.picture",
-              "profile_picture_url": 1
+              "profile_picture_url": 1,
+              "number_of_likes": 1,
+              "liking_users": 1,
+              "current_user_has_liked" : {
+                  "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+              },
           }
        },
        { $sort : { "date_created" : -1 } }
         ]).toArray( (err_find_comments, res_find_comments) => {
             if (err_find_comments) throw err_find_comments;
             res_find_comments.map(item => {
+                item.number_of_likes = item.liking_users.length;
                 item.date_created = getDate(item.date_created);
                 item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
             });
@@ -1793,7 +1801,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     deleteCommentById: function (db, res, commentId, userId) {
       db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
           if (err_find_comments) throw err_find_comments;
-          if (res_find_comments.owner_id == userId) {
+          if (res_find_comments.author_id == userId) {
               db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
                   if (err_remove_comments) throw err_remove_comments;
 
@@ -2165,6 +2173,42 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             }
         })
     },
+
+    //----------------------Like Comment----------------------//
+    likeComment: function (db, res, commentId, userId) {
+    db.collection("comments").findOne(
+        {
+            _id : new ObjectId(commentId)
+        },
+        (err_find_comments, res_find_comments) => {
+
+        if (err_find_comments) throw err_find_comments;
+        if (res_find_comments.liking_users.includes(userId)) {
+            let index = res_find_comments.liking_users.indexOf(userId);
+            if (index > -1) {
+                res_find_comments.liking_users.splice(index, 1);
+            }
+            else {
+                throw err_find_comments;
+            }
+        }
+        else {
+            res_find_comments.liking_users.push(userId);
+        }
+        db.collection("comments").update(
+            {
+                _id : new ObjectId(commentId)
+            },
+            {
+                $set: { liking_users: res_find_comments.liking_users }
+            },
+            (err_update_comments, res_update_comments) => {
+
+            if (err_update_comments) throw err_update_comments;
+        });
+        res.send(true);
+    });
+  },
 
 }
 

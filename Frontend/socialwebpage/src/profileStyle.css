@@ -60,8 +60,8 @@ div.item::before{
 
 div.comment {
   margin-top: 15px !important;
-  width: 96% !important;
-  margin-left: 10px !important;
+  /*width: 96% !important;
+  margin-left: 10px !important;*/
 }
 
 div.description{
@@ -93,12 +93,12 @@ h2.ui.huge.icon.center.aligned.header{
 
 
 #guestbook-reply{
-  padding: 2em 3.4em;
   margin-right: auto;
   border-radius: 2px;
-  padding-right: 9em;
-  margin-top: 30px;
-  margin-bottom: 40px;
+  padding-right: 10px;
+  padding-left: 10;
+  /* margin-top: 30px; */
+  margin-bottom: 5px;
 }
 
 #guestbook{
@@ -189,7 +189,7 @@ a{
   max-width: 230px;
   text-align: center;
   border-radius: 2px;
-  height: 567px;
+  height: 477px;
   padding-top: 10px;
   color: rgb(30,30,30);
   background: #fefefe;
@@ -330,6 +330,100 @@ div.ui.pointing.secondary.menu{
   float: right;
 }
 
+
+
+/*----------------------------------------------
+          Comment Boxes
+----------------------------------------------*/
+
+div.ui.comments {
+  margin: 0.5em 0;
+}
+
+.comment-likes{
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+}
+
+.comment-header {
+  width: 100%;
+  height: 30px;
+  background: rgb(233,233,233);
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  box-shadow: 0 1px 2px #adadad79;
+}
+
+.comment-author{
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.delete-button-comment{
+  position: absolute;
+  top: -25px;
+  right: 10px;
+}
+
+.comment-user-info{
+  position: absolute;
+  top: 40px;
+  left: 74px;
+}
+
+.comment-box{
+  border: 1px solid rgb(220,220,220);
+  border-radius: 3px;
+  margin-bottom: 20px !important;
+  padding-left: 15px !important;
+  padding-top: 10px !important;
+  box-shadow: 0 1px 4px 1px #c5c5c59e;
+  position: relative;
+}
+
+.comment-card {
+  box-shadow: none !important;
+}
+
+#feed-upload-content{
+  padding: 1em 0;
+}
+
+.comments-user-image{
+  height: 58px;
+  width: 58px;
+  border: 1px solid rgb(244,244,244);
+  display: block;
+  -o-object-fit: cover;
+  object-fit: cover;
+  margin-top: -2px;
+  z-index: 100;
+  border-radius: 75%;
+  -webkit-box-shadow: 0 0 3px #b9b9b9a8;
+  box-shadow: 0 0 3px 1px #ffffffae;
+}
+
+.comment-rating{
+  position: absolute;
+  top: 6px;
+  left: 40%;
+  transform: translateX(50%);
+}
+
+.comment-content{
+  padding: 1em !important;
+}
+
+/*----------------------------------------------
+        End  Comment Boxes
+----------------------------------------------*/
+
 input:hover {
   border-bottom: 1px solid rgb(220, 240, 250) !important;
   transition: all 0.2s !important;
@@ -424,17 +518,18 @@ textarea {
   top: 0;
   left: 0;
   z-index: 8999;
+  touch-action: none !important;
   background: rgba(30,30,30, 0.9);
 }
 
 #profile-image-large{
   margin-left: auto !important;
   margin-right: auto !important;
-  margin-top: -35px;
-  height: auto;
+  object-fit: contain;
   width: 60%;
-  border-radius: 2px;
+  margin-top: 35px;
   max-width: 880px;
+  border-radius: 2px;
   display: block;
 }
 
@@ -567,11 +662,17 @@ div.sub.header.feed-subheader{
   display: block;
 }
 
+#feed-share-text{
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  /* width: 112px; */
+  padding: 0 5px;
+}
+
 .upload-dropzone{
-  width: 36%;
+  width: 135px;
   cursor: pointer;
-  max-width: 290px;
-  min-width: 270px;
   margin-top: 10px;
   padding: 8px;
   padding-bottom: 4px;
@@ -586,7 +687,7 @@ div.sub.header.feed-subheader{
 
 .input-label-upload{
   display: block;
-  margin-top: 40px;
+  margin-top: 25px;
   margin-right: 20px;
 }
 
@@ -813,11 +914,9 @@ a.item:hover {
 
 #upload-content{
   display: block;
-  width: 70%;
-  min-width: 270px;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 94%;
+  padding-left: 25px;
+  margin-bottom: 5px;
 }
 
 #search{
@@ -880,7 +979,7 @@ img.ui.image.image-feed{
   display: none !important;
   image-rendering: auto;
   left: 50%;
-  margin-left: -36px;
+  transform: translateX(-50%);
 }
 
 #profile-header{
@@ -1004,15 +1103,6 @@ img.ui.image.image-feed{
     #mobile-header{
       display: block;
     }
-
-    #upload-content{
-      top: 53px;
-      position: relative;
-    }
-
-    #upload-content{
-      padding-top: 20px;
-    }
 }
 
 /*-------------------------------------------------------
@@ -1023,6 +1113,10 @@ img.ui.image.image-feed{
     #feed-card{
       margin-bottom: 0px;
       margin-top: 10px;
+    }
+
+    #card-content{
+      padding: 1em 0.5em;
     }
 
     div.ui.item.dropdown{
@@ -1059,7 +1153,6 @@ img.ui.image.image-feed{
     .logo-mobile{
       margin-top: 2px;
       height: 40px;
-      margin-left: -40px;
     }
 
     #profile-button-mobile{
@@ -1152,6 +1245,15 @@ img.ui.image.image-feed{
       position: inherit;
       display: block;
       margin: 10px auto;
+    }
+
+    .comment-box{
+      border-radius: 4px;
+    }
+
+    .comment-header{
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
     }
 
     #button-upload {

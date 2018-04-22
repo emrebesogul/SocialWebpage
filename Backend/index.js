@@ -122,7 +122,8 @@ MongoClient.connect(url, function(err, client) {
               } else {
                   res.json({
                       message: "User is authorized",
-                      username: authData.username
+                      username: authData.username,
+                      userId: authData.userid
                   });
               }
           });
@@ -736,7 +737,8 @@ MongoClient.connect(url, function(err, client) {
                     message: "User is not authorized"
                 });
             } else {
-                database.getComments(client.db('socialwebpage'), res, req);
+                const currentUserId = authData.userid;
+                database.getComments(client.db('socialwebpage'), res, currentUserId);
             }
         });
       });
@@ -754,7 +756,7 @@ MongoClient.connect(url, function(err, client) {
                     message: "User is not authorized"
                 });
             } else {
-                const commentId = req.body;
+                const commentId = req.body.commentId;
                 const userId = authData.userid;
                 database.deleteCommentById(client.db('socialwebpage'), res, commentId, userId, () => {
                     db.close();
@@ -817,6 +819,23 @@ MongoClient.connect(url, function(err, client) {
                     }
               }
           });
+      });
+
+      //----------------------Like Comment----------------------//
+      app.post('/rest/comment/like', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const commentId = req.body.commentId;
+                const userId = authData.userid;
+                database.likeComment(client.db('socialwebpage'), res, commentId, userId, () => {
+                    db.close();
+                });
+            }
+        });
       });
 
 

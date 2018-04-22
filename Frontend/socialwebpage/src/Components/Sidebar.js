@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Icon, Button, Image, Menu, Dropdown } from 'semantic-ui-react'
-import SearchBar from '../Components/SearchBar';
 import {checkSession, deleteSession} from '../API/GET/GetMethods';
 import {getCurrentUser} from '../API/GET/GetMethods';
 
@@ -100,21 +99,6 @@ class Sidebar extends Component {
                  </Dropdown>
                </Menu>
 
-               {/*
-                <Link to="/profile">
-                  <Button circular size="medium" id="profile-button-mobile" icon>
-                    <Icon className="menu-icons" name='user' />
-                    Profile
-                  </Button>
-                </Link> */}
-
-                <Link to="/post">
-                  <Button circular size="medium" id="logout-button-mobile" icon>
-                      <Icon className="menu-icons" name='plus' />
-                      Add Story
-                  </Button>
-                </Link>
-
               </div>
 
               <div className="feed-header">
@@ -132,20 +116,6 @@ class Sidebar extends Component {
                       <Button labelPosition="right"  size="medium" id="upload-button" icon>
                         <Icon className="menu-icons" size="large" name='feed' />
                         Feed
-                      </Button>
-                    </Link>
-
-                    <Link to="/post">
-                    <Button labelPosition="right" size="medium" id="upload-button" icon>
-                      <Icon className="menu-icons" size="large" name='plus' />
-                      Add Story
-                    </Button>
-                  </Link>
-
-                    <Link to="/upload">
-                      <Button labelPosition="right" size="medium" id="upload-button" icon>
-                        <Icon className="menu-icons" size="large" name='upload' />
-                        Add Image
                       </Button>
                     </Link>
 
