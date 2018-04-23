@@ -644,7 +644,7 @@ var call = module.exports = {
                 db.collection("stories").findOne({"_id" : ObjectId(JSON.parse(storyId).storyId)}, (err, docs) => {
                     if(err) throw err;
                     if(docs) {
-                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your story!", "story_id": ObjectId(JSON.parse(storyId).storyId)}, (err, res_stories) => {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your story", "story_id": ObjectId(JSON.parse(storyId).storyId)}, (err, res_stories) => {
                             if (err) throw err;
                         });
                     }
@@ -665,7 +665,7 @@ var call = module.exports = {
                     db.collection('notifications').insert({
                         "whoAmI": ObjectId(docs.user_id),
                         "whoDidAction": ObjectId(userId),
-                        "action": "liked your story!",
+                        "action": "liked your story",
                         "date_created": date_created,
                         "story_id": ObjectId(JSON.parse(storyId).storyId)
                     });
@@ -717,7 +717,7 @@ var call = module.exports = {
                 db.collection("images").findOne({"_id" : ObjectId(JSON.parse(imageId).imageId)}, (err, docs) => {
                     if(err) throw err;
                     if(docs) {
-                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your image!", "image_id": ObjectId(JSON.parse(imageId).imageId)}, (err, res_stories) => {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your image", "image_id": ObjectId(JSON.parse(imageId).imageId)}, (err, res_stories) => {
                             if (err) throw err;
                         });
                     }
@@ -740,7 +740,7 @@ var call = module.exports = {
                     db.collection('notifications').insert({
                         "whoAmI": ObjectId(docs.user_id),
                         "whoDidAction": ObjectId(userId),
-                        "action": "liked your image!",
+                        "action": "liked your photo",
                         "date_created": date_created,
                         "image_id": ObjectId(JSON.parse(imageId).imageId)
                     });
@@ -1113,7 +1113,7 @@ var call = module.exports = {
         db.collection('notifications').insert({
             "whoAmI": ObjectId(requesterId),
             "whoDidAction": ObjectId(recipientId),
-            "action": "added you as a friend!",
+            "action": "added you as friend",
             "date_created": date_created
         });
 
@@ -1269,7 +1269,7 @@ var call = module.exports = {
                         db.collection('notifications').insert({
                             "whoAmI": ObjectId(res_user._id),
                             "whoDidAction": ObjectId(authorId),
-                            "action": "created a Guestbook entry on your page!",
+                            "action": "posted something in your guestbook",
                             "date_created": date_created,
                             "guestbook_id": ObjectId(docs._id)
                         });
@@ -1379,7 +1379,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                 db.collection("guestbookEntries").findOne({"_id" : ObjectId(guestbookData.guestbookEntryId)}, (err, docs) => {
                     if(err) throw err;
                     if(docs) {
-                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.owner_id), "whoDidAction": ObjectId(userId), "action": "liked your Guestbook entry!", "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err, res_guestbookData) => {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.owner_id), "whoDidAction": ObjectId(userId), "action": "liked your guestbook post", "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err, res_guestbookData) => {
                             if (err) throw err;
                         });
                     }
@@ -1399,7 +1399,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                     db.collection('notifications').insert({
                         "whoAmI": ObjectId(docs.owner_id),
                         "whoDidAction": ObjectId(userId),
-                        "action": "liked your Guestbook entry!",
+                        "action": "liked your guestbook post",
                         "date_created": date_created,
                         "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)
                     });
@@ -1660,7 +1660,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                                         db.collection('notifications').insert({
                                             "whoAmI": ObjectId(docs_stories.user_id),
                                             "whoDidAction": ObjectId(docs.author_id),
-                                            "action": "commented on your "+ docs_stories.type +"!",
+                                            "action": "commented on your "+ docs_stories.type,
                                             "type": docs_stories.type,
                                             "date_created": date_created,
                                             "comment_id": ObjectId(docs._id)
@@ -1676,7 +1676,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                                                 db.collection('notifications').insert({
                                                     "whoAmI": ObjectId(docs_images.user_id),
                                                     "whoDidAction": ObjectId(docs.author_id),
-                                                    "action": "commented on your "+ docs_images.type +"!",
+                                                    "action": "commented on your "+ docs_images.type,
                                                     "type": docs_images.type,
                                                     "date_created": date_created,
                                                     "comment_id": ObjectId(docs._id)
@@ -1692,7 +1692,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                                                         db.collection('notifications').insert({
                                                             "whoAmI": ObjectId(docs_guestbookEntries.owner_id),
                                                             "whoDidAction": ObjectId(docs.author_id),
-                                                            "action": "commented on your "+ docs_guestbookEntries.type +"!",
+                                                            "action": "commented on your "+ docs_guestbookEntries.type,
                                                             "type": docs_guestbookEntries.type,
                                                             "date_created": date_created,
                                                             "comment_id": ObjectId(docs._id)

@@ -162,6 +162,7 @@ a{
 
 .card-header{
   margin-top: 4px !important;
+  font-weight: 700;
 }
 
 .post-likes{
@@ -272,6 +273,11 @@ a{
   position: relative;
   top: -68px;
   right: 6px;
+}
+
+#notification-card{
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .content-card-username-label{
@@ -508,6 +514,10 @@ textarea {
 
 .wrapper-content{
   z-index: 10000;
+  height: 80vh;
+  width: 80vw;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .wrapper{
@@ -525,18 +535,13 @@ textarea {
 #profile-image-large{
   margin-left: auto !important;
   margin-right: auto !important;
-  object-fit: contain;
-  width: 60%;
-  margin-top: 35px;
-  max-width: 880px;
+  object-fit: cover;
+  margin-top: 20px;
   border-radius: 2px;
   display: block;
+  height: 100%;
 }
 
-#profile-image-close-button{
-  margin-left: 7.5%;
-  margin-top: 2%;
-}
 
 /*----------------------------------------------
     End Profile Picture Large
@@ -1017,7 +1022,6 @@ img.ui.image.image-feed{
 
     #profile-image-large{
       height: auto;
-      width: 85%;
     }
 
     #feed-content{

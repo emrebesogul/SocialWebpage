@@ -71,6 +71,10 @@ class Notifications extends Component {
         }
     }
 
+    async handleRateImage(event, data){
+
+    }
+
 
     render() {
         const { redirectToLogin } = this.state;
@@ -82,49 +86,49 @@ class Notifications extends Component {
         comments = this.state.resComments;
 
         return (
-          <div id="main-content">
+          <div className="feed">
+               <Sidebar />
 
-            <div className="feed">
-                <Sidebar />
-            </div>
 
-            <div id="feed-content">
+            <div id="profile-content">
+                <Header as='h2' icon textAlign='center'>
+                  <Icon name='discussions' circular />
+                  <Header.Content>
+                    Notifications
+                  </Header.Content>
+                  <Header.Subheader className="feed-subheader">
+                    Check your notification.
+                  </Header.Subheader>
+                </Header>
 
                 <div>
-                  <Header as='h2' icon textAlign='center'>
-                    <Icon name='discussions' circular />
-                    <Header.Content>
-                      Notifications
-                    </Header.Content>
-                    <Header.Subheader className="feed-subheader">
-                      Check your notification.
-                    </Header.Subheader>
-                  </Header>
-                </div>
-
-                {posts.map((item, index) =>
-                {return(
+                  {posts.map((item, index) =>
+                    {return(
                     <div key={index} className="profile-card">
-                      <Card.Group>
+                      <Card.Group id="notification-card">
                         <Card fluid centered>
                           <div className="username-label">
                             {item.profile_picture_url !== "http://localhost:8000/uploads/posts/"? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                            <span className="content-card-username-label"> @{item.username} </span>
+                            <Link to={`/profile/${item.username}`}>
+                              <span className="content-card-username-label"> @{item.username} </span>
+                            </Link>
                             {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                           </div>
+
                           <Image className="image-feed" src={item.src} />
                           <Card.Content id="card-content">
-                            <Form onSubmit={((e) => this.handleUpdateImage(e, item))}>
                               <Card.Header className="card-header">
-                                {this.state.updateItemId == item._id ? <Form.Field><Input  placeholder={this.state.imageTitle} value={this.state.imageTitle} onChange={(e) => this.handleChangeImageData(e,"imageTitle")}/></Form.Field> : item.title}
-                                  <div className="ui mini horizontal statistic post-likes">
-                                    <div className="value">
-                                      {this.getNumberOfLikesOfPost(item)}
-                                    </div>
-                                    <div className="label">
-                                      Likes
-                                    </div>
+                               <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
+                               </Rating>
+                               {item.title}
+                                <div className="ui mini horizontal statistic post-likes">
+                                  <div className="value">
+                                    {this.getNumberOfLikesOfPost(item)}
                                   </div>
+                                  <div className="label">
+                                    Likes
+                                  </div>
+                                </div>
                               </Card.Header>
                               <Card.Meta className="card-meta">
                                 <span className='date'>
@@ -133,13 +137,12 @@ class Notifications extends Component {
                                 </span>
                               </Card.Meta>
                               <Card.Description>
-                                {this.state.updateItemId == item._id ? <Input placeholder={this.state.imageContent} value={this.state.imageContent}/> : item.content}
+                                 {item.content}
                               </Card.Description>
-                            </Form>
                             <Header as='h4' dividing>Comments</Header>
                             {comments.map((comment, index) => {
                               return(
-                                <Comment.Group>
+                                <Comment.Group key={index}>
                                   {comment.post_id === item._id ?
                                   <Comment>
                                     {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={comment.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
@@ -155,13 +158,17 @@ class Notifications extends Component {
                                 </Comment.Group>
                               )
                             })}
+                            <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                              <Form.TextArea class="commentInput"/>
+                              <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                            </Form>
                           </Card.Content>
                         </Card>
                       </Card.Group>
                      </div>
                    )
                 })}
-
+                </div>
                 {this.state.showError ? <Message size='massive'>404 POST ENTRY NOT FOUND!</Message>: null}
 
             </div>
