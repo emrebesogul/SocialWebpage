@@ -333,7 +333,7 @@ async handleDeleteComment(event, data) {
                                         <Input className="input-upload" type="text"/>
 
                                         <span className="input-label-upload"> What story do you want to share?</span>
-                                        <TextArea required className="input-upload" type="text"></TextArea>
+                                        <TextArea className="input-upload" type="text"></TextArea>
 
                                           <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
                                               <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
