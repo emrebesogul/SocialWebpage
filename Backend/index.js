@@ -8,125 +8,115 @@ const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const uuid = require('uuid/v4');
 const jwt = require('jsonwebtoken');
+const database = require('./database');
 
 // create application/json parser
 const jsonParser = bodyParser.json();
-
-const database = require('./database');
 const url = 'mongodb://127.0.0.1:27017/socialwebpage';
 
-//Setup Multer:
+//Setup Multer for uploading files
 const storage = multer.diskStorage({
-  destination: 'public/uploads/posts/',
-  filename: function (req, file, callback) {
-      switch (file.mimetype) {
-          case 'image/jpeg': ext = '.jpeg'; break;
-          case 'image/png': ext = '.png'; break;
-          default: ext = '';
-      }
-     callback(null, uuid() + ext);
-  }
+    destination: 'public/uploads/posts/',
+    filename: function (req, file, callback) {
+        switch (file.mimetype) {
+            case 'image/jpeg': ext = '.jpeg'; break;
+            case 'image/png': ext = '.png'; break;
+            default: ext = '';
+        }
+        callback(null, uuid() + ext);
+    }
 });
 
 const upload = multer({ storage: storage});
 
-
-
-
-//==================================================================================================//
 app.use(express.static('public'));
-
-//Enable CORS
 app.use(cors());
-
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  if (req.method === "OPTIONS") {
-      res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-      return res.status(200).json({});
-  }
-  next();
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    if (req.method === "OPTIONS") {
+        res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+        return res.status(200).json({});
+    }
+    next();
 });
 
-
-
-//==================================================================================================//
-// Connect to Mongo DB on start
 MongoClient.connect(url, function(err, client) {
   if (err) {
-      console.log('Unable to connect to MongoDB');
-      throw err;
+        console.log('Unable to connect to MongoDB');
+        throw err;
   } else {
-      console.log("Successfully connected to MongoDB");
-      app.use(bodyParser.json());
+        console.log("Successfully connected to MongoDB");
+        app.use(bodyParser.json());
 
-      //Verify Token Function
-      function verifyToken(req, res, next) {
-          //Get auth header value
-          const bearerHeader = req.headers.authorization;
-          if(typeof bearerHeader !== 'undefined') {
-              //Split at the space
-              const bearer = bearerHeader.split(' ');
-              const bearerToken = bearer[1];
-              //Set the Token
-              req.token = bearerToken;
-              //Next middleware
-              next();
-          } else {
-              //Forbidden
-              res.json({
-                  message: "User is not authorized"
-              });
-          }
+        function verifyToken(req, res, next) {
+            const bearerHeader = req.headers.authorization;
+            if(typeof bearerHeader !== 'undefined') {
+                const bearer = bearerHeader.split(' ');
+                const bearerToken = bearer[1];
+                req.token = bearerToken;
+                next();
+            } else {
+                res.json({
+                    message: "User is not authorized"
+                });
+            }
       }
 
-      //----------------------CHECK SESSION----------------------//
-      app.get('/rest/getUserInfo', verifyToken, (req, res) => {
+      //----------------------Get Profile----------------------//
+    app.get('/rest/getUserData', verifyToken, (req, res) => {
+        if(req.query.username) {
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    const userid = authData.userid
+                    const username = req.query.username;
+                    database.getUserDataForUsername(client.db('socialwebpage'), res, username, userid);
+                }
+            });
+        } else {
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    const userid = authData.userid
+                    database.getUserDataForCurrentUser(client.db('socialwebpage'), res, userid);
+                }
+            });
+        }
+    });
 
-          if(req.query.username) {
-              jwt.verify(req.token, 'secretkey', (err, authData) => {
-                  if(err) {
-                      res.json({
-                          message: "User is not authorized"
-                      });
-                  } else {
-                      const myUsername = authData.username
-                      let username = req.query.username;
-                      database.getOtherUserProfile(client.db('socialwebpage'), req, res, username, myUsername);
-                  }
-              });
+    //----------------------Check Authorization----------------------//
+    app.get('/rest/checkAuthorization', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.send(false);
+            } else {
+                res.send(true);
+            }
+        });
+    });
 
-          } else {
-              jwt.verify(req.token, 'secretkey', (err, authData) => {
-                  if(err) {
-                      res.json({
-                          message: "User is not authorized"
-                      });
-                  } else {
-                      const userid = authData.userid
-                      database.getCurrentUserProfile(client.db('socialwebpage'), req, res, userid);
-                  }
-              });
-          }
-      });
-
-      //----------------------SESSION CHECK----------------------//
-      app.get('/rest/checkSession', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  res.json({
-                      message: "User is authorized",
-                      username: authData.username,
-                      userId: authData.userid
-                  });
-              }
-          });
-      });
+    //----------------------Get User Data----------------------//
+    app.get('/rest/currentUserData', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.send({
+                    message: "User is not authorized"
+                });
+            } else {
+                res.send({
+                    username: authData.username,
+                    userId: authData.userid
+                });
+            }
+        });
+    });
 
       //----------------------SESSION DELETE----------------------//
       app.get('/rest/deleteSession', (req, res) => {
@@ -416,7 +406,7 @@ MongoClient.connect(url, function(err, client) {
       //----------------------Get friendRequests----------------------//
       // User ONE sends User TWO a friendship request. User TWO can accept or reject
       // If accepted, add to friendship list, else do nothing...
-      app.get('/rest/friends/getFriendRequests', verifyToken, (req, res) => {
+      app.get('/rest/friends/getRequests', verifyToken, (req, res) => {
           jwt.verify(req.token, 'secretkey', (err, authData) => {
               if(err) {
                   res.json({
@@ -438,7 +428,8 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
-                  database.confirmFriendshipRequest(client.db('socialwebpage'), req.body.requester, req.body.recipient, res);
+                  const recipientId = authData.userid;
+                  database.confirmFriendshipRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
               }
           });
 
@@ -452,7 +443,8 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
-                  database.deleteFriendshipRequest(client.db('socialwebpage'), req.body.requester, req.body.recipient, res);
+                  const recipientId = authData.userid;
+                  database.deleteFriendshipRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
               }
           });
 
@@ -481,8 +473,8 @@ MongoClient.connect(url, function(err, client) {
                   });
               } else {
                   const userId = authData.userid;
-                  const userToDelete = req.body.userToDelete;
-                  database.deleteFriend(client.db('socialwebpage'), res, userId, userToDelete);
+                  const userToDeleteId = req.body.userToDeleteId;
+                  database.deleteFriend(client.db('socialwebpage'), res, userId, userToDeleteId);
               }
           });
       });
@@ -601,7 +593,7 @@ MongoClient.connect(url, function(err, client) {
                       const userid = authData.userid
                       const file = {fileData, userid}
 
-                      database.uploadProfilePic(client.db('socialwebpage'), res, file);
+                      database.uploadProfilePicture(client.db('socialwebpage'), res, file);
                   }
               });
 
@@ -620,7 +612,7 @@ MongoClient.connect(url, function(err, client) {
                 });
             } else {
                 const userId = authData.userid;
-                database.deleteProfilePic(client.db('socialwebpage'), res, userId);
+                database.deleteProfilePicture(client.db('socialwebpage'), res, userId);
             }
         });
       });
@@ -770,8 +762,50 @@ MongoClient.connect(url, function(err, client) {
                       message: "User is not authorized"
                   });
               } else {
-                  const username = authData.username;
-                  database.getNotifications(client.db('socialwebpage'), res, username);
+                  const userId = authData.userid;
+                  database.getNotifications(client.db('socialwebpage'), res, userId);
+              }
+          });
+      });
+
+      //----------------------Show specific Notification----------------------//
+      app.get('/rest/user/notifications/data/:type/:typeCommented/:postId', verifyToken, (req, res) => {
+          jwt.verify(req.token, 'secretkey', (err, authData) => {
+              if(err) {
+                  res.json({
+                      message: "User is not authorized"
+                  });
+              } else {
+                    const currentUserId = authData.userid;
+                    const type = req.params.type;
+                    const typeCommented = req.params.typeCommented;
+                    const postId = req.params.postId;
+
+                    if(req.params.type == "story") {
+                        database.listStoriesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                    }
+                    else if(req.params.type == "image") {
+                        database.listImagesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                    }
+                    else if(req.params.type == "comment") {
+                        //Funktioniert noch nicht so ganz richtig!
+                        if(req.params.typeCommented == "story") {
+                            database.listCommentsForNotificationInStoriesId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                        }
+                        else if(req.params.typeCommented == "image") {
+                            database.listCommentsForNotificationInImagesId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                        }
+                        else if(req.params.typeCommented == "guestbook") {
+                            database.listCommentsForNotificationInGuestbooksId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                        } else {
+                            res.send(false);
+                        }
+                    }
+                    else if(req.params.type == "guestbook") {
+                        database.listGuestbookEntryForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                    } else {
+                        res.send(false);
+                    }
               }
           });
       });

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image } from 'semantic-ui-react'
+import { Image } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
 
 class About extends React.Component{

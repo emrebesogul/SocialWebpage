@@ -10,6 +10,7 @@ import Settings from './Pages/Settings'
 import About from './Pages/About'
 import Legal from './Pages/Legal'
 import Search from './Pages/Search'
+import Notifications from './Pages/Notifications'
 
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
@@ -23,6 +24,7 @@ ReactDOM.render(
             <Route exact path="/login" component={Login}></Route>
             <Route exact path="/register" component={Register}></Route>
             <Route path="/profile/:username?" component={Profile}></Route>
+            <Route exact path="/notifications/:type/:typeCommented/:postId?" component={Notifications}></Route>
             <Route exact path="/" component={Feed}></Route>
             <Route exact path="/roadmap" component={Roadmap}></Route>
             <Route exact path="/settings" component={Settings}></Route>

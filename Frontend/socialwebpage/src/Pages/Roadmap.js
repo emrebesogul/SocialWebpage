@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
-import {checkSession, deleteSession} from '../API/GET/GetMethods';
+import { checkAuthorization, deleteSession } from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar'
 import { Item, Icon } from 'semantic-ui-react'
 
@@ -16,30 +16,23 @@ class Roadmap extends Component {
           redirectToFeed: false,
           status: false
         }
-
-        this.apiCheckSession = "/checkSession"
-        this.api = "/story/create";
-
-        //this.checkThisSession();
-
         this.pageTitle = "Roadmap"
         document.title = this.pageTitle;
       }
 
       componentDidMount() {
-          this.checkThisSession();
-
+          this.checkAuthorization();
       }
 
-      async checkThisSession() {
-          const response = await checkSession(this.apiCheckSession);
-          if(response.message !== "User is authorized") {
-              this.setState({redirectToLogin: true})
-          }
+      async checkAuthorization() {
+        const userIsAuthorized = await checkAuthorization();
+        if(!userIsAuthorized) {
+          this.setState({redirectToLogin: true})
+        }
       }
 
       handleLogout() {
-          deleteSession(this.apiDeleteSession);
+          deleteSession();
           this.setState({ redirectToLogin: true });
       }
 

@@ -61,7 +61,7 @@ var call = module.exports = {
   registerUserToPlatform: function (db, req, res, newUserData) {
       //Select table and parse form input fields
       const collection = db.collection('users');
-      let firstname = JSON.parse(newUserData).username;
+      let firstname = JSON.parse(newUserData).firstname;
       let lastname = JSON.parse(newUserData).lastname;
       let username = JSON.parse(newUserData).username;
       let email = JSON.parse(newUserData).email;
@@ -300,7 +300,9 @@ var call = module.exports = {
         "liking_users": [],
         "date_created": new Date(),
         "user_id": new ObjectId(userId),
-        "updated" : false
+        "updated" : false,
+        "type": "image"
+
     });
     console.log("Image was uploaded to server...")
     res.send(JSON.stringify({
@@ -325,7 +327,8 @@ var call = module.exports = {
         "liking_users": [],
         "date_created": new Date(),
         "user_id": new ObjectId(userId),
-        "updated" : false
+        "updated" : false,
+        "type": "story"
     });
     res.send(true);
   },
@@ -468,8 +471,10 @@ var call = module.exports = {
     });
   },
 
+
   //----------------------Get Other User----------------------//
-  getOtherUserProfile: function(db, req, res, username, myUsername) {
+  getUserDataForUsername: function(db, res, username, userid) {
+
       const collection = db.collection('users');
       collection.findOne({"username": username}, (err, docs) => {
           if (err) {
@@ -480,10 +485,9 @@ var call = module.exports = {
           }
 
           if (docs) {
-
               //Check if they are alredy friends or friend request is on its way
               db.collection('friendRequests').findOne({ $and : [
-                      {$or: [ {"requester": myUsername, "recipient": username}, {"requester": username, "recipient": myUsername} ]},
+                      {$or: [ {"requesterId": ObjectId(userid), "recipientId": ObjectId(docs._id)}, {"requesterId": ObjectId(docs._id), "recipientId": ObjectId(userid)} ]},
                       {"status": "open"}
                   ]},
                   (err, docs2) => {
@@ -492,15 +496,20 @@ var call = module.exports = {
 
                   var buttonState = "";
 
-                  if ((docs.friends).includes(myUsername)) {
+                  if ((docs.friends.toString()).includes(userid)) {
                       buttonState = "Delete Friend";
                   } else if (docs2) {
-                      buttonState = "Request sent";
+                      if (docs2.requesterId == userid) {
+                          buttonState = "Your Request was sent";
+                      } else {
+                          buttonState = "Your have a new Request";
+                      }
                   } else {
                       buttonState = "Add Friend";
                   }
 
                   res.send(JSON.stringify({
+                      id: docs._id,
                       username: docs.username,
                       firstname: docs.first_name,
                       lastname: docs.last_name,
@@ -522,7 +531,7 @@ var call = module.exports = {
   },
 
   //----------------------Get Current User----------------------//
-  getCurrentUserProfile: function(db, req, res, userid) {
+  getUserDataForCurrentUser: function(db, res, userid) {
       const collection = db.collection('users');
       collection.findOne({"_id": ObjectId(userid)},(err, docs) => {
           if (err) {
@@ -565,6 +574,11 @@ var call = module.exports = {
                 db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
                     if (err) throw err;
                     console.log("Removed story entry from the database");
+
+                    db.collection('notifications').remove({"story_id": ObjectId(JSON.parse(storyId).storyId)}, (err, res_stories) => {
+                        if (err) throw err;
+                    });
+
                     res.send(true);
                 });
             });
@@ -592,6 +606,11 @@ var call = module.exports = {
                 db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_remove_image, res_remove_image) => {
                     if (err_remove_image) throw err_remove_image;
                     console.log("Removed image from the database and server");
+
+                    db.collection('notifications').remove({"image_id": ObjectId(JSON.parse(imageId).imageId)}, (err, res_stories) => {
+                        if (err) throw err;
+                    });
+
                     res.send(true);
                 });
             });
@@ -616,17 +635,42 @@ var call = module.exports = {
         (err_find_stories, res_find_stories) => {
 
         if (err_find_stories) throw err_find_stories;
+        // If user alredy like it...
         if (res_find_stories.liking_users.includes(userId)) {
             let index = res_find_stories.liking_users.indexOf(userId);
             if (index > -1) {
                 res_find_stories.liking_users.splice(index, 1);
+
+                db.collection("stories").findOne({"_id" : ObjectId(JSON.parse(storyId).storyId)}, (err, docs) => {
+                    if(err) throw err;
+                    if(docs) {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your story!", "story_id": ObjectId(JSON.parse(storyId).storyId)}, (err, res_stories) => {
+                            if (err) throw err;
+                        });
+                    }
+                });
             }
             else {
                 throw err_find_stories;
             }
         }
+        // If user did not already liked story
         else {
             res_find_stories.liking_users.push(userId);
+
+            db.collection("stories").findOne({"_id" : ObjectId(JSON.parse(storyId).storyId)}, (err, docs) => {
+                if(err) throw err;
+                if(docs) {
+                    const date_created = new Date();
+                    db.collection('notifications').insert({
+                        "whoAmI": ObjectId(docs.user_id),
+                        "whoDidAction": ObjectId(userId),
+                        "action": "liked your story!",
+                        "date_created": date_created,
+                        "story_id": ObjectId(JSON.parse(storyId).storyId)
+                    });
+                }
+            });
         }
 
         db.collection("stories").update(
@@ -640,6 +684,8 @@ var call = module.exports = {
 
             if (err_update_stories) throw err_update_stories;
         });
+
+
         res.send(true);
     });
   },
@@ -667,6 +713,15 @@ var call = module.exports = {
             let index = res_find_images.liking_users.indexOf(userId);
             if (index > -1) {
                 res_find_images.liking_users.splice(index, 1);
+
+                db.collection("images").findOne({"_id" : ObjectId(JSON.parse(imageId).imageId)}, (err, docs) => {
+                    if(err) throw err;
+                    if(docs) {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your image!", "image_id": ObjectId(JSON.parse(imageId).imageId)}, (err, res_stories) => {
+                            if (err) throw err;
+                        });
+                    }
+                });
             }
             else {
                 res.send(JSON.stringify({
@@ -677,6 +732,20 @@ var call = module.exports = {
         }
         else {
             res_find_images.liking_users.push(userId);
+
+            db.collection("images").findOne({"_id" : ObjectId(JSON.parse(imageId).imageId)}, (err, docs) => {
+                if(err) throw err;
+                if(docs) {
+                    const date_created = new Date();
+                    db.collection('notifications').insert({
+                        "whoAmI": ObjectId(docs.user_id),
+                        "whoDidAction": ObjectId(userId),
+                        "action": "liked your image!",
+                        "date_created": date_created,
+                        "image_id": ObjectId(JSON.parse(imageId).imageId)
+                    });
+                }
+            });
         }
 
         db.collection("images").update(
@@ -695,41 +764,90 @@ var call = module.exports = {
                 throw err_update_images;
             }
         });
+
+        /*
+        const date_created = new Date();
+        db.collection('notifications').insert({
+            "user": requester,
+            "actionUser": recipient,
+            "action": "added you as a friend!",
+            "date_created": date_created
+        });
+        */
+
         res.send(true);
     });
   },
 
   //----------------------Update User Data at Settings----------------------//
-updateUserData: function(db, res, data) {
-    const collectionUsers = db.collection('users');
+    updateUserData: function(db, res, data) {
+        const collectionUsers = db.collection('users');
 
-    const userid = data.userid;
-    const userData = data.userData
-    const hashedPassword = SHA256(userData.password)
-    let username = (userData.username).trim();
-    var checkUsername = false;
-    var checkEmail = false;
+        const userid = data.userid;
+        const userData = data.userData
+        const hashedPassword = SHA256(userData.password)
+        let username = (userData.username).trim();
+        var checkUsername = false;
+        var checkEmail = false;
 
-    // check for username
-    collectionUsers.findOne({"username": username}, (err, docs) => {
-        if (err) {
-            throw err;
-        }
+        // check for username
+        collectionUsers.findOne({"username": username}, (err, docs) => {
+            if (err) {
+                throw err;
+            }
 
-        // username already given, but...
-        if(docs) {
-            // username is me...
-            if(docs._id == userid) {
-                // Username is same => no update => check for email if email is given
-                collectionUsers.findOne({"email": userData.email}, (err, docs) => {
-                    if (err) {
-                        throw err;
-                    }
+            // username already given, but...
+            if(docs) {
+                // username is me...
+                if(docs._id == userid) {
+                    // Username is same => no update => check for email if email is given
+                    collectionUsers.findOne({"email": userData.email}, (err, docs) => {
+                        if (err) {
+                            throw err;
+                        }
 
-                    // If email exists:
-                    if(docs) {
-                        if(docs._id == userid) {
-                            // If Email is same as origin users => no update => update fields
+                        // If email exists:
+                        if(docs) {
+                            if(docs._id == userid) {
+                                // If Email is same as origin users => no update => update fields
+                                console.log(username, " changed successfully its user data")
+                                if(userData.password !== '') {
+                                    collectionUsers.update(
+                                        {_id: ObjectId(userid)},
+                                        {
+                                            $set: {
+                                                "first_name": userData.first_name,
+                                                "last_name": userData.last_name,
+                                                "username": username,
+                                                "email": userData.email,
+                                                "password": hashedPassword.words
+                                            }
+                                        }
+                                    );
+                                } else {
+                                    collectionUsers.update(
+                                        {_id: ObjectId(userid)},
+                                        {
+                                            $set: {
+                                                "first_name": userData.first_name,
+                                                "last_name": userData.last_name,
+                                                "username": username,
+                                                "email": userData.email
+                                            }
+                                        }
+                                    );
+                                }
+                                res.send(JSON.stringify({
+                                    message: "User data successfully updated."
+                                }));
+                            } else {
+                                // Email is already given and is not same with the origin users
+                                res.send(JSON.stringify({
+                                    message: "This email is not available222. Please try another one."
+                                }));
+                            }
+                        } else {
+
                             console.log(username, " changed successfully its user data")
                             if(userData.password !== '') {
                                 collectionUsers.update(
@@ -760,65 +878,66 @@ updateUserData: function(db, res, data) {
                             res.send(JSON.stringify({
                                 message: "User data successfully updated."
                             }));
-                        } else {
-                            // Email is already given and is not same with the origin users
+
+
+                        }
+                    })
+                } else {
+                    // Username is already given
+                    res.send(JSON.stringify({
+                        message: "This username is not available. Please try another one."
+                    }));
+                }
+            } else {
+                //Check email because username is new
+                collectionUsers.findOne({"email": userData.email}, (err, docs) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    if(docs) {
+                        if(docs._id == userid) {
+                            // Email is same => no update => update fields
+                            console.log(userData.username, " changed successfully its user data")
+                            if(userData.password !== '') {
+                                collectionUsers.update(
+                                    {_id: ObjectId(userid)},
+                                    {
+                                        $set: {
+                                            "first_name": userData.first_name,
+                                            "last_name": userData.last_name,
+                                            "username": username,
+                                            "email": userData.email,
+                                            "password": hashedPassword
+                                        }
+                                    }
+                                );
+                            } else {
+                                collectionUsers.update(
+                                    {_id: ObjectId(userid)},
+                                    {
+                                        $set: {
+                                            "first_name": userData.first_name,
+                                            "last_name": userData.last_name,
+                                            "username": username,
+                                            "email": userData.email
+                                        }
+                                    }
+                                );
+                            }
                             res.send(JSON.stringify({
-                                message: "This email is not available222. Please try another one."
+                                message: "User data successfully updated."
+                            }));
+                        } else {
+                            // Email is already given
+                            res.send(JSON.stringify({
+                                message: "This email is not available. Please try another one."
                             }));
                         }
                     } else {
 
+
                         console.log(username, " changed successfully its user data")
-                        if(userData.password !== '') {
-                            collectionUsers.update(
-                                {_id: ObjectId(userid)},
-                                {
-                                    $set: {
-                                        "first_name": userData.first_name,
-                                        "last_name": userData.last_name,
-                                        "username": username,
-                                        "email": userData.email,
-                                        "password": hashedPassword.words
-                                    }
-                                }
-                            );
-                        } else {
-                            collectionUsers.update(
-                                {_id: ObjectId(userid)},
-                                {
-                                    $set: {
-                                        "first_name": userData.first_name,
-                                        "last_name": userData.last_name,
-                                        "username": username,
-                                        "email": userData.email
-                                    }
-                                }
-                            );
-                        }
-                        res.send(JSON.stringify({
-                            message: "User data successfully updated."
-                        }));
-
-
-                    }
-                })
-            } else {
-                // Username is already given
-                res.send(JSON.stringify({
-                    message: "This username is not available. Please try another one."
-                }));
-            }
-        } else {
-            //Check email because username is new
-            collectionUsers.findOne({"email": userData.email}, (err, docs) => {
-                if (err) {
-                    throw err;
-                }
-
-                if(docs) {
-                    if(docs._id == userid) {
-                        // Email is same => no update => update fields
-                        console.log(userData.username, " changed successfully its user data")
                         if(userData.password !== '') {
                             collectionUsers.update(
                                 {_id: ObjectId(userid)},
@@ -848,53 +967,14 @@ updateUserData: function(db, res, data) {
                         res.send(JSON.stringify({
                             message: "User data successfully updated."
                         }));
-                    } else {
-                        // Email is already given
-                        res.send(JSON.stringify({
-                            message: "This email is not available. Please try another one."
-                        }));
                     }
-                } else {
+                })
+            }
+        })
 
+    },
 
-                    console.log(username, " changed successfully its user data")
-                    if(userData.password !== '') {
-                        collectionUsers.update(
-                            {_id: ObjectId(userid)},
-                            {
-                                $set: {
-                                    "first_name": userData.first_name,
-                                    "last_name": userData.last_name,
-                                    "username": username,
-                                    "email": userData.email,
-                                    "password": hashedPassword
-                                }
-                            }
-                        );
-                    } else {
-                        collectionUsers.update(
-                            {_id: ObjectId(userid)},
-                            {
-                                $set: {
-                                    "first_name": userData.first_name,
-                                    "last_name": userData.last_name,
-                                    "username": username,
-                                    "email": userData.email
-                                }
-                            }
-                        );
-                    }
-                    res.send(JSON.stringify({
-                        message: "User data successfully updated."
-                    }));
-                }
-            })
-        }
-    })
-
-},
-
-  //----------------------Friend----------------------//
+  //----------------------Send Friend requests----------------------//
   sendFriendshipRequest: function(db, res, userId, requester, recipient) {
       const collectionUsers = db.collection('users');
 
@@ -946,7 +1026,7 @@ updateUserData: function(db, res, data) {
       })
   },
 
-  //----------------------xy----------------------//
+  //----------------------get Friendship requests----------------------//
   //getFriendRequests => where recipient is userid and status open
   // if decline: status = rejected
   // if status = accepted
@@ -968,7 +1048,9 @@ updateUserData: function(db, res, data) {
              $project :
              {
                  "requester": "$user.username",
+                 "requesterId": "$user._id",
                  "recipient": 1,
+                 "time": 1,
                  "profile_picture_filename": "$user.picture",
                  "profile_picture_url": 1
              }
@@ -977,6 +1059,8 @@ updateUserData: function(db, res, data) {
       if (err) throw err;
         result.map(item => {
               item.requester = item.requester;
+              item.requesterId = item.requesterId;
+              item.date_created = getDate(item.time);
               item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
           });
           res.status(200).send(result);
@@ -984,24 +1068,23 @@ updateUserData: function(db, res, data) {
     },
 
 
-    //----------------------xy----------------------//
-    confirmFriendshipRequest: function(db, requester, recipient , res) {
+    //----------------------Add to friendlist----------------------//
+    confirmFriendshipRequest: function(db, requesterId, recipientId , res) {
         const collectionfriendRequests = db.collection('friendRequests');
         const collectionUsers = db.collection('users');
 
-        // Set status to accepted
         // Delete from database
-        collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
+        collectionfriendRequests.remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
         });
 
         // Add to friendlist of both array.push()
-        collectionUsers.findOne({"username": requester}, (err, docs) => {
+        collectionUsers.findOne({"_id": ObjectId(requesterId)}, (err, docs) => {
             if(err) throw err;
             if(docs) {
                 var friendlist = docs.friends;
-                friendlist.push(recipient);
-                collectionUsers.update({"username": requester},
+                friendlist.push(ObjectId(recipientId));
+                collectionUsers.update({"_id": ObjectId(requesterId)},
                     {
                         $set: {
                             "friends": friendlist
@@ -1011,12 +1094,12 @@ updateUserData: function(db, res, data) {
             }
         });
 
-        collectionUsers.findOne({"username": recipient}, (err, docs) => {
+        collectionUsers.findOne({"_id": ObjectId(recipientId)}, (err, docs) => {
             if(err) throw err;
             if(docs) {
                 var friendlist = docs.friends;
-                friendlist.push(requester);
-                collectionUsers.update({"username": recipient},
+                friendlist.push(ObjectId(requesterId));
+                collectionUsers.update({"_id": ObjectId(recipientId)},
                     {
                         $set: {
                             "friends": friendlist
@@ -1026,12 +1109,10 @@ updateUserData: function(db, res, data) {
             }
         });
 
-        const action = "added you as a friend!"
         const date_created = new Date();
-
         db.collection('notifications').insert({
-            "user": requester,
-            "actionUser": recipient,
+            "whoAmI": ObjectId(requesterId),
+            "whoDidAction": ObjectId(recipientId),
             "action": "added you as a friend!",
             "date_created": date_created
         });
@@ -1039,11 +1120,11 @@ updateUserData: function(db, res, data) {
         res.send(true);
     },
 
-    //----------------------xy----------------------//
-    deleteFriendshipRequest: function(db, requester, recipient , res) {
+    //----------------------Decline Friend request----------------------//
+    deleteFriendshipRequest: function(db, requesterId, recipientId, res) {
         const collectionfriendRequests = db.collection('friendRequests');
 
-        collectionfriendRequests.remove({"requester": requester, "recipient": recipient}, (err, res_stories) => {
+        collectionfriendRequests.remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
             res.send(true);
         });
@@ -1063,14 +1144,15 @@ updateUserData: function(db, res, data) {
 
                 docs.friends.map(item => {
                     item.friends = item.friends;
-                    collectionUsers.findOne({"username": item}, (err_friends, res_friends) => {
+                    collectionUsers.findOne({"_id": ObjectId(item)}, (err_friends, res_friends) => {
                         if(err_friends) throw err_friends;
-                        if (res_friends) {
+                        if (res_friends != "") {
                             friendlist.push(res_friends);
                             i++;
 
                             result = {};
                             result ["name"] = res_friends.username;
+                            result ["friendId"] = res_friends._id;
                             result ["picture"] = "http://localhost:8000/uploads/posts/" +res_friends.picture;
                             friends.push(result);
 
@@ -1096,43 +1178,60 @@ updateUserData: function(db, res, data) {
     },
 
 
-    deleteFriend: function(db, res, userId, userToDelete) {
+    deleteFriend: function(db, res, userId, userToDeleteId) {
         const collectionUsers = db.collection('users');
 
         //Delete friend from first user
-        collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
+        collectionUsers.findOne({"_id" : ObjectId(userId)}, (err, docs) => {
             if(err) throw err;
             if (docs) {
                 // Find and remove item from an array
-                var i = (docs.friends).indexOf(userToDelete);
+                var i = (docs.friends.toString()).indexOf(ObjectId(userToDeleteId).toString());
+                // -1 if not exists
+                // else place where it exists
+
                 if(i != -1) {
-                	(docs.friends).splice(i, 1);
+                    var S = docs.friends.toString()
+                    S = S.replace(ObjectId(userToDeleteId).toString(), "");
+
+                    var re = /\s*,\s*/;
+                    S = S.split(re);
+                    S = S.filter(String)
                 }
-                collectionUsers.update({_id : ObjectId(userId)},
+                collectionUsers.update({"_id" : ObjectId(userId)},
                     {
                         $set: {
-                            "friends": docs.friends
+                            "friends": S
                         }
                     }
                 );
 
                 //Delete friend from second user
-                collectionUsers.findOne({username : userToDelete}, (err, docs2) => {
+                collectionUsers.findOne({"_id" : ObjectId(userToDeleteId)}, (err, docs2) => {
                     if(err) throw err;
                     if (docs2) {
                         // Find and remove item from an array
-                        var j = (docs2.friends).indexOf(docs.username);
-                        if(j != -1) {
-                            (docs2.friends).splice(j, 1);
+                        var j = (docs2.friends.toString()).indexOf(ObjectId(userId).toString());
+
+                        if(i != -1) {
+                            var S2 = docs2.friends.toString()
+                            S2 = S2.replace(ObjectId(userId).toString(), "");
+                            var re = /\s*,\s*/;
+                            S2 = S2.split(re);
+                            S2 = S2.filter(String)
                         }
-                        collectionUsers.update({username: userToDelete},
+                        collectionUsers.update({"_id": ObjectId(userToDeleteId)},
                             {
                                 $set: {
-                                    "friends": docs2.friends
+                                    "friends": S2
                                 }
                             }
                         );
-                        res.send(true);
+
+                        db.collection('notifications').remove({$or: [ {"whoAmI": ObjectId(userToDeleteId), "whoDidAction": ObjectId(userId)}, {"whoAmI": ObjectId(userId), "whoDidAction": ObjectId(userToDeleteId)} ], "action": "added you as friend!"}, (err, res_stories) => {
+                            if (err) throw err;
+                            res.send(true);
+                        });
                     }
                 });
             }
@@ -1152,14 +1251,31 @@ updateUserData: function(db, res, data) {
             if (err_user) throw err_user;
 
             if (res_user && (res_user._id != authorId)) {
+                var date_created = new Date();
+
                 db.collection('guestbookEntries').insert({
                     "title": title,
                     "content": content,
                     "liking_users": [],
-                    "date_created": new Date(),
+                    "date_created": date_created,
                     "owner_id": new ObjectId(res_user._id),
                     "author_id": new ObjectId(authorId),
+                    "type": "guestbook"
                 });
+
+                db.collection("guestbookEntries").findOne({"date_created": date_created, "owner_id": new ObjectId(res_user._id), "author_id": new ObjectId(authorId)}, (err, docs) => {
+                    if(err) throw err;
+                    if(docs) {
+                        db.collection('notifications').insert({
+                            "whoAmI": ObjectId(res_user._id),
+                            "whoDidAction": ObjectId(authorId),
+                            "action": "created a Guestbook entry on your page!",
+                            "date_created": date_created,
+                            "guestbook_id": ObjectId(docs._id)
+                        });
+                    }
+                });
+
                 res.send(true);
             }
             else {
@@ -1259,6 +1375,15 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             let index = res_find_guestbook_entries.liking_users.indexOf(userId);
             if (index > -1) {
                 res_find_guestbook_entries.liking_users.splice(index, 1);
+
+                db.collection("guestbookEntries").findOne({"_id" : ObjectId(guestbookData.guestbookEntryId)}, (err, docs) => {
+                    if(err) throw err;
+                    if(docs) {
+                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.owner_id), "whoDidAction": ObjectId(userId), "action": "liked your Guestbook entry!", "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err, res_guestbookData) => {
+                            if (err) throw err;
+                        });
+                    }
+                });
             }
             else {
                 throw err_find_guestbook_entries;
@@ -1266,6 +1391,20 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         }
         else {
             res_find_guestbook_entries.liking_users.push(userId);
+
+            db.collection("guestbookEntries").findOne({"_id" : ObjectId(guestbookData.guestbookEntryId)}, (err, docs) => {
+                if(err) throw err;
+                if(docs) {
+                    const date_created = new Date();
+                    db.collection('notifications').insert({
+                        "whoAmI": ObjectId(docs.owner_id),
+                        "whoDidAction": ObjectId(userId),
+                        "action": "liked your Guestbook entry!",
+                        "date_created": date_created,
+                        "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)
+                    });
+                }
+            });
         }
         db.collection("guestbookEntries").update(
             {
@@ -1296,6 +1435,11 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                 db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
                     if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
                     console.log("Removed guestbook entry from the database");
+
+                    db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
+                        if (err_guestbook_delete) throw err_guestbook_delete;
+                    });
+
                     res.send(true);
                 });
             });
@@ -1307,7 +1451,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
   },
 
   //----------------------Upload Profile Picture----------------------//
-  uploadProfilePic: function (db, res, file) {
+  uploadProfilePicture: function (db, res, file) {
     const collectionUsers = db.collection('users');
     const fileData = file.fileData;
     const userid = file.userid;
@@ -1348,7 +1492,7 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
   },
 
     //----------------------Delete Profile Pic---------------------//
-    deleteProfilePic: function (db, res, userId) {
+    deleteProfilePicture: function (db, res, userId) {
 
         const collectionUsers = db.collection('users');
 
@@ -1491,12 +1635,82 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
 
     //----------------------------Create Comment-----------------------------//
     createComment: function (db, res, commentData, currentUserId) {
+        var date_created = new Date();
+
         db.collection('comments').insert({
             "content": commentData.content,
-            "date_created": new Date(),
+            "date_created": date_created,
             "liking_users": [],
             "post_id": new ObjectId(commentData.postId),
-            "author_id": new ObjectId(currentUserId)
+            "author_id": new ObjectId(currentUserId),
+            "type": "comment"
+        }, (err, res) => {
+            if (err) throw err;
+            if (res) {
+                if(res.result.ok == 1) {
+                    db.collection("comments").findOne({"date_created": date_created, "content": commentData.content, "post_id": ObjectId(commentData.postId), "author_id": ObjectId(currentUserId)}, (err, docs) => {
+                        if(err) throw err;
+                        if(docs) {
+                            db.collection("stories").findOne({"_id": ObjectId(docs.post_id)}, (err_stories, docs_stories) => {
+                                if (err_stories) throw err_stories;
+                                if (docs_stories) {
+                                    if (JSON.stringify(docs_stories.user_id) === JSON.stringify(docs.author_id)) {
+
+                                    } else {
+                                        db.collection('notifications').insert({
+                                            "whoAmI": ObjectId(docs_stories.user_id),
+                                            "whoDidAction": ObjectId(docs.author_id),
+                                            "action": "commented on your "+ docs_stories.type +"!",
+                                            "type": docs_stories.type,
+                                            "date_created": date_created,
+                                            "comment_id": ObjectId(docs._id)
+                                        });
+                                    }
+                                } else {
+                                    db.collection("images").findOne({"_id": ObjectId(docs.post_id)}, (err_images, docs_images) => {
+                                        if (err_images) throw err_images;
+                                        if (docs_images) {
+                                            if (JSON.stringify(docs_images.user_id) === JSON.stringify(docs.author_id)) {
+
+                                            } else {
+                                                db.collection('notifications').insert({
+                                                    "whoAmI": ObjectId(docs_images.user_id),
+                                                    "whoDidAction": ObjectId(docs.author_id),
+                                                    "action": "commented on your "+ docs_images.type +"!",
+                                                    "type": docs_images.type,
+                                                    "date_created": date_created,
+                                                    "comment_id": ObjectId(docs._id)
+                                                });
+                                            }
+                                        } else {
+                                            db.collection("guestbookEntries").findOne({"_id": ObjectId(docs.post_id)}, (err_guestbookEntries, docs_guestbookEntries) => {
+                                                if (err_guestbookEntries) throw err_guestbookEntries;
+                                                if (docs_guestbookEntries) {
+                                                    if (JSON.stringify(docs_guestbookEntries.owner_id) === JSON.stringify(docs.author_id)) {
+
+                                                    } else {
+                                                        db.collection('notifications').insert({
+                                                            "whoAmI": ObjectId(docs_guestbookEntries.owner_id),
+                                                            "whoDidAction": ObjectId(docs.author_id),
+                                                            "action": "commented on your "+ docs_guestbookEntries.type +"!",
+                                                            "type": docs_guestbookEntries.type,
+                                                            "date_created": date_created,
+                                                            "comment_id": ObjectId(docs._id)
+                                                        });
+                                                    }
+                                                } else {
+                                                    console.log("Post ID does not exist")
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    });
+                }
+            }
         });
         res.send(true);
     },
@@ -1586,6 +1800,11 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
           if (res_find_comments.author_id == userId) {
               db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
                   if (err_remove_comments) throw err_remove_comments;
+
+                  db.collection('notifications').remove({"comment_id": ObjectId(commentId)}, (err, res_comment_noti) => {
+                      if (err) throw err;
+                  });
+
                   res.send(true);
               });
           }
@@ -1596,17 +1815,359 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     },
 
     //----------------------------List all notifications of a user-----------------------------//
-    getNotifications: function(db, res, username) {
+    getNotifications: function(db, res, userId) {
 
-        db.collection('notifications').find({"user": username}).toArray(function (err, docs) {
-            if (err) throw err;
-            if (docs) {
-                console.log("docs: ", docs);
-                res.status(200).send(docs);
+        db.collection('notifications').aggregate([
+            { $match: {"whoAmI": ObjectId(userId), "whoDidAction": {"$ne": ObjectId(userId)} }},
+            { $lookup:
+                {
+                    from: "users",
+                    localField: "whoDidAction",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            },
+            {
+                $project :
+                {
+                    "username": "$user.username",
+                    "id": "$user._id",
+                    "action": 1,
+                    "date_created": 1,
+                    "userid": "$user._id",
+                    "profile_picture_filename": "$user.picture",
+                    "profile_picture_url": 1,
+                    "story_id": 1,
+                    "image_id": 1,
+                    "guestbook_id": 1,
+                    "liked_guestbook_id": 1,
+                    "comment_id": 1,
+                    "typeCommented": 1,
+                    "type": 1
+                }
             }
+        ]).toArray((err, result) => {
+         if (err) throw err;
+
+         result.map(item => {
+
+                item.username = item.username;
+                item.action = item.action;
+                item.date_created = getDate(item.date_created);
+                item.userid = item.userid;
+                if (item.action == "added you as a friend!") {
+                    item.redirect = false;
+                }
+                if (item.story_id) {
+                     item.redirect = true;
+                     item.type = "story";
+                     item.typeCommented = item.type;
+                     item.linkToPost = item.story_id;
+                }
+                if (item.image_id) {
+                     item.redirect = true;
+                     item.type = "image";
+                     item.typeCommented = item.type;
+                     item.linkToPost = item.image_id;
+                }
+                if (item.guestbook_id) {
+                     item.redirect = true;
+                     item.type = "guestbook";
+                     item.typeCommented = item.type;
+                     item.linkToPost = item.guestbook_id;
+                }
+                if (item.liked_guestbook_id) {
+                    item.redirect = true;
+                    item.typeCommented = item.type;
+                    item.type = "guestbook";
+                    item.linkToPost = item.liked_guestbook_id;
+                }
+                if (item.comment_id) {
+                    item.redirect = true;
+                    item.typeCommented = item.type;
+                    item.type = "comment";
+                    item.linkToPost = item.comment_id;
+                }
+                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+
+           });
+            result.sort((a, b) => {
+                return new Date(b.date_created) - new Date(a.date_created);
+            });
+
+            res.status(200).send(result);
+         });
+       },
+
+    listImagesForNotificationId: function(db, req, res, type, postId, currentUserId) {
+        db.collection('images').aggregate([
+            { $match : { user_id:  ObjectId(currentUserId), "_id": ObjectId(postId) } },
+            { $lookup:
+               {
+                 from: "users",
+                 localField: "user_id",
+                 foreignField: "_id",
+                 as: "user"
+               }
+             },
+             { $project :
+                {
+                    "title" : 1,
+                    "content": 1,
+                    "src": 1,
+                    "filename": 1,
+                    "number_of_likes": 1,
+                    "liking_users": 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                    },
+                    "updated" : 1,
+                    "profile_picture_filename": "$user.picture",
+                    "profile_picture_url": 1
+                }
+             },
+             { $sort : { "date_created" : -1 } }
+            ]).toArray((err_images, result_images) => {
+            if (err_images) throw err_images;
+            result_images.map(item => {
+                item.date_created = getDate(item.date_created);
+                item.src = "http://localhost:8000/uploads/posts/" + item.filename;
+                item.number_of_likes = item.liking_users.length;
+                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+
+            });
+                res.status(200).send(result_images);
         });
+    },
 
+    listCommentsForNotificationInImagesId: function(db, req, res, type, commentId, currentUserId) {
+        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                db.collection('images').aggregate([
+                    { $match : { user_id:  ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
+                    { $lookup:
+                       {
+                         from: "users",
+                         localField: "user_id",
+                         foreignField: "_id",
+                         as: "user"
+                       }
+                     },
+                     { $project :
+                        {
+                            "title" : 1,
+                            "content": 1,
+                            "src": 1,
+                            "filename": 1,
+                            "number_of_likes": 1,
+                            "liking_users": 1,
+                            "current_user_has_liked" : {
+                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                            },
+                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                            "user_id": 1,
+                            "username": {
+                                "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                            },
+                            "updated" : 1,
+                            "profile_picture_filename": "$user.picture",
+                            "profile_picture_url": 1
+                        }
+                     },
+                     { $sort : { "date_created" : -1 } }
+                    ]).toArray((err_images, result_images) => {
+                    if (err_images) throw err_images;
+                    result_images.map(item => {
+                        item.date_created = getDate(item.date_created);
+                        item.src = "http://localhost:8000/uploads/posts/" + item.filename;
+                        item.number_of_likes = item.liking_users.length;
+                        item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
 
+                    });
+                        res.status(200).send(result_images);
+                });
+            }
+        })
+    },
+
+    listStoriesForNotificationId: function(db, req, res, type, postId, currentUserId) {
+        db.collection('stories').aggregate([
+            { $match : { user_id: ObjectId(currentUserId), "_id": ObjectId(postId) } },
+            { $lookup:
+               {
+                 from: "users",
+                 localField: "user_id",
+                 foreignField: "_id",
+                 as: "user"
+               }
+             },
+             { $project : {
+                    "title" : 1,
+                    "content": 1,
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "number_of_likes": 1,
+                    "liking_users" : 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                    },
+                    "updated": 1,
+                    "profile_picture_filename": "$user.picture",
+                    "profile_picture_url": 1
+                }
+             },
+             { $sort : { "date_created" : -1 } }
+            ]).toArray((err_stories, result_stories) => {
+            if (err_stories) throw err_stories;
+                result_stories.map(item => {
+                    item.date_created = getDate(item.date_created);
+                    item.number_of_likes = item.liking_users.length;
+                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                });
+                res.status(200).send(result_stories);
+        });
+    },
+
+    listCommentsForNotificationInStoriesId: function(db, req, res, type, commentId, currentUserId) {
+        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                db.collection('stories').aggregate([
+                    { $match : { user_id: ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
+                    { $lookup:
+                       {
+                         from: "users",
+                         localField: "user_id",
+                         foreignField: "_id",
+                         as: "user"
+                       }
+                     },
+                     { $project : {
+                            "title" : 1,
+                            "content": 1,
+                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                            "number_of_likes": 1,
+                            "liking_users" : 1,
+                            "current_user_has_liked" : {
+                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                            },
+                            "user_id": 1,
+                            "username": {
+                                "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                            },
+                            "updated": 1,
+                            "profile_picture_filename": "$user.picture",
+                            "profile_picture_url": 1
+                        }
+                     },
+                     { $sort : { "date_created" : -1 } }
+                    ]).toArray((err_stories, result_stories) => {
+                    if (err_stories) throw err_stories;
+                        result_stories.map(item => {
+                            item.date_created = getDate(item.date_created);
+                            item.number_of_likes = item.liking_users.length;
+                            item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                        });
+                        res.status(200).send(result_stories);
+                });
+            }
+        })
+    },
+
+    listGuestbookEntryForNotificationId: function(db, req, res, type, postId, currentUserId) {
+        db.collection('guestbookEntries').aggregate([
+            { $match : { owner_id: ObjectId(currentUserId), "_id": ObjectId(postId) } },
+            { $lookup:
+               {
+                 from: "users",
+                 localField: "author_id",
+                 foreignField: "_id",
+                 as: "author"
+               }
+             },
+             { $project : {
+                    "title" : 1,
+                    "content": 1,
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "number_of_likes": 1,
+                    "liking_users" : 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
+                    },
+                    "profile_picture_filename": "$author.picture",
+                    "profile_picture_url": 1
+                }
+             },
+             { $sort : { "date_created" : -1 } }
+            ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
+            if (err_guestbook_entries) throw err_guestbook_entries;
+              res_guestbook_entries.map(item => {
+                    item.date_created = getDate(item.date_created);
+                    item.number_of_likes = item.liking_users.length;
+                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                    item.profile_picture_filename = item.profile_picture_filename;
+                });
+                res.status(200).send(res_guestbook_entries);
+        });
+    },
+
+    listCommentsForNotificationInGuestbooksId: function(db, req, res, type, commentId, currentUserId) {
+        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
+            if(err) throw err;
+            if (docs) {
+                db.collection('guestbookEntries').aggregate([
+                    { $match : { owner_id: ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
+                    { $lookup:
+                       {
+                         from: "users",
+                         localField: "author_id",
+                         foreignField: "_id",
+                         as: "author"
+                       }
+                     },
+                     { $project : {
+                            "title" : 1,
+                            "content": 1,
+                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                            "number_of_likes": 1,
+                            "liking_users" : 1,
+                            "current_user_has_liked" : {
+                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                            },
+                            "user_id": 1,
+                            "username": {
+                                "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
+                            },
+                            "profile_picture_filename": "$author.picture",
+                            "profile_picture_url": 1
+                        }
+                     },
+                     { $sort : { "date_created" : -1 } }
+                    ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
+                    if (err_guestbook_entries) throw err_guestbook_entries;
+                      res_guestbook_entries.map(item => {
+                            item.date_created = getDate(item.date_created);
+                            item.number_of_likes = item.liking_users.length;
+                            item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                            item.profile_picture_filename = item.profile_picture_filename;
+                        });
+                        res.status(200).send(res_guestbook_entries);
+                });
+            }
+        })
     },
 
     //----------------------Like Comment----------------------//

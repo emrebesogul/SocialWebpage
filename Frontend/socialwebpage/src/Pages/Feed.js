@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
-import {fetchFeedData} from '../API/GET/GetMethods';
 import Sidebar from '../Components/Sidebar';
 import Dropzone from 'react-dropzone'
-import {checkSession} from '../API/GET/GetMethods';
-import {uploadStoryToPlatform, uploadPictureToPlatform} from '../API/POST/PostMethods';
-import {getFriendRequests, getFriends, getComments, getNotifications} from '../API/GET/GetMethods';
-import {likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment, deleteCommentById, likeComment} from '../API/POST/PostMethods';
+import { Link, Redirect } from 'react-router-dom';
+import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
+import { fetchFeedData } from '../API/GET/GetMethods';
+import { getCurrentUserData, checkAuthorization } from '../API/GET/GetMethods';
+import { uploadStoryToPlatform, uploadPictureToPlatform } from '../API/POST/PostMethods';
+import { getFriendRequests, getFriends, getComments, getNotifications } from '../API/GET/GetMethods';
+import { likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment, deleteCommentById, likeComment } from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 var feedPosts = [];
@@ -37,23 +37,13 @@ class Feed extends Component {
         redirectToFeed: false,
         status: false
       }
-
-      this.apiCheckSession = "/checkSession";
-      this.apiStoryCreate = "/story/create";
-      this.apiUploadImage = "/image/create";
-
-      //this.checkThisSession();
-      //this.getfeeddata();
-      //this.getFriends();
-      //this.getFriendRequests();
-
-
       this.pageTitle = "Ivey";
       document.title = this.pageTitle;
   }
 
   componentDidMount() {
-      this.checkThisSession();
+      this.checkAuthorization();
+      this.getCurrentUserData();
       this.getfeeddata();
       this.getFriends();
       this.getFriendRequests();
@@ -61,17 +51,23 @@ class Feed extends Component {
       this.getNotifications();
   }
 
-  async checkThisSession() {
-    const response = await checkSession(this.apiCheckSession);
-    this.setState({currentUserId: response.userId})
-    if(response.message !== "User is authorized") {
-        this.setState({redirectToLogin: true})
+  async checkAuthorization() {
+    const userIsAuthorized = await checkAuthorization();
+    if(!userIsAuthorized) {
+      this.setState({redirectToLogin: true})
+    }
+  }
+
+  async getCurrentUserData() {
+    const currentUserData = await getCurrentUserData();
+    if(currentUserData.userId) {
+      this.setState({currentUserId: currentUserData.userId})
     }
   }
 
 
  async getfeeddata() {
-      const response = await fetchFeedData("/feed");
+      const response = await fetchFeedData();
       this.setState({resFeedPosts: response});
       response.map(item => {
         item.number_of_likes_in_state = item.number_of_likes;
@@ -79,57 +75,36 @@ class Feed extends Component {
   }
 
   async getFriendRequests() {
-      const response = await getFriendRequests("/friends/getFriendRequests");
+      const response = await getFriendRequests();
       this.setState({resFriendsRequests: response});
   }
 
   async getFriends() {
-      const response = await getFriends("/friends/getFriends");
+      const response = await getFriends();
       this.setState({resFriends: response})
   }
 
   async getNotifications() {
-      const response = await getNotifications("/user/notifications");
+      const response = await getNotifications();
       this.setState({resNotifications: response})
   }
 
   async confirmFriendRequest(e, item) {
-      //Set state of status to accepted
-      //Add both to friends: []
-      console.log(String(item.requester))
-      console.log(item.recipient)
-
-      const response = await confirmFriendshipRequest(
-          "/friends/confirmFriendRequest",
-          String(item.requester),
-          item.recipient
-      );
+      const response = await confirmFriendshipRequest(String(item.requesterId));
       if(response) {
           window.location.reload();
       }
-
   }
 
   async declineFriendRequest(e, item) {
-      //Set state of status to rejected
-      //Delete from friendRequests collection
-      console.log(item.requester)
-      console.log(item.recipient)
-      const response = await deleteFriendshipRequest(
-          "/friends/declineFriendRequest",
-          String(item.requester),
-          item.recipient
-      );
+      const response = await deleteFriendshipRequest(String(item.requesterId));
       if(response) {
           window.location.reload();
       }
   }
 
   async deleteFriend(e, item) {
-      const response = await deleteFriend(
-          "/friends/deleteFriend",
-          item.name
-      );
+      const response = await deleteFriend(item.friendId);
       if(response) {
           window.location.reload();
       }
@@ -139,16 +114,10 @@ async handleRatePost(event, data){
   event.preventDefault();
 
   if(data.src) {
-    await likeImageById(
-      "/image/like",
-      data._id
-    );
+    await likeImageById(data._id);
   }
   else {
-    await likeStoryEntryById(
-      "/story/like",
-      data._id
-    );
+    await likeStoryEntryById(data._id);
   }
 
   this.state.resFeedPosts.map(item => {
@@ -179,12 +148,13 @@ getNumberOfLikesOfPost(currentItem) {
 }
 
 async handleCreateComment(event, data) {
+
   if(event.target[0].value.trim() != "" && event.target[0].value != null) {
     let commentData = {
       "content": event.target[0].value,
       "postId" : data._id
     }
-    let response = await createComment("/comment/create", commentData);
+    let response = await createComment(commentData);
     if(response) {
       let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
       commentInputElements.map(item => {
@@ -196,7 +166,7 @@ async handleCreateComment(event, data) {
 }
 
 async getComments() {
-  let response = await getComments("/comment/list");
+  let response = await getComments();
   this.setState({resComments: response});
   response.map(item => {
     item.number_of_likes_in_state = item.number_of_likes;
@@ -206,7 +176,7 @@ async getComments() {
 async handleRateComment(event, data) {
   event.preventDefault();
 
-  await likeComment("/comment/like", data._id);
+  await likeComment(data._id);
   this.state.resComments.map(item => {
     if(item._id === data._id) {
       if(item.current_user_has_liked == 0) {
@@ -247,10 +217,7 @@ async handleSubmit(event) {
     fd.append('title', this.state.title);
     fd.append('content', this.state.content);
 
-    const response = await uploadPictureToPlatform(
-        this.apiUploadImage,
-        fd
-    );
+    const response = await uploadPictureToPlatform(fd);
 
     this.setState({message : JSON.parse(response).message});
     if(this.state.message === "Image uploaded") {
@@ -262,11 +229,7 @@ async handleSubmit(event) {
     }
 
   }else{
-    const response = await uploadStoryToPlatform(
-        this.apiStoryCreate,
-        this.state.title,
-        this.state.content
-    );
+    const response = await uploadStoryToPlatform(this.state.title, this.state.content);
 
     this.setState({status: response});
 
@@ -289,7 +252,7 @@ onDrop(files) {
 }
 
 async handleDeleteComment(event, data) {
-  const response = await deleteCommentById("/comment/delete", data._id);
+  const response = await deleteCommentById(data._id);
   if(response) {
     this.getComments();
   }
@@ -477,7 +440,7 @@ async handleDeleteComment(event, data) {
                                                   </Link>
                                                    wants to be friends with you.
                                               </List.Header>
-                                              <List.Description>4 mutual contacts</List.Description>
+                                              <List.Description>{item.date_created}</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
                                               <Button onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
@@ -502,7 +465,6 @@ async handleDeleteComment(event, data) {
                                                       {item.name}
                                                   </Link>
                                               </List.Header>
-                                              <List.Description>4 mutual contacts</List.Description>
                                             </List.Content>
                                             <List.Content floated="right">
                                                 <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
@@ -537,15 +499,14 @@ async handleDeleteComment(event, data) {
                                     <div key={index}>
                                       <List  divided relaxed verticalAlign='middle'>
                                         <List.Item>
-                                          {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                           <List.Content>
                                             <List.Header >
-                                                <Link to={`/profile/${item.actionUser}`}>
-                                                    {item.actionUser}
+                                                <Link to={`/profile/${item.username}`}>
+                                                    {item.username}
                                                 </Link>
                                             </List.Header>
-                                            <List.Description>{item.action}</List.Description>
-                                            <List.Description>{item.date_created}</List.Description>
+                                            {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></Link></div> : <div><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></div> }
                                           </List.Content>
                                           <List.Content floated="right">
                                           </List.Content>

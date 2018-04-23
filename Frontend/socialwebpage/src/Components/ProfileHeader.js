@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import { Icon, Header, Button, Image} from 'semantic-ui-react'
-import {getCurrentUser, checkSession} from '../API/GET/GetMethods';
-import {sendFriendshipRequest, deleteProfilePic, deleteFriend} from '../API/POST/PostMethods';
-
+import { Icon, Header, Button, Image } from 'semantic-ui-react'
+import { getUserData, getCurrentUserData } from '../API/GET/GetMethods';
+import { sendFriendshipRequest, deleteProfilePicture, deleteFriend } from '../API/POST/PostMethods';
 import '../profileStyle.css';
 
 class ProfileHeader extends Component {
@@ -12,6 +11,7 @@ class ProfileHeader extends Component {
         this.state = {
           show: false,
           redirectToLogin: false,
+          id: "",
           username: "",
           firstname: "",
           lastname: "",
@@ -19,26 +19,18 @@ class ProfileHeader extends Component {
           picture: "",
           pictureURL: "",
           pictureExists: false,
-
-          //ButtonState variiert je nachdem, ob sie freunde sind, anfrage raus ist oder status anders ist
           buttonState: "Loading"
         }
-        this.api = "/getUserInfo"
-        this.apiFriendshipRequest = "/friends/sendFriendshipRequest"
-        this.apiCheckSession = "/checkSession"
-
-        //this.getCurrentUser(props.name);
     }
 
     componentDidMount() {
         this.getCurrentUser(this.props.name);
-
     }
 
     async getCurrentUser(username) {
 
         if(username === undefined) {
-            const response = await getCurrentUser(this.api);
+            const response = await getUserData("/getUserData");
             this.setState({username: response.username})
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
@@ -46,18 +38,19 @@ class ProfileHeader extends Component {
             this.setState({picture: response.picture})
             this.setState({pictureURL: response.pictureURL})
 
-            const responseMyData = await checkSession(this.apiCheckSession);
+            const currentUserData = await getCurrentUserData();
 
-            if(responseMyData.username === this.state.username) {
+            if(currentUserData.username === this.state.username) {
                 this.setState({ show: false});
             } else {
                 this.setState({ show: true});
             }
 
         } else {
-            let api = this.api + "?username=" + username;
-            const response = await getCurrentUser(api);
+            let api = "/getUserData?username=" + username;
+            const response = await getUserData(api);
             this.setState({username: response.username})
+            this.setState({id: response.id})
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
             this.setState({email: response.email})
@@ -65,9 +58,9 @@ class ProfileHeader extends Component {
             this.setState({pictureURL: response.pictureURL})
             this.setState({buttonState: response.buttonState})
 
-            const responseMyData = await checkSession(this.apiCheckSession);
+            const currentUserData = await getCurrentUserData();
 
-            if(responseMyData.username === this.state.username) {
+            if(currentUserData.username === this.state.username) {
                 this.setState({ show: false});
             } else {
                 this.setState({ show: true});
@@ -78,10 +71,8 @@ class ProfileHeader extends Component {
         }
     }
 
-    async handleDeleteProfilePic(event) {
-      const response = await deleteProfilePic(
-        "/user/delete/picture"
-      );
+    async handleDeleteProfilePicture(event) {
+      const response = await deleteProfilePicture();
       if(response) {
         window.location.reload();
       }
@@ -91,16 +82,13 @@ class ProfileHeader extends Component {
 
         // Send friendship request to user
         if(this.state.buttonState == "Add Friend") {
-            const response = await sendFriendshipRequest(this.apiFriendshipRequest, this.state.username);
+            const response = await sendFriendshipRequest(this.state.username);
             this.setState({buttonState: JSON.parse(response).buttonState})
         }
 
         // Delete friendship request to user
         if(this.state.buttonState == "Delete Friend") {
-            const response = await deleteFriend(
-                "/friends/deleteFriend",
-                this.state.username
-            );
+            const response = await deleteFriend(this.state.id);
             if(response) {
                 window.location.reload();
             }
@@ -136,9 +124,9 @@ class ProfileHeader extends Component {
                   </div>
 
                     <div>
-                        {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePic} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
+                        {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePicture} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
 
-                        {this.state.pictureExists ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
+                        {this.state.pictureURL !== "http://localhost:8000/uploads/posts/" ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
 
                     </div>
                     <Header as='h2' size="huge" icon textAlign='center'>
