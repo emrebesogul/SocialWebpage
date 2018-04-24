@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Sidebar from '../Components/Sidebar';
 import Dropzone from 'react-dropzone'
+import Footer from '../Components/Footer'
 import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
 import { fetchFeedData } from '../API/GET/GetMethods';
@@ -430,11 +431,11 @@ async handleDeleteComment(event, data) {
                                   {
                                     return(
                                       <div key={index}>
-                                        <List  divided relaxed verticalAlign='middle'>
+                                        <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                            <List.Content>
-                                              <List.Header as='a'>
+                                            {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
+                                            <List.Content className="friends-content">
+                                              <List.Header>
                                                   <Link to={`/profile/${item.requester}`}>
                                                       <span>{item.requester} </span>
                                                   </Link>
@@ -442,9 +443,13 @@ async handleDeleteComment(event, data) {
                                               </List.Header>
                                               <List.Description>{item.date_created}</List.Description>
                                             </List.Content>
-                                            <List.Content floated="right">
-                                              <Button onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
-                                              <Button onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
+                                            <List.Content className="flex">
+                                              <div className="flex-item">
+                                                <Button onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
+                                              </div>
+                                              <div className="flex-item">
+                                                <Button onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
+                                              </div>
                                             </List.Content>
                                           </List.Item>
                                         </List>
@@ -456,18 +461,20 @@ async handleDeleteComment(event, data) {
                                   {
                                     return(
                                       <div key={index}>
-                                        <List  divided relaxed verticalAlign='middle'>
+                                        <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                            <List.Content>
+                                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
+                                            <List.Content className="friends-content">
                                               <List.Header >
                                                   <Link to={`/profile/${item.name}`}>
                                                       {item.name}
                                                   </Link>
                                               </List.Header>
                                             </List.Content>
-                                            <List.Content floated="right">
+                                            <List.Content className="flex">
+                                              <div className="flex-item">
                                                 <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
+                                                </div>
                                             </List.Content>
                                           </List.Item>
                                         </List>
@@ -497,20 +504,15 @@ async handleDeleteComment(event, data) {
                                 {
                                   return(
                                     <div key={index}>
-                                      <List  divided relaxed verticalAlign='middle'>
+                                      <List className="feed-list-item" animated divided verticalAlign='middle'>
                                         <List.Item>
-                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <Image size="tiny" avatar src={item.profile_picture_url} className="user-card-avatar"/> : <Image size="tiny" avatar className="user-card-avatar" src="/assets/images/user.png"></Image> }
-                                          <List.Content>
-                                            <List.Header >
-                                                <Link to={`/profile/${item.username}`}>
-                                                    {item.username}
-                                                </Link>
+                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image size="tiny" src={item.profile_picture_url} className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
+                                          <List.Content className="friends-content">
+                                            <List.Header>
+                                                {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}>
+                                              {item.username} {' '} {item.action} <br/>
+                                            <span className="notifications-metatext">{item.date_created}</span></Link></div> : <div >{item.username} {' '} {item.action} <br/> <span className="notifications-metatext">{item.date_created}</span> </div> }
                                             </List.Header>
-                                            {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}>
-                                            <List.Description>{item.action}</List.Description>
-                                            <List.Description>{item.date_created}</List.Description></Link></div> : <div><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></div> }
-                                          </List.Content>
-                                          <List.Content floated="right">
                                           </List.Content>
                                         </List.Item>
                                       </List>
@@ -524,6 +526,7 @@ async handleDeleteComment(event, data) {
                         ]
                         } />
                 </div>
+                  <Footer />
           </div>
         );
     }

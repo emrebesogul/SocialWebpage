@@ -626,14 +626,14 @@ class Profile extends Component {
                             <Card.Group>
                               <Card fluid centered>
                                 <div className="username-label">
+                                Add a new guestbook post
                                 </div>
                                 <Card.Content id="card-content">
                                   <Form reply id="guestbook-reply" onSubmit={this.handleCreateGuestbookEntry.bind(this)}>
                                     <Form.Field>
-                                      <label>Title of your guestbook entry</label>
                                       <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
                                     </Form.Field>
-                                    <Form.TextArea required autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
+                                    <Form.TextArea required placeholder="What do you want to say?" autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
                                     <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
                                   </Form>
                                 </Card.Content>

@@ -5,7 +5,6 @@ import Login from './Pages/Login';
 import Register from './Pages/Register';
 import Profile from './Pages/Profile';
 import Feed from './Pages/Feed';
-import Roadmap from './Pages/Roadmap'
 import Settings from './Pages/Settings'
 import About from './Pages/About'
 import Legal from './Pages/Legal'
@@ -26,7 +25,6 @@ ReactDOM.render(
             <Route path="/profile/:username?" component={Profile}></Route>
             <Route exact path="/notifications/:type/:typeCommented/:postId?" component={Notifications}></Route>
             <Route exact path="/" component={Feed}></Route>
-            <Route exact path="/roadmap" component={Roadmap}></Route>
             <Route exact path="/settings" component={Settings}></Route>
             <Route exact path="/about" component={About}></Route>
             <Route exact path="/legal" component={Legal}></Route>

@@ -155,12 +155,14 @@ class Settings extends React.Component{
               <Icon name='user' id="settings-icon" />
               Profile Settings
               <Header.Subheader>
-                Manage your profile settings and set your profile picture
+                Manage your profile settings and set your profile picture.
               </Header.Subheader>
               </Header>
-
+              <p>
+                Upload a photo and set it as your profile picture. 
+              </p>
               <Dropzone id="dz-repair" multiple={ false } name="image" acceptedFiles="image/jpeg, image/png" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
-                <p><Icon name='user' size="large" id="settings-icon" /> Select your picture for your profile</p>
+                <p><Icon name='user' size="large" id="settings-icon" />Add Photo </p>
               </Dropzone>
 
               <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>

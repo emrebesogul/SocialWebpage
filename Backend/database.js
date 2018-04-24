@@ -497,15 +497,15 @@ var call = module.exports = {
                   var buttonState = "";
 
                   if ((docs.friends.toString()).includes(userid)) {
-                      buttonState = "Delete Friend";
+                      buttonState = "Delete friend";
                   } else if (docs2) {
                       if (docs2.requesterId == userid) {
-                          buttonState = "Your Request was sent";
+                          buttonState = "Request sent";
                       } else {
-                          buttonState = "Your have a new Request";
+                          buttonState = "Pending request";
                       }
                   } else {
-                      buttonState = "Add Friend";
+                      buttonState = "Add friend";
                   }
 
                   res.send(JSON.stringify({
