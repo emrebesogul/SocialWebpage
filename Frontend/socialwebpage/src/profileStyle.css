@@ -520,6 +520,19 @@ textarea {
   margin-right: auto;
 }
 
+#footer {
+  margin-top: 10px;
+  color: rgb(250,250,250);
+  background: rgb();
+  padding-top: 5px;
+  padding-left: 30px;
+  padding-bottom: 5px;
+  font-size: 12px;
+  border-top-right-radius: 2px;
+  border-top-left-radius: 2px;
+  background-color: #1a2e3ed6;
+}
+
 .wrapper{
   display: none;
   height: 100vh;
