@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { Redirect } from 'react-router-dom';
-import { Message, Input, Card, Image, Icon, Button, Header, Comment, Form } from 'semantic-ui-react'
+import { Redirect, Link } from 'react-router-dom';
+import { Message, Input, Card, Image, Icon, Button, Header, Comment, Form, Rating } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
 import { checkAuthorization, getNotificationData, getComments } from '../API/GET/GetMethods';
 import '../profileStyle.css';
