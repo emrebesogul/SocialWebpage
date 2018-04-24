@@ -526,7 +526,7 @@ class Profile extends Component {
                                     })}
                                     <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                       <Form.TextArea class="commentInput"/>
-                                      <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                      <Button className="button-styles">Add Comment</Button>
                                     </Form>
                                   </Card.Content>
                                 </Card>
@@ -610,7 +610,7 @@ class Profile extends Component {
                                         })}
                                         <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                           <Form.TextArea class="commentInput"/>
-                                          <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                        <Button className="button-styles">Add Comment</Button>
                                         </Form>
                                       </Card.Content>
                                     </Card>
@@ -634,7 +634,7 @@ class Profile extends Component {
                                       <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
                                     </Form.Field>
                                     <Form.TextArea required placeholder="What do you want to say?" autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
-                                    <Button content='Add Reply' className="button-upload" labelPosition='left' icon='edit' type="submit" />
+                                    <Button className="button-styles">Add Comment</Button>
                                   </Form>
                                 </Card.Content>
                               </Card>
@@ -709,7 +709,7 @@ class Profile extends Component {
                                       })}
                                       <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                         <Form.TextArea class="commentInput"/>
-                                        <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                        <Button className="button-styles">Add Comment</Button>
                                       </Form>
                                     </Card.Content>
                                   </Card>

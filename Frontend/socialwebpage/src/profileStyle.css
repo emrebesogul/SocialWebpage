@@ -312,6 +312,7 @@ a{
   float: right;
   position: relative;
   top: -68px;
+  background: none !important;
   right: 6px;
 }
 
@@ -370,6 +371,7 @@ div.ui.pointing.secondary.menu{
 
 .edit-button-guestbook{
   z-index: 999;
+  background: none !important;
   top: -68px;
   right: 10px;
   position: relative;
@@ -415,6 +417,7 @@ div.ui.comments {
   position: absolute;
   top: -25px;
   right: 10px;
+  background: none !important;
 }
 
 .comment-user-info{
@@ -444,6 +447,7 @@ div.ui.comments {
 .comments-user-image{
   height: 58px;
   width: 58px;
+  background: white !important;
   border: 1px solid rgb(244,244,244);
   display: block;
   -o-object-fit: cover;
@@ -692,11 +696,31 @@ div.sub.header.feed-subheader{
   margin-bottom: 20px !important;
 }
 
+#feed-post-button{
+  position: absolute;
+  bottom: 10px;
+  right: 10%;
+  border: 1px solid !important;
+}
+
+.button-styles{
+  border: 1px solid !important;
+  background: none !important;
+  color: rgb(35,35,35) !important;
+}
+
+.button-styles:hover{
+  background-color: rgb(40,40,40) !important;
+  color: rgb(245,245,245) !important;
+  transition: all 0.3s;
+}
+
 .button-upload{
   margin-top: 25px !important;
   display: block;
-  color: rgb(65,65,65) !important;
+  color: rgb(35,35,35) !important;
   transition: all 0.3s;
+  background: none !important;
 }
 
 .button-upload:hover{

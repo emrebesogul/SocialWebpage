@@ -124,7 +124,7 @@ class ProfileHeader extends Component {
                   </div>
 
                     <div>
-                        {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePicture} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
+                        {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePicture} id="delete-button-profile-picture" className="button-styles" circular icon="delete" ></Button> : null}
 
                         {this.state.pictureURL !== "http://localhost:8000/uploads/posts/" ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
 

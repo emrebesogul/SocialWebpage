@@ -311,7 +311,7 @@ async handleDeleteComment(event, data) {
                                           </aside>
 
                                           {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
-                                        <Button className="button-upload" type="submit">Post</Button>
+                                        <Button id="feed-post-button" className="button-upload" type="submit">Post</Button>
 
                                       </Form>
                                   </div>
@@ -402,7 +402,7 @@ async handleDeleteComment(event, data) {
                                       })}
                                       <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                         <Form.TextArea class="commentInput" placeholder="Add a comment.." />
-                                        <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                        <Button className="button-upload button-styles"  content='Add Comment'/>
                                       </Form>
                                   </Card.Content>
                                 </Card>
@@ -445,10 +445,10 @@ async handleDeleteComment(event, data) {
                                             </List.Content>
                                             <List.Content className="flex">
                                               <div className="flex-item">
-                                                <Button onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
+                                                <Button className="button-styles" onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
                                               </div>
                                               <div className="flex-item">
-                                                <Button onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
+                                                <Button className="button-styles" onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
                                               </div>
                                             </List.Content>
                                           </List.Item>
@@ -473,7 +473,7 @@ async handleDeleteComment(event, data) {
                                             </List.Content>
                                             <List.Content className="flex">
                                               <div className="flex-item">
-                                                <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
+                                                <Button className="button-styles" onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
                                                 </div>
                                             </List.Content>
                                           </List.Item>
@@ -504,7 +504,7 @@ async handleDeleteComment(event, data) {
                                 {
                                   return(
                                     <div key={index}>
-                                      <List className="feed-list-item" animated divided verticalAlign='middle'>
+                                      <List className="feed-list-item" divided verticalAlign='middle'>
                                         <List.Item>
                                           {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image size="tiny" src={item.profile_picture_url} className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
                                           <List.Content className="friends-content">

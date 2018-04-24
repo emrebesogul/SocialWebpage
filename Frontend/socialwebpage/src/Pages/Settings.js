@@ -159,7 +159,7 @@ class Settings extends React.Component{
               </Header.Subheader>
               </Header>
               <p>
-                Upload a photo and set it as your profile picture. 
+                Upload a photo and set it as your profile picture.
               </p>
               <Dropzone id="dz-repair" multiple={ false } name="image" acceptedFiles="image/jpeg, image/png" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
                 <p><Icon name='user' size="large" id="settings-icon" />Add Photo </p>
@@ -171,7 +171,7 @@ class Settings extends React.Component{
                     this.state.files.map(f => <span className="upload-image-label" key={f.name}>Uploaded Filename: {f.name}</span>)
                   }
               </aside>
-              <Button className="button-upload" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
+              <Button className="button-upload button-styles" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
 
               {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
               {this.state.showMessageSuccess ? <Message color='green'><p>{this.state.message}<br /></p></Message> : null}
