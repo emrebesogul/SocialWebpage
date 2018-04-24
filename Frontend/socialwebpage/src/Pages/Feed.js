@@ -296,7 +296,7 @@ async handleDeleteComment(event, data) {
                                         <Input className="input-upload" type="text"/>
 
                                         <span className="input-label-upload"> What story do you want to share?</span>
-                                        <TextArea required className="input-upload" type="text"></TextArea>
+                                        <TextArea className="input-upload" type="text"></TextArea>
 
                                           <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
                                               <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
@@ -499,14 +499,16 @@ async handleDeleteComment(event, data) {
                                     <div key={index}>
                                       <List  divided relaxed verticalAlign='middle'>
                                         <List.Item>
-                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <Image size="tiny" avatar src={item.profile_picture_url} className="user-card-avatar"/> : <Image size="tiny" avatar className="user-card-avatar" src="/assets/images/user.png"></Image> }
                                           <List.Content>
                                             <List.Header >
                                                 <Link to={`/profile/${item.username}`}>
                                                     {item.username}
                                                 </Link>
                                             </List.Header>
-                                            {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></Link></div> : <div><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></div> }
+                                            {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}>
+                                            <List.Description>{item.action}</List.Description>
+                                            <List.Description>{item.date_created}</List.Description></Link></div> : <div><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></div> }
                                           </List.Content>
                                           <List.Content floated="right">
                                           </List.Content>

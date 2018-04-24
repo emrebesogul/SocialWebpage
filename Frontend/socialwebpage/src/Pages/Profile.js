@@ -3,6 +3,7 @@ import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message, Header
 import { Redirect, Link } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
+import Footer from '../Components/Footer'
 import '../profileStyle.css';
 import { checkAuthorization, getCurrentUserData, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getUserData, getComments } from '../API/GET/GetMethods';
 import { likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById, createComment, deleteCommentById, likeComment } from '../API/POST/PostMethods';
@@ -42,9 +43,9 @@ class Profile extends Component {
       this.getComments();
 
       if(this.property === undefined) {
-          this.pageTitle = "My Profile "
+          this.pageTitle = "My Profile"
       } else {
-          this.pageTitle = "Profile of user: " + this.property
+          this.pageTitle = "Profile of " + this.property
       }
       document.title = this.pageTitle;
   }
@@ -722,6 +723,8 @@ class Profile extends Component {
                       ]
                       } />
               </div>
+
+              <Footer />
           </div>
 
         )
