@@ -449,7 +449,7 @@ var call = module.exports = {
                     if(err) throw err;
 
                     var buttonState = "";
-                    
+
                     if ((res_find_user.friends.toString()).includes(userid)) {
                         buttonState = "Delete Friend";
                     } else if (res_find_friend_request) {
@@ -728,7 +728,7 @@ var call = module.exports = {
                         }
                     }
                 );
-            } 
+            }
             res.send(JSON.stringify({message: responseMessage}));
         });
     },
@@ -861,7 +861,7 @@ var call = module.exports = {
                 let friends = [];
                 let i = 0;
 
-                res_find_user.friends.map(item => { 
+                res_find_user.friends.map(item => {
                     db.collection('users').findOne({"_id": ObjectId(item)}, (err_friends, res_friends) => {
                         if (err_friends) throw err_friends;
                         friendlist.push(res_friends);
@@ -872,7 +872,7 @@ var call = module.exports = {
                         result ["friendId"] = res_friends._id;
                         result ["picture"] = "http://localhost:8000/uploads/posts/" + res_friends.picture;
                         friends.push(result);
-                        
+
                         if (i == friendlistLength) {
                             let friendsByName = friends.slice(0);
                             friendsByName.sort(function(a,b) {
@@ -1015,9 +1015,9 @@ var call = module.exports = {
                 res_find_guestbook_entries.liking_users.splice(index, 1);
 
                 db.collection('notifications').remove({
-                    "recipient": new ObjectId(res_find_guestbook_entries.owner_id), 
-                    "creator": new ObjectId(userId), 
-                    "action": "liked your guestbook post", 
+                    "recipient": new ObjectId(res_find_guestbook_entries.owner_id),
+                    "creator": new ObjectId(userId),
+                    "action": "liked your guestbook post",
                     "guestbook_id": new ObjectId(guestbookData.guestbookEntryId)
                 }, (err, res_guestbookData) => {
                     if (err) throw err;
@@ -1055,7 +1055,7 @@ var call = module.exports = {
     deleteGuestbookEntryById: function (db, res, guestbookData, userId) {
         db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
             if (err_find_user) throw err_find_user;
-            if (res_find_user) { 
+            if (res_find_user) {
                 db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
                     if (err_find_guestbook_entries) throw err_find_guestbook_entries;
                     if (res_find_guestbook_entries.owner_id == userId || res_find_user.is_admin) {
@@ -1455,7 +1455,7 @@ var call = module.exports = {
     deleteCommentById: function (db, res, commentId, userId) {
         db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
             if (err_find_user) throw err_find_user;
-            if (res_find_user) { 
+            if (res_find_user) {
                 db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
                     if (err_find_comments) throw err_find_comments;
                     if (res_find_comments.author_id == userId || res_find_user.is_admin) {
