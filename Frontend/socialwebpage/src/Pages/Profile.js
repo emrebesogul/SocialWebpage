@@ -86,6 +86,7 @@ class Profile extends Component {
             });
 
             const currentUserData = await getCurrentUserData();
+            this.setState({currentUserIsAdmin: currentUserData.is_admin});
 
             const response = await getUserData("/getUserData");
             this.setState({username: response.username})
@@ -129,6 +130,7 @@ class Profile extends Component {
             });
 
             const currentUserData = await getCurrentUserData();
+            this.setState({currentUserIsAdmin: currentUserData.is_admin});
 
             let api = "/getUserData?username=" + username;
             const response = await getUserData(api);
@@ -460,7 +462,7 @@ class Profile extends Component {
                                     {this.state.pictureExists ? <div><Image src={this.state.pictureURL} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
 
                                     <span className="content-card-username-label"> @{item.username} </span>
-                                    {this.state.show ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                    {this.state.show || this.state.currentUserIsAdmin ? <Button onClick={((e) => this.handleDeleteImage(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                     {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenImageUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
                                   </div>
                                   <Image className="image-feed" src={item.src} />
@@ -510,7 +512,7 @@ class Profile extends Component {
                                                   Likes
                                                 </div>
                                               </div>
-                                              {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                              {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
                                               <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
                                               </Rating>
                                               <div className="comment-user-info">
@@ -545,7 +547,7 @@ class Profile extends Component {
                                       <div className="username-label">
                                           {this.state.pictureExists ? <div><Image src={this.state.pictureURL} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                           <span className="content-card-username-label"> @{item.username} </span>
-                                        {this.state.show ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                        {this.state.show || this.state.currentUserIsAdmin ? <Button onClick={((e) => this.handleDeleteStoryEntry(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                         {this.state.show && this.state.updateItemId != item._id ? <Button onClick={((e) => this.handleOpenStoryUpdateWindow(e, item))} className="button-upload edit-button-guestbook" circular icon="edit" size="small"></Button> : null}
                                       </div>
                                       <Card.Content id="card-content">
@@ -594,7 +596,7 @@ class Profile extends Component {
                                                       Likes
                                                     </div>
                                                   </div>
-                                                  {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                                  {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ?  <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
                                                   <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
                                                   </Rating>
                                                   <div className="comment-user-info">
@@ -651,7 +653,7 @@ class Profile extends Component {
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
-                                      {this.state.show ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
+                                      {this.state.show || this.state.currentUserIsAdmin ? <Button onClick={((e) => this.handleDeleteGuestbookEntry(e, item))}  className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                     </div>
                                     <Card.Content id="card-content">
                                       <Card.Header className="card-header">
@@ -693,7 +695,7 @@ class Profile extends Component {
                                                     Likes
                                                   </div>
                                                 </div>
-                                                {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                                {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
                                                 <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
                                                 </Rating>
                                                 <div className="comment-user-info">

@@ -96,7 +96,8 @@ var call = module.exports = {
                                                 "birthday": birthday,
                                                 "gender": gender,
                                                 "picture": profilePicture,
-                                                "friends": friends
+                                                "friends": friends,
+                                                "is_admin" : false
                                             });
                                             console.log("User created: " + username);
                                             res.send(JSON.stringify({
@@ -141,7 +142,8 @@ var call = module.exports = {
                                             "birthday": birthday,
                                             "gender": gender,
                                             "picture": profilePicture,
-                                            "friends": friends
+                                            "friends": friends,
+                                            "is_admin" : false
                                         });
                                         console.log("User created: " + username);
                                     }
@@ -460,14 +462,15 @@ var call = module.exports = {
                         buttonState = "Add Friend";
                     }
                     res.send(JSON.stringify({
-                        id: res_find_user._id,
+                        userId: res_find_user._id,
                         username: res_find_user.username,
                         firstname: res_find_user.first_name,
                         lastname: res_find_user.last_name,
                         email: res_find_user.email,
                         picture: res_find_user.picture,
                         pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture,
-                        buttonState: buttonState
+                        buttonState: buttonState,
+                        is_admin: res_find_user.is_admin
                     }));
                 });
             }
@@ -490,12 +493,14 @@ var call = module.exports = {
             }
             if (res_find_user) {
                 res.send(JSON.stringify({
+                    userId: res_find_user._id,
                     username: res_find_user.username,
                     firstname: res_find_user.first_name,
                     lastname: res_find_user.last_name,
                     email: res_find_user.email,
                     picture: res_find_user.picture,
-                    pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture
+                    pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture,
+                    is_admin: res_find_user.is_admin
                 }));
             }
             else {
@@ -511,24 +516,31 @@ var call = module.exports = {
     // Receives the id of a story entry and deletes it from the database.
     // After that, a message with "true" is send to the react application.
     deleteStoryEntryById: function (db, res, storyId, userId) {
-        db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err, docs) => {
-            if (err) throw err;
-            if (docs.user_id == userId) {
-                db.collection("comments").remove({ post_id : new ObjectId(storyId) }, (err_remove_comments, res_remove_comments) => {
-                    if (err_remove_comments) throw err_remove_comments;
-                    db.collection("stories").remove({ _id : new ObjectId(storyId) }, (err, docs) => {
-                        if (err) throw err;
-                        db.collection('notifications').remove({"story_id": ObjectId(storyId)}, (err, res_stories) => {
-                            if (err) throw err;
+        db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) {
+                db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err, docs) => {
+                    if (err) throw err;
+                    if (docs.user_id == userId || res_find_user.is_admin) {
+                        db.collection("comments").remove({ post_id : new ObjectId(storyId) }, (err_remove_comments, res_remove_comments) => {
+                            if (err_remove_comments) throw err_remove_comments;
+                            db.collection("stories").remove({ _id : new ObjectId(storyId) }, (err, docs) => {
+                                if (err) throw err;
+                                db.collection('notifications').remove({"story_id": ObjectId(storyId)}, (err, res_stories) => {
+                                    if (err) throw err;
+                                });
+                                res.send(true);
+                            });
                         });
-                        res.send(true);
-                    });
+                    }
+                    else {
+                        res.send(false);
+                    }
                 });
-            }
-            else {
-                res.send(false);
+
             }
         });
+
     },
 
     //----------------------Delete Image---------------------//
@@ -536,24 +548,29 @@ var call = module.exports = {
     // Receives the id of an image and deletes it from the database.
     // After that, a message with "true" is send to the react application.
     deleteImageById: function (db, res, imageId, userId) {
-        db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
-            if (err_find_images) throw err_find_images;
-            if (res_find_images !== null && res_find_images.user_id == userId) {
-                db.collection("comments").remove({ post_id : new ObjectId(imageId) }, (err_remove_comments, res_remove_comments) => {
-                    if (err_remove_comments) throw err_remove_comments;
-                    let path = "./public/uploads/posts/" + res_find_images.filename;
-                    fs.unlinkSync(path);
-                    db.collection("images").remove({ _id : new ObjectId(imageId) }, (err_remove_image, res_remove_image) => {
-                        if (err_remove_image) throw err_remove_image;
-                        db.collection('notifications').remove({"image_id": ObjectId(imageId)}, (err, res_stories) => {
-                            if (err) throw err;
+        db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) {
+                db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
+                    if (err_find_images) throw err_find_images;
+                    if (res_find_images.user_id == userId || res_find_user.is_admin) {
+                        db.collection("comments").remove({ post_id : new ObjectId(imageId) }, (err_remove_comments, res_remove_comments) => {
+                            if (err_remove_comments) throw err_remove_comments;
+                            let path = "./public/uploads/posts/" + res_find_images.filename;
+                            fs.unlinkSync(path);
+                            db.collection("images").remove({ _id : new ObjectId(imageId) }, (err_remove_image, res_remove_image) => {
+                                if (err_remove_image) throw err_remove_image;
+                                db.collection('notifications').remove({"image_id": ObjectId(imageId)}, (err, res_stories) => {
+                                    if (err) throw err;
+                                });
+                                res.send(true);
+                            });
                         });
-                        res.send(true);
-                    });
+                    }
+                    else {
+                        res.send(false);
+                    }
                 });
-            }
-            else {
-                res.send(false);
             }
         });
     },
@@ -1036,22 +1053,27 @@ var call = module.exports = {
     // Receives the id of a guestbook entry and deletes it from the database.
     // After that, a message with "true" is send to the react application.
     deleteGuestbookEntryById: function (db, res, guestbookData, userId) {
-        db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
-            if (err_find_guestbook_entries) throw err_find_guestbook_entries;
-            if (res_find_guestbook_entries.owner_id == userId) {
-                db.collection("comments").remove({ post_id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_comments, res_remove_comments) => {
-                    if (err_remove_comments) throw err_remove_comments;
-                    db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
-                        if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
-                        db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
-                            if (err_guestbook_delete) throw err_guestbook_delete;
+        db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) { 
+                db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
+                    if (err_find_guestbook_entries) throw err_find_guestbook_entries;
+                    if (res_find_guestbook_entries.owner_id == userId || res_find_user.is_admin) {
+                        db.collection("comments").remove({ post_id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_comments, res_remove_comments) => {
+                            if (err_remove_comments) throw err_remove_comments;
+                            db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
+                                if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
+                                db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
+                                    if (err_guestbook_delete) throw err_guestbook_delete;
+                                });
+                                res.send(true);
+                            });
                         });
-                        res.send(true);
-                    });
+                    }
+                    else {
+                        res.send(false);
+                    }
                 });
-            }
-            else {
-                res.send(false);
             }
         });
     },
@@ -1122,7 +1144,7 @@ var call = module.exports = {
         });
     },
 
-    //----------------------Delete Profile Pic---------------------//
+    //----------------------Delete Profile Picture---------------------//
     deleteProfilePicture: function (db, res, userId) {
         db.collection('users').findOne({ _id : new ObjectId(userId)}, (err, docs) => {
             if (err) throw err;
@@ -1431,19 +1453,24 @@ var call = module.exports = {
 
     //----------------------Delete Comment----------------------//
     deleteCommentById: function (db, res, commentId, userId) {
-        db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
-            if (err_find_comments) throw err_find_comments;
-            if (res_find_comments.author_id == userId) {
-                db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
-                    if (err_remove_comments) throw err_remove_comments;
-                    db.collection('notifications').remove({"comment_id": ObjectId(commentId)}, (err_notification, res_notification) => {
-                        if (err_notification) throw err_notification;
-                    });
-                    res.send(true);
+        db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) { 
+                db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
+                    if (err_find_comments) throw err_find_comments;
+                    if (res_find_comments.author_id == userId || res_find_user.is_admin) {
+                        db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
+                            if (err_remove_comments) throw err_remove_comments;
+                            db.collection('notifications').remove({"comment_id": ObjectId(commentId)}, (err_notification, res_notification) => {
+                                if (err_notification) throw err_notification;
+                            });
+                            res.send(true);
+                        });
+                    }
+                    else {
+                        res.send(false);
+                    }
                 });
-            }
-            else {
-                res.send(false);
             }
         });
     },
