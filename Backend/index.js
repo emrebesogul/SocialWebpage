@@ -61,9 +61,9 @@ MongoClient.connect(url, function(err, client) {
                     message: "User is not authorized"
                 });
             }
-      }
+        }
 
-      //----------------------Get Profile----------------------//
+    //-----------------------------Get user data-----------------------------//
     app.get('/rest/getUserData', verifyToken, (req, res) => {
         if(req.query.username) {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -91,7 +91,7 @@ MongoClient.connect(url, function(err, client) {
         }
     });
 
-    //----------------------Check Authorization----------------------//
+    //--------------------------Check authorization--------------------------//
     app.get('/rest/checkAuthorization', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
@@ -102,7 +102,7 @@ MongoClient.connect(url, function(err, client) {
         });
     });
 
-    //----------------------Get User Data----------------------//
+    //-------------------Get user data of the current user-------------------//
     app.get('/rest/currentUserData', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
@@ -118,101 +118,84 @@ MongoClient.connect(url, function(err, client) {
         });
     });
 
-      //----------------------SESSION DELETE----------------------//
-      app.get('/rest/deleteSession', (req, res) => {
-          res.status(200).send({ auth: false, token: null });
-      });
+    //---------------------------Delete the session--------------------------//
+    app.get('/rest/deleteSession', (req, res) => {
+        res.status(200).send({ auth: false, token: null });
+    });
 
-      //----------------------LOGIN----------------------//
-      app.post('/rest/user/loginUser', (req, res) => {
-          const userCredential = JSON.stringify(req.body);
-          database.checkUserCredentials(client.db('socialwebpage'), req, res, userCredential, function(){
-              db.close();
-          });
-      });
+    //-------------------------------Login user------------------------------//
+    app.post('/rest/user/loginUser', (req, res) => {
+        const userCredential = req.body;
+        database.checkUserCredentials(client.db('socialwebpage'), res, userCredential);
+    });
 
-      //----------------------REGISTER----------------------//
-      app.post('/rest/user/create', (req, res) => {
-          const newUserData = JSON.stringify(req.body);
-          database.registerUserToPlatform(client.db('socialwebpage'), req, res, newUserData, function(){
-              db.close();
-          });
-      });
+    //-----------------------------Register user------------------------------//
+    app.post('/rest/user/create', (req, res) => {
+        const newUserData = req.body;
+        database.registerUserToPlatform(client.db('socialwebpage'), res, newUserData);
+    });
 
-      //----------------------Show the Feed----------------------//
-      //
-      // Calls the method getFeed that fetchs all images and story entries from
-      // the database.
-      // Post parameters: title, content and userId of the new story entry
-      app.get('/rest/feed', verifyToken, (req, res) => {
+    //------------------------------Show the Feed-----------------------------//
+    app.get('/rest/feed', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
                     message: "User is not authorized"
                 });
             } else {
-                database.getFeed(client.db('socialwebpage'), req, res, authData.userid, () => {
-                    db.close();
-                });
-
+                database.getFeed(client.db('socialwebpage'), res, authData.userid);
             }
         });
-      });
+    });
 
-      //----------------------Upload Image----------------------//
-      app.post('/rest/image/create', verifyToken, upload.single('theImage'), (req, res) => {
-          if (!req.file) {
-            res.send(JSON.stringify({
-                message: "Image could not be uploaded"
-            }));
-          } else {
-              jwt.verify(req.token, 'secretkey', (err, authData) => {
-                  if(err) {
-                      res.json({
-                          message: "User is not authorized"
-                      });
-                  } else {
-                      const fileData = JSON.stringify(req.file);
-                      const fileDataInfo = JSON.stringify(req.body);
-                      const userid = authData.userid
-                      const file = {fileData, fileDataInfo, userid}
+    //---------------------------Upload an image---------------------------//
+    app.post('/rest/image/create', verifyToken, upload.single('theImage'), (req, res) => {
+        if (!req.file) {
+        res.send(JSON.stringify({
+            message: "Image could not be uploaded"
+        }));
+        } else {
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    const fileData = req.file;
+                    const fileDataInfo = req.body;
+                    const userId = authData.userid;
+                    database.uploadImageToPlatform(client.db('socialwebpage'), res, fileData, fileDataInfo, userId);
+                }
+            });
+        }
+    });
 
-                      database.uploadImageToPlatform(client.db('socialwebpage'), res, file);
-                  }
-              });
-          }
-      });
-
-      //----------------------Create Story----------------------//
-      //
-      // Calls the method createStoryEntry that insert the information of a new story
-      // to the database.
-      // Post parameters: title, content and userId of the new story entry
-      app.post('/rest/story/create', verifyToken, (req, res) => {
-
+    //-----------------------------Create Story----------------------------//
+    //
+    // Calls the method createStoryEntry that insert the information of a 
+    // new story to the database.
+    // Post parameters: title, content and userId of the new story entry
+    app.post('/rest/story/create', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
                     message: "User is not authorized"
                 });
             } else {
-                const userid = authData.userid
-                const storyData = JSON.stringify(req.body);
-                const file = {storyData, userid}
-
-                database.createStoryEntry(client.db('socialwebpage'), res, file, () => {
-                    db.close();
-                });
+                const userId = authData.userid
+                const storyData = req.body;
+                database.createStoryEntry(client.db('socialwebpage'), res, storyData, userId);
             }
         });
-      });
+    });
 
-      //----------------------List Story Entries in a user profile----------------------//
-      //
-      // Calls the method listStoryEntriesForUserId or listStoryEntriesForUsername that
-      // returns all story entries for the user id in the query to the react application.
-      // Get prameter: userId of the respective user
-      app.get('/rest/story/list', verifyToken, (req, res) => {
+    //----------------List story entries in a user profile-----------------//
+    //
+    // Calls one of the methods listStoryEntriesForUserId or 
+    // listStoryEntriesForUsername that returns all story entries for the 
+    // user id in the query to the react application.
+    // Get prameter: userId of the respective user
+    app.get('/rest/story/list', verifyToken, (req, res) => {
         if(req.query.username) {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
@@ -220,14 +203,11 @@ MongoClient.connect(url, function(err, client) {
                         message: "User is not authorized"
                     });
                 } else {
-                    let username = req.query.username;
-                    let currentUserId = authData.userid;
-                    database.listStoryEntriesForUsername(client.db('socialwebpage'), res, username, currentUserId,  () => {
-                        db.close();
-                    });
+                    const username = req.query.username;
+                    const currentUserId = authData.userid;
+                    database.listStoryEntriesForUsername(client.db('socialwebpage'), res, username, currentUserId);
                 }
             });
-
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
@@ -236,18 +216,17 @@ MongoClient.connect(url, function(err, client) {
                     });
                 } else {
                     const currentUserId = authData.userid;
-                    database.listStoryEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId, () => {
-                        db.close();
-                    });
+                    database.listStoryEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId);
                 }
             });
         }
-      });
+    });
 
-      //----------------------List Images in a user profile----------------------//
+      //--------------------List images in a user profile--------------------//
       //
-      // Calls the method listImagesForUserId or listImagesForUsername that returns all
-      // images for the user id in the query to the react application.
+      // Calls the method listImagesForUserId or listImagesForUsername that 
+      // returns all images for the user id in the query to the react 
+      // application.
       // Get prameter: userId of the respective user
       app.get('/rest/image/list', verifyToken, (req, res) => {
 
@@ -258,11 +237,9 @@ MongoClient.connect(url, function(err, client) {
                         message: "User is not authorized"
                     });
                 } else {
-                    let username = req.query.username;
-                    let currentUserId = authData.userid;
-                    database.listImagesForUsername(client.db('socialwebpage'), req, res, username, currentUserId, () => {
-                        db.close();
-                    });
+                    const username = req.query.username;
+                    const currentUserId = authData.userid;
+                    database.listImagesForUsername(client.db('socialwebpage'), res, username, currentUserId);
                 }
             });
         } else {
@@ -273,220 +250,188 @@ MongoClient.connect(url, function(err, client) {
                     });
                 } else {
                     const currentUserId = authData.userid;
-                    database.listImagesForUserId(client.db('socialwebpage'), req, res, currentUserId, currentUserId, () => {
-                        db.close();
-                    });
+                    database.listImagesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId);
                 }
             });
         }
       });
 
-      //----------------------Delete Story Entry----------------------//
-      //
-      // Calls the method deleteStoryEntry that deletes a story entry
-      // from the database.
-      app.post('/rest/story/delete', verifyToken, (req, res) => {
-
-        // check if the current user is also the author of this story entry
-        // if no, the user does not have the rights to delete this story
-
+    //--------------------------Delete a story entry-------------------------//
+    app.post('/rest/story/delete', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
                     message: "User is not authorized"
                 });
             } else {
-                const storyId = JSON.stringify(req.body);
+                const storyId = req.body.storyId;
                 const userId = authData.userid;
-                database.deleteStoryEntryById(client.db('socialwebpage'), res, storyId, userId, () => {
-                    db.close();
-                });
+                database.deleteStoryEntryById(client.db('socialwebpage'), res, storyId, userId);
             }
         });
-      });
+    });
 
-      //----------------------Delete Image----------------------//
-      //
-      // Calls the method deleteImage that deletes an image from the database.
-      app.post('/rest/image/delete', verifyToken, (req, res) => {
-
+    //----------------------------Delete an image----------------------------//
+    //
+    // Calls the method deleteImage that deletes an image from the database.
+    app.post('/rest/image/delete', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
                     message: "User is not authorized"
                 });
             } else {
-                const imageId = JSON.stringify(req.body);
+                const imageId = req.body.imageId;
                 const userId = authData.userid;
-                database.deleteImageById(client.db('socialwebpage'), res, imageId, userId, () => {
-                    db.close();
-                });
+                database.deleteImageById(client.db('socialwebpage'), res, imageId, userId);
             }
         });
-      });
+    });
 
-      //----------------------Update user----------------------//
-      app.put('/rest/user/edit', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  const userData = req.body;
-                  const userid = authData.userid
-                  const user = {userData, userid}
-                  database.updateUserData(client.db('socialwebpage'), res, user);
-              }
-          });
-      });
-
-      //----------------------Like Story Entry----------------------//
-      //
-      // Calls the method likeStoryEntryById that add the user to the list of
-      // likes
-      app.post('/rest/story/like', verifyToken, (req, res) => {
-
+    //-----------------------------Update a user-----------------------------//
+    app.put('/rest/user/edit', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
                     message: "User is not authorized"
                 });
             } else {
-                const storyId = JSON.stringify(req.body);
-                const userId = authData.userid;
-                database.likeStoryEntryById(client.db('socialwebpage'), res, storyId, userId, () => {
-                    db.close();
-                });
+                const userData = req.body;
+                const currentUserId = authData.userid;
+                database.updateUserData(client.db('socialwebpage'), res, userData, currentUserId);
             }
         });
-      });
+    });
 
-      //----------------------Like Image----------------------//
-      //
-      // Calls the method likeImageById that add the user to the list of
-      // likes
-      app.post('/rest/image/like', verifyToken, (req, res) => {
-
+    //-----------------------------Like a story----------------------------//
+    //
+    // Calls the method likeStoryEntryById that add the user to the list of
+    // likes.
+    app.post('/rest/story/like', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
                     message: "User is not authorized"
                 });
             } else {
-                const imageId = JSON.stringify(req.body);
+                const storyId = req.body.storyId;
                 const userId = authData.userid;
-                database.likeImageById(client.db('socialwebpage'), res, imageId, userId, () => {
-                    db.close();
-                });
+                database.likeStoryEntryById(client.db('socialwebpage'), res, storyId, userId);
             }
         });
-      });
+    });
 
-      //----------------------Friendship relation between users----------------------//
-      // User ONE sends User TWO a friendship request. User TWO can accept or reject
-      // If accepted, add to friendship list, else do nothing...
-      app.post('/rest/friends/sendFriendshipRequest', verifyToken, (req, res) => {
+    //-----------------------------Like an image-----------------------------//
+    //
+    // Calls the method likeImageById that add the user to the list of
+    // likes
+    app.post('/rest/image/like', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const imageId = req.body.imageId;
+                const userId = authData.userid;
+                database.likeImageById(client.db('socialwebpage'), res, imageId, userId);
+            }
+        });
+    });
 
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  const userId = authData.userid;
-                  const requester = authData.username;
-                  const recipient = req.body.recipient;
+    //-------------------Friendship relation between users-------------------//
+    // User ONE sends User TWO a friendship request. User TWO can accept or reject
+    // If accepted, add to friendship list, else do nothing...
+    app.post('/rest/friends/sendFriendshipRequest', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const userId = authData.userid;
+                const requester = authData.username;
+                const recipient = req.body.recipient;
+                database.sendFriendRequest(client.db('socialwebpage'), res, userId, requester, recipient);
+            }
+        });
+    });
 
-                  database.sendFriendshipRequest(client.db('socialwebpage'), res, userId, requester, recipient);
-              }
-          });
-      });
+    //------------------------Get all friend requests------------------------//
+    // User ONE sends User TWO a friendship request. User TWO can accept or 
+    // reject. If accepted, add to friendship list, else do nothing.
+    app.get('/rest/friends/getRequests', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const userId = authData.userid;
+                database.getFriendRequests(client.db('socialwebpage'), res, userId);
+            }
+        });
+    });
 
-      //----------------------Get friendRequests----------------------//
-      // User ONE sends User TWO a friendship request. User TWO can accept or reject
-      // If accepted, add to friendship list, else do nothing...
-      app.get('/rest/friends/getRequests', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  const userId = authData.userid;
-                  database.getFriendRequests(client.db('socialwebpage'), res, userId);
-              }
-          });
+    //-----------------------Confirm a friend requests-----------------------//
+    app.post('/rest/friends/confirmFriendRequest', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const recipientId = authData.userid;
+                database.confirmFriendRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
+            }
+        });
+    });
 
-      });
+    //-----------------------Decline a friend requests-----------------------//
+    app.post('/rest/friends/declineFriendRequest', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const recipientId = authData.userid;
+                database.deleteFriendRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
+            }
+        });
+    });
 
-      //----------------------Confirm friendRequests----------------------//
-      app.post('/rest/friends/confirmFriendRequest', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  const recipientId = authData.userid;
-                  database.confirmFriendshipRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
-              }
-          });
+    //-----------------------Get all friends of a user-----------------------//
+    app.get('/rest/friends/getFriends', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const userId = authData.userid;
+                database.getFriends(client.db('socialwebpage'), res, userId);
+            }
+        });
+    });
 
-      });
+    //----------------------------Delete a friend----------------------------//
+    app.post('/rest/friends/deleteFriend', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const userId = authData.userid;
+                const userToDeleteId = req.body.userToDeleteId;
+                database.deleteFriend(client.db('socialwebpage'), res, userId, userToDeleteId);
+            }
+        });
+    });
 
-      //----------------------Decline friendRequests----------------------//
-      app.post('/rest/friends/declineFriendRequest', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  const recipientId = authData.userid;
-                  database.deleteFriendshipRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
-              }
-          });
-
-      });
-
-      //----------------------Get friends----------------------//
-      app.get('/rest/friends/getFriends', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  const userId = authData.userid;
-                  database.getFriends(client.db('socialwebpage'), res, userId);
-              }
-          });
-      });
-
-      //----------------------Delete friend----------------------//
-      app.post('/rest/friends/deleteFriend', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  const userId = authData.userid;
-                  const userToDeleteId = req.body.userToDeleteId;
-                  database.deleteFriend(client.db('socialwebpage'), res, userId, userToDeleteId);
-              }
-          });
-      });
-
-      // ------------------------------------Guestbook--------------------------------------//
-
-      //------------------------------Create Guestbook Entry--------------------------------//
-      //
-      // Calls the method createGuestbookEntry that insert the information of a new story
-      // to the database.
-      // Post parameters: title, content and owner name of the new guestbook entry
-      app.post('/rest/guestbook/create', verifyToken, (req, res) => {
+    //-----------------------Create a guestbook entry------------------------//
+    app.post('/rest/guestbook/create', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -497,18 +442,13 @@ MongoClient.connect(url, function(err, client) {
                 const content = req.body.content;
                 const ownerName = req.body.ownerName;
                 const authorId = authData.userid;
-                database.createGuestbookEntry(client.db('socialwebpage'), res, title, content, ownerName, authorId, () => {
-                    db.close();
-                });
+                database.createGuestbookEntry(client.db('socialwebpage'), res, title, content, ownerName, authorId);
             }
         });
-      });
+    });
 
-      //----------------------List Guestbook Entries in a user profile----------------------//
-      //
-      // Calls the method listGuestbookEntriesForUserId or listGuestbookEntriesForUsername that
-      // returns all guestbook entries for the user id in the query to the react application.
-      app.get('/rest/guestbook/list', verifyToken, (req, res) => {
+    //-------------List all guestbook entries in a user profile------------//
+    app.get('/rest/guestbook/list', verifyToken, (req, res) => {
         if(req.query.username) {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
@@ -518,10 +458,9 @@ MongoClient.connect(url, function(err, client) {
                 } else {
                     const username = req.query.username;
                     const currentUserId = authData.userid;
-                    database.listGuestbookEntriesForUsername(client.db('socialwebpage'), res, username, currentUserId, req);
+                    database.listGuestbookEntriesForUsername(client.db('socialwebpage'), res, username, currentUserId);
                 }
             });
-
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
@@ -530,17 +469,17 @@ MongoClient.connect(url, function(err, client) {
                     });
                 } else {
                     const currentUserId = authData.userid;
-                    database.listGuestbookEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId, req);
+                    database.listGuestbookEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId);
                 }
             });
         }
-      });
+    });
 
-      //----------------------Like Guestbook Entry----------------------//
-      //
-      // Calls the method likeGuestbookEntryById that add the user to the list of
-      // likes
-      app.post('/rest/guestbook/like', verifyToken, (req, res) => {
+    //-------------------------Like a guestbook entry------------------------//
+    //
+    // Calls the method likeGuestbookEntryById that add the user to the list 
+    // of likes
+    app.post('/rest/guestbook/like', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -549,18 +488,16 @@ MongoClient.connect(url, function(err, client) {
             } else {
                 const guestbookData = req.body;
                 const userId = authData.userid;
-                database.likeGuestbookEntryById(client.db('socialwebpage'), res, guestbookData, userId, () => {
-                    db.close();
-                });
+                database.likeGuestbookEntryById(client.db('socialwebpage'), res, guestbookData, userId);
             }
         });
-      });
+    });
 
-      //----------------------Delete Guestbook Entry----------------------//
-      //
-      // Calls the method deleteGuestbookEntryById that deletes a story entry
-      // from the database.
-      app.post('/rest/guestbook/delete', verifyToken, (req, res) => {
+    //------------------------Delete a guestbook entry-----------------------//
+    //
+    // Calls the method deleteGuestbookEntryById that deletes a story entry
+    // from the database.
+    app.post('/rest/guestbook/delete', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -569,42 +506,36 @@ MongoClient.connect(url, function(err, client) {
             } else {
                 const guestbookData = req.body;
                 const userId = authData.userid;
-                database.deleteGuestbookEntryById(client.db('socialwebpage'), res, guestbookData, userId, () => {
-                    db.close();
-                });
+                database.deleteGuestbookEntryById(client.db('socialwebpage'), res, guestbookData, userId);
             }
         });
-      });
+    });
 
-      //----------------------Upload Profile Picture----------------------//
-      app.post('/rest/user/image/create', verifyToken, upload.single('image'), (req, res) => {
-          if (!req.file) {
-            res.send(JSON.stringify({
-                message: "Image could not be uploaded"
-            }));
-          } else {
-              jwt.verify(req.token, 'secretkey', (err, authData) => {
-                  if(err) {
-                      res.json({
-                          message: "User is not authorized"
-                      });
-                  } else {
-                      const fileData = req.file;
-                      const userid = authData.userid
-                      const file = {fileData, userid}
+    //------------------------Upload a profile picture-----------------------//
+    app.post('/rest/user/image/create', verifyToken, upload.single('image'), (req, res) => {
+        if (!req.file) {
+        res.send(JSON.stringify({
+            message: "Image could not be uploaded"
+        }));
+        } else {
+            jwt.verify(req.token, 'secretkey', (err, authData) => {
+                if(err) {
+                    res.json({
+                        message: "User is not authorized"
+                    });
+                } else {
+                    const fileData = req.file;
+                    const userId = authData.userid
+                    database.uploadProfilePicture(client.db('socialwebpage'), res, fileData, userId);
+                }
+            });
+        }
+    });
 
-                      database.uploadProfilePicture(client.db('socialwebpage'), res, file);
-                  }
-              });
-
-          }
-      });
-
-      //----------------------Delete Profile Pic----------------------//
-      //
-      // Calls the method deleteImage that deletes an image from the database.
-      app.post('/rest/user/delete/picture', verifyToken, (req, res) => {
-
+    //------------------------Delete a profile picture-----------------------//
+    //
+    // Calls the method deleteImage that deletes an image from the database.
+    app.post('/rest/user/delete/picture', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -615,33 +546,27 @@ MongoClient.connect(url, function(err, client) {
                 database.deleteProfilePicture(client.db('socialwebpage'), res, userId);
             }
         });
-      });
+    });
 
-
-    // --------------------------Update Story Entries----------------------------//
-
-    //---------------------------Get Story Entry By ID---------------------------//
+    //---------------------------Get a story by id---------------------------//
     //
     // Calls the method getStoryEntry that returns the information of the
     // desired story entry.
     app.post('/rest/story/getEntry', verifyToken, (req, res) => {
-
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
                     message: "User is not authorized"
                 });
             } else {
-                let storyId = req.body.storyId;
-                let currentUserId = authData.userid;
-                database.getStoryEntry(client.db('socialwebpage'), res, storyId, currentUserId, () => {
-                    db.close();
-                });
+                const storyId = req.body.storyId;
+                const currentUserId = authData.userid;
+                database.getStoryEntry(client.db('socialwebpage'), res, storyId, currentUserId);
             }
         });
     });
 
-    //----------------------Update Story Entry----------------------//
+    //--------------------------Update Story Entry---------------------------//
     app.put('/rest/story/edit', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
@@ -649,20 +574,16 @@ MongoClient.connect(url, function(err, client) {
                     message: "User is not authorized"
                 });
             } else {
-                let storyId = req.body.storyId;
-                let storyTitle = req.body.storyTitle;
-                let storyContent = req.body.storyContent;
-                let currentUserId = authData.userid;
-                database.updateStoryEntry(client.db('socialwebpage'), res, storyId, storyTitle, storyContent, currentUserId, () => {
-                        db.close();
-                });
+                const storyId = req.body.storyId;
+                const storyTitle = req.body.storyTitle;
+                const storyContent = req.body.storyContent;
+                const currentUserId = authData.userid;
+                database.updateStoryEntry(client.db('socialwebpage'), res, storyId, storyTitle, storyContent, currentUserId);
             }
         });
     });
 
-    // --------------------------Update Images----------------------------//
-
-    //---------------------------Get Image By ID---------------------------//
+    //--------------------------Get an image by ID---------------------------//
     //
     // Calls the method getImage that returns the information of the
     // desired image.
@@ -675,14 +596,12 @@ MongoClient.connect(url, function(err, client) {
             } else {
                 let imageId = req.body.imageId;
                 let currentUserId = authData.userid;
-                database.getImage(client.db('socialwebpage'), res, imageId, currentUserId, () => {
-                    db.close();
-                });
+                database.getImage(client.db('socialwebpage'), res, imageId, currentUserId);
             }
         });
     });
 
-    //----------------------Update Image----------------------//
+    //----------------------------Update an image----------------------------//
     app.put('/rest/image/edit', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
@@ -694,15 +613,13 @@ MongoClient.connect(url, function(err, client) {
                 let imageTitle = req.body.imageTitle;
                 let imageContent = req.body.imageContent;
                 let currentUserId = authData.userid;
-                database.updateImage(client.db('socialwebpage'), res, imageId, imageTitle, imageContent, currentUserId, () => {
-                        db.close();
-                });
+                database.updateImage(client.db('socialwebpage'), res, imageId, imageTitle, imageContent, currentUserId);
             }
         });
     });
 
-      //------------------------------Create Comment--------------------------------//
-      app.post('/rest/comment/create', verifyToken, (req, res) => {
+    //--------------------------Create a comment-----------------------------//
+    app.post('/rest/comment/create', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -711,15 +628,13 @@ MongoClient.connect(url, function(err, client) {
             } else {
                 const commentData = req.body.commentData;
                 const currentUserId = authData.userid;
-                database.createComment(client.db('socialwebpage'), res, commentData, currentUserId, () => {
-                    db.close();
-                });
+                database.createComment(client.db('socialwebpage'), res, commentData, currentUserId);
             }
         });
-      });
+    });
 
-      //----------------------Get Comments----------------------//
-      app.get('/rest/comment/list', verifyToken, (req, res) => {
+    //----------------------------Get all comments----------------------------//
+    app.get('/rest/comment/list', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -730,15 +645,15 @@ MongoClient.connect(url, function(err, client) {
                 database.getComments(client.db('socialwebpage'), res, currentUserId);
             }
         });
-      });
+    });
 
-      //----------------------Get all user----------------------//
-      app.get('/rest/user/all', (req, res) => {
-          database.getAllUser(client.db('socialwebpage'), res);
-      });
+    //-----------------------------Get all users-----------------------------//
+    app.get('/rest/user/all', (req, res) => {
+        database.getAllUsers(client.db('socialwebpage'), res);
+    });
 
-      //----------------------Delete Comment----------------------//
-      app.post('/rest/comment/delete', verifyToken, (req, res) => {
+    //----------------------------Delete a comment---------------------------//
+    app.post('/rest/comment/delete', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -747,71 +662,68 @@ MongoClient.connect(url, function(err, client) {
             } else {
                 const commentId = req.body.commentId;
                 const userId = authData.userid;
-                database.deleteCommentById(client.db('socialwebpage'), res, commentId, userId, () => {
-                    db.close();
-                });
+                database.deleteCommentById(client.db('socialwebpage'), res, commentId, userId);
             }
         });
-      });
+    });
 
-      //----------------------Delete Comment----------------------//
-      app.get('/rest/user/notifications', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                  const userId = authData.userid;
-                  database.getNotifications(client.db('socialwebpage'), res, userId);
-              }
-          });
-      });
+    //----------------------------Delete a comment---------------------------//
+    app.get('/rest/notifications', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const userId = authData.userid;
+                database.getNotifications(client.db('socialwebpage'), res, userId);
+            }
+        });
+    });
 
-      //----------------------Show specific Notification----------------------//
-      app.get('/rest/user/notifications/data/:type/:typeCommented/:postId', verifyToken, (req, res) => {
-          jwt.verify(req.token, 'secretkey', (err, authData) => {
-              if(err) {
-                  res.json({
-                      message: "User is not authorized"
-                  });
-              } else {
-                    const currentUserId = authData.userid;
-                    const type = req.params.type;
-                    const typeCommented = req.params.typeCommented;
-                    const postId = req.params.postId;
-
-                    if(req.params.type == "story") {
-                        database.listStoriesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+    //----------------------Show a specific notification---------------------//
+    app.get('/rest/notifications/data/:type/:typeCommented/:postId', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.json({
+                    message: "User is not authorized"
+                });
+            } else {
+                const currentUserId = authData.userid;
+                const type = req.params.type;
+                const typeCommented = req.params.typeCommented;
+                const postId = req.params.postId;
+                
+                if(req.params.type == "story") {
+                    database.getStoryEntry(client.db('socialwebpage'), res, postId, currentUserId);
+                }
+                else if(req.params.type == "image") {
+                    database.getImage(client.db('socialwebpage'), res, postId, currentUserId);
+                }
+                else if(req.params.type == "guestbook") {
+                    database.getGuestBookEntry(client.db('socialwebpage'), res, postId, currentUserId);
+                }
+                else if(req.params.type == "comment") {
+                    if(req.params.typeCommented == "story") {
+                        database.getStoryEntry(client.db('socialwebpage'), res, postId, currentUserId);
                     }
-                    else if(req.params.type == "image") {
-                        database.listImagesForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                    else if(req.params.typeCommented == "image") {
+                        database.getImage(client.db('socialwebpage'), res, postId, currentUserId);
                     }
-                    else if(req.params.type == "comment") {
-                        //Funktioniert noch nicht so ganz richtig!
-                        if(req.params.typeCommented == "story") {
-                            database.listCommentsForNotificationInStoriesId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
-                        }
-                        else if(req.params.typeCommented == "image") {
-                            database.listCommentsForNotificationInImagesId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
-                        }
-                        else if(req.params.typeCommented == "guestbook") {
-                            database.listCommentsForNotificationInGuestbooksId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
-                        } else {
-                            res.send(false);
-                        }
-                    }
-                    else if(req.params.type == "guestbook") {
-                        database.listGuestbookEntryForNotificationId(client.db('socialwebpage'), req, res, req.params.type, postId, currentUserId);
+                    else if(req.params.typeCommented == "guestbook") {
+                        database.getGuestBookEntry(client.db('socialwebpage'), res, postId, currentUserId);
                     } else {
                         res.send(false);
                     }
-              }
-          });
-      });
+                } else {
+                    res.send(false);
+                }
+            }
+        });
+    });
 
-      //----------------------Like Comment----------------------//
-      app.post('/rest/comment/like', verifyToken, (req, res) => {
+    //-----------------------------Like a comment----------------------------//
+    app.post('/rest/comment/like', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
@@ -820,19 +732,13 @@ MongoClient.connect(url, function(err, client) {
             } else {
                 const commentId = req.body.commentId;
                 const userId = authData.userid;
-                database.likeComment(client.db('socialwebpage'), res, commentId, userId, () => {
-                    db.close();
-                });
+                database.likeComment(client.db('socialwebpage'), res, commentId, userId);
             }
         });
-      });
+    });
 
-
-      //----------------------xy----------------------//
-
-
-      app.listen(8000, function() {
-          console.log('Listening for API Requests on port 8000...')
-      })
+    app.listen(8000, function() {
+        console.log('Listening for API Requests on port 8000...')
+    });
   }
 })

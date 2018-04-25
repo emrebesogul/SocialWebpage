@@ -6,223 +6,198 @@ var fs = require('fs');
 
 var call = module.exports = {
 
-  //----------------------LOGIN----------------------//
-  checkUserCredentials: function (db, req, res, userCredential) {
-      //Select table and parse form input fields
-      const collection = db.collection('users');
-      let username = (JSON.parse(userCredential).username).trim();
-      let password = JSON.parse(userCredential).password;
-      let passwordHashed = SHA256(password);
+    //----------------------LOGIN----------------------//
+    checkUserCredentials: function (db, res, userCredential) {
+        let username = (userCredential.username).trim();
+        let password = userCredential.password;
+        let passwordHashed = SHA256(password);
 
-      if(!username || !password) {
-          res.send(JSON.stringify({
-              message: "The fields are required."
-          }));
-       } else {
-           //Check username and password
-           if (username != null && password != null) {
-               collection.findOne({"username": username}, (err, docs) => {
-                   if (err) {
-                       console.log(username, " tried to login")
-                       res.send(JSON.stringify({
-                           message: "Sorry, your password is incorrect. Please check again."
-                       }));
-                       throw err;
-                   }
-
-                   if (docs) {
-                       if(JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password) ) {
-                           jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
-                               console.log("Correct credentials! Login from user: ", docs.username)
-                               res.send(JSON.stringify({
-                                   message : "Correct credentials",
-                                   token,
-                               }));
-                           });
-                       } else {
-                           console.log(username, " tried to login")
-                           res.send(JSON.stringify({
-                               message: "Sorry, your password is incorrect. Please check again."
-                           }));
-                       }
-                   }
-                   else {
-                       console.log(username, " tried to login")
-                       res.send(JSON.stringify({
-                           message: "Sorry, your password is incorrect. Please check again."
-                       }));
-                   }
-               })
-           }
-       }
-  },
-
-  //----------------------REGISTER----------------------//
-  registerUserToPlatform: function (db, req, res, newUserData) {
-      //Select table and parse form input fields
-      const collection = db.collection('users');
-      let firstname = JSON.parse(newUserData).firstname;
-      let lastname = JSON.parse(newUserData).lastname;
-      let username = JSON.parse(newUserData).username;
-      let email = JSON.parse(newUserData).email;
-      let password = JSON.parse(newUserData).password;
-      let birthday = JSON.parse(newUserData).birthday;
-      let gender = JSON.parse(newUserData).gender;
-      let profilePicture = "";
-      let friends = [];
-
-      let passwordHashed = SHA256(password);
-
-      //Check username and password
-      if(username !== null && password !== null) {
-          //Check valid email => we will fake it but normally there are npm that validate the email
-          const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-          if(email !== null) {
-              if(email.match(mailformat)) {
-                  // Check valid date format
-                  if(birthday.length !== 0) {
-                      const dateformat = /(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/](19|20)\d\d/;
-                      //const dateformat = /(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d/;
-                      if(birthday.match(dateformat)) {
-                          collection.findOne({"username": username}, (err, docs) => {
-                              if (err) {
-                                  throw err;
-                              }
-
-                              if(docs) {
-                                  res.send(JSON.stringify({
-                                      message: "This username is not available. Please try another one."
-                                  }));
-                              } else {
-                                  collection.findOne({"email": email}, (err, docs) => {
-                                      if (err) {
-                                          throw err;
-                                      }
-                                      if(docs) {
-                                          res.send(JSON.stringify({
-                                              message: "This email is not available. Please try another one."
-                                          }));
-                                      } else {
-                                          console.log("User created: ", username);
-
-                                          collection.insert({
-                                              "first_name": firstname,
-                                              "last_name": lastname,
-                                              "username": username,
-                                              "email": email,
-                                              "password": passwordHashed.words,
-                                              "birthday": birthday,
-                                              "gender": gender,
-                                              "picture": profilePicture,
-                                              "friends": friends
-                                          })
-
-                                          res.send(JSON.stringify({
-                                              message: "User successfully created",
-                                              messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
-                                          }));
-                                      }
-                                  })
-                              }
-
-                          })
-                      } else {
-                          res.send(JSON.stringify({
-                              message: "Please enter correct date format: dd/mm/yyyy."
-                          }));
-                      }
-                  } else {
-                      collection.findOne({"username": username}, (err, docs) => {
-                          if (err) {
-                              throw err;
-                          }
-
-                          if(docs) {
-                              res.send(JSON.stringify({
-                                  message: "This username is not available. Please try another one."
-                              }));
-                          } else {
-                              collection.findOne({"email": email}, (err, docs) => {
-                                  if (err) {
-                                      throw err;
-                                  }
-                                  if(docs) {
-                                      res.send(JSON.stringify({
-                                          message: "This email is not available. Please try another one."
-                                      }));
-                                  } else {
-                                      console.log("User created: ", username);
-                                      res.send(JSON.stringify({
-                                          message: "User successfully created",
-                                          messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
-                                      }));
-
-                                      collection.insert({
-                                          "first_name": firstname,
-                                          "last_name": lastname,
-                                          "username": username,
-                                          "email": email,
-                                          "password": passwordHashed.words,
-                                          "birthday": birthday,
-                                          "gender": gender,
-                                          "picture": profilePicture,
-                                          "friends": friends
-                                      })
-                                  }
-                              })
-                          }
-
-                      })
-                  }
-              } else {
-                  res.send(JSON.stringify({
-                      message: "You have entered an invalid email address."
-                  }));
-              }
-          } else {
-              res.send(JSON.stringify({
-                  message: "Username and Password is required."
-              }));
-          }
-      }
-
-  },
-
-  //----------------------Get Feed----------------------//
-  //
-  // Sends all story entries and images sorted by date to the react application.
-  getFeed: function (db, req, res, userId) {
-    db.collection('images').aggregate([
-        { $lookup:
-           {
-             from: "users",
-             localField: "user_id",
-             foreignField: "_id",
-             as: "user"
-           }
-         },
-         { $project :
-            {
-                "_id" : 1,
-                "title" : 1,
-                "content": 1,
-                "src": 1,
-                "filename": 1,
-                "number_of_likes": 1,
-                "liking_users": 1,
-                "current_user_has_liked" : {
-                    "$cond": { if: { "$in": [ userId , "$liking_users"] }, then: "1", else: "0" }
-                },
-                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                "user_id": 1,
-                "username": {
-                    "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                },
-                "updated" : 1,
-                "profile_picture_filename": "$user.picture",
-                "profile_picture_url": 1
+        if (!username || !password) {
+            res.send(JSON.stringify({
+                message: "The fields are required."
+            }));
+        } else {
+            if (username != null && password != null) {
+                db.collection('users').findOne({"username": username}, (err, docs) => {
+                    if (err) {
+                        console.log(username, " tried to login");
+                        res.send(JSON.stringify({
+                            message: "Sorry, your password is incorrect. Please check again."
+                        }));
+                        throw err;
+                    }
+                    if (docs) {
+                        if (JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password)) {
+                            jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
+                                console.log("Correct credentials! Login from user: ", docs.username);
+                                res.send(JSON.stringify({
+                                    message : "Correct credentials",
+                                    token,
+                                }));
+                            });
+                        } else {
+                            console.log(username, " tried to login")
+                            res.send(JSON.stringify({
+                                message: "Sorry, your password is incorrect. Please check again."
+                            }));
+                        }
+                    }
+                    else {
+                        console.log(username, " tried to login");
+                        res.send(JSON.stringify({
+                            message: "Sorry, your password is incorrect. Please check again."
+                        }));
+                    }
+                })
             }
-         }
+        }
+    },
+
+    //----------------------REGISTER----------------------//
+    registerUserToPlatform: function (db, res, newUserData) {
+        let firstname = newUserData.firstname;
+        let lastname = newUserData.lastname;
+        let username = newUserData.username;
+        let email = newUserData.email;
+        let password = newUserData.password;
+        let birthday = newUserData.birthday;
+        let gender = newUserData.gender;
+        let profilePicture = "";
+        let friends = [];
+        let passwordHashed = SHA256(password);
+
+        if (username !== null && password !== null) {
+            let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            if (email !== null) {
+                if (email.match(mailformat)) {
+                    if (birthday.length !== 0) {
+                        let dateformat = /(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/](19|20)\d\d/;
+                        if (birthday.match(dateformat)) {
+                            db.collection('users').findOne({"username": username}, (err, docs) => {
+                                if (err) throw err;
+                                if (docs) {
+                                    res.send(JSON.stringify({
+                                        message: "This username is not available. Please try another one."
+                                    }));
+                                } else {
+                                    db.collection('users').findOne({"email": email}, (err, docs) => {
+                                        if (err) throw err;
+                                        if (docs) {
+                                            res.send(JSON.stringify({
+                                                message: "This email is not available. Please try another one."
+                                            }));
+                                        } else {
+                                            console.log("User created: ", username);
+                                            db.collection('users').insert({
+                                                "first_name": firstname,
+                                                "last_name": lastname,
+                                                "username": username,
+                                                "email": email,
+                                                "password": passwordHashed.words,
+                                                "birthday": birthday,
+                                                "gender": gender,
+                                                "picture": profilePicture,
+                                                "friends": friends
+                                            });
+                                            res.send(JSON.stringify({
+                                                message: "User successfully created",
+                                                messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
+                                            }));
+                                        }
+                                    })
+                                }
+                            })
+                        } else {
+                            res.send(JSON.stringify({
+                                message: "Please enter correct date format: dd/mm/yyyy."
+                            }));
+                        }
+                    } else {
+                        db.collection('users').findOne({"username": username}, (err, docs) => {
+                            if (err) throw err;
+                            if (docs) {
+                                res.send(JSON.stringify({
+                                    message: "This username is not available. Please try another one."
+                                }));
+                            } else {
+                                db.collection('users').findOne({"email": email}, (err, docs) => {
+                                    if (err) throw err;
+                                    if (docs) {
+                                        res.send(JSON.stringify({
+                                            message: "This email is not available. Please try another one."
+                                        }));
+                                    } else {
+                                        console.log("User created: ", username);
+                                        res.send(JSON.stringify({
+                                            message: "User successfully created",
+                                            messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
+                                        }));
+                                        db.collection('users').insert({
+                                            "first_name": firstname,
+                                            "last_name": lastname,
+                                            "username": username,
+                                            "email": email,
+                                            "password": passwordHashed.words,
+                                            "birthday": birthday,
+                                            "gender": gender,
+                                            "picture": profilePicture,
+                                            "friends": friends
+                                        });
+                                    }
+                                })
+                            }
+                        })
+                    }
+                } else {
+                    res.send(JSON.stringify({
+                        message: "You have entered an invalid email address."
+                    }));
+                }
+            } else {
+                res.send(JSON.stringify({
+                    message: "Username and Password is required."
+                }));
+            }
+        }
+
+    },
+
+    //----------------------Get Feed----------------------//
+    //
+    // Sends all story entries and images sorted by date to the react application.
+    getFeed: function (db, res, userId) {
+        db.collection('images').aggregate([
+            { $lookup:
+                {
+                    from: "users",
+                    localField: "user_id",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            },
+            { $project :
+                {
+                    "_id" : 1,
+                    "title" : 1,
+                    "content": 1,
+                    "src": 1,
+                    "filename": 1,
+                    "number_of_likes": 1,
+                    "liking_users": 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ userId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                    },
+                    "updated" : 1,
+                    "profile_picture_filename": "$user.picture",
+                    "profile_picture_url": 1,
+                    "type": 1
+                }
+            }
         ]).toArray((err_images, res_images) => {
             if (err_images) throw err_images;
             db.collection('stories').aggregate([
@@ -251,170 +226,152 @@ var call = module.exports = {
                         },
                         "updated" : 1,
                         "profile_picture_filename": "$user.picture",
-                        "profile_picture_url": 2
+                        "profile_picture_url": 1,
+                        "type": 1
                     }
                 }
-                ]).toArray((err_stories, res_stories) => {
-                    if (err_stories) throw err_stories;
+            ]).toArray((err_stories, res_stories) => {
+                if (err_stories) throw err_stories;
 
-                    res_stories.map(item => {
-                        item.number_of_likes = item.liking_users.length;
-                        item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-                    });
-                    res_images.map(item => {
-                        item.src = "http://localhost:8000/uploads/posts/" + item.filename;
-                        item.number_of_likes = item.liking_users.length;
-                        item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-                    });
+                res_stories.map(item => {
+                    item.number_of_likes = item.liking_users.length;
+                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                });
+                res_images.map(item => {
+                    item.src = "http://localhost:8000/uploads/posts/" + item.filename;
+                    item.number_of_likes = item.liking_users.length;
+                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                });
 
-                    let feed = res_images.concat(res_stories);
-                    feed.sort((a, b) => {
-                        return new Date(b.date_created) - new Date(a.date_created);
-                    });
-                    feed.map(item => {
-                        item.date_created = getDate(item.date_created);
-                    });
-                    res.status(200).send(feed);
-          });
-      });
-  },
+                let feed = res_images.concat(res_stories);
+                feed.sort((a, b) => {
+                    return new Date(b.date_created) - new Date(a.date_created);
+                });
+                feed.map(item => {
+                    item.date_created = getDate(item.date_created);
+                });
+                res.status(200).send(feed);
+            });
+        });
+    },
 
   //----------------------Upload Image----------------------//
   //
   // Receives a file from the react application and stores it
   // to the database.
-  uploadImageToPlatform: function (db, res, file) {
-    const fileData = file.fileData;
-    const fileDataInfo = file.fileDataInfo;
-    const userid = file.userid;
-
-    let title = JSON.parse(fileDataInfo).title;
-    let content = JSON.parse(fileDataInfo).content;
-    let src = JSON.parse(fileData).destination;
-    let filename = JSON.parse(fileData).filename;
-    let userId = userid;
-    db.collection('images').insert({
-        "title": title,
-        "content": content,
-        "filename": filename,
-        "liking_users": [],
-        "date_created": new Date(),
-        "user_id": new ObjectId(userId),
-        "updated" : false,
-        "type": "image"
-
-    });
-    console.log("Image was uploaded to server...")
-    res.send(JSON.stringify({
-        message: "Image uploaded"
-    }));
+    uploadImageToPlatform: function (db, res, fileData, fileDataInfo, userId) {
+        let title = fileDataInfo.title;
+        let content = fileDataInfo.content;
+        let src = fileData.destination;
+        let filename = fileData.filename;
+        db.collection('images').insert({
+            "title": title,
+            "content": content,
+            "filename": filename,
+            "liking_users": [],
+            "date_created": new Date(),
+            "user_id": new ObjectId(userId),
+            "updated" : false,
+            "type": "image"
+        });
+        console.log("Image was uploaded to server...")
+        res.send(JSON.stringify({
+            message: "Image uploaded"
+        }));
 
     },
 
-  //----------------------Create Story Entry----------------------//
-  //
-  // Receives the titel and the content of a story and inserts it to the database.
-  // After that, a message with "true" is send to the react application.
-  createStoryEntry: function (db, res, file) {
-    let title = JSON.parse(file.storyData).title;
-    let content = JSON.parse(file.storyData).content;
-    let userId = file.userid;
+    //----------------------Create Story Entry----------------------//
+    //
+    // Receives the titel and the content of a story and inserts it to the database.
+    // After that, a message with "true" is send to the react application.
+    createStoryEntry: function (db, res, storyData, userId) {
+        let title = storyData.title;
+        let content = storyData.content;
+        db.collection('stories').insert({
+            "title": title,
+            "content": content,
+            "liking_users": [],
+            "date_created": new Date(),
+            "user_id": new ObjectId(userId),
+            "updated" : false,
+            "type": "story"
+        });
+        console.log("Story was uploaded to server...")
+        res.send(true);
+    },
 
-    console.log("Story was uploaded to server...")
-    db.collection('stories').insert({
-        "title": title,
-        "content": content,
-        "liking_users": [],
-        "date_created": new Date(),
-        "user_id": new ObjectId(userId),
-        "updated" : false,
-        "type": "story"
-    });
-    res.send(true);
-  },
-
-  //----------------------List Story Entries in Profile for a Username----------------------//
-  //
-  // Receives the name of a user, fetchs the corresponding user id from the database and
-  // calls the method listStoryEntriesForUserId.
-  listStoryEntriesForUsername: function(db, res, username, currentUserId) {
-      const collection = db.collection('users');
-      collection.findOne({"username": username}, (err, docs) => {
-          if (err) {
-              res.send(JSON.stringify({
-                  message: "User not found"
-              }));
-              throw err;
-          }
-
-          if (docs) {
-              call.listStoryEntriesForUserId(db, res, docs._id, currentUserId)
-          }
-          else {
-              res.send(JSON.stringify({
-                  message: "User not found"
-              }));
-          }
-      })
-  },
-
-  //----------------------List Images in Profile for a Username----------------------//
-  //
-  // Receives the name of a user, fetchs the corresponding user id from the database and
-  // calls the method listImagesForUserId.
-  listImagesForUsername: function(db, req, res, username, currentUserId) {
-    const collection = db.collection('users');
-    collection.findOne({"username": username}, (err, docs) => {
-        if (err) {
-            res.send(JSON.stringify({
-                message: "User not found"
-            }));
-            throw err;
-        }
-
-        if (docs) {
-            call.listImagesForUserId(db, req, res, docs._id, currentUserId)
-        }
-        else {
-            res.send(JSON.stringify({
-                message: "User not found"
-            }));
-        }
-    })
-},
-
-  //----------------------List Story Entries in Profile----------------------//
-  //
-  // Receives the userId of a user and sends all story entries of this user
-  // to the react application. These story entries are sorted by date.
-  listStoryEntriesForUserId: function (db, res, userId, currentUserId) {
-    db.collection('stories').aggregate([
-        { $match : { user_id : new ObjectId(userId) } },
-        { $lookup:
-           {
-             from: "users",
-             localField: "user_id",
-             foreignField: "_id",
-             as: "user"
-           }
-         },
-         { $project : {
-                "title" : 1,
-                "content": 1,
-                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                "number_of_likes": 1,
-                "liking_users" : 1,
-                "current_user_has_liked" : {
-                    "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-                },
-                "user_id": 1,
-                "username": {
-                    "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                },
-                "updated": 1
+    //----------------------List Story Entries in Profile for a Username----------------------//
+    //
+    // Receives the name of a user, fetchs the corresponding user id from the database and
+    // calls the method listStoryEntriesForUserId.
+    listStoryEntriesForUsername: function(db, res, username, currentUserId) {
+        const collection = db.collection('users');
+        collection.findOne({"username": username}, (err, res_find_user) => {
+            if (err) throw err;
+            if (res_find_user) {
+                call.listStoryEntriesForUserId(db, res, res_find_user._id, currentUserId)
             }
-         },
-         { $sort : { "date_created" : -1 } }
+            else {
+                res.send(JSON.stringify({
+                    message: "User not found"
+                }));
+            }
+        });
+    },
+
+    //----------------------List Images in Profile for a Username----------------------//
+    //
+    // Receives the name of a user, fetchs the corresponding user id from the database and
+    // calls the method listImagesForUserId.
+    listImagesForUsername: function(db, res, username, currentUserId) {
+        const collection = db.collection('users');
+        collection.findOne({"username": username}, (err, res_find_user) => {
+            if (err) throw err;
+            if (res_find_user) {
+                call.listImagesForUserId(db, res, res_find_user._id, currentUserId)
+            }
+            else {
+                res.send(JSON.stringify({
+                    message: "User not found"
+                }));
+            }
+        });
+    },
+
+    //----------------------List Story Entries in Profile----------------------//
+    //
+    // Receives the userId of a user and sends all story entries of this user
+    // to the react application. These story entries are sorted by date.
+    listStoryEntriesForUserId: function (db, res, userId, currentUserId) {
+        db.collection('stories').aggregate([
+            { $match : { user_id : new ObjectId(userId) } },
+            { $lookup:
+                {
+                    from: "users",
+                    localField: "user_id",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            },
+            { $project : {
+                    "title" : 1,
+                    "content": 1,
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "number_of_likes": 1,
+                    "liking_users" : 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                    },
+                    "updated": 1,
+                    "type": 1
+                }
+            },
+            { $sort : { "date_created" : -1 } }
         ]).toArray((err_stories, result_stories) => {
         if (err_stories) throw err_stories;
             result_stories.map(item => {
@@ -422,1131 +379,827 @@ var call = module.exports = {
                 item.number_of_likes = item.liking_users.length;
             });
             res.status(200).send(result_stories);
-    });
-  },
-
-  //----------------------List Images in Profile----------------------//
-  //
-  // Receives the userId of a user and sends all images of this user
-  // to the react application. These images are sorted by date.
-  listImagesForUserId: function (db, req, res, userId, currentUserId) {
-    db.collection('images').aggregate([
-        { $match : { user_id : new ObjectId(userId) } },
-        { $lookup:
-           {
-             from: "users",
-             localField: "user_id",
-             foreignField: "_id",
-             as: "user"
-           }
-         },
-         { $project :
-            {
-                "title" : 1,
-                "content": 1,
-                "src": 1,
-                "filename": 1,
-                "number_of_likes": 1,
-                "liking_users": 1,
-                "current_user_has_liked" : {
-                    "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-                },
-                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                "user_id": 1,
-                "username": {
-                    "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                },
-                "updated" : 1
-            }
-         },
-         { $sort : { "date_created" : -1 } }
-        ]).toArray((err_images, result_images) => {
-        if (err_images) throw err_images;
-        result_images.map(item => {
-            item.date_created = getDate(item.date_created);
-            item.src = "http://localhost:8000/uploads/posts/" + item.filename;
-            item.number_of_likes = item.liking_users.length;
-        });
-            res.status(200).send(result_images);
-    });
-  },
-
-
-  //----------------------Get Other User----------------------//
-  getUserDataForUsername: function(db, res, username, userid) {
-
-      const collection = db.collection('users');
-      collection.findOne({"username": username}, (err, docs) => {
-          if (err) {
-              res.send(JSON.stringify({
-                  message: "User not found"
-              }));
-              throw err;
-          }
-
-          if (docs) {
-              //Check if they are alredy friends or friend request is on its way
-              db.collection('friendRequests').findOne({ $and : [
-                      {$or: [ {"requesterId": ObjectId(userid), "recipientId": ObjectId(docs._id)}, {"requesterId": ObjectId(docs._id), "recipientId": ObjectId(userid)} ]},
-                      {"status": "open"}
-                  ]},
-                  (err, docs2) => {
-                  // If already sent, means request was send, dont send it
-                  if(err) throw err;
-
-                  var buttonState = "";
-
-                  if ((docs.friends.toString()).includes(userid)) {
-                      buttonState = "Delete Friend";
-                  } else if (docs2) {
-                      if (docs2.requesterId == userid) {
-                          buttonState = "Your Request was sent";
-                      } else {
-                          buttonState = "Your have a new Request";
-                      }
-                  } else {
-                      buttonState = "Add Friend";
-                  }
-
-                  res.send(JSON.stringify({
-                      id: docs._id,
-                      username: docs.username,
-                      firstname: docs.first_name,
-                      lastname: docs.last_name,
-                      email: docs.email,
-                      picture: docs.picture,
-                      pictureURL: "http://localhost:8000/uploads/posts/" + docs.picture,
-                      buttonState: buttonState
-                  }));
-              })
-
-          }
-          else {
-              res.send(JSON.stringify({
-                  message: "User not found"
-              }));
-          }
-      })
-
-  },
-
-  //----------------------Get Current User----------------------//
-  getUserDataForCurrentUser: function(db, res, userid) {
-      const collection = db.collection('users');
-      collection.findOne({"_id": ObjectId(userid)},(err, docs) => {
-          if (err) {
-              res.send(JSON.stringify({
-                  message: "User not found"
-              }));
-              throw err;
-          }
-
-          if (docs) {
-              res.send(JSON.stringify({
-                  username: docs.username,
-                  firstname: docs.first_name,
-                  lastname: docs.last_name,
-                  email: docs.email,
-                  picture: docs.picture,
-                  pictureURL: "http://localhost:8000/uploads/posts/" + docs.picture
-              }));
-          }
-          else {
-              res.send(JSON.stringify({
-                  message: "User not found"
-              }));
-          }
-      })
-  },
-
-  //----------------------Delete Story Entry----------------------//
-  //
-  // Receives the id of a story entry and deletes it from the database.
-  // After that, a message with "true" is send to the react application.
-  deleteStoryEntryById: function (db, res, storyId, userId) {
-
-    db.collection("stories").findOne({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
-        if (err) throw err;
-        if (docs.user_id == userId) {
-            db.collection("comments").remove({ post_id : new ObjectId(JSON.parse(storyId).storyId) }, (err_remove_comments, res_remove_comments) => {
-                if (err_remove_comments) throw err_remove_comments;
-                console.log("Removed " + res_remove_comments.result.n + " comments from the database");
-                db.collection("stories").remove({ _id : new ObjectId(JSON.parse(storyId).storyId) }, (err, docs) => {
-                    if (err) throw err;
-                    console.log("Removed story entry from the database");
-
-                    db.collection('notifications').remove({"story_id": ObjectId(JSON.parse(storyId).storyId)}, (err, res_stories) => {
-                        if (err) throw err;
-                    });
-
-                    res.send(true);
-                });
-            });
-        }
-        else {
-            res.send(false);
-        }
-    });
-  },
-
-  //----------------------Delete Image---------------------//
-  //
-  // Receives the id of an image and deletes it from the database.
-  // After that, a message with "true" is send to the react application.
-  deleteImageById: function (db, res, imageId, userId) {
-
-    db.collection("images").findOne({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_find_images, res_find_images) => {
-        if (err_find_images) throw err_find_images;
-        if (res_find_images !== null && res_find_images.user_id == userId) {
-            db.collection("comments").remove({ post_id : new ObjectId(JSON.parse(imageId).imageId) }, (err_remove_comments, res_remove_comments) => {
-                if (err_remove_comments) throw err_remove_comments;
-                console.log("Removed " + res_remove_comments.result.n + " comments from the database");
-                let path = "./public/uploads/posts/" + res_find_images.filename;
-                fs.unlinkSync(path);
-                db.collection("images").remove({ _id : new ObjectId(JSON.parse(imageId).imageId) }, (err_remove_image, res_remove_image) => {
-                    if (err_remove_image) throw err_remove_image;
-                    console.log("Removed image from the database and server");
-
-                    db.collection('notifications').remove({"image_id": ObjectId(JSON.parse(imageId).imageId)}, (err, res_stories) => {
-                        if (err) throw err;
-                    });
-
-                    res.send(true);
-                });
-            });
-        }
-        else {
-            res.send(false);
-        }
-    });
-  },
-
-  //----------------------Like Story Entry----------------------//
-  //
-  // Receives the id of a story entry and of a user, fetchs the array with likes from
-  // the database and add or remove the current user from this array.
-  // After that, a message with "true" is send to the react application.
-  likeStoryEntryById: function (db, res, storyId, userId) {
-
-    db.collection("stories").findOne(
-        {
-            _id : new ObjectId(JSON.parse(storyId).storyId)
-        },
-        (err_find_stories, res_find_stories) => {
-
-        if (err_find_stories) throw err_find_stories;
-        // If user alredy like it...
-        if (res_find_stories.liking_users.includes(userId)) {
-            let index = res_find_stories.liking_users.indexOf(userId);
-            if (index > -1) {
-                res_find_stories.liking_users.splice(index, 1);
-
-                db.collection("stories").findOne({"_id" : ObjectId(JSON.parse(storyId).storyId)}, (err, docs) => {
-                    if(err) throw err;
-                    if(docs) {
-                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your story", "story_id": ObjectId(JSON.parse(storyId).storyId)}, (err, res_stories) => {
-                            if (err) throw err;
-                        });
-                    }
-                });
-            }
-            else {
-                throw err_find_stories;
-            }
-        }
-        // If user did not already liked story
-        else {
-            res_find_stories.liking_users.push(userId);
-
-            db.collection("stories").findOne({"_id" : ObjectId(JSON.parse(storyId).storyId)}, (err, docs) => {
-                if(err) throw err;
-                if(docs) {
-                    const date_created = new Date();
-                    db.collection('notifications').insert({
-                        "whoAmI": ObjectId(docs.user_id),
-                        "whoDidAction": ObjectId(userId),
-                        "action": "liked your story",
-                        "date_created": date_created,
-                        "story_id": ObjectId(JSON.parse(storyId).storyId)
-                    });
-                }
-            });
-        }
-
-        db.collection("stories").update(
-            {
-                _id : new ObjectId(JSON.parse(storyId).storyId)
-            },
-            {
-                $set: { liking_users: res_find_stories.liking_users }
-            },
-            (err_update_stories, res_update_stories) => {
-
-            if (err_update_stories) throw err_update_stories;
-        });
-
-
-        res.send(true);
-    });
-  },
-
-  //----------------------Like Image----------------------//
-  //
-  // Receives the id of an image and of a user, fetchs the array with likes from
-  // the database and add or remove the current user from this array.
-  // After that, a message with "true" is send to the react application.
-  likeImageById: function (db, res, imageId, userId) {
-
-    db.collection("images").findOne(
-        {
-            _id : new ObjectId(JSON.parse(imageId).imageId)
-        },
-        (err_find_images, res_find_images) => {
-
-        if (err_find_images) {
-            res.send(JSON.stringify({
-                message: "Error while liking the image with id: " + imageId
-            }));
-            throw err_find_images;
-        }
-        if(res_find_images.liking_users.includes(userId)) {
-            let index = res_find_images.liking_users.indexOf(userId);
-            if (index > -1) {
-                res_find_images.liking_users.splice(index, 1);
-
-                db.collection("images").findOne({"_id" : ObjectId(JSON.parse(imageId).imageId)}, (err, docs) => {
-                    if(err) throw err;
-                    if(docs) {
-                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your image", "image_id": ObjectId(JSON.parse(imageId).imageId)}, (err, res_stories) => {
-                            if (err) throw err;
-                        });
-                    }
-                });
-            }
-            else {
-                res.send(JSON.stringify({
-                    message: "Error while liking the image with id: " + userId
-                }));
-                throw err_find_images;
-            }
-        }
-        else {
-            res_find_images.liking_users.push(userId);
-
-            db.collection("images").findOne({"_id" : ObjectId(JSON.parse(imageId).imageId)}, (err, docs) => {
-                if(err) throw err;
-                if(docs) {
-                    const date_created = new Date();
-                    db.collection('notifications').insert({
-                        "whoAmI": ObjectId(docs.user_id),
-                        "whoDidAction": ObjectId(userId),
-                        "action": "liked your photo",
-                        "date_created": date_created,
-                        "image_id": ObjectId(JSON.parse(imageId).imageId)
-                    });
-                }
-            });
-        }
-
-        db.collection("images").update(
-            {
-                _id : new ObjectId(JSON.parse(imageId).imageId)
-            },
-            {
-                $set: { liking_users: res_find_images.liking_users }
-            },
-            (err_update_images, res_update_images) => {
-
-            if (err_update_images) {
-                res.send(JSON.stringify({
-                    message: "Error while updating the image with id: " + imageId
-                }));
-                throw err_update_images;
-            }
-        });
-
-        /*
-        const date_created = new Date();
-        db.collection('notifications').insert({
-            "user": requester,
-            "actionUser": recipient,
-            "action": "added you as a friend!",
-            "date_created": date_created
-        });
-        */
-
-        res.send(true);
-    });
-  },
-
-  //----------------------Update User Data at Settings----------------------//
-    updateUserData: function(db, res, data) {
-        const collectionUsers = db.collection('users');
-
-        const userid = data.userid;
-        const userData = data.userData
-        const hashedPassword = SHA256(userData.password)
-        let username = (userData.username).trim();
-        var checkUsername = false;
-        var checkEmail = false;
-
-        // check for username
-        collectionUsers.findOne({"username": username}, (err, docs) => {
-            if (err) {
-                throw err;
-            }
-
-            // username already given, but...
-            if(docs) {
-                // username is me...
-                if(docs._id == userid) {
-                    // Username is same => no update => check for email if email is given
-                    collectionUsers.findOne({"email": userData.email}, (err, docs) => {
-                        if (err) {
-                            throw err;
-                        }
-
-                        // If email exists:
-                        if(docs) {
-                            if(docs._id == userid) {
-                                // If Email is same as origin users => no update => update fields
-                                console.log(username, " changed successfully its user data")
-                                if(userData.password !== '') {
-                                    collectionUsers.update(
-                                        {_id: ObjectId(userid)},
-                                        {
-                                            $set: {
-                                                "first_name": userData.first_name,
-                                                "last_name": userData.last_name,
-                                                "username": username,
-                                                "email": userData.email,
-                                                "password": hashedPassword.words
-                                            }
-                                        }
-                                    );
-                                } else {
-                                    collectionUsers.update(
-                                        {_id: ObjectId(userid)},
-                                        {
-                                            $set: {
-                                                "first_name": userData.first_name,
-                                                "last_name": userData.last_name,
-                                                "username": username,
-                                                "email": userData.email
-                                            }
-                                        }
-                                    );
-                                }
-                                res.send(JSON.stringify({
-                                    message: "User data successfully updated."
-                                }));
-                            } else {
-                                // Email is already given and is not same with the origin users
-                                res.send(JSON.stringify({
-                                    message: "This email is not available222. Please try another one."
-                                }));
-                            }
-                        } else {
-
-                            console.log(username, " changed successfully its user data")
-                            if(userData.password !== '') {
-                                collectionUsers.update(
-                                    {_id: ObjectId(userid)},
-                                    {
-                                        $set: {
-                                            "first_name": userData.first_name,
-                                            "last_name": userData.last_name,
-                                            "username": username,
-                                            "email": userData.email,
-                                            "password": hashedPassword.words
-                                        }
-                                    }
-                                );
-                            } else {
-                                collectionUsers.update(
-                                    {_id: ObjectId(userid)},
-                                    {
-                                        $set: {
-                                            "first_name": userData.first_name,
-                                            "last_name": userData.last_name,
-                                            "username": username,
-                                            "email": userData.email
-                                        }
-                                    }
-                                );
-                            }
-                            res.send(JSON.stringify({
-                                message: "User data successfully updated."
-                            }));
-
-
-                        }
-                    })
-                } else {
-                    // Username is already given
-                    res.send(JSON.stringify({
-                        message: "This username is not available. Please try another one."
-                    }));
-                }
-            } else {
-                //Check email because username is new
-                collectionUsers.findOne({"email": userData.email}, (err, docs) => {
-                    if (err) {
-                        throw err;
-                    }
-
-                    if(docs) {
-                        if(docs._id == userid) {
-                            // Email is same => no update => update fields
-                            console.log(userData.username, " changed successfully its user data")
-                            if(userData.password !== '') {
-                                collectionUsers.update(
-                                    {_id: ObjectId(userid)},
-                                    {
-                                        $set: {
-                                            "first_name": userData.first_name,
-                                            "last_name": userData.last_name,
-                                            "username": username,
-                                            "email": userData.email,
-                                            "password": hashedPassword
-                                        }
-                                    }
-                                );
-                            } else {
-                                collectionUsers.update(
-                                    {_id: ObjectId(userid)},
-                                    {
-                                        $set: {
-                                            "first_name": userData.first_name,
-                                            "last_name": userData.last_name,
-                                            "username": username,
-                                            "email": userData.email
-                                        }
-                                    }
-                                );
-                            }
-                            res.send(JSON.stringify({
-                                message: "User data successfully updated."
-                            }));
-                        } else {
-                            // Email is already given
-                            res.send(JSON.stringify({
-                                message: "This email is not available. Please try another one."
-                            }));
-                        }
-                    } else {
-
-
-                        console.log(username, " changed successfully its user data")
-                        if(userData.password !== '') {
-                            collectionUsers.update(
-                                {_id: ObjectId(userid)},
-                                {
-                                    $set: {
-                                        "first_name": userData.first_name,
-                                        "last_name": userData.last_name,
-                                        "username": username,
-                                        "email": userData.email,
-                                        "password": hashedPassword
-                                    }
-                                }
-                            );
-                        } else {
-                            collectionUsers.update(
-                                {_id: ObjectId(userid)},
-                                {
-                                    $set: {
-                                        "first_name": userData.first_name,
-                                        "last_name": userData.last_name,
-                                        "username": username,
-                                        "email": userData.email
-                                    }
-                                }
-                            );
-                        }
-                        res.send(JSON.stringify({
-                            message: "User data successfully updated."
-                        }));
-                    }
-                })
-            }
-        })
-
-    },
-
-  //----------------------Send Friend requests----------------------//
-  sendFriendshipRequest: function(db, res, userId, requester, recipient) {
-      const collectionUsers = db.collection('users');
-
-      collectionUsers.findOne({"username": recipient}, (err, docs) => {
-          if (err) {
-              res.send(JSON.stringify({
-                  message: "User not found"
-              }));
-              throw err;
-          }
-
-          if (docs) {
-              const recipientId = docs._id;
-              const recipient = docs.username;
-
-              //Check if request is already sent... (open status) A to B and B to A
-              //If not, send request... (put in db)
-
-              db.collection('friendRequests').findOne({"requester": requester, "recipient": recipient}, (err, docs) => {
-                  // If already sent, means request was send, dont send it
-                  if(err) throw err;
-                  if (docs) {
-                      res.send(JSON.stringify({
-                          buttonState: "Undo Friend"
-                      }));
-                  } else {
-                      console.log("Request sent to add new friend...")
-
-                      res.send(JSON.stringify({
-                          buttonState: "Request sent"
-                      }));
-
-                      db.collection('friendRequests').insert({
-                          "requester": requester,
-                          "requesterId": ObjectId(userId),
-                          "recipient": recipient,
-                          "recipientId": recipientId,
-                          "time": Date(),
-                          "status": "open"
-                      });
-                  }
-              })
-          }
-          else {
-              res.send(JSON.stringify({
-                  message: "User not found"
-              }));
-          }
-      })
-  },
-
-  //----------------------get Friendship requests----------------------//
-  //getFriendRequests => where recipient is userid and status open
-  // if decline: status = rejected
-  // if status = accepted
-  getFriendRequests: function(db, res, userId) {
-      const collectionfriendRequests = db.collection('friendRequests');
-      const collectionUsers = db.collection('users');
-
-      collectionfriendRequests.aggregate([
-          { $match : {"status": "open", "recipientId": ObjectId(userId)} },
-          { $lookup:
-             {
-               from: "users",
-               localField: "requesterId",
-               foreignField: "_id",
-               as: "user"
-             }
-         },
-         {
-             $project :
-             {
-                 "requester": "$user.username",
-                 "requesterId": "$user._id",
-                 "recipient": 1,
-                 "time": 1,
-                 "profile_picture_filename": "$user.picture",
-                 "profile_picture_url": 1
-             }
-         }
-     ]).toArray((err, result) => {
-      if (err) throw err;
-        result.map(item => {
-              item.requester = item.requester;
-              item.requesterId = item.requesterId;
-              item.date_created = getDate(item.time);
-              item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-          });
-          res.status(200).send(result);
-      });
-    },
-
-
-    //----------------------Add to friendlist----------------------//
-    confirmFriendshipRequest: function(db, requesterId, recipientId , res) {
-        const collectionfriendRequests = db.collection('friendRequests');
-        const collectionUsers = db.collection('users');
-
-        // Delete from database
-        collectionfriendRequests.remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
-            if (err) throw err;
-        });
-
-        // Add to friendlist of both array.push()
-        collectionUsers.findOne({"_id": ObjectId(requesterId)}, (err, docs) => {
-            if(err) throw err;
-            if(docs) {
-                var friendlist = docs.friends;
-                friendlist.push(ObjectId(recipientId));
-                collectionUsers.update({"_id": ObjectId(requesterId)},
-                    {
-                        $set: {
-                            "friends": friendlist
-                        }
-                    }
-                );
-            }
-        });
-
-        collectionUsers.findOne({"_id": ObjectId(recipientId)}, (err, docs) => {
-            if(err) throw err;
-            if(docs) {
-                var friendlist = docs.friends;
-                friendlist.push(ObjectId(requesterId));
-                collectionUsers.update({"_id": ObjectId(recipientId)},
-                    {
-                        $set: {
-                            "friends": friendlist
-                        }
-                    }
-                );
-            }
-        });
-
-        const date_created = new Date();
-        db.collection('notifications').insert({
-            "whoAmI": ObjectId(requesterId),
-            "whoDidAction": ObjectId(recipientId),
-            "action": "added you as friend",
-            "date_created": date_created
-        });
-
-        res.send(true);
-    },
-
-    //----------------------Decline Friend request----------------------//
-    deleteFriendshipRequest: function(db, requesterId, recipientId, res) {
-        const collectionfriendRequests = db.collection('friendRequests');
-
-        collectionfriendRequests.remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
-            if (err) throw err;
-            res.send(true);
         });
     },
 
-    getFriends: function(db, res, userId) {
-        const collectionUsers = db.collection('users');
-
-        collectionUsers.findOne({_id : ObjectId(userId)}, (err, docs) => {
-            if(err) throw err;
-            if (docs) {
-                //Get friends and map through them to get profile pic
-                var friendlist = [];
-                var friendlistLength = (docs.friends).length;
-                var friends = [];
-                var i = 0;
-
-                docs.friends.map(item => {
-                    item.friends = item.friends;
-                    collectionUsers.findOne({"_id": ObjectId(item)}, (err_friends, res_friends) => {
-                        if(err_friends) throw err_friends;
-                        if (res_friends != "") {
-                            friendlist.push(res_friends);
-                            i++;
-
-                            result = {};
-                            result ["name"] = res_friends.username;
-                            result ["friendId"] = res_friends._id;
-                            result ["picture"] = "http://localhost:8000/uploads/posts/" +res_friends.picture;
-                            friends.push(result);
-
-                        }
-                        call.sendFriendlistHelper(res, friends, i, friendlistLength);
-                    })
-                })
-            }
-        })
-    },
-
-    sendFriendlistHelper: function(res, friends, i, friendlistLength) {
-        if(i == friendlistLength) {
-            var friendsByName = friends.slice(0);
-            friendsByName.sort(function(a,b) {
-                var x = a.name.toLowerCase();
-                var y = b.name.toLowerCase();
-                return x < y ? -1 : x > y ? 1 : 0;
-            });
-
-            res.status(200).send(friendsByName);
-        }
-    },
-
-
-    deleteFriend: function(db, res, userId, userToDeleteId) {
-        const collectionUsers = db.collection('users');
-
-        //Delete friend from first user
-        collectionUsers.findOne({"_id" : ObjectId(userId)}, (err, docs) => {
-            if(err) throw err;
-            if (docs) {
-                // Find and remove item from an array
-                var i = (docs.friends.toString()).indexOf(ObjectId(userToDeleteId).toString());
-                // -1 if not exists
-                // else place where it exists
-
-                if(i != -1) {
-                    var S = docs.friends.toString()
-                    S = S.replace(ObjectId(userToDeleteId).toString(), "");
-
-                    var re = /\s*,\s*/;
-                    S = S.split(re);
-                    S = S.filter(String)
-                }
-                collectionUsers.update({"_id" : ObjectId(userId)},
-                    {
-                        $set: {
-                            "friends": S
-                        }
-                    }
-                );
-
-                //Delete friend from second user
-                collectionUsers.findOne({"_id" : ObjectId(userToDeleteId)}, (err, docs2) => {
-                    if(err) throw err;
-                    if (docs2) {
-                        // Find and remove item from an array
-                        var j = (docs2.friends.toString()).indexOf(ObjectId(userId).toString());
-
-                        if(i != -1) {
-                            var S2 = docs2.friends.toString()
-                            S2 = S2.replace(ObjectId(userId).toString(), "");
-                            var re = /\s*,\s*/;
-                            S2 = S2.split(re);
-                            S2 = S2.filter(String)
-                        }
-                        collectionUsers.update({"_id": ObjectId(userToDeleteId)},
-                            {
-                                $set: {
-                                    "friends": S2
-                                }
-                            }
-                        );
-
-                        db.collection('notifications').remove({$or: [ {"whoAmI": ObjectId(userToDeleteId), "whoDidAction": ObjectId(userId)}, {"whoAmI": ObjectId(userId), "whoDidAction": ObjectId(userToDeleteId)} ], "action": "added you as friend!"}, (err, res_stories) => {
-                            if (err) throw err;
-                            res.send(true);
-                        });
-                    }
-                });
-            }
-        });
-    },
-
-
-  // ----------------------------------------Guestbook------------------------------------------//
-
-  //-----------------------------------Create Guestbook Entry-----------------------------------//
-  //
-  // Receives the titel and the content of a guestbook and inserts it to the database.
-  // After that, a message with "true" is send to the react application.
-  createGuestbookEntry: function (db, res, title, content, ownerName, authorId) {
-    if(ownerName) {
-        db.collection('users').findOne({"username": ownerName}, (err_user, res_user) => {
-            if (err_user) throw err_user;
-
-            if (res_user && (res_user._id != authorId)) {
-                var date_created = new Date();
-
-                db.collection('guestbookEntries').insert({
-                    "title": title,
-                    "content": content,
-                    "liking_users": [],
-                    "date_created": date_created,
-                    "owner_id": new ObjectId(res_user._id),
-                    "author_id": new ObjectId(authorId),
-                    "type": "guestbook"
-                });
-
-                db.collection("guestbookEntries").findOne({"date_created": date_created, "owner_id": new ObjectId(res_user._id), "author_id": new ObjectId(authorId)}, (err, docs) => {
-                    if(err) throw err;
-                    if(docs) {
-                        db.collection('notifications').insert({
-                            "whoAmI": ObjectId(res_user._id),
-                            "whoDidAction": ObjectId(authorId),
-                            "action": "posted something in your guestbook",
-                            "date_created": date_created,
-                            "guestbook_id": ObjectId(docs._id)
-                        });
-                    }
-                });
-
-                res.send(true);
-            }
-            else {
-                console.log("It is not possible to post a guestbook entry on the own profile!");
-                res.send(false);
-            }
-        })
-    } else {
-        console.log("It is not possible to post a guestbook entry on the own profile!");
-        res.send(false);
-    }
-  },
-
-  //----------------------List Guestbook Entries in Profile for a Username----------------------//
-  //
-  // Receives the name of a user, fetchs the corresponding user id from the database and
-  // calls the method listGuestbookEntriesForUserId.
-  listGuestbookEntriesForUsername: function(db, res, username, currentUserId) {
-    db.collection('users').findOne({"username": username}, (err, docs) => {
-        if (err) {
-            res.send(JSON.stringify({
-                message: "User not found"
-            }));
-            throw err;
-        }
-
-        if (docs) {
-            call.listGuestbookEntriesForUserId(db, res, docs._id, currentUserId)
-        }
-        else {
-            res.send(JSON.stringify({
-                message: "User not found"
-            }));
-        }
-    })
-},
-
-//----------------------List Guestbook Entries in Profile----------------------//
-//
-// Receives the userId of a user and sends all guestbook entries of this user
-// to the react application. These story entries are sorted by date.
-listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
-  db.collection('guestbookEntries').aggregate([
-      { $match : { owner_id : new ObjectId(userId) } },
-      { $lookup:
-         {
-           from: "users",
-           localField: "author_id",
-           foreignField: "_id",
-           as: "author"
-         }
-       },
-       { $project : {
-              "title" : 1,
-              "content": 1,
-              date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-              "number_of_likes": 1,
-              "liking_users" : 1,
-              "current_user_has_liked" : {
-                  "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-              },
-              "user_id": 1,
-              "username": {
-                  "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
-              },
-              "profile_picture_filename": "$author.picture",
-              "profile_picture_url": 1
-          }
-       },
-       { $sort : { "date_created" : -1 } }
-      ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
-      if (err_guestbook_entries) throw err_guestbook_entries;
-        res_guestbook_entries.map(item => {
-              item.date_created = getDate(item.date_created);
-              item.number_of_likes = item.liking_users.length;
-              item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-              item.profile_picture_filename = item.profile_picture_filename;
-          });
-          res.status(200).send(res_guestbook_entries);
-  });
-},
-
-  //----------------------Like Guestbook Entry----------------------//
-  //
-  // Receives the id of a guestbook entry and of a user, fetchs the array with likes from
-  // the database and add or remove the current user from this array.
-  // After that, a message with "true" is send to the react application.
-  likeGuestbookEntryById: function (db, res, guestbookData, userId) {
-    db.collection("guestbookEntries").findOne(
-        {
-            _id : new ObjectId(guestbookData.guestbookEntryId)
-        },
-        (err_find_guestbook_entries, res_find_guestbook_entries) => {
-
-        if (err_find_guestbook_entries) throw err_find_guestbook_entries;
-        if (res_find_guestbook_entries.liking_users.includes(userId)) {
-            let index = res_find_guestbook_entries.liking_users.indexOf(userId);
-            if (index > -1) {
-                res_find_guestbook_entries.liking_users.splice(index, 1);
-
-                db.collection("guestbookEntries").findOne({"_id" : ObjectId(guestbookData.guestbookEntryId)}, (err, docs) => {
-                    if(err) throw err;
-                    if(docs) {
-                        db.collection('notifications').remove({"whoAmI": ObjectId(docs.owner_id), "whoDidAction": ObjectId(userId), "action": "liked your guestbook post", "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err, res_guestbookData) => {
-                            if (err) throw err;
-                        });
-                    }
-                });
-            }
-            else {
-                throw err_find_guestbook_entries;
-            }
-        }
-        else {
-            res_find_guestbook_entries.liking_users.push(userId);
-
-            db.collection("guestbookEntries").findOne({"_id" : ObjectId(guestbookData.guestbookEntryId)}, (err, docs) => {
-                if(err) throw err;
-                if(docs) {
-                    const date_created = new Date();
-                    db.collection('notifications').insert({
-                        "whoAmI": ObjectId(docs.owner_id),
-                        "whoDidAction": ObjectId(userId),
-                        "action": "liked your guestbook post",
-                        "date_created": date_created,
-                        "liked_guestbook_id": ObjectId(guestbookData.guestbookEntryId)
-                    });
-                }
-            });
-        }
-        db.collection("guestbookEntries").update(
-            {
-                _id : new ObjectId(guestbookData.guestbookEntryId)
-            },
-            {
-                $set: { liking_users: res_find_guestbook_entries.liking_users }
-            },
-            (err_update_guestbook_entries, res_update_guestbook_entries) => {
-
-            if (err_update_guestbook_entries) throw err_update_guestbook_entries;
-        });
-        res.send(true);
-    });
-  },
-
-  //----------------------Delete Guestbook Entry----------------------//
-  //
-  // Receives the id of a guestbook entry and deletes it from the database.
-  // After that, a message with "true" is send to the react application.
-  deleteGuestbookEntryById: function (db, res, guestbookData, userId) {
-    db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
-        if (err_find_guestbook_entries) throw err_find_guestbook_entries;
-        if (res_find_guestbook_entries.owner_id == userId) {
-            db.collection("comments").remove({ post_id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_comments, res_remove_comments) => {
-                if (err_remove_comments) throw err_remove_comments;
-                console.log("Removed " + res_remove_comments.result.n + " comments from the database");
-                db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
-                    if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
-                    console.log("Removed guestbook entry from the database");
-
-                    db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
-                        if (err_guestbook_delete) throw err_guestbook_delete;
-                    });
-
-                    res.send(true);
-                });
-            });
-        }
-        else {
-            res.send(false);
-        }
-    });
-  },
-
-  //----------------------Upload Profile Picture----------------------//
-  uploadProfilePicture: function (db, res, file) {
-    const collectionUsers = db.collection('users');
-    const fileData = file.fileData;
-    const userid = file.userid;
-
-    let filename = fileData.filename;
-    let userId = userid;
-
-    collectionUsers.findOne({ _id : new ObjectId(userId)}, (err, docs) => {
-        if (err) {
-            res.send(JSON.stringify({
-                message: "User not found"
-            }));
-            throw err;
-        }
-        if (docs) {
-            //Delete old image from Server
-            if(docs.picture !== "") {
-                console.log(docs.picture)
-                let path = "./public/uploads/posts/" + docs.picture;
-                fs.unlinkSync(path);
-            }
-
-            collectionUsers.update({_id: ObjectId(userId)},
+    //----------------------List Images in Profile----------------------//
+    //
+    // Receives the userId of a user and sends all images of this user
+    // to the react application. These images are sorted by date.
+    listImagesForUserId: function (db, res, userId, currentUserId) {
+        db.collection('images').aggregate([
+            { $match : { user_id : new ObjectId(userId) } },
+            { $lookup:
                 {
-                    $set: {
-                        "picture": filename
-                    }
+                    from: "users",
+                    localField: "user_id",
+                    foreignField: "_id",
+                    as: "user"
                 }
-            )
-            console.log("Profile Pic was uploaded to server...")
+            },
+            { $project :
+                {
+                    "title" : 1,
+                    "content": 1,
+                    "src": 1,
+                    "filename": 1,
+                    "number_of_likes": 1,
+                    "liking_users": 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                    },
+                    "updated" : 1,
+                    "type": 1
+                }
+            },
+            { $sort : { "date_created" : -1 } }
+        ]).toArray((err_images, result_images) => {
+            if (err_images) throw err_images;
+            result_images.map(item => {
+                item.date_created = getDate(item.date_created);
+                item.src = "http://localhost:8000/uploads/posts/" + item.filename;
+                item.number_of_likes = item.liking_users.length;
+            });
+            res.status(200).send(result_images);
+        });
+    },
 
-            res.send(JSON.stringify({
-                message: "Image uploaded"
-            }));
-        }
-    })
 
-  },
-
-    //----------------------Delete Profile Pic---------------------//
-    deleteProfilePicture: function (db, res, userId) {
-
-        const collectionUsers = db.collection('users');
-
-        collectionUsers.findOne({ _id : new ObjectId(userId)}, (err, docs) => {
+    //----------------------Get Userdata for username----------------------//
+    getUserDataForUsername: function(db, res, username, userid) {
+        db.collection('users').findOne({"username": username}, (err, res_find_user) => {
             if (err) {
                 res.send(JSON.stringify({
                     message: "User not found"
                 }));
                 throw err;
             }
+            if (res_find_user) {
+                db.collection('friendRequests').findOne({ $and : [
+                        {$or: [ {"requesterId": ObjectId(userid), "recipientId": ObjectId(res_find_user._id)}, {"requesterId": ObjectId(res_find_user._id), "recipientId": ObjectId(userid)} ]},
+                        {"status": "open"}
+                ]},
+                (err, res_find_friend_request) => {
+                    if(err) throw err;
+
+                    var buttonState = "";
+                    
+                    if ((res_find_user.friends.toString()).includes(userid)) {
+                        buttonState = "Delete Friend";
+                    } else if (res_find_friend_request) {
+                        if (res_find_friend_request.requesterId == userid) {
+                            buttonState = "Your request was sent";
+                        } else {
+                            buttonState = "You have a new Request";
+                        }
+                    } else {
+                        buttonState = "Add Friend";
+                    }
+                    res.send(JSON.stringify({
+                        id: res_find_user._id,
+                        username: res_find_user.username,
+                        firstname: res_find_user.first_name,
+                        lastname: res_find_user.last_name,
+                        email: res_find_user.email,
+                        picture: res_find_user.picture,
+                        pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture,
+                        buttonState: buttonState
+                    }));
+                });
+            }
+            else {
+                res.send(JSON.stringify({
+                    message: "User not found"
+                }));
+            }
+        })
+    },
+
+    //----------------------Get Current User----------------------//
+    getUserDataForCurrentUser: function(db, res, userid) {
+        db.collection('users').findOne({"_id": ObjectId(userid)},(err, res_find_user) => {
+            if (err) {
+                res.send(JSON.stringify({
+                    message: "User not found"
+                }));
+                throw err;
+            }
+            if (res_find_user) {
+                res.send(JSON.stringify({
+                    username: res_find_user.username,
+                    firstname: res_find_user.first_name,
+                    lastname: res_find_user.last_name,
+                    email: res_find_user.email,
+                    picture: res_find_user.picture,
+                    pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture
+                }));
+            }
+            else {
+                res.send(JSON.stringify({
+                    message: "User not found"
+                }));
+            }
+        })
+    },
+
+    //----------------------Delete Story Entry----------------------//
+    //
+    // Receives the id of a story entry and deletes it from the database.
+    // After that, a message with "true" is send to the react application.
+    deleteStoryEntryById: function (db, res, storyId, userId) {
+        db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err, docs) => {
+            if (err) throw err;
+            if (docs.user_id == userId) {
+                db.collection("comments").remove({ post_id : new ObjectId(storyId) }, (err_remove_comments, res_remove_comments) => {
+                    if (err_remove_comments) throw err_remove_comments;
+
+                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
+                    db.collection("stories").remove({ _id : new ObjectId(storyId) }, (err, docs) => {
+                        if (err) throw err;
+
+                        console.log("Removed story entry from the database");
+                        db.collection('notifications').remove({"story_id": ObjectId(storyId)}, (err, res_stories) => {
+                            if (err) throw err;
+                        });
+                        res.send(true);
+                    });
+                });
+            }
+            else {
+                res.send(false);
+            }
+        });
+    },
+
+    //----------------------Delete Image---------------------//
+    //
+    // Receives the id of an image and deletes it from the database.
+    // After that, a message with "true" is send to the react application.
+    deleteImageById: function (db, res, imageId, userId) {
+        db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
+            if (err_find_images) throw err_find_images;
+            if (res_find_images !== null && res_find_images.user_id == userId) {
+                db.collection("comments").remove({ post_id : new ObjectId(imageId) }, (err_remove_comments, res_remove_comments) => {
+                    if (err_remove_comments) throw err_remove_comments;
+
+                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
+                    let path = "./public/uploads/posts/" + res_find_images.filename;
+                    fs.unlinkSync(path);
+                    db.collection("images").remove({ _id : new ObjectId(imageId) }, (err_remove_image, res_remove_image) => {
+                        if (err_remove_image) throw err_remove_image;
+
+                        console.log("Removed image from the database and server");
+                        db.collection('notifications').remove({"image_id": ObjectId(imageId)}, (err, res_stories) => {
+                            if (err) throw err;
+                        });
+                        res.send(true);
+                    });
+                });
+            }
+            else {
+                res.send(false);
+            }
+        });
+    },
+
+    //----------------------Like Story Entry----------------------//
+    //
+    // Receives the id of a story entry and of a user, fetchs the array with likes from
+    // the database and add or remove the current user from this array.
+    // After that, a message with "true" is send to the react application.
+    likeStoryEntryById: function (db, res, storyId, userId) {
+        db.collection("stories").findOne({_id : new ObjectId(storyId)},(err_find_stories, res_find_stories) => {
+            if (err_find_stories) throw err_find_stories;
+            if (res_find_stories.liking_users.includes(userId)) {
+                let index = res_find_stories.liking_users.indexOf(userId);
+                if (index > -1) {
+                    res_find_stories.liking_users.splice(index, 1);
+                    db.collection("stories").findOne({"_id" : ObjectId(storyId)}, (err, docs) => {
+                        if(err) throw err;
+                        if(docs) {
+                            db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your story", "story_id": ObjectId(storyId)}, (err, res_stories) => {
+                                if (err) throw err;
+                            });
+                        }
+                    });
+                }
+                else {
+                    throw err_find_stories;
+                }
+            }
+            else {
+                res_find_stories.liking_users.push(userId);
+                db.collection("stories").findOne({"_id" : ObjectId(storyId)}, (err, docs) => {
+                    if (err) throw err;
+                    if (docs) {
+                        db.collection('notifications').insert({
+                            "whoAmI": ObjectId(docs.user_id),
+                            "whoDidAction": ObjectId(userId),
+                            "action": "liked your story",
+                            "date_created": new Date(),
+                            "story_id": ObjectId(storyId)
+                        });
+                    }
+                });
+            }
+            db.collection("stories").update(
+                {
+                    _id : new ObjectId(storyId)
+                },
+                {
+                    $set: { liking_users: res_find_stories.liking_users }
+                },
+                (err_update_stories, res_update_stories) => {
+
+                if (err_update_stories) throw err_update_stories;
+            });
+            res.send(true);
+        });
+    },
+
+    //----------------------Like Image----------------------//
+    //
+    // Receives the id of an image and of a user, fetchs the array with likes from
+    // the database and add or remove the current user from this array.
+    // After that, a message with "true" is send to the react application.
+    likeImageById: function (db, res, imageId, userId) {
+        db.collection("images").findOne({ _id : new ObjectId(imageId)},(err_find_images, res_find_images) => {
+            if (err_find_images) throw err_find_images;
+            if (res_find_images.liking_users.includes(userId)) {
+                let index = res_find_images.liking_users.indexOf(userId);
+                if (index > -1) {
+                    res_find_images.liking_users.splice(index, 1);
+
+                    db.collection("images").findOne({"_id" : ObjectId(imageId)}, (err, docs) => {
+                        if (err) throw err;
+                        if (docs) {
+                            db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your image", "image_id": ObjectId(imageId)}, (err, res_stories) => {
+                                if (err) throw err;
+                            });
+                        }
+                    });
+                }
+                else {
+                    res.send(JSON.stringify({
+                        message: "Error while liking the image with id: " + userId
+                    }));
+                    throw err_find_images;
+                }
+            }
+            else {
+                res_find_images.liking_users.push(userId);
+                db.collection("images").findOne({"_id" : ObjectId(imageId)}, (err, docs) => {
+                    if (err) throw err;
+                    if (docs) {
+                        db.collection('notifications').insert({
+                            "whoAmI": ObjectId(docs.user_id),
+                            "whoDidAction": ObjectId(userId),
+                            "action": "liked your photo",
+                            "date_created": new Date(),
+                            "image_id": ObjectId(imageId)
+                        });
+                    }
+                });
+            }
+
+            db.collection("images").update(
+                {
+                    _id : new ObjectId(imageId)
+                },
+                {
+                    $set: { liking_users: res_find_images.liking_users }
+                },
+                (err_update_images, res_update_images) => {
+
+                if (err_update_images) {
+                    res.send(JSON.stringify({
+                        message: "Error while updating the image with id: " + imageId
+                    }));
+                    throw err_update_images;
+                }
+            });
+            res.send(true);
+        });
+    },
+
+    //----------------------Update User----------------------//
+    updateUserData: function(db, res, userData, currentUserId) {
+        let newUsername = (userData.username).trim();
+        let newEmail = (userData.email).trim();
+        let hashedPassword = SHA256(userData.password)
+        let permitUpdate = 1;
+        let responseMessage = "User data successfully updated.";
+        db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
+            res_find_user.map(user => {
+                if (user._id != currentUserId) {
+                    if (user.username == newUsername) {
+                        permitUpdate = 0;
+                        responseMessage = "This username already exists.";
+                    }
+                    if (user.email == newEmail) {
+                        permitUpdate = 0;
+                        responseMessage = "This email address already exists.";
+                    }
+                }
+            });
+            if (permitUpdate) {
+                db.collection('users').update(
+                    { _id: ObjectId(currentUserId) },
+                    {
+                        $set: {
+                        "first_name": userData.first_name,
+                        "last_name": userData.last_name,
+                        "username": newUsername,
+                        "email": newEmail,
+                        "password": hashedPassword.words
+                        }
+                    }
+                );
+            } 
+            res.send(JSON.stringify({message: responseMessage}));
+        });
+    },
+
+    //----------------------Send Friend requests----------------------//
+    sendFriendRequest: function(db, res, userId, requester, recipient) {
+        db.collection('users').findOne({"username": recipient}, (err, res_find_user) => {
+            if (err) throw err;
+            if (res_find_user) {
+                db.collection('friendRequests').findOne({"requester": requester, "recipient": res_find_user.username}, (err, res_find_request) => {
+                    if(err) throw err;
+                    if (res_find_request) {
+                        res.send(JSON.stringify({
+                            buttonState: "Undo Friend"
+                        }));
+                    } else {
+                        console.log("Request sent to add new friend...")
+                        res.send(JSON.stringify({
+                            buttonState: "Request sent"
+                        }));
+                        db.collection('friendRequests').insert({
+                            "requester": requester,
+                            "requesterId": ObjectId(userId),
+                            "recipient": res_find_user.username,
+                            "recipientId": res_find_user._id,
+                            "time": new Date(),
+                            "status": "open"
+                        });
+                    }
+                })
+            }
+            else {
+                res.send(JSON.stringify({
+                    message: "User not found"
+                }));
+            }
+        })
+    },
+
+    //----------------------get Friendship requests----------------------//
+    getFriendRequests: function(db, res, userId) {
+        db.collection('friendRequests').aggregate([
+            { $match : {"status": "open", "recipientId": ObjectId(userId)} },
+            { $lookup:
+                {
+                from: "users",
+                localField: "requesterId",
+                foreignField: "_id",
+                as: "user"
+                }
+            },
+            {
+                $project :
+                {
+                    "requester": "$user.username",
+                    "requesterId": "$user._id",
+                    "recipient": 1,
+                    "time": 1,
+                    "profile_picture_filename": "$user.picture",
+                    "profile_picture_url": 1
+                }
+            }
+        ]).toArray((err, result) => {
+        if (err) throw err;
+            result.map(item => {
+                item.requester = item.requester;
+                item.requesterId = item.requesterId;
+                item.date_created = getDate(item.time);
+                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+            });
+            res.status(200).send(result);
+        });
+    },
+
+
+    //----------------------Confirm Friend Request----------------------//
+    confirmFriendRequest: function(db, requesterId, recipientId, res) {
+        db.collection('friendRequests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
+            if (err) throw err;
+        });
+        db.collection('users').findOne({"_id": ObjectId(requesterId)}, (err, docs) => {
+            if (err) throw err;
             if (docs) {
-                //Delete image from Server
+                docs.friends.push(ObjectId(recipientId));
+                db.collection('users').update({"_id": ObjectId(requesterId)},
+                    {
+                        $set: {
+                            "friends": docs.friends
+                        }
+                    }
+                );
+            }
+        });
+        db.collection('users').findOne({"_id": ObjectId(recipientId)}, (err, docs) => {
+            if (err) throw err;
+            if (docs) {
+                docs.friends.push(ObjectId(requesterId));
+                db.collection('users').update({"_id": ObjectId(recipientId)},
+                    {
+                        $set: {
+                            "friends": docs.friends
+                        }
+                    }
+                );
+            }
+        });
+        db.collection('notifications').insert({
+            "whoAmI": ObjectId(requesterId),
+            "whoDidAction": ObjectId(recipientId),
+            "action": "added you as friend",
+            "date_created": new Date()
+        });
+        res.send(true);
+    },
+
+    //----------------------Decline Friend request----------------------//
+    deleteFriendRequest: function(db, requesterId, recipientId, res) {
+        db.collection('friendRequests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
+            if (err) throw err;
+            res.send(true);
+        });
+    },
+
+    //----------------------Get all Friends----------------------//
+    getFriends: function(db, res, userId) {
+        db.collection('users').findOne({_id : ObjectId(userId)}, (err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) {
+                let friendlist = [];
+                let friendlistLength = res_find_user.friends.length;
+                let friends = [];
+                let i = 0;
+
+                res_find_user.friends.map(item => { 
+                    db.collection('users').findOne({"_id": ObjectId(item)}, (err_friends, res_friends) => {
+                        if (err_friends) throw err_friends;
+                        friendlist.push(res_friends);
+                        i++;
+
+                        result = {};
+                        result ["name"] = res_friends.username;
+                        result ["friendId"] = res_friends._id;
+                        result ["picture"] = "http://localhost:8000/uploads/posts/" + res_friends.picture;
+                        friends.push(result);
+                        
+                        if (i == friendlistLength) {
+                            let friendsByName = friends.slice(0);
+                            friendsByName.sort(function(a,b) {
+                                let x = a.name.toLowerCase();
+                                let y = b.name.toLowerCase();
+                                return x < y ? -1 : x > y ? 1 : 0;
+                            });
+                            res.status(200).send(friendsByName);
+                        }
+                    });
+                });
+            }
+        });
+    },
+
+    //----------------------Delete a Friend----------------------//
+    deleteFriend: function(db, res, userId, userToDeleteId) {
+        db.collection('users').update({"_id" : ObjectId(userId)}, {'$pull': {"friends": ObjectId(userToDeleteId)}});
+        db.collection('users').update({"_id" : ObjectId(userToDeleteId)}, {'$pull': {"friends": ObjectId(userId)}});
+        res.send(true);
+    },
+
+    //-----------------------------------Create a Guestbook Entry-----------------------------------//
+    createGuestbookEntry: function (db, res, title, content, ownerName, authorId) {
+        if(ownerName) {
+            db.collection('users').findOne({"username": ownerName}, (err_user, res_user) => {
+                if (err_user) throw err_user;
+
+                if (res_user && (res_user._id != authorId)) {
+                    let date_created = new Date();
+                    db.collection('guestbookEntries').insert({
+                        "title": title,
+                        "content": content,
+                        "liking_users": [],
+                        "date_created": date_created,
+                        "owner_id": new ObjectId(res_user._id),
+                        "author_id": new ObjectId(authorId),
+                        "type": "guestbook"
+                    }, (err_insert_enty, res_insert_entry) => {
+                        db.collection('notifications').insert({
+                            "whoAmI": ObjectId(res_user._id),
+                            "whoDidAction": ObjectId(authorId),
+                            "action": "Posted a new entry in your guestbook.",
+                            "date_created": date_created,
+                            "guestbook_id": ObjectId(res_insert_entry.ops[0]._id)
+                        });
+                    });
+                    res.send(true);
+                }
+                else {
+                    console.log("It is not possible to post a guestbook entry on the own profile!");
+                    res.send(false);
+                }
+            })
+        } else {
+            console.log("It is not possible to post a guestbook entry on the own profile!");
+            res.send(false);
+        }
+    },
+
+    //----------------------List Guestbook Entries in Profile for a Username----------------------//
+    //
+    // Receives the name of a user, fetchs the corresponding user id from the database and
+    // calls the method listGuestbookEntriesForUserId.
+    listGuestbookEntriesForUsername: function(db, res, username, currentUserId) {
+        db.collection('users').findOne({"username": username}, (err, docs) => {
+            if (err) throw err;
+
+            if (docs) {
+                call.listGuestbookEntriesForUserId(db, res, docs._id, currentUserId)
+            }
+            else {
+                res.send(JSON.stringify({
+                    message: "User not found"
+                }));
+            }
+        })
+    },
+
+    //----------------------List Guestbook Entries in Profile----------------------//
+    //
+    // Receives the userId of a user and sends all guestbook entries of this user
+    // to the react application. These story entries are sorted by date.
+    listGuestbookEntriesForUserId: function (db, res, userId, currentUserId) {
+        db.collection('guestbookEntries').aggregate([
+            { $match : { owner_id : new ObjectId(userId) } },
+            { $lookup:
+                {
+                    from: "users",
+                    localField: "author_id",
+                    foreignField: "_id",
+                    as: "author"
+                }
+            },
+            { $project : {
+                    "title" : 1,
+                    "content": 1,
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "number_of_likes": 1,
+                    "liking_users" : 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
+                    },
+                    "profile_picture_filename": "$author.picture",
+                    "profile_picture_url": 1,
+                    "type": 1
+                }
+            },
+            { $sort : { "date_created" : -1 } }
+        ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
+            if (err_guestbook_entries) throw err_guestbook_entries;
+                res_guestbook_entries.map(item => {
+                    item.date_created = getDate(item.date_created);
+                    item.number_of_likes = item.liking_users.length;
+                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                    item.profile_picture_filename = item.profile_picture_filename;
+                });
+                res.status(200).send(res_guestbook_entries);
+        });
+    },
+
+    //----------------------Like Guestbook Entry----------------------//
+    //
+    // Receives the id of a guestbook entry and of a user, fetchs the array with likes from
+    // the database and add or remove the current user from this array.
+    // After that, a message with "true" is send to the react application.
+    likeGuestbookEntryById: function (db, res, guestbookData, userId) {
+        db.collection("guestbookEntries").findOne(
+            {
+                _id : new ObjectId(guestbookData.guestbookEntryId)
+            },
+            (err_find_guestbook_entries, res_find_guestbook_entries) => {
+
+            if (err_find_guestbook_entries) throw err_find_guestbook_entries;
+            if (res_find_guestbook_entries.liking_users.includes(userId)) {
+                let index = res_find_guestbook_entries.liking_users.indexOf(userId);
+
+                res_find_guestbook_entries.liking_users.splice(index, 1);
+
+                db.collection('notifications').remove({
+                    "whoAmI": new ObjectId(res_find_guestbook_entries.owner_id), 
+                    "whoDidAction": new ObjectId(userId), 
+                    "action": "liked your guestbook post", 
+                    "guestbook_id": new ObjectId(guestbookData.guestbookEntryId)
+                }, (err, res_guestbookData) => {
+                    if (err) throw err;
+                });
+            }
+            else {
+                res_find_guestbook_entries.liking_users.push(userId);
+                db.collection('notifications').insert({
+                    "whoAmI": new ObjectId(res_find_guestbook_entries.owner_id),
+                    "whoDidAction": new ObjectId(userId),
+                    "action": "liked your guestbook post",
+                    "date_created": new Date(),
+                    "guestbook_id": new ObjectId(guestbookData.guestbookEntryId)
+                });
+            }
+            db.collection("guestbookEntries").update(
+                {
+                    _id : new ObjectId(guestbookData.guestbookEntryId)
+                },
+                {
+                    $set: { liking_users: res_find_guestbook_entries.liking_users }
+                },
+                (err_update_guestbook_entries, res_update_guestbook_entries) => {
+
+                if (err_update_guestbook_entries) throw err_update_guestbook_entries;
+            });
+            res.send(true);
+        });
+    },
+
+    //----------------------Delete Guestbook Entry----------------------//
+    //
+    // Receives the id of a guestbook entry and deletes it from the database.
+    // After that, a message with "true" is send to the react application.
+    deleteGuestbookEntryById: function (db, res, guestbookData, userId) {
+        db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
+            if (err_find_guestbook_entries) throw err_find_guestbook_entries;
+            if (res_find_guestbook_entries.owner_id == userId) {
+                db.collection("comments").remove({ post_id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_comments, res_remove_comments) => {
+                    if (err_remove_comments) throw err_remove_comments;
+                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
+                    db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
+                        if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
+                        console.log("Removed guestbook entry from the database");
+
+                        db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
+                            if (err_guestbook_delete) throw err_guestbook_delete;
+                        });
+
+                        res.send(true);
+                    });
+                });
+            }
+            else {
+                res.send(false);
+            }
+        });
+    },
+
+    //----------------------Get Guestbook Entry----------------------//
+    getGuestBookEntry: function(db, res, guestbookEntyId, currentUserId) {
+        db.collection('guestbookEntries').aggregate([
+            { $match : { owner_id: ObjectId(currentUserId), "_id": ObjectId(guestbookEntyId) } },
+            { $lookup:
+               {
+                 from: "users",
+                 localField: "author_id",
+                 foreignField: "_id",
+                 as: "author"
+               }
+             },
+             { $project : {
+                    "title" : 1,
+                    "content": 1,
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "number_of_likes": 1,
+                    "liking_users" : 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
+                    },
+                    "profile_picture_filename": "$author.picture",
+                    "profile_picture_url": 1
+                }
+             },
+             { $sort : { "date_created" : -1 } }
+            ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
+            if (err_guestbook_entries) throw err_guestbook_entries;
+            res_guestbook_entries[0].date_created = getDate(res_guestbook_entries[0].date_created);
+            res_guestbook_entries[0].number_of_likes = res_guestbook_entries[0].liking_users.length;
+            res_guestbook_entries[0].profile_picture_url = "http://localhost:8000/uploads/posts/" + res_guestbook_entries[0].profile_picture_filename;
+            res_guestbook_entries[0].profile_picture_filename = res_guestbook_entries[0].profile_picture_filename;
+            res.status(200).send(res_guestbook_entries[0]);
+        });
+    },
+
+    //----------------------Upload Profile Picture----------------------//
+    uploadProfilePicture: function (db, res, fileData, userId) {
+        let filename = fileData.filename;
+        db.collection('users').findOne({ _id : new ObjectId(userId)}, (err, docs) => {
+            if (err) throw err;
+            if (docs) {
+                //Delete old image from Server
+                if(docs.picture !== "") {
+                    let path = "./public/uploads/posts/" + docs.picture;
+                    fs.unlinkSync(path);
+                }
+                db.collection('users').update({_id: ObjectId(userId)},
+                    {
+                        $set: {
+                            "picture": filename
+                        }
+                    }
+                );
+                console.log("Profile picture has been uploaded")
+                res.send(true);
+            } else {
+                res.send(false);
+            }
+        });
+    },
+
+    //----------------------Delete Profile Pic---------------------//
+    deleteProfilePicture: function (db, res, userId) {
+        db.collection('users').findOne({ _id : new ObjectId(userId)}, (err, docs) => {
+            if (err) throw err;
+            if (docs) {
+                // Delete image from Server
                 let path = "./public/uploads/posts/" + docs.picture;
                 fs.unlinkSync(path);
 
-                //Delete from database
-                collectionUsers.update({ _id : new ObjectId(userId) },
+                // Delete from database
+                db.collection('users').update({ _id : new ObjectId(userId) },
                     {
                         $set: {
                             "picture": ""
                         }
                     }
                 );
-
-                console.log(docs.username, " deleted his Profile Picture and uploaded new one")
-                res.send(JSON.stringify({
-                    message: "Profile Pic deleted"
-                }));
+                console.log(docs.username + " deleted his profile picture")
+                res.send(true);
             }
         })
     },
-
-    // --------------------------Update Story Entries----------------------------//
 
     //------------------------------Get Story Entry------------------------------//
     //
     // Recieves the id of a story and the id of the current user and returns the
     // information of the story if the current user is the author of this story.
-    getStoryEntry: function (db, res, storyId, currentUserId) {
-        db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err_find_story_entries, res_find_story_entries) => {
-            if (err_find_story_entries) throw err_find_story_entries;
-            if (res_find_story_entries) {
-                if (res_find_story_entries.user_id == currentUserId) {
-                    res.status(200).send(res_find_story_entries);
-                } else {
-                    res.status(401).send(JSON.stringify({
-                        message: "User is not authorized to update this story entry"
-                    }));
+    getStoryEntry: function(db, res, storyId, currentUserId) {
+        db.collection('stories').aggregate([
+            { $match : { user_id: ObjectId(currentUserId), "_id": ObjectId(storyId) } },
+            { $lookup:
+               {
+                 from: "users",
+                 localField: "user_id",
+                 foreignField: "_id",
+                 as: "user"
+               }
+             },
+             { $project : {
+                    "title" : 1,
+                    "content": 1,
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "number_of_likes": 1,
+                    "liking_users" : 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                    },
+                    "updated": 1,
+                    "profile_picture_filename": "$user.picture",
+                    "profile_picture_url": 1
                 }
-            } else {
-                res.status(404).send(JSON.stringify({
-                    message: "Can't find a story with id: " + storyId
-                }));
-            }
+             }
+            ]).toArray((err_stories, result_stories) => {
+            if (err_stories) throw err_stories;
+            result_stories[0].date_created = getDate(result_stories[0].date_created);
+            result_stories[0].number_of_likes = result_stories[0].liking_users.length;
+            result_stories[0].profile_picture_url = "http://localhost:8000/uploads/posts/" + result_stories[0].profile_picture_filename;
+            res.status(200).send(result_stories[0]);
         });
     },
 
@@ -1579,28 +1232,50 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         });
     },
 
-    // --------------------------Update Images----------------------------//
-
     //------------------------------Get Image------------------------------//
     //
     // Recieves the id of an image and the id of the current user and returns the
     // information of the image if the current user is the author of this image.
-    getImage: function (db, res, imageId, currentUserId) {
-        db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
-            if (err_find_images) throw err_find_images;
-            if (res_find_images) {
-                if (res_find_images.user_id == currentUserId) {
-                    res.status(200).send(res_find_images);
-                } else {
-                    res.status(401).send(JSON.stringify({
-                        message: "User is not authorized to get this image"
-                    }));
+    getImage: function(db, res, imageId, currentUserId) {
+        db.collection('images').aggregate([
+            { $match : { user_id:  ObjectId(currentUserId), "_id": ObjectId(imageId) } },
+            { $lookup:
+               {
+                 from: "users",
+                 localField: "user_id",
+                 foreignField: "_id",
+                 as: "user"
+               }
+             },
+             { $project :
+                {
+                    "title" : 1,
+                    "content": 1,
+                    "src": 1,
+                    "filename": 1,
+                    "number_of_likes": 1,
+                    "liking_users": 1,
+                    "current_user_has_liked" : {
+                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                    },
+                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                    "user_id": 1,
+                    "username": {
+                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
+                    },
+                    "updated" : 1,
+                    "profile_picture_filename": "$user.picture",
+                    "profile_picture_url": 1
                 }
-            } else {
-                res.status(404).send(JSON.stringify({
-                    message: "Can't find an image with id: " + imageId
-                }));
-            }
+             },
+             { $sort : { "date_created" : -1 } }
+            ]).toArray((err_images, result_images) => {
+            if (err_images) throw err_images;
+            result_images[0].date_created = getDate(result_images[0].date_created);
+            result_images[0].src = "http://localhost:8000/uploads/posts/" + result_images[0].filename;
+            result_images[0].number_of_likes = result_images[0].liking_users.length;
+            result_images[0].profile_picture_url = "http://localhost:8000/uploads/posts/" + result_images[0].profile_picture_filename;
+            res.status(200).send(result_images[0]);
         });
     },
 
@@ -1636,7 +1311,6 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     //----------------------------Create Comment-----------------------------//
     createComment: function (db, res, commentData, currentUserId) {
         var date_created = new Date();
-
         db.collection('comments').insert({
             "content": commentData.content,
             "date_created": date_created,
@@ -1644,72 +1318,58 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
             "post_id": new ObjectId(commentData.postId),
             "author_id": new ObjectId(currentUserId),
             "type": "comment"
-        }, (err, res) => {
-            if (err) throw err;
-            if (res) {
-                if(res.result.ok == 1) {
-                    db.collection("comments").findOne({"date_created": date_created, "content": commentData.content, "post_id": ObjectId(commentData.postId), "author_id": ObjectId(currentUserId)}, (err, docs) => {
-                        if(err) throw err;
-                        if(docs) {
-                            db.collection("stories").findOne({"_id": ObjectId(docs.post_id)}, (err_stories, docs_stories) => {
-                                if (err_stories) throw err_stories;
-                                if (docs_stories) {
-                                    if (JSON.stringify(docs_stories.user_id) === JSON.stringify(docs.author_id)) {
-
-                                    } else {
-                                        db.collection('notifications').insert({
-                                            "whoAmI": ObjectId(docs_stories.user_id),
-                                            "whoDidAction": ObjectId(docs.author_id),
-                                            "action": "commented on your "+ docs_stories.type,
-                                            "type": docs_stories.type,
-                                            "date_created": date_created,
-                                            "comment_id": ObjectId(docs._id)
-                                        });
-                                    }
-                                } else {
-                                    db.collection("images").findOne({"_id": ObjectId(docs.post_id)}, (err_images, docs_images) => {
-                                        if (err_images) throw err_images;
-                                        if (docs_images) {
-                                            if (JSON.stringify(docs_images.user_id) === JSON.stringify(docs.author_id)) {
-
-                                            } else {
-                                                db.collection('notifications').insert({
-                                                    "whoAmI": ObjectId(docs_images.user_id),
-                                                    "whoDidAction": ObjectId(docs.author_id),
-                                                    "action": "commented on your "+ docs_images.type,
-                                                    "type": docs_images.type,
-                                                    "date_created": date_created,
-                                                    "comment_id": ObjectId(docs._id)
-                                                });
-                                            }
-                                        } else {
-                                            db.collection("guestbookEntries").findOne({"_id": ObjectId(docs.post_id)}, (err_guestbookEntries, docs_guestbookEntries) => {
-                                                if (err_guestbookEntries) throw err_guestbookEntries;
-                                                if (docs_guestbookEntries) {
-                                                    if (JSON.stringify(docs_guestbookEntries.owner_id) === JSON.stringify(docs.author_id)) {
-
-                                                    } else {
-                                                        db.collection('notifications').insert({
-                                                            "whoAmI": ObjectId(docs_guestbookEntries.owner_id),
-                                                            "whoDidAction": ObjectId(docs.author_id),
-                                                            "action": "commented on your "+ docs_guestbookEntries.type,
-                                                            "type": docs_guestbookEntries.type,
-                                                            "date_created": date_created,
-                                                            "comment_id": ObjectId(docs._id)
-                                                        });
-                                                    }
-                                                } else {
-                                                    console.log("Post ID does not exist")
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
+        }, (err_insert_entry, res_insert_entry) => {
+            if (err_insert_entry) throw err_insert_entry;
+            if (commentData.postType == "story") {
+                db.collection("stories").findOne({"_id": ObjectId(commentData.postId)}, (err_find_stories, res_find_stories) => {
+                    if (err_find_stories) throw err_find_stories;
+                    if (res_find_stories) {
+                        if (res_find_stories.user_id !== currentUserId) {
+                            db.collection('notifications').insert({
+                                "whoAmI": new ObjectId(res_find_stories.user_id),
+                                "whoDidAction": new ObjectId(currentUserId),
+                                "action": "commented on your story",
+                                "type": res_find_stories.type,
+                                "date_created": date_created,
+                                "story_id": new ObjectId(commentData.postId)
                             });
-
                         }
-                    });
-                }
+                    }
+                });
+            }
+            if (commentData.postType == "image") {
+                db.collection("images").findOne({"_id": ObjectId(commentData.postId)}, (err_find_image, res_find_image) => {
+                    if (err_find_image) throw err_find_image;
+                    if (res_find_image) {
+                        if (res_find_image.user_id !== currentUserId) {
+                            db.collection('notifications').insert({
+                                "whoAmI": ObjectId(res_find_image.user_id),
+                                "whoDidAction": ObjectId(currentUserId),
+                                "action": "commented on your image",
+                                "type": res_find_image.type,
+                                "date_created": date_created,
+                                "image_id": new ObjectId(commentData.postId)
+                            });
+                        }
+                    }
+                });
+            }
+            if (commentData.postType == "guestbook") {
+                db.collection("guestbookEntries").findOne({"_id": ObjectId(commentData.postId)}, (err_find_guestbook_entry, res_find_guestbook_entry) => {
+                    if (err_find_guestbook_entry) throw err_find_guestbook_entry;
+                    if (res_find_guestbook_entry) {
+                        if (res_find_guestbook_entry.owner_id !== currentUserId) {
+                            db.collection('notifications').insert({
+                                "whoAmI": ObjectId(res_find_guestbook_entry.owner_id),
+                                "whoDidAction": ObjectId(currentUserId),
+                                "action": "commented on your guestbook entry",
+                                "type": res_find_guestbook_entry.type,
+                                "date_created": date_created,
+                                "guestbook_id": new ObjectId(commentData.postId)
+                            });
+                        }
+                    }
+                });
             }
         });
         res.send(true);
@@ -1718,32 +1378,32 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
     //----------------------------List Comments-----------------------------//
     getComments: function (db, res, currentUserId) {
         db.collection("comments").aggregate([
-      { $lookup:
-         {
-           from: "users",
-           localField: "author_id",
-           foreignField: "_id",
-           as: "author"
-         }
-       },
-       { $project : {
-              "content": 1,
-              date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-              "authorName": {
-                  "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
-              },
-              "author_id": 1,
-              "post_id": 1,
-              "profile_picture_filename": "$author.picture",
-              "profile_picture_url": 1,
-              "number_of_likes": 1,
-              "liking_users": 1,
-              "current_user_has_liked" : {
-                  "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-              },
-          }
-       },
-       { $sort : { "date_created" : -1 } }
+        { $lookup:
+            {
+            from: "users",
+            localField: "author_id",
+            foreignField: "_id",
+            as: "author"
+            }
+        },
+        { $project : {
+                "content": 1,
+                date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
+                "authorName": {
+                    "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
+                },
+                "author_id": 1,
+                "post_id": 1,
+                "profile_picture_filename": "$author.picture",
+                "profile_picture_url": 1,
+                "number_of_likes": 1,
+                "liking_users": 1,
+                "current_user_has_liked" : {
+                    "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
+                },
+            }
+        },
+        { $sort : { "date_created" : -1 } }
         ]).toArray( (err_find_comments, res_find_comments) => {
             if (err_find_comments) throw err_find_comments;
             res_find_comments.map(item => {
@@ -1755,68 +1415,56 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
         });
     },
 
-    //----------------------------List all user-----------------------------//
-    getAllUser: function(db, res) {
+    //----------------------------List all users-----------------------------//
+    getAllUsers: function(db, res) {
         db.collection('users').find({}).toArray(function (err, docs) {
             if (err) throw err;
             if (docs) {
-                var userLength = (docs).length;
-                var user = [];
-                var i = 0;
-
+                let userLength = (docs).length;
+                let result_users = [];
                 docs.map(item => {
-                    i++;
-
-                    result = {};
-                    result ["title"] = item.username;
-                    result ["description"] = item.first_name + " " + item.last_name;
+                    let user = {};
+                    user ["title"] = item.username;
+                    user ["description"] = item.first_name + " " + item.last_name;
                     if(item.picture !== "") {
-                        result ["image"] = "http://localhost:8000/uploads/posts/" + item.picture;
+                        user ["image"] = "http://localhost:8000/uploads/posts/" + item.picture;
                     } else {
-                        result ["image"] = "/assets/images/user.png";
+                        user ["image"] = "/assets/images/user.png";
                     }
-                    user.push(result);
+                    result_users.push(user);
                 });
-                call.sendUserList(res, user, i, userLength);
+                result_users = result_users.slice(0);
+                result_users.sort(function(a,b) {
+                    let x = a.title.toLowerCase();
+                    let y = b.title.toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
+            res.status(200).send(result_users);
             }
         });
-    },
-    sendUserList: function(res, user, i, userLength) {
-        if(i == userLength) {
-            var userByName = user.slice(0);
-            userByName.sort(function(a,b) {
-                var x = a.title.toLowerCase();
-                var y = b.title.toLowerCase();
-                return x < y ? -1 : x > y ? 1 : 0;
-            });
-            res.status(200).send(userByName);
-        }
     },
 
     //----------------------Delete Comment----------------------//
     deleteCommentById: function (db, res, commentId, userId) {
-      db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
-          if (err_find_comments) throw err_find_comments;
-          if (res_find_comments.author_id == userId) {
-              db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
-                  if (err_remove_comments) throw err_remove_comments;
-
-                  db.collection('notifications').remove({"comment_id": ObjectId(commentId)}, (err, res_comment_noti) => {
-                      if (err) throw err;
-                  });
-
-                  res.send(true);
-              });
-          }
-          else {
-              res.send(false);
-          }
-      });
+        db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
+            if (err_find_comments) throw err_find_comments;
+            if (res_find_comments.author_id == userId) {
+                db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
+                    if (err_remove_comments) throw err_remove_comments;
+                    db.collection('notifications').remove({"comment_id": ObjectId(commentId)}, (err_notification, res_notification) => {
+                        if (err_notification) throw err_notification;
+                    });
+                    res.send(true);
+                });
+            }
+            else {
+                res.send(false);
+            }
+        });
     },
 
     //----------------------------List all notifications of a user-----------------------------//
     getNotifications: function(db, res, userId) {
-
         db.collection('notifications').aggregate([
             { $match: {"whoAmI": ObjectId(userId), "whoDidAction": {"$ne": ObjectId(userId)} }},
             { $lookup:
@@ -1831,410 +1479,116 @@ listGuestbookEntriesForUserId: function (db, res, userId, currentUserId, req) {
                 $project :
                 {
                     "username": "$user.username",
-                    "id": "$user._id",
                     "action": 1,
                     "date_created": 1,
-                    "userid": "$user._id",
                     "profile_picture_filename": "$user.picture",
                     "profile_picture_url": 1,
                     "story_id": 1,
                     "image_id": 1,
                     "guestbook_id": 1,
-                    "liked_guestbook_id": 1,
                     "comment_id": 1,
                     "typeCommented": 1,
                     "type": 1
                 }
             }
         ]).toArray((err, result) => {
-         if (err) throw err;
-
-         result.map(item => {
-
-                item.username = item.username;
-                item.action = item.action;
+            if (err) throw err;
+            result.map(item => {
                 item.date_created = getDate(item.date_created);
-                item.userid = item.userid;
                 if (item.action == "added you as a friend!") {
                     item.redirect = false;
                 }
                 if (item.story_id) {
-                     item.redirect = true;
-                     item.type = "story";
-                     item.typeCommented = item.type;
-                     item.linkToPost = item.story_id;
+                    item.redirect = true;
+                    item.type = "story";
+                    item.typeCommented = item.type;
+                    item.linkToPost = item.story_id;
                 }
                 if (item.image_id) {
-                     item.redirect = true;
-                     item.type = "image";
-                     item.typeCommented = item.type;
-                     item.linkToPost = item.image_id;
+                    item.redirect = true;
+                    item.type = "image";
+                    item.typeCommented = item.type;
+                    item.linkToPost = item.image_id;
                 }
                 if (item.guestbook_id) {
-                     item.redirect = true;
-                     item.type = "guestbook";
-                     item.typeCommented = item.type;
-                     item.linkToPost = item.guestbook_id;
+                    item.redirect = true;
+                    item.type = "guestbook";
+                    item.typeCommented = item.type;
+                    item.linkToPost = item.guestbook_id;
                 }
-                if (item.liked_guestbook_id) {
+                if (item.guestbook_id) {
                     item.redirect = true;
                     item.typeCommented = item.type;
                     item.type = "guestbook";
-                    item.linkToPost = item.liked_guestbook_id;
-                }
-                if (item.comment_id) {
-                    item.redirect = true;
-                    item.typeCommented = item.type;
-                    item.type = "comment";
-                    item.linkToPost = item.comment_id;
+                    item.linkToPost = item.guestbook_id;
                 }
                 item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-
-           });
+            });
             result.sort((a, b) => {
                 return new Date(b.date_created) - new Date(a.date_created);
             });
-
             res.status(200).send(result);
-         });
-       },
-
-    listImagesForNotificationId: function(db, req, res, type, postId, currentUserId) {
-        db.collection('images').aggregate([
-            { $match : { user_id:  ObjectId(currentUserId), "_id": ObjectId(postId) } },
-            { $lookup:
-               {
-                 from: "users",
-                 localField: "user_id",
-                 foreignField: "_id",
-                 as: "user"
-               }
-             },
-             { $project :
-                {
-                    "title" : 1,
-                    "content": 1,
-                    "src": 1,
-                    "filename": 1,
-                    "number_of_likes": 1,
-                    "liking_users": 1,
-                    "current_user_has_liked" : {
-                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-                    },
-                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                    "user_id": 1,
-                    "username": {
-                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                    },
-                    "updated" : 1,
-                    "profile_picture_filename": "$user.picture",
-                    "profile_picture_url": 1
-                }
-             },
-             { $sort : { "date_created" : -1 } }
-            ]).toArray((err_images, result_images) => {
-            if (err_images) throw err_images;
-            result_images.map(item => {
-                item.date_created = getDate(item.date_created);
-                item.src = "http://localhost:8000/uploads/posts/" + item.filename;
-                item.number_of_likes = item.liking_users.length;
-                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-
-            });
-                res.status(200).send(result_images);
         });
-    },
-
-    listCommentsForNotificationInImagesId: function(db, req, res, type, commentId, currentUserId) {
-        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
-            if(err) throw err;
-            if (docs) {
-                db.collection('images').aggregate([
-                    { $match : { user_id:  ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
-                    { $lookup:
-                       {
-                         from: "users",
-                         localField: "user_id",
-                         foreignField: "_id",
-                         as: "user"
-                       }
-                     },
-                     { $project :
-                        {
-                            "title" : 1,
-                            "content": 1,
-                            "src": 1,
-                            "filename": 1,
-                            "number_of_likes": 1,
-                            "liking_users": 1,
-                            "current_user_has_liked" : {
-                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-                            },
-                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                            "user_id": 1,
-                            "username": {
-                                "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                            },
-                            "updated" : 1,
-                            "profile_picture_filename": "$user.picture",
-                            "profile_picture_url": 1
-                        }
-                     },
-                     { $sort : { "date_created" : -1 } }
-                    ]).toArray((err_images, result_images) => {
-                    if (err_images) throw err_images;
-                    result_images.map(item => {
-                        item.date_created = getDate(item.date_created);
-                        item.src = "http://localhost:8000/uploads/posts/" + item.filename;
-                        item.number_of_likes = item.liking_users.length;
-                        item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-
-                    });
-                        res.status(200).send(result_images);
-                });
-            }
-        })
-    },
-
-    listStoriesForNotificationId: function(db, req, res, type, postId, currentUserId) {
-        db.collection('stories').aggregate([
-            { $match : { user_id: ObjectId(currentUserId), "_id": ObjectId(postId) } },
-            { $lookup:
-               {
-                 from: "users",
-                 localField: "user_id",
-                 foreignField: "_id",
-                 as: "user"
-               }
-             },
-             { $project : {
-                    "title" : 1,
-                    "content": 1,
-                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                    "number_of_likes": 1,
-                    "liking_users" : 1,
-                    "current_user_has_liked" : {
-                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-                    },
-                    "user_id": 1,
-                    "username": {
-                        "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                    },
-                    "updated": 1,
-                    "profile_picture_filename": "$user.picture",
-                    "profile_picture_url": 1
-                }
-             },
-             { $sort : { "date_created" : -1 } }
-            ]).toArray((err_stories, result_stories) => {
-            if (err_stories) throw err_stories;
-                result_stories.map(item => {
-                    item.date_created = getDate(item.date_created);
-                    item.number_of_likes = item.liking_users.length;
-                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-                });
-                res.status(200).send(result_stories);
-        });
-    },
-
-    listCommentsForNotificationInStoriesId: function(db, req, res, type, commentId, currentUserId) {
-        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
-            if(err) throw err;
-            if (docs) {
-                db.collection('stories').aggregate([
-                    { $match : { user_id: ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
-                    { $lookup:
-                       {
-                         from: "users",
-                         localField: "user_id",
-                         foreignField: "_id",
-                         as: "user"
-                       }
-                     },
-                     { $project : {
-                            "title" : 1,
-                            "content": 1,
-                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                            "number_of_likes": 1,
-                            "liking_users" : 1,
-                            "current_user_has_liked" : {
-                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-                            },
-                            "user_id": 1,
-                            "username": {
-                                "$cond": { if: { "$eq": [ "$user", [] ] }, then: "Anonym", else: "$user.username" }
-                            },
-                            "updated": 1,
-                            "profile_picture_filename": "$user.picture",
-                            "profile_picture_url": 1
-                        }
-                     },
-                     { $sort : { "date_created" : -1 } }
-                    ]).toArray((err_stories, result_stories) => {
-                    if (err_stories) throw err_stories;
-                        result_stories.map(item => {
-                            item.date_created = getDate(item.date_created);
-                            item.number_of_likes = item.liking_users.length;
-                            item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-                        });
-                        res.status(200).send(result_stories);
-                });
-            }
-        })
-    },
-
-    listGuestbookEntryForNotificationId: function(db, req, res, type, postId, currentUserId) {
-        db.collection('guestbookEntries').aggregate([
-            { $match : { owner_id: ObjectId(currentUserId), "_id": ObjectId(postId) } },
-            { $lookup:
-               {
-                 from: "users",
-                 localField: "author_id",
-                 foreignField: "_id",
-                 as: "author"
-               }
-             },
-             { $project : {
-                    "title" : 1,
-                    "content": 1,
-                    date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                    "number_of_likes": 1,
-                    "liking_users" : 1,
-                    "current_user_has_liked" : {
-                        "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-                    },
-                    "user_id": 1,
-                    "username": {
-                        "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
-                    },
-                    "profile_picture_filename": "$author.picture",
-                    "profile_picture_url": 1
-                }
-             },
-             { $sort : { "date_created" : -1 } }
-            ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
-            if (err_guestbook_entries) throw err_guestbook_entries;
-              res_guestbook_entries.map(item => {
-                    item.date_created = getDate(item.date_created);
-                    item.number_of_likes = item.liking_users.length;
-                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-                    item.profile_picture_filename = item.profile_picture_filename;
-                });
-                res.status(200).send(res_guestbook_entries);
-        });
-    },
-
-    listCommentsForNotificationInGuestbooksId: function(db, req, res, type, commentId, currentUserId) {
-        db.collection('comments').findOne({"_id": ObjectId(commentId)}, (err, docs) => {
-            if(err) throw err;
-            if (docs) {
-                db.collection('guestbookEntries').aggregate([
-                    { $match : { owner_id: ObjectId(currentUserId), "_id": ObjectId(docs.post_id) } },
-                    { $lookup:
-                       {
-                         from: "users",
-                         localField: "author_id",
-                         foreignField: "_id",
-                         as: "author"
-                       }
-                     },
-                     { $project : {
-                            "title" : 1,
-                            "content": 1,
-                            date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
-                            "number_of_likes": 1,
-                            "liking_users" : 1,
-                            "current_user_has_liked" : {
-                                "$cond": { if: { "$in": [ currentUserId , "$liking_users"] }, then: "1", else: "0" }
-                            },
-                            "user_id": 1,
-                            "username": {
-                                "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
-                            },
-                            "profile_picture_filename": "$author.picture",
-                            "profile_picture_url": 1
-                        }
-                     },
-                     { $sort : { "date_created" : -1 } }
-                    ]).toArray((err_guestbook_entries, res_guestbook_entries) => {
-                    if (err_guestbook_entries) throw err_guestbook_entries;
-                      res_guestbook_entries.map(item => {
-                            item.date_created = getDate(item.date_created);
-                            item.number_of_likes = item.liking_users.length;
-                            item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
-                            item.profile_picture_filename = item.profile_picture_filename;
-                        });
-                        res.status(200).send(res_guestbook_entries);
-                });
-            }
-        })
     },
 
     //----------------------Like Comment----------------------//
     likeComment: function (db, res, commentId, userId) {
-    db.collection("comments").findOne(
-        {
-            _id : new ObjectId(commentId)
-        },
-        (err_find_comments, res_find_comments) => {
-
-        if (err_find_comments) throw err_find_comments;
-        if (res_find_comments.liking_users.includes(userId)) {
-            let index = res_find_comments.liking_users.indexOf(userId);
-            if (index > -1) {
-                res_find_comments.liking_users.splice(index, 1);
+        db.collection("comments").findOne({_id : new ObjectId(commentId)},(err_find_comments, res_find_comments) => {
+            if (err_find_comments) throw err_find_comments;
+            if (res_find_comments.liking_users.includes(userId)) {
+                let index = res_find_comments.liking_users.indexOf(userId);
+                if (index > -1) {
+                    res_find_comments.liking_users.splice(index, 1);
+                }
+                else {
+                    throw err_find_comments;
+                }
             }
             else {
-                throw err_find_comments;
+                res_find_comments.liking_users.push(userId);
             }
-        }
-        else {
-            res_find_comments.liking_users.push(userId);
-        }
-        db.collection("comments").update(
-            {
-                _id : new ObjectId(commentId)
-            },
-            {
-                $set: { liking_users: res_find_comments.liking_users }
-            },
-            (err_update_comments, res_update_comments) => {
-
-            if (err_update_comments) throw err_update_comments;
+            db.collection("comments").update(
+                {
+                    _id : new ObjectId(commentId)
+                },
+                {
+                    $set: { liking_users: res_find_comments.liking_users }
+                },
+                (err_update_comments, res_update_comments) => {
+                if (err_update_comments) throw err_update_comments;
+            });
+            res.send(true);
         });
-        res.send(true);
-    });
-  },
+    },
 
 }
 
 function getMonthName (month) {
     const monthNames = [
-      "Jan.",
-      "Feb.",
-      "Mar.",
-      "Apr.",
-      "May",
-      "Jun.",
-      "Jul.",
-      "Aug.",
-      "Sep.",
-      "Oct.",
-      "Nov.",
-      "Dec."
+        "Jan.",
+        "Feb.",
+        "Mar.",
+        "Apr.",
+        "May",
+        "Jun.",
+        "Jul.",
+        "Aug.",
+        "Sep.",
+        "Oct.",
+        "Nov.",
+        "Dec."
     ];
-
     return monthNames[month];
-  }
+}
 
-  function getDate (date) {
-      date = new Date(date);
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let days = date.getDate();
-      let months = getMonthName(date.getMonth());
-      let year = date.getFullYear();
-      if (hours < 10) hours = "0" + hours;
-      if (minutes < 10) minutes = "0" + minutes;
-      return  days + ". " + months + " " + year + ", " + hours + ":" + minutes;
-    }
+function getDate (date) {
+    date = new Date(date);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let days = date.getDate();
+    let months = getMonthName(date.getMonth());
+    let year = date.getFullYear();
+    if (hours < 10) hours = "0" + hours;
+    if (minutes < 10) minutes = "0" + minutes;
+    return  days + ". " + months + " " + year + ", " + hours + ":" + minutes;
+}

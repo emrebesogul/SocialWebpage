@@ -58,10 +58,10 @@ class Notifications extends Component {
   }
 
     async getNotificationData() {
-        let api = "/user/notifications/data/" + this.props.match.params.type + "/" + this.props.match.params.typeCommented  + "/" + this.props.match.params.postId;
-        const response = await getNotificationData(
-            api
-        );
+        let api = "/notifications/data/" + this.props.match.params.type + "/" + this.props.match.params.typeCommented  + "/" + this.props.match.params.postId;
+        const res= await getNotificationData(api);
+        let response = [];
+        response[0] = res;
         if(response === false) {
             this.setState({showError: true});
         } else {
