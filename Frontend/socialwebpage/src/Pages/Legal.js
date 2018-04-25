@@ -52,7 +52,7 @@ class About extends React.Component{
                       <p>11. You may not attempt to restrict another user's use of or enjoyment of the Service, and you may not encourage or support any violation of these Terms of Use or any other instagram terms.</p>
                       <p>12. We respect the rights of others and expect you to do the same.</p>
                       <p>13. If you repeatedly violate the intellectual property rights of others, we may block your account.</p>
-                      <p>14. Wenn du einen Nutzernamen bzw. eine ähnliche Kennung für dein Konto auswählst, behalten wir uns das Recht vor, diese/n zu entfernen oder zu widerrufen, wenn wir das als angemessen oder erforderlich erachten (zum Beispiel, wenn der Nutzername bzw. die Kennung das geistige Eigentum von jemanden verletzt).</p>
+                      <p>14. If you choose a username or similar identifier for your account, we reserve the right to remove or revoke it if we deem it appropriate or necessary (for example, if the username or identifier infringes someone's intellectual property).</p>
                       <p>15. You must have fun!</p>
                     </Item.Description>
                   </Item.Content>

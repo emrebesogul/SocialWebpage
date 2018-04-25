@@ -394,7 +394,7 @@ async handleDeletePost(event, data) {
                                                   </div>
                                                 </div>
                                                 {(this.state.currentUserId === comment.author_id) || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
-                                                
+
                                                 <div className="comment-user-info">
                                                   <Comment.Metadata>
                                                     <div>{comment.date_created}</div>
@@ -411,17 +411,11 @@ async handleDeletePost(event, data) {
                                           </Comment.Group>
                                         )
                                       })}
-<<<<<<< HEAD
-                                      <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea className="commentInput" placeholder="Add a comment.." />
-                                        <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
-=======
                                       <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                         <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.." />
                                         <Button className="button-upload button-styles add-comment-button"  content='Add Comment'>
                                           <Icon name="send" />
                                         </Button>
->>>>>>> 37ad16c70d08a0bc35003cb1ec336d03a445c7d8
                                       </Form>
                                   </Card.Content>
                                 </Card>

@@ -68,7 +68,7 @@ class Settings extends React.Component{
 
         const fd = new FormData();
         fd.append('image', this.state.files[0]);
-        
+
         const response = await uploadProfilePicture(fd);
         console.log(response)
         if(response) {

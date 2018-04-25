@@ -793,6 +793,7 @@ div.sub.header.feed-subheader{
   position: absolute;
   bottom: 16px;
   right: 30px;
+  z-index: 200;
 }
 
 .feed-comments-form > div.field {
