@@ -70,19 +70,12 @@ class Settings extends React.Component{
 
         const fd = new FormData();
         fd.append('image', this.state.files[0]);
-
-        console.log(fd)
-
+        
         const response = await uploadProfilePicture(fd);
-
-        //Do something with response
-        this.setState({message : JSON.parse(response).message});
-
-        if(this.state.message === "Image uploaded") {
+        if(response) {
             this.setState({ showMessageSuccess: true });
             this.setState({ showMessageError: false });
         } else {
-            //Error messages
             this.setState({ showMessageSuccess: false });
             this.setState({ showMessageError: true });
         }
@@ -173,8 +166,8 @@ class Settings extends React.Component{
               </aside>
               <Button id="settings-upload-button" className="button-upload button-styles" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
 
-              {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
-              {this.state.showMessageSuccess ? <Message color='green'><p>{this.state.message}<br /></p></Message> : null}
+              {this.state.showMessageError ? <Message color='red'><p>Error while uploading the profile picture!</p></Message> : null}
+              {this.state.showMessageSuccess ? <Message color='green'><p>Profile picture has been uploaded successfully!<br/></p></Message> : null}
 
             </div>
           </div>

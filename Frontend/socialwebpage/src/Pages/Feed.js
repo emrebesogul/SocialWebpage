@@ -149,11 +149,11 @@ getNumberOfLikesOfPost(currentItem) {
 }
 
 async handleCreateComment(event, data) {
-
   if(event.target[0].value.trim() != "" && event.target[0].value != null) {
     let commentData = {
       "content": event.target[0].value,
-      "postId" : data._id
+      "postId" : data._id,
+      "postType" : data.type
     }
     let response = await createComment(commentData);
     if(response) {
@@ -297,7 +297,7 @@ async handleDeleteComment(event, data) {
                                         <Input className="input-upload" type="text"/>
 
                                         <span className="input-label-upload"> What story do you want to share?</span>
-                                        <TextArea className="input-upload" type="text"></TextArea>
+                                        <TextArea id="textarea-feed" className="input-upload" type="text"></TextArea>
 
                                           <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
                                               <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
@@ -373,7 +373,7 @@ async handleDeleteComment(event, data) {
                                                 <div className="comment-header">
                                                     <Comment.Author className="comment-author" >
                                                       <Link to={`/profile/${comment.authorName}`}>
-                                                        {comment.authorName}
+                                                        @{comment.authorName}
                                                       </Link>
                                                     </Comment.Author>
                                                 </div>
@@ -386,23 +386,27 @@ async handleDeleteComment(event, data) {
                                                   </div>
                                                 </div>
                                                 {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
-                                                <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                                </Rating>
                                                 <div className="comment-user-info">
                                                   <Comment.Metadata>
                                                     <div>{comment.date_created}</div>
                                                   </Comment.Metadata>
                                                 </div>
-                                                <Comment.Text>{comment.content}</Comment.Text>
+                                                <Comment.Text>
+                                                  <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                  </Rating>
+                                                  {comment.content}
+                                                </Comment.Text>
                                               </Comment.Content>
                                             </Comment>
                                             : null }
                                           </Comment.Group>
                                         )
                                       })}
-                                      <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea class="commentInput" placeholder="Add a comment.." />
-                                        <Button className="button-upload button-styles"  content='Add Comment'/>
+                                      <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                        <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.." />
+                                        <Button className="button-upload button-styles add-comment-button"  content='Add Comment'>
+                                          <Icon name="send" />
+                                        </Button>
                                       </Form>
                                   </Card.Content>
                                 </Card>

@@ -257,7 +257,7 @@ export const getNotifications=() => {
   return new Promise((resolve, reject) => {
     var token = read_cookie('token')
     $.ajax({
-      url: url + "/user/notifications",
+      url: url + "/notifications",
       type: "GET",
       cache: false,
       contentType: 'application/json',
