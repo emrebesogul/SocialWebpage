@@ -110,10 +110,7 @@ MongoClient.connect(url, function(err, client) {
                     message: "User is not authorized"
                 });
             } else {
-                res.send({
-                    username: authData.username,
-                    userId: authData.userid
-                });
+                database.getUserDataForCurrentUser(client.db('socialwebpage'), res, authData.userid);
             }
         });
     });
@@ -514,9 +511,7 @@ MongoClient.connect(url, function(err, client) {
     //------------------------Upload a profile picture-----------------------//
     app.post('/rest/user/image/create', verifyToken, upload.single('image'), (req, res) => {
         if (!req.file) {
-        res.send(JSON.stringify({
-            message: "Image could not be uploaded"
-        }));
+        res.send(false);
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {

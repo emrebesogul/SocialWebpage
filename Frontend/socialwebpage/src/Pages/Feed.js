@@ -6,7 +6,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
 import { fetchFeedData } from '../API/GET/GetMethods';
 import { getCurrentUserData, checkAuthorization } from '../API/GET/GetMethods';
-import { uploadStoryToPlatform, uploadPictureToPlatform } from '../API/POST/PostMethods';
+import { uploadStoryToPlatform, uploadPictureToPlatform, deleteImageById, deleteStoryEntryById } from '../API/POST/PostMethods';
 import { getFriendRequests, getFriends, getComments, getNotifications } from '../API/GET/GetMethods';
 import { likeStoryEntryById, likeImageById, deleteFriendshipRequest, confirmFriendshipRequest, deleteFriend, createComment, deleteCommentById, likeComment } from '../API/POST/PostMethods';
 import '../profileStyle.css';
@@ -61,9 +61,8 @@ class Feed extends Component {
 
   async getCurrentUserData() {
     const currentUserData = await getCurrentUserData();
-    if(currentUserData.userId) {
-      this.setState({currentUserId: currentUserData.userId})
-    }
+    this.setState({currentUserId: currentUserData.userId})
+    this.setState({currentUserIsAdmin: currentUserData.is_admin});
   }
 
 
@@ -205,7 +204,6 @@ getNumberOfLikesOfComment(currentItem) {
   return numberOfLikes;
 }
 
-// Upload story
 async handleSubmit(event) {
   event.preventDefault();
 
@@ -225,7 +223,6 @@ async handleSubmit(event) {
         this.setState({ redirectToFeed: true });
         window.location.reload();
     } else {
-        //Error messages
         this.setState({ showMessage: true });
     }
 
@@ -234,8 +231,6 @@ async handleSubmit(event) {
 
     this.setState({status: response});
 
-    // Redirect to feed if respose is message is true
-
     if(this.state.status === true) {
         this.setState({ redirectToFeed: true });
         window.location.reload();
@@ -243,7 +238,6 @@ async handleSubmit(event) {
         this.setState({ showMessage: true });
     }
   }
-
 }
 
 onDrop(files) {
@@ -257,6 +251,19 @@ async handleDeleteComment(event, data) {
   if(response) {
     this.getComments();
   }
+}
+
+async handleDeletePost(event, data) {
+  if(data.type == "story") {
+    await deleteStoryEntryById(data._id);
+    this.getfeeddata();
+  }
+  if(data.type == "image") {
+    await deleteImageById(data._id);
+    this.getfeeddata();
+  }
+
+
 }
 
 
@@ -330,6 +337,7 @@ async handleDeleteComment(event, data) {
                                     <Link to={`/profile/${item.username}`}>
                                       <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
+                                    {(this.state.currentUserId === item.user_id) || this.state.currentUserIsAdmin ? <Button onClick={((e) => this.handleDeletePost(e, item))} className="button-upload delete-button-guestbook" circular icon="delete" size="small"></Button> : null}
                                   </div>
 
                                   <Image className="image-feed" src={item.src} />
@@ -385,7 +393,8 @@ async handleDeleteComment(event, data) {
                                                     Likes
                                                   </div>
                                                 </div>
-                                                {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                                {(this.state.currentUserId === comment.author_id) || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                                
                                                 <div className="comment-user-info">
                                                   <Comment.Metadata>
                                                     <div>{comment.date_created}</div>

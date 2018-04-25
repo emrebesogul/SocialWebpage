@@ -29,7 +29,6 @@ class Settings extends React.Component{
 
     componentDidMount() {
         this.getCurrentUserData();
-
     }
 
     async getCurrentUserData() {
@@ -59,7 +58,6 @@ class Settings extends React.Component{
             this.setState({ showMessageSuccess: true });
             this.setState({ showMessageError: false });
         } else {
-            //Error messages
             this.setState({ showMessageSuccess: false });
             this.setState({ showMessageError: true });
         }
@@ -72,12 +70,15 @@ class Settings extends React.Component{
         fd.append('image', this.state.files[0]);
         
         const response = await uploadProfilePicture(fd);
+        console.log(response)
         if(response) {
-            this.setState({ showMessageSuccess: true });
-            this.setState({ showMessageError: false });
+          this.setState({ message: "Profile picture has been uploaded successfully." });
+          this.setState({ showMessageSuccess: true });
+          this.setState({ showMessageError: false });
         } else {
-            this.setState({ showMessageSuccess: false });
-            this.setState({ showMessageError: true });
+          this.setState({ message: "Error while uploading profile picture." });
+          this.setState({ showMessageSuccess: false });
+          this.setState({ showMessageError: true });
         }
     }
 
@@ -88,7 +89,8 @@ class Settings extends React.Component{
           case "username": this.setState({"username": e.target.value}); break;
           case "email":  this.setState({"email": e.target.value}); break;
           default: //Nothing to do;
-    }}
+      }
+    }
 
     onDrop(files) {
       this.setState({
@@ -166,8 +168,8 @@ class Settings extends React.Component{
               </aside>
               <Button id="settings-upload-button" className="button-upload button-styles" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
 
-              {this.state.showMessageError ? <Message color='red'><p>Error while uploading the profile picture!</p></Message> : null}
-              {this.state.showMessageSuccess ? <Message color='green'><p>Profile picture has been uploaded successfully!<br/></p></Message> : null}
+              {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
+              {this.state.showMessageSuccess ? <Message color='green'><p>{this.state.message}<br/></p></Message> : null}
 
             </div>
           </div>
