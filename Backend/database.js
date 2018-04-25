@@ -20,7 +20,7 @@ var call = module.exports = {
             if (username != null && password != null) {
                 db.collection('users').findOne({"username": username}, (err, docs) => {
                     if (err) {
-                        console.log(username, " tried to login");
+                        console.log(username + " failed to login.");
                         res.send(JSON.stringify({
                             message: "Sorry, your password is incorrect. Please check again."
                         }));
@@ -29,21 +29,21 @@ var call = module.exports = {
                     if (docs) {
                         if (JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password)) {
                             jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
-                                console.log("Correct credentials! Login from user: ", docs.username);
+                                console.log(docs.username + " has logged in successfully.");
                                 res.send(JSON.stringify({
                                     message : "Correct credentials",
                                     token,
                                 }));
                             });
                         } else {
-                            console.log(username, " tried to login")
+                            console.log(username + " failed to login.")
                             res.send(JSON.stringify({
                                 message: "Sorry, your password is incorrect. Please check again."
                             }));
                         }
                     }
                     else {
-                        console.log(username, " tried to login");
+                        console.log(username + " failed to login.");
                         res.send(JSON.stringify({
                             message: "Sorry, your password is incorrect. Please check again."
                         }));
@@ -87,7 +87,6 @@ var call = module.exports = {
                                                 message: "This email is not available. Please try another one."
                                             }));
                                         } else {
-                                            console.log("User created: ", username);
                                             db.collection('users').insert({
                                                 "first_name": firstname,
                                                 "last_name": lastname,
@@ -99,6 +98,7 @@ var call = module.exports = {
                                                 "picture": profilePicture,
                                                 "friends": friends
                                             });
+                                            console.log("User created: " + username);
                                             res.send(JSON.stringify({
                                                 message: "User successfully created",
                                                 messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
@@ -143,6 +143,7 @@ var call = module.exports = {
                                             "picture": profilePicture,
                                             "friends": friends
                                         });
+                                        console.log("User created: " + username);
                                     }
                                 })
                             }
@@ -255,10 +256,10 @@ var call = module.exports = {
         });
     },
 
-  //----------------------Upload Image----------------------//
-  //
-  // Receives a file from the react application and stores it
-  // to the database.
+    //----------------------Upload Image----------------------//
+    //
+    // Receives a file from the react application and stores it
+    // to the database.
     uploadImageToPlatform: function (db, res, fileData, fileDataInfo, userId) {
         let title = fileDataInfo.title;
         let content = fileDataInfo.content;
@@ -274,7 +275,6 @@ var call = module.exports = {
             "updated" : false,
             "type": "image"
         });
-        console.log("Image was uploaded to server...")
         res.send(JSON.stringify({
             message: "Image uploaded"
         }));
@@ -297,7 +297,6 @@ var call = module.exports = {
             "updated" : false,
             "type": "story"
         });
-        console.log("Story was uploaded to server...")
         res.send(true);
     },
 
@@ -440,7 +439,7 @@ var call = module.exports = {
                 throw err;
             }
             if (res_find_user) {
-                db.collection('friendRequests').findOne({ $and : [
+                db.collection('friend_requests').findOne({ $and : [
                         {$or: [ {"requesterId": ObjectId(userid), "recipientId": ObjectId(res_find_user._id)}, {"requesterId": ObjectId(res_find_user._id), "recipientId": ObjectId(userid)} ]},
                         {"status": "open"}
                 ]},
@@ -517,12 +516,8 @@ var call = module.exports = {
             if (docs.user_id == userId) {
                 db.collection("comments").remove({ post_id : new ObjectId(storyId) }, (err_remove_comments, res_remove_comments) => {
                     if (err_remove_comments) throw err_remove_comments;
-
-                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
                     db.collection("stories").remove({ _id : new ObjectId(storyId) }, (err, docs) => {
                         if (err) throw err;
-
-                        console.log("Removed story entry from the database");
                         db.collection('notifications').remove({"story_id": ObjectId(storyId)}, (err, res_stories) => {
                             if (err) throw err;
                         });
@@ -546,14 +541,10 @@ var call = module.exports = {
             if (res_find_images !== null && res_find_images.user_id == userId) {
                 db.collection("comments").remove({ post_id : new ObjectId(imageId) }, (err_remove_comments, res_remove_comments) => {
                     if (err_remove_comments) throw err_remove_comments;
-
-                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
                     let path = "./public/uploads/posts/" + res_find_images.filename;
                     fs.unlinkSync(path);
                     db.collection("images").remove({ _id : new ObjectId(imageId) }, (err_remove_image, res_remove_image) => {
                         if (err_remove_image) throw err_remove_image;
-
-                        console.log("Removed image from the database and server");
                         db.collection('notifications').remove({"image_id": ObjectId(imageId)}, (err, res_stories) => {
                             if (err) throw err;
                         });
@@ -730,18 +721,17 @@ var call = module.exports = {
         db.collection('users').findOne({"username": recipient}, (err, res_find_user) => {
             if (err) throw err;
             if (res_find_user) {
-                db.collection('friendRequests').findOne({"requester": requester, "recipient": res_find_user.username}, (err, res_find_request) => {
+                db.collection('friend_requests').findOne({"requester": requester, "recipient": res_find_user.username}, (err, res_find_request) => {
                     if(err) throw err;
                     if (res_find_request) {
                         res.send(JSON.stringify({
                             buttonState: "Undo Friend"
                         }));
                     } else {
-                        console.log("Request sent to add new friend...")
                         res.send(JSON.stringify({
                             buttonState: "Request sent"
                         }));
-                        db.collection('friendRequests').insert({
+                        db.collection('friend_requests').insert({
                             "requester": requester,
                             "requesterId": ObjectId(userId),
                             "recipient": res_find_user.username,
@@ -762,7 +752,7 @@ var call = module.exports = {
 
     //----------------------get Friendship requests----------------------//
     getFriendRequests: function(db, res, userId) {
-        db.collection('friendRequests').aggregate([
+        db.collection('friend_requests').aggregate([
             { $match : {"status": "open", "recipientId": ObjectId(userId)} },
             { $lookup:
                 {
@@ -798,7 +788,7 @@ var call = module.exports = {
 
     //----------------------Confirm Friend Request----------------------//
     confirmFriendRequest: function(db, requesterId, recipientId, res) {
-        db.collection('friendRequests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
+        db.collection('friend_requests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
         });
         db.collection('users').findOne({"_id": ObjectId(requesterId)}, (err, docs) => {
@@ -838,7 +828,7 @@ var call = module.exports = {
 
     //----------------------Decline Friend request----------------------//
     deleteFriendRequest: function(db, requesterId, recipientId, res) {
-        db.collection('friendRequests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
+        db.collection('friend_requests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
             res.send(true);
         });
@@ -916,12 +906,10 @@ var call = module.exports = {
                     res.send(true);
                 }
                 else {
-                    console.log("It is not possible to post a guestbook entry on the own profile!");
                     res.send(false);
                 }
             })
         } else {
-            console.log("It is not possible to post a guestbook entry on the own profile!");
             res.send(false);
         }
     },
@@ -1053,15 +1041,11 @@ var call = module.exports = {
             if (res_find_guestbook_entries.owner_id == userId) {
                 db.collection("comments").remove({ post_id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_comments, res_remove_comments) => {
                     if (err_remove_comments) throw err_remove_comments;
-                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
                     db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
                         if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
-                        console.log("Removed guestbook entry from the database");
-
                         db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
                             if (err_guestbook_delete) throw err_guestbook_delete;
                         });
-
                         res.send(true);
                     });
                 });
@@ -1131,7 +1115,6 @@ var call = module.exports = {
                         }
                     }
                 );
-                console.log("Profile picture has been uploaded")
                 res.send(true);
             } else {
                 res.send(false);
@@ -1156,7 +1139,6 @@ var call = module.exports = {
                         }
                     }
                 );
-                console.log(docs.username + " deleted his profile picture")
                 res.send(true);
             }
         })
