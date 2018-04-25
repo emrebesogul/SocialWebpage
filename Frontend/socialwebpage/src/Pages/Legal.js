@@ -39,7 +39,7 @@ class About extends React.Component{
                   <Item.Content>
                     <Item.Header as='a'>General terms and conditions</Item.Header>
                     <Item.Description>
-                      <p>1. You must be at least 13 years old to use the service.</p>
+                      <p>1. You must be at least 18 years old to use the service.</p>
                       <p>2. You may not post violent, nude, discriminatory, illegal, hurtful, hateful, pornographic or sexually explicit photos or other content on the Service.</p>
                       <p>3. You are responsible for any activity that occurs through your account and you agree not to sell, transfer, license or assign your account, your followers, your username or any account rights. Except for individuals or companies that are expressly authorized to create accounts on behalf of their employees or customers, Ivey prohibits the creation of an account for anyone other than yourself, and you agree not to do so. You also represent and warrant that any information you provide to Ivey upon registration or at any time thereafter is true, accurate, current and complete and you agree to update your information to the extent necessary to maintain its truthfulness and accuracy.</p>
                       <p>4. You agree that you will not request, collect or use the credentials of other Ivey users.</p>
