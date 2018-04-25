@@ -1098,7 +1098,8 @@ var call = module.exports = {
                         "$cond": { if: { "$eq": [ "$author", [] ] }, then: "Anonym", else: "$author.username" }
                     },
                     "profile_picture_filename": "$author.picture",
-                    "profile_picture_url": 1
+                    "profile_picture_url": 1,
+                    "type": 1
                 }
              },
              { $sort : { "date_created" : -1 } }
@@ -1191,7 +1192,8 @@ var call = module.exports = {
                     },
                     "updated": 1,
                     "profile_picture_filename": "$user.picture",
-                    "profile_picture_url": 1
+                    "profile_picture_url": 1,
+                    "type": 1
                 }
              }
             ]).toArray((err_stories, result_stories) => {
@@ -1265,7 +1267,8 @@ var call = module.exports = {
                     },
                     "updated" : 1,
                     "profile_picture_filename": "$user.picture",
-                    "profile_picture_url": 1
+                    "profile_picture_url": 1,
+                    "type": 1
                 }
              },
              { $sort : { "date_created" : -1 } }

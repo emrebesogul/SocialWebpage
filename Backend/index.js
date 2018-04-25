@@ -667,7 +667,7 @@ MongoClient.connect(url, function(err, client) {
         });
     });
 
-    //----------------------------Delete a comment---------------------------//
+    //--------------------------Get all notifications------------------------//
     app.get('/rest/notifications', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
@@ -693,7 +693,7 @@ MongoClient.connect(url, function(err, client) {
                 const type = req.params.type;
                 const typeCommented = req.params.typeCommented;
                 const postId = req.params.postId;
-                
+
                 if(req.params.type == "story") {
                     database.getStoryEntry(client.db('socialwebpage'), res, postId, currentUserId);
                 }
