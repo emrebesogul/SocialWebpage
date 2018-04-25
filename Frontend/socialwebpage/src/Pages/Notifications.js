@@ -32,7 +32,7 @@ class Notifications extends Component {
       this.getNotificationData();
       this.getComments();
   }
-  
+
   async checkAuthorization() {
     const userIsAuthorized = await checkAuthorization();
     if(!userIsAuthorized) {
@@ -135,7 +135,7 @@ class Notifications extends Component {
 
   async handleRateComment(event, data) {
     event.preventDefault();
-  
+
     await likeComment(data._id);
     this.state.resComments.map(item => {
       if(item._id === data._id) {

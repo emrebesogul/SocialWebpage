@@ -132,13 +132,6 @@ class Sidebar extends Component {
                     </Button>
                   </Link>
 
-                  <Link to="/roadmap">
-                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
-                      <Icon className="menu-icons" size="large" name='compass' />
-                      Roadmap
-                    </Button>
-                  </Link>
-
                   <Link to="/legal">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='legal' />

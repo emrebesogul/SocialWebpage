@@ -16,7 +16,7 @@ class About extends React.Component{
               <Sidebar />
           </div>
 
-          <div id="upload-content">
+          <div className="legal-content">
             <h2>Terms of Use & Privacy Policy</h2>
             <div className="milestone">
               <Item.Group divided relaxed>

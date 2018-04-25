@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Sidebar from '../Components/Sidebar';
 import Dropzone from 'react-dropzone'
+import Footer from '../Components/Footer'
 import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
 import { fetchFeedData } from '../API/GET/GetMethods';
@@ -303,7 +304,7 @@ async handleDeletePost(event, data) {
                                         <Input className="input-upload" type="text"/>
 
                                         <span className="input-label-upload"> What story do you want to share?</span>
-                                        <TextArea className="input-upload" type="text"></TextArea>
+                                        <TextArea id="textarea-feed" className="input-upload" type="text"></TextArea>
 
                                           <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
                                               <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
@@ -317,7 +318,7 @@ async handleDeletePost(event, data) {
                                           </aside>
 
                                           {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
-                                        <Button className="button-upload" type="submit">Post</Button>
+                                        <Button id="feed-post-button" className="button-upload" type="submit">Post</Button>
 
                                       </Form>
                                   </div>
@@ -380,7 +381,7 @@ async handleDeletePost(event, data) {
                                                 <div className="comment-header">
                                                     <Comment.Author className="comment-author" >
                                                       <Link to={`/profile/${comment.authorName}`}>
-                                                        {comment.authorName}
+                                                        @{comment.authorName}
                                                       </Link>
                                                     </Comment.Author>
                                                 </div>
@@ -393,23 +394,28 @@ async handleDeletePost(event, data) {
                                                   </div>
                                                 </div>
                                                 {(this.state.currentUserId === comment.author_id) || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
-                                                <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                                </Rating>
+                                                
                                                 <div className="comment-user-info">
                                                   <Comment.Metadata>
                                                     <div>{comment.date_created}</div>
                                                   </Comment.Metadata>
                                                 </div>
-                                                <Comment.Text>{comment.content}</Comment.Text>
+                                                <Comment.Text>
+                                                  <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                  </Rating>
+                                                  {comment.content}
+                                                </Comment.Text>
                                               </Comment.Content>
                                             </Comment>
                                             : null }
                                           </Comment.Group>
                                         )
                                       })}
-                                      <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea class="commentInput" placeholder="Add a comment.." />
-                                        <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                                      <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                        <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.." />
+                                        <Button className="button-upload button-styles add-comment-button"  content='Add Comment'>
+                                          <Icon name="send" />
+                                        </Button>
                                       </Form>
                                   </Card.Content>
                                 </Card>
@@ -438,11 +444,11 @@ async handleDeletePost(event, data) {
                                   {
                                     return(
                                       <div key={index}>
-                                        <List  divided relaxed verticalAlign='middle'>
+                                        <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                            <List.Content>
-                                              <List.Header as='a'>
+                                            {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
+                                            <List.Content className="friends-content">
+                                              <List.Header>
                                                   <Link to={`/profile/${item.requester}`}>
                                                       <span>{item.requester} </span>
                                                   </Link>
@@ -450,9 +456,13 @@ async handleDeletePost(event, data) {
                                               </List.Header>
                                               <List.Description>{item.date_created}</List.Description>
                                             </List.Content>
-                                            <List.Content floated="right">
-                                              <Button onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
-                                              <Button onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
+                                            <List.Content className="flex">
+                                              <div className="flex-item">
+                                                <Button className="button-styles" onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
+                                              </div>
+                                              <div className="flex-item">
+                                                <Button className="button-styles" onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
+                                              </div>
                                             </List.Content>
                                           </List.Item>
                                         </List>
@@ -464,18 +474,20 @@ async handleDeletePost(event, data) {
                                   {
                                     return(
                                       <div key={index}>
-                                        <List  divided relaxed verticalAlign='middle'>
+                                        <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
-                                            <List.Content>
+                                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
+                                            <List.Content className="friends-content">
                                               <List.Header >
                                                   <Link to={`/profile/${item.name}`}>
                                                       {item.name}
                                                   </Link>
                                               </List.Header>
                                             </List.Content>
-                                            <List.Content floated="right">
-                                                <Button onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
+                                            <List.Content className="flex">
+                                              <div className="flex-item">
+                                                <Button className="button-styles" onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
+                                                </div>
                                             </List.Content>
                                           </List.Item>
                                         </List>
@@ -505,20 +517,15 @@ async handleDeletePost(event, data) {
                                 {
                                   return(
                                     <div key={index}>
-                                      <List  divided relaxed verticalAlign='middle'>
+                                      <List className="feed-list-item" divided verticalAlign='middle'>
                                         <List.Item>
-                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <Image size="tiny" avatar src={item.profile_picture_url} className="user-card-avatar"/> : <Image size="tiny" avatar className="user-card-avatar" src="/assets/images/user.png"></Image> }
-                                          <List.Content>
-                                            <List.Header >
-                                                <Link to={`/profile/${item.username}`}>
-                                                    {item.username}
-                                                </Link>
+                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image size="tiny" src={item.profile_picture_url} className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
+                                          <List.Content className="friends-content">
+                                            <List.Header>
+                                                {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}>
+                                              {item.username} {' '} {item.action} <br/>
+                                            <span className="notifications-metatext">{item.date_created}</span></Link></div> : <div >{item.username} {' '} {item.action} <br/> <span className="notifications-metatext">{item.date_created}</span> </div> }
                                             </List.Header>
-                                            {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}>
-                                            <List.Description>{item.action}</List.Description>
-                                            <List.Description>{item.date_created}</List.Description></Link></div> : <div><List.Description>{item.action}</List.Description><List.Description>{item.date_created}</List.Description></div> }
-                                          </List.Content>
-                                          <List.Content floated="right">
                                           </List.Content>
                                         </List.Item>
                                       </List>
@@ -532,6 +539,7 @@ async handleDeletePost(event, data) {
                         ]
                         } />
                 </div>
+                  <Footer />
           </div>
         );
     }
