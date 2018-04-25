@@ -371,7 +371,8 @@ class Profile extends Component {
         if(event.target[0].value.trim() != "" && event.target[0].value != null) {
           let commentData = {
             "content": event.target[0].value,
-            "postId" : data._id
+            "postId" : data._id,
+            "postType" : data.type
           }
           let response = await createComment(commentData);
           if(response) {
