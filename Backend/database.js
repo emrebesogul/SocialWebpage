@@ -20,7 +20,7 @@ var call = module.exports = {
             if (username != null && password != null) {
                 db.collection('users').findOne({"username": username}, (err, docs) => {
                     if (err) {
-                        console.log(username, " tried to login");
+                        console.log(username + " failed to login.");
                         res.send(JSON.stringify({
                             message: "Sorry, your password is incorrect. Please check again."
                         }));
@@ -29,21 +29,21 @@ var call = module.exports = {
                     if (docs) {
                         if (JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password)) {
                             jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
-                                console.log("Correct credentials! Login from user: ", docs.username);
+                                console.log(docs.username + " has logged in successfully.");
                                 res.send(JSON.stringify({
                                     message : "Correct credentials",
                                     token,
                                 }));
                             });
                         } else {
-                            console.log(username, " tried to login")
+                            console.log(username + " failed to login.")
                             res.send(JSON.stringify({
                                 message: "Sorry, your password is incorrect. Please check again."
                             }));
                         }
                     }
                     else {
-                        console.log(username, " tried to login");
+                        console.log(username + " failed to login.");
                         res.send(JSON.stringify({
                             message: "Sorry, your password is incorrect. Please check again."
                         }));
@@ -87,7 +87,6 @@ var call = module.exports = {
                                                 message: "This email is not available. Please try another one."
                                             }));
                                         } else {
-                                            console.log("User created: ", username);
                                             db.collection('users').insert({
                                                 "first_name": firstname,
                                                 "last_name": lastname,
@@ -97,8 +96,10 @@ var call = module.exports = {
                                                 "birthday": birthday,
                                                 "gender": gender,
                                                 "picture": profilePicture,
-                                                "friends": friends
+                                                "friends": friends,
+                                                "is_admin" : false
                                             });
+                                            console.log("User created: " + username);
                                             res.send(JSON.stringify({
                                                 message: "User successfully created",
                                                 messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
@@ -141,8 +142,10 @@ var call = module.exports = {
                                             "birthday": birthday,
                                             "gender": gender,
                                             "picture": profilePicture,
-                                            "friends": friends
+                                            "friends": friends,
+                                            "is_admin" : false
                                         });
+                                        console.log("User created: " + username);
                                     }
                                 })
                             }
@@ -255,10 +258,10 @@ var call = module.exports = {
         });
     },
 
-  //----------------------Upload Image----------------------//
-  //
-  // Receives a file from the react application and stores it
-  // to the database.
+    //----------------------Upload Image----------------------//
+    //
+    // Receives a file from the react application and stores it
+    // to the database.
     uploadImageToPlatform: function (db, res, fileData, fileDataInfo, userId) {
         let title = fileDataInfo.title;
         let content = fileDataInfo.content;
@@ -274,7 +277,6 @@ var call = module.exports = {
             "updated" : false,
             "type": "image"
         });
-        console.log("Image was uploaded to server...")
         res.send(JSON.stringify({
             message: "Image uploaded"
         }));
@@ -297,7 +299,6 @@ var call = module.exports = {
             "updated" : false,
             "type": "story"
         });
-        console.log("Story was uploaded to server...")
         res.send(true);
     },
 
@@ -440,7 +441,7 @@ var call = module.exports = {
                 throw err;
             }
             if (res_find_user) {
-                db.collection('friendRequests').findOne({ $and : [
+                db.collection('friend_requests').findOne({ $and : [
                         {$or: [ {"requesterId": ObjectId(userid), "recipientId": ObjectId(res_find_user._id)}, {"requesterId": ObjectId(res_find_user._id), "recipientId": ObjectId(userid)} ]},
                         {"status": "open"}
                 ]},
@@ -461,14 +462,15 @@ var call = module.exports = {
                         buttonState = "Add Friend";
                     }
                     res.send(JSON.stringify({
-                        id: res_find_user._id,
+                        userId: res_find_user._id,
                         username: res_find_user.username,
                         firstname: res_find_user.first_name,
                         lastname: res_find_user.last_name,
                         email: res_find_user.email,
                         picture: res_find_user.picture,
                         pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture,
-                        buttonState: buttonState
+                        buttonState: buttonState,
+                        is_admin: res_find_user.is_admin
                     }));
                 });
             }
@@ -491,12 +493,14 @@ var call = module.exports = {
             }
             if (res_find_user) {
                 res.send(JSON.stringify({
+                    userId: res_find_user._id,
                     username: res_find_user.username,
                     firstname: res_find_user.first_name,
                     lastname: res_find_user.last_name,
                     email: res_find_user.email,
                     picture: res_find_user.picture,
-                    pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture
+                    pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture,
+                    is_admin: res_find_user.is_admin
                 }));
             }
             else {
@@ -512,28 +516,31 @@ var call = module.exports = {
     // Receives the id of a story entry and deletes it from the database.
     // After that, a message with "true" is send to the react application.
     deleteStoryEntryById: function (db, res, storyId, userId) {
-        db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err, docs) => {
-            if (err) throw err;
-            if (docs.user_id == userId) {
-                db.collection("comments").remove({ post_id : new ObjectId(storyId) }, (err_remove_comments, res_remove_comments) => {
-                    if (err_remove_comments) throw err_remove_comments;
-
-                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
-                    db.collection("stories").remove({ _id : new ObjectId(storyId) }, (err, docs) => {
-                        if (err) throw err;
-
-                        console.log("Removed story entry from the database");
-                        db.collection('notifications').remove({"story_id": ObjectId(storyId)}, (err, res_stories) => {
-                            if (err) throw err;
+        db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) {
+                db.collection("stories").findOne({ _id : new ObjectId(storyId) }, (err, docs) => {
+                    if (err) throw err;
+                    if (docs.user_id == userId || res_find_user.is_admin) {
+                        db.collection("comments").remove({ post_id : new ObjectId(storyId) }, (err_remove_comments, res_remove_comments) => {
+                            if (err_remove_comments) throw err_remove_comments;
+                            db.collection("stories").remove({ _id : new ObjectId(storyId) }, (err, docs) => {
+                                if (err) throw err;
+                                db.collection('notifications').remove({"story_id": ObjectId(storyId)}, (err, res_stories) => {
+                                    if (err) throw err;
+                                });
+                                res.send(true);
+                            });
                         });
-                        res.send(true);
-                    });
+                    }
+                    else {
+                        res.send(false);
+                    }
                 });
-            }
-            else {
-                res.send(false);
+
             }
         });
+
     },
 
     //----------------------Delete Image---------------------//
@@ -541,28 +548,29 @@ var call = module.exports = {
     // Receives the id of an image and deletes it from the database.
     // After that, a message with "true" is send to the react application.
     deleteImageById: function (db, res, imageId, userId) {
-        db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
-            if (err_find_images) throw err_find_images;
-            if (res_find_images !== null && res_find_images.user_id == userId) {
-                db.collection("comments").remove({ post_id : new ObjectId(imageId) }, (err_remove_comments, res_remove_comments) => {
-                    if (err_remove_comments) throw err_remove_comments;
-
-                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
-                    let path = "./public/uploads/posts/" + res_find_images.filename;
-                    fs.unlinkSync(path);
-                    db.collection("images").remove({ _id : new ObjectId(imageId) }, (err_remove_image, res_remove_image) => {
-                        if (err_remove_image) throw err_remove_image;
-
-                        console.log("Removed image from the database and server");
-                        db.collection('notifications').remove({"image_id": ObjectId(imageId)}, (err, res_stories) => {
-                            if (err) throw err;
+        db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) {
+                db.collection("images").findOne({ _id : new ObjectId(imageId) }, (err_find_images, res_find_images) => {
+                    if (err_find_images) throw err_find_images;
+                    if (res_find_images.user_id == userId || res_find_user.is_admin) {
+                        db.collection("comments").remove({ post_id : new ObjectId(imageId) }, (err_remove_comments, res_remove_comments) => {
+                            if (err_remove_comments) throw err_remove_comments;
+                            let path = "./public/uploads/posts/" + res_find_images.filename;
+                            fs.unlinkSync(path);
+                            db.collection("images").remove({ _id : new ObjectId(imageId) }, (err_remove_image, res_remove_image) => {
+                                if (err_remove_image) throw err_remove_image;
+                                db.collection('notifications').remove({"image_id": ObjectId(imageId)}, (err, res_stories) => {
+                                    if (err) throw err;
+                                });
+                                res.send(true);
+                            });
                         });
-                        res.send(true);
-                    });
+                    }
+                    else {
+                        res.send(false);
+                    }
                 });
-            }
-            else {
-                res.send(false);
             }
         });
     },
@@ -582,7 +590,7 @@ var call = module.exports = {
                     db.collection("stories").findOne({"_id" : ObjectId(storyId)}, (err, docs) => {
                         if(err) throw err;
                         if(docs) {
-                            db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your story", "story_id": ObjectId(storyId)}, (err, res_stories) => {
+                            db.collection('notifications').remove({"recipient": ObjectId(docs.user_id), "creator": ObjectId(userId), "action": "liked your story", "story_id": ObjectId(storyId)}, (err, res_stories) => {
                                 if (err) throw err;
                             });
                         }
@@ -598,8 +606,8 @@ var call = module.exports = {
                     if (err) throw err;
                     if (docs) {
                         db.collection('notifications').insert({
-                            "whoAmI": ObjectId(docs.user_id),
-                            "whoDidAction": ObjectId(userId),
+                            "recipient": ObjectId(docs.user_id),
+                            "creator": ObjectId(userId),
                             "action": "liked your story",
                             "date_created": new Date(),
                             "story_id": ObjectId(storyId)
@@ -638,7 +646,7 @@ var call = module.exports = {
                     db.collection("images").findOne({"_id" : ObjectId(imageId)}, (err, docs) => {
                         if (err) throw err;
                         if (docs) {
-                            db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your image", "image_id": ObjectId(imageId)}, (err, res_stories) => {
+                            db.collection('notifications').remove({"recipient": ObjectId(docs.user_id), "creator": ObjectId(userId), "action": "liked your image", "image_id": ObjectId(imageId)}, (err, res_stories) => {
                                 if (err) throw err;
                             });
                         }
@@ -657,8 +665,8 @@ var call = module.exports = {
                     if (err) throw err;
                     if (docs) {
                         db.collection('notifications').insert({
-                            "whoAmI": ObjectId(docs.user_id),
-                            "whoDidAction": ObjectId(userId),
+                            "recipient": ObjectId(docs.user_id),
+                            "creator": ObjectId(userId),
                             "action": "liked your photo",
                             "date_created": new Date(),
                             "image_id": ObjectId(imageId)
@@ -730,18 +738,17 @@ var call = module.exports = {
         db.collection('users').findOne({"username": recipient}, (err, res_find_user) => {
             if (err) throw err;
             if (res_find_user) {
-                db.collection('friendRequests').findOne({"requester": requester, "recipient": res_find_user.username}, (err, res_find_request) => {
+                db.collection('friend_requests').findOne({"requester": requester, "recipient": res_find_user.username}, (err, res_find_request) => {
                     if(err) throw err;
                     if (res_find_request) {
                         res.send(JSON.stringify({
                             buttonState: "Undo Friend"
                         }));
                     } else {
-                        console.log("Request sent to add new friend...")
                         res.send(JSON.stringify({
                             buttonState: "Request sent"
                         }));
-                        db.collection('friendRequests').insert({
+                        db.collection('friend_requests').insert({
                             "requester": requester,
                             "requesterId": ObjectId(userId),
                             "recipient": res_find_user.username,
@@ -762,7 +769,7 @@ var call = module.exports = {
 
     //----------------------get Friendship requests----------------------//
     getFriendRequests: function(db, res, userId) {
-        db.collection('friendRequests').aggregate([
+        db.collection('friend_requests').aggregate([
             { $match : {"status": "open", "recipientId": ObjectId(userId)} },
             { $lookup:
                 {
@@ -798,7 +805,7 @@ var call = module.exports = {
 
     //----------------------Confirm Friend Request----------------------//
     confirmFriendRequest: function(db, requesterId, recipientId, res) {
-        db.collection('friendRequests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
+        db.collection('friend_requests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
         });
         db.collection('users').findOne({"_id": ObjectId(requesterId)}, (err, docs) => {
@@ -828,8 +835,8 @@ var call = module.exports = {
             }
         });
         db.collection('notifications').insert({
-            "whoAmI": ObjectId(requesterId),
-            "whoDidAction": ObjectId(recipientId),
+            "recipient": ObjectId(requesterId),
+            "creator": ObjectId(recipientId),
             "action": "added you as friend",
             "date_created": new Date()
         });
@@ -838,7 +845,7 @@ var call = module.exports = {
 
     //----------------------Decline Friend request----------------------//
     deleteFriendRequest: function(db, requesterId, recipientId, res) {
-        db.collection('friendRequests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
+        db.collection('friend_requests').remove({"requesterId": ObjectId(requesterId), "recipientId": ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
             res.send(true);
         });
@@ -906,8 +913,8 @@ var call = module.exports = {
                         "type": "guestbook"
                     }, (err_insert_enty, res_insert_entry) => {
                         db.collection('notifications').insert({
-                            "whoAmI": ObjectId(res_user._id),
-                            "whoDidAction": ObjectId(authorId),
+                            "recipient": ObjectId(res_user._id),
+                            "creator": ObjectId(authorId),
                             "action": "Posted a new entry in your guestbook.",
                             "date_created": date_created,
                             "guestbook_id": ObjectId(res_insert_entry.ops[0]._id)
@@ -916,12 +923,10 @@ var call = module.exports = {
                     res.send(true);
                 }
                 else {
-                    console.log("It is not possible to post a guestbook entry on the own profile!");
                     res.send(false);
                 }
             })
         } else {
-            console.log("It is not possible to post a guestbook entry on the own profile!");
             res.send(false);
         }
     },
@@ -1010,8 +1015,8 @@ var call = module.exports = {
                 res_find_guestbook_entries.liking_users.splice(index, 1);
 
                 db.collection('notifications').remove({
-                    "whoAmI": new ObjectId(res_find_guestbook_entries.owner_id), 
-                    "whoDidAction": new ObjectId(userId), 
+                    "recipient": new ObjectId(res_find_guestbook_entries.owner_id), 
+                    "creator": new ObjectId(userId), 
                     "action": "liked your guestbook post", 
                     "guestbook_id": new ObjectId(guestbookData.guestbookEntryId)
                 }, (err, res_guestbookData) => {
@@ -1021,8 +1026,8 @@ var call = module.exports = {
             else {
                 res_find_guestbook_entries.liking_users.push(userId);
                 db.collection('notifications').insert({
-                    "whoAmI": new ObjectId(res_find_guestbook_entries.owner_id),
-                    "whoDidAction": new ObjectId(userId),
+                    "recipient": new ObjectId(res_find_guestbook_entries.owner_id),
+                    "creator": new ObjectId(userId),
                     "action": "liked your guestbook post",
                     "date_created": new Date(),
                     "guestbook_id": new ObjectId(guestbookData.guestbookEntryId)
@@ -1048,26 +1053,27 @@ var call = module.exports = {
     // Receives the id of a guestbook entry and deletes it from the database.
     // After that, a message with "true" is send to the react application.
     deleteGuestbookEntryById: function (db, res, guestbookData, userId) {
-        db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
-            if (err_find_guestbook_entries) throw err_find_guestbook_entries;
-            if (res_find_guestbook_entries.owner_id == userId) {
-                db.collection("comments").remove({ post_id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_comments, res_remove_comments) => {
-                    if (err_remove_comments) throw err_remove_comments;
-                    console.log("Removed " + res_remove_comments.result.n + " comments from the database");
-                    db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
-                        if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
-                        console.log("Removed guestbook entry from the database");
-
-                        db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
-                            if (err_guestbook_delete) throw err_guestbook_delete;
+        db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) { 
+                db.collection("guestbookEntries").findOne({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_find_guestbook_entries, res_find_guestbook_entries) => {
+                    if (err_find_guestbook_entries) throw err_find_guestbook_entries;
+                    if (res_find_guestbook_entries.owner_id == userId || res_find_user.is_admin) {
+                        db.collection("comments").remove({ post_id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_comments, res_remove_comments) => {
+                            if (err_remove_comments) throw err_remove_comments;
+                            db.collection("guestbookEntries").remove({ _id : new ObjectId(guestbookData.guestbookEntryId) }, (err_remove_guestbook_entries, res_remove_guestbook_entries) => {
+                                if (err_remove_guestbook_entries) throw err_remove_guestbook_entries;
+                                db.collection('notifications').remove({"guestbook_id": ObjectId(guestbookData.guestbookEntryId)}, (err_guestbook_delete, res_guestbook_delete) => {
+                                    if (err_guestbook_delete) throw err_guestbook_delete;
+                                });
+                                res.send(true);
+                            });
                         });
-
-                        res.send(true);
-                    });
+                    }
+                    else {
+                        res.send(false);
+                    }
                 });
-            }
-            else {
-                res.send(false);
             }
         });
     },
@@ -1131,7 +1137,6 @@ var call = module.exports = {
                         }
                     }
                 );
-                console.log("Profile picture has been uploaded")
                 res.send(true);
             } else {
                 res.send(false);
@@ -1139,7 +1144,7 @@ var call = module.exports = {
         });
     },
 
-    //----------------------Delete Profile Pic---------------------//
+    //----------------------Delete Profile Picture---------------------//
     deleteProfilePicture: function (db, res, userId) {
         db.collection('users').findOne({ _id : new ObjectId(userId)}, (err, docs) => {
             if (err) throw err;
@@ -1156,7 +1161,6 @@ var call = module.exports = {
                         }
                     }
                 );
-                console.log(docs.username + " deleted his profile picture")
                 res.send(true);
             }
         })
@@ -1329,8 +1333,8 @@ var call = module.exports = {
                     if (res_find_stories) {
                         if (res_find_stories.user_id !== currentUserId) {
                             db.collection('notifications').insert({
-                                "whoAmI": new ObjectId(res_find_stories.user_id),
-                                "whoDidAction": new ObjectId(currentUserId),
+                                "recipient": new ObjectId(res_find_stories.user_id),
+                                "creator": new ObjectId(currentUserId),
                                 "action": "commented on your story",
                                 "type": res_find_stories.type,
                                 "date_created": date_created,
@@ -1346,8 +1350,8 @@ var call = module.exports = {
                     if (res_find_image) {
                         if (res_find_image.user_id !== currentUserId) {
                             db.collection('notifications').insert({
-                                "whoAmI": ObjectId(res_find_image.user_id),
-                                "whoDidAction": ObjectId(currentUserId),
+                                "recipient": ObjectId(res_find_image.user_id),
+                                "creator": ObjectId(currentUserId),
                                 "action": "commented on your image",
                                 "type": res_find_image.type,
                                 "date_created": date_created,
@@ -1363,8 +1367,8 @@ var call = module.exports = {
                     if (res_find_guestbook_entry) {
                         if (res_find_guestbook_entry.owner_id !== currentUserId) {
                             db.collection('notifications').insert({
-                                "whoAmI": ObjectId(res_find_guestbook_entry.owner_id),
-                                "whoDidAction": ObjectId(currentUserId),
+                                "recipient": ObjectId(res_find_guestbook_entry.owner_id),
+                                "creator": ObjectId(currentUserId),
                                 "action": "commented on your guestbook entry",
                                 "type": res_find_guestbook_entry.type,
                                 "date_created": date_created,
@@ -1449,19 +1453,24 @@ var call = module.exports = {
 
     //----------------------Delete Comment----------------------//
     deleteCommentById: function (db, res, commentId, userId) {
-        db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
-            if (err_find_comments) throw err_find_comments;
-            if (res_find_comments.author_id == userId) {
-                db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
-                    if (err_remove_comments) throw err_remove_comments;
-                    db.collection('notifications').remove({"comment_id": ObjectId(commentId)}, (err_notification, res_notification) => {
-                        if (err_notification) throw err_notification;
-                    });
-                    res.send(true);
+        db.collection('users').findOne({"_id": ObjectId(userId)},(err_find_user, res_find_user) => {
+            if (err_find_user) throw err_find_user;
+            if (res_find_user) { 
+                db.collection("comments").findOne({ _id : new ObjectId(commentId) }, (err_find_comments, res_find_comments) => {
+                    if (err_find_comments) throw err_find_comments;
+                    if (res_find_comments.author_id == userId || res_find_user.is_admin) {
+                        db.collection("comments").remove({ _id : new ObjectId(commentId) }, (err_remove_comments, res_remove_comments) => {
+                            if (err_remove_comments) throw err_remove_comments;
+                            db.collection('notifications').remove({"comment_id": ObjectId(commentId)}, (err_notification, res_notification) => {
+                                if (err_notification) throw err_notification;
+                            });
+                            res.send(true);
+                        });
+                    }
+                    else {
+                        res.send(false);
+                    }
                 });
-            }
-            else {
-                res.send(false);
             }
         });
     },
@@ -1469,11 +1478,11 @@ var call = module.exports = {
     //----------------------------List all notifications of a user-----------------------------//
     getNotifications: function(db, res, userId) {
         db.collection('notifications').aggregate([
-            { $match: {"whoAmI": ObjectId(userId), "whoDidAction": {"$ne": ObjectId(userId)} }},
+            { $match: {"recipient": ObjectId(userId), "creator": {"$ne": ObjectId(userId)} }},
             { $lookup:
                 {
                     from: "users",
-                    localField: "whoDidAction",
+                    localField: "creator",
                     foreignField: "_id",
                     as: "user"
                 }
