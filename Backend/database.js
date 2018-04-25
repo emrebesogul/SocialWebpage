@@ -582,7 +582,7 @@ var call = module.exports = {
                     db.collection("stories").findOne({"_id" : ObjectId(storyId)}, (err, docs) => {
                         if(err) throw err;
                         if(docs) {
-                            db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your story", "story_id": ObjectId(storyId)}, (err, res_stories) => {
+                            db.collection('notifications').remove({"recipient": ObjectId(docs.user_id), "creator": ObjectId(userId), "action": "liked your story", "story_id": ObjectId(storyId)}, (err, res_stories) => {
                                 if (err) throw err;
                             });
                         }
@@ -598,8 +598,8 @@ var call = module.exports = {
                     if (err) throw err;
                     if (docs) {
                         db.collection('notifications').insert({
-                            "whoAmI": ObjectId(docs.user_id),
-                            "whoDidAction": ObjectId(userId),
+                            "recipient": ObjectId(docs.user_id),
+                            "creator": ObjectId(userId),
                             "action": "liked your story",
                             "date_created": new Date(),
                             "story_id": ObjectId(storyId)
@@ -638,7 +638,7 @@ var call = module.exports = {
                     db.collection("images").findOne({"_id" : ObjectId(imageId)}, (err, docs) => {
                         if (err) throw err;
                         if (docs) {
-                            db.collection('notifications').remove({"whoAmI": ObjectId(docs.user_id), "whoDidAction": ObjectId(userId), "action": "liked your image", "image_id": ObjectId(imageId)}, (err, res_stories) => {
+                            db.collection('notifications').remove({"recipient": ObjectId(docs.user_id), "creator": ObjectId(userId), "action": "liked your image", "image_id": ObjectId(imageId)}, (err, res_stories) => {
                                 if (err) throw err;
                             });
                         }
@@ -657,8 +657,8 @@ var call = module.exports = {
                     if (err) throw err;
                     if (docs) {
                         db.collection('notifications').insert({
-                            "whoAmI": ObjectId(docs.user_id),
-                            "whoDidAction": ObjectId(userId),
+                            "recipient": ObjectId(docs.user_id),
+                            "creator": ObjectId(userId),
                             "action": "liked your photo",
                             "date_created": new Date(),
                             "image_id": ObjectId(imageId)
@@ -828,8 +828,8 @@ var call = module.exports = {
             }
         });
         db.collection('notifications').insert({
-            "whoAmI": ObjectId(requesterId),
-            "whoDidAction": ObjectId(recipientId),
+            "recipient": ObjectId(requesterId),
+            "creator": ObjectId(recipientId),
             "action": "added you as friend",
             "date_created": new Date()
         });
@@ -906,8 +906,8 @@ var call = module.exports = {
                         "type": "guestbook"
                     }, (err_insert_enty, res_insert_entry) => {
                         db.collection('notifications').insert({
-                            "whoAmI": ObjectId(res_user._id),
-                            "whoDidAction": ObjectId(authorId),
+                            "recipient": ObjectId(res_user._id),
+                            "creator": ObjectId(authorId),
                             "action": "Posted a new entry in your guestbook.",
                             "date_created": date_created,
                             "guestbook_id": ObjectId(res_insert_entry.ops[0]._id)
@@ -1010,8 +1010,8 @@ var call = module.exports = {
                 res_find_guestbook_entries.liking_users.splice(index, 1);
 
                 db.collection('notifications').remove({
-                    "whoAmI": new ObjectId(res_find_guestbook_entries.owner_id), 
-                    "whoDidAction": new ObjectId(userId), 
+                    "recipient": new ObjectId(res_find_guestbook_entries.owner_id), 
+                    "creator": new ObjectId(userId), 
                     "action": "liked your guestbook post", 
                     "guestbook_id": new ObjectId(guestbookData.guestbookEntryId)
                 }, (err, res_guestbookData) => {
@@ -1021,8 +1021,8 @@ var call = module.exports = {
             else {
                 res_find_guestbook_entries.liking_users.push(userId);
                 db.collection('notifications').insert({
-                    "whoAmI": new ObjectId(res_find_guestbook_entries.owner_id),
-                    "whoDidAction": new ObjectId(userId),
+                    "recipient": new ObjectId(res_find_guestbook_entries.owner_id),
+                    "creator": new ObjectId(userId),
                     "action": "liked your guestbook post",
                     "date_created": new Date(),
                     "guestbook_id": new ObjectId(guestbookData.guestbookEntryId)
@@ -1329,8 +1329,8 @@ var call = module.exports = {
                     if (res_find_stories) {
                         if (res_find_stories.user_id !== currentUserId) {
                             db.collection('notifications').insert({
-                                "whoAmI": new ObjectId(res_find_stories.user_id),
-                                "whoDidAction": new ObjectId(currentUserId),
+                                "recipient": new ObjectId(res_find_stories.user_id),
+                                "creator": new ObjectId(currentUserId),
                                 "action": "commented on your story",
                                 "type": res_find_stories.type,
                                 "date_created": date_created,
@@ -1346,8 +1346,8 @@ var call = module.exports = {
                     if (res_find_image) {
                         if (res_find_image.user_id !== currentUserId) {
                             db.collection('notifications').insert({
-                                "whoAmI": ObjectId(res_find_image.user_id),
-                                "whoDidAction": ObjectId(currentUserId),
+                                "recipient": ObjectId(res_find_image.user_id),
+                                "creator": ObjectId(currentUserId),
                                 "action": "commented on your image",
                                 "type": res_find_image.type,
                                 "date_created": date_created,
@@ -1363,8 +1363,8 @@ var call = module.exports = {
                     if (res_find_guestbook_entry) {
                         if (res_find_guestbook_entry.owner_id !== currentUserId) {
                             db.collection('notifications').insert({
-                                "whoAmI": ObjectId(res_find_guestbook_entry.owner_id),
-                                "whoDidAction": ObjectId(currentUserId),
+                                "recipient": ObjectId(res_find_guestbook_entry.owner_id),
+                                "creator": ObjectId(currentUserId),
                                 "action": "commented on your guestbook entry",
                                 "type": res_find_guestbook_entry.type,
                                 "date_created": date_created,
@@ -1469,11 +1469,11 @@ var call = module.exports = {
     //----------------------------List all notifications of a user-----------------------------//
     getNotifications: function(db, res, userId) {
         db.collection('notifications').aggregate([
-            { $match: {"whoAmI": ObjectId(userId), "whoDidAction": {"$ne": ObjectId(userId)} }},
+            { $match: {"recipient": ObjectId(userId), "creator": {"$ne": ObjectId(userId)} }},
             { $lookup:
                 {
                     from: "users",
-                    localField: "whoDidAction",
+                    localField: "creator",
                     foreignField: "_id",
                     as: "user"
                 }
