@@ -31,6 +31,7 @@ class ProfileHeader extends Component {
 
         if(username === undefined) {
             const response = await getUserData("/getUserData");
+            this.setState({userId: response.userId})
             this.setState({username: response.username})
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
@@ -39,18 +40,17 @@ class ProfileHeader extends Component {
             this.setState({pictureURL: response.pictureURL})
 
             const currentUserData = await getCurrentUserData();
-
-            if(currentUserData.username === this.state.username) {
+            this.setState({currentUserIsAdmin: currentUserData.is_admin});
+            if(currentUserData.userId === this.state.userId) {
                 this.setState({ show: false});
             } else {
                 this.setState({ show: true});
             }
-
         } else {
             let api = "/getUserData?username=" + username;
             const response = await getUserData(api);
+            this.setState({userId: response.userId})
             this.setState({username: response.username})
-            this.setState({id: response.id})
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
             this.setState({email: response.email})
@@ -59,8 +59,8 @@ class ProfileHeader extends Component {
             this.setState({buttonState: response.buttonState})
 
             const currentUserData = await getCurrentUserData();
-
-            if(currentUserData.username === this.state.username) {
+            this.setState({currentUserIsAdmin: currentUserData.is_admin});
+            if(currentUserData.userId === this.state.userId) {
                 this.setState({ show: false});
             } else {
                 this.setState({ show: true});
@@ -88,7 +88,7 @@ class ProfileHeader extends Component {
 
         // Delete friendship request to user
         if(this.state.buttonState == "Delete Friend") {
-            const response = await deleteFriend(this.state.id);
+            const response = await deleteFriend(this.state.userId);
             if(response) {
                 window.location.reload();
             }
@@ -124,7 +124,7 @@ class ProfileHeader extends Component {
                   </div>
 
                     <div>
-                        {!this.state.show && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePicture} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
+                        {(!this.state.show || this.state.currentUserIsAdmin) && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePicture} id="delete-button-profile-picture" circular icon="delete" ></Button> : null}
 
                         {this.state.pictureURL !== "http://localhost:8000/uploads/posts/" ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
 
