@@ -186,7 +186,7 @@ h2.ui.huge.icon.center.aligned.header{
   justify-content: center;
 }
 
-.red-border-button:hover{
+#red-border-button:hover{
     background-color: red !important;
     color: white !important;
     transition: all 0.3s !important;
