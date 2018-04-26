@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Sidebar from '../Components/Sidebar';
 import Dropzone from 'react-dropzone'
-import Footer from '../Components/Footer'
 import { Link, Redirect } from 'react-router-dom';
 import { Tab, Card, Image, Icon, Rating, List, Button, Header, Comment, Message, TextArea, Input, Form } from 'semantic-ui-react'
 import { fetchFeedData } from '../API/GET/GetMethods';
@@ -241,9 +240,8 @@ async handleSubmit(event) {
 }
 
 onDrop(files) {
-  this.setState({
-    files: files
-  });
+  this.setState({files: files});
+  document.getElementById("textarea-feed").removeAttribute("required");
 }
 
 async handleDeleteComment(event, data) {
@@ -299,25 +297,19 @@ async handleDeletePost(event, data) {
                                 <Card.Content id="feed-upload-content">
                                   <div id="upload-content">
                                      <Form onSubmit={this.handleSubmit.bind(this)}>
-                                        <span className="input-label-upload"> Add the title of your new post</span>
 
-                                        <Input className="input-upload" type="text"/>
+                                        <Input className="input-upload" placeholder=" What's the title of your post?" type="text"/>
 
-                                        <span className="input-label-upload"> What story do you want to share?</span>
-                                        <TextArea id="textarea-feed" className="input-upload" type="text"></TextArea>
+                                        <span className="input-label-upload"> </span>
+                                        <TextArea id="textarea-feed" className="input-upload" placeholder="What story do you want to share?" required type="text"></TextArea>
 
-                                          <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
-                                              <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
-                                          </Dropzone>
+                                        <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>
 
-                                          <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>
-                                          <aside>
-                                              {
-                                                this.state.files.map(f => <span className="upload-image-label" key={f.name}>Uploaded Filename: {f.name}</span>)
-                                              }
-                                          </aside>
+                                        {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 
-                                          {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
+                                        <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+                                            <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
+                                        </Dropzone>
                                         <Button id="feed-post-button" className="button-upload" type="submit">Post</Button>
 
                                       </Form>
@@ -413,7 +405,7 @@ async handleDeletePost(event, data) {
                                       })}
                                       <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                         <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.." />
-                                        <Button className="button-upload button-styles add-comment-button"  content='Add Comment'>
+                                        <Button className="button-upload button-styles add-comment-button">
                                           <Icon name="send" />
                                         </Button>
                                       </Form>
@@ -539,7 +531,6 @@ async handleDeletePost(event, data) {
                         ]
                         } />
                 </div>
-                  <Footer />
           </div>
         );
     }

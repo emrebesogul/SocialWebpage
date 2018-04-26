@@ -153,23 +153,17 @@ class Settings extends React.Component{
                 Manage your profile settings and set your profile picture.
               </Header.Subheader>
               </Header>
-              <p>
-                Upload a photo and set it as your profile picture.
-              </p>
-              <Dropzone id="dz-repair" multiple={ false } name="image" acceptedFiles="image/jpeg, image/png" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
-                <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
-              </Dropzone>
 
               <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>
-              <aside>
-                  {
-                    this.state.files.map(f => <span className="upload-image-label" key={f.name}>Uploaded Filename: {f.name}</span>)
-                  }
-              </aside>
-              <Button id="settings-upload-button" className="button-upload button-styles" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
 
               {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
               {this.state.showMessageSuccess ? <Message color='green'><p>{this.state.message}<br/></p></Message> : null}
+
+              <Dropzone id="dz-repair" multiple={ false } name="image" acceptedFiles="image/jpeg, image/png" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+                <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
+              </Dropzone>
+              <Button id="settings-upload-button" className="button-upload button-styles" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
+
 
             </div>
           </div>
