@@ -563,6 +563,10 @@ textarea {
   margin-bottom: 20px !important;
 }
 
+.not-height{
+  margin-top: 20px;
+}
+
 .logo{
   height: 72px;
   position: fixed !important;
