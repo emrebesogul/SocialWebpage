@@ -664,7 +664,7 @@ class Profile extends Component {
                                       <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
                                     </Form.Field>
                                     <Form.TextArea required placeholder="What do you want to say?" autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
-                                    <Button className="button-styles">Add Comment</Button>
+                                    <Button className="button-styles mobile-button-border">Add entry</Button>
                                   </Form>
                                 </Card.Content>
                               </Card>
