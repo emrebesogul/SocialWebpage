@@ -1340,7 +1340,7 @@ img.ui.image.image-feed{
       width: 100% !important;
     }
 
-    .red-border-button{
+    #red-border-button{
       border: 1px solid red !important;
     }
 
