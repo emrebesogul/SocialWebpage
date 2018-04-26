@@ -26,9 +26,6 @@ class SearchBar extends Component {
         }
     }
 
-    reloadPage() {
-    }
-
   resetComponent = () => {
       this.setState({ isLoading: false, results: [], value: '' })
   }

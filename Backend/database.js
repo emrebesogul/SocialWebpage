@@ -699,8 +699,10 @@ var call = module.exports = {
     updateUserData: function(db, res, userData, currentUserId) {
         let newUsername = (userData.username).trim();
         let newEmail = (userData.email).trim();
-        let newHashedPassword = SHA256(userData.password)
+        let newHashedPassword = SHA256(userData.new_password)
+        let oldHashedPassword = SHA256(userData.old_password)
         let permitUpdate = 1;
+
         let responseMessage = "User data successfully updated.";
         if(newEmail != null && newEmail != "" && newUsername != null && newUsername != "") {
             db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
@@ -714,10 +716,11 @@ var call = module.exports = {
                             permitUpdate = 0;
                             responseMessage = "This email address already exists.";
                         }
+                        res.send(JSON.stringify({message: responseMessage}));
                     }
                 });
                 if (permitUpdate) {
-                    if(userData.password == "" || userData.password == null) {
+                    if(userData.new_password == "" || userData.new_password == null) {
                         db.collection('users').update(
                             { _id: ObjectId(currentUserId) },
                             {
@@ -729,22 +732,32 @@ var call = module.exports = {
                                 }
                             }
                         );
+                        res.send(JSON.stringify({message: responseMessage}));
                     } else {
-                        db.collection('users').update(
-                            { _id: ObjectId(currentUserId) },
-                            {
-                                $set: {
-                                "first_name": userData.first_name,
-                                "last_name": userData.last_name,
-                                "username": newUsername,
-                                "email": newEmail,
-                                "password": newHashedPassword.words
+                        db.collection('users').findOne({"_id": new ObjectId(currentUserId)}, (err, docs) => {
+                            if (err) throw err;
+                            if (docs) {
+                                if (JSON.stringify(oldHashedPassword.words) === JSON.stringify(docs.password)) {
+                                    db.collection('users').update(
+                                        { _id: ObjectId(currentUserId) },
+                                        {
+                                            $set: {
+                                            "first_name": userData.first_name,
+                                            "last_name": userData.last_name,
+                                            "username": newUsername,
+                                            "email": newEmail,
+                                            "password": newHashedPassword.words
+                                            }
+                                        }
+                                    );
+                                } else {
+                                    responseMessage = "Your old password is not the same.";
                                 }
                             }
-                        );
+                            res.send(JSON.stringify({message: responseMessage}));
+                        });
                     }
                 }
-                res.send(JSON.stringify({message: responseMessage}));
             });
         } else {
             res.send(JSON.stringify({message: "Username and email must not be empty!"}));
