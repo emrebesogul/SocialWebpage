@@ -617,6 +617,7 @@ textarea {
 
 .profile-edit-buttons{
   display: flex;
+  justify-content: flex-end;
 }
 
 .wrapper{
@@ -1206,7 +1207,7 @@ img.ui.image.image-feed{
 
     #feed-content{
       width: 100% !important;
-      max-width: 765px;
+      /*max-width: 765px;*/
       position: relative;
       top: 57px;
     }
@@ -1306,6 +1307,11 @@ img.ui.image.image-feed{
       margin-top: 10px;
     }
 
+    #friends {
+      margin-left: 0 !important; */
+      width: 100%;
+    }
+
     #card-content{
       padding: 1em 0.5em;
     }
@@ -1332,7 +1338,7 @@ img.ui.image.image-feed{
     }
 
     #upload-content{
-      width: 105%;
+      width: 100%;
       padding-left: 15px;
     }
 
