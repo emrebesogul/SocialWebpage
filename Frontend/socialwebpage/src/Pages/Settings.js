@@ -1,10 +1,11 @@
 import React from 'react';
 import { Icon, Header,  Form, Input, Label, Button, Message } from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom';
 import Sidebar from '../Components/Sidebar'
 import Dropzone from 'react-dropzone'
 import { getUserData } from '../API/GET/GetMethods';
 import { updateUserData } from '../API/PUT/PutMethods';
-import { uploadProfilePicture } from '../API/POST/PostMethods';
+import { uploadProfilePicture, deleteUser } from '../API/POST/PostMethods';
 
 class Settings extends React.Component{
     constructor() {
@@ -35,6 +36,7 @@ class Settings extends React.Component{
     async getCurrentUserData() {
         const response = await getUserData("/getUserData");
         if(response) {
+            this.setState({userId: response.userId})
             this.setState({username: response.username})
             this.setState({firstname: response.firstname})
             this.setState({lastname: response.lastname})
@@ -72,7 +74,6 @@ class Settings extends React.Component{
         fd.append('image', this.state.files[0]);
 
         const response = await uploadProfilePicture(fd);
-        console.log(response)
         if(response) {
           this.setState({ message: "Profile picture has been uploaded successfully." });
           this.setState({ showMessageSuccess: true });
@@ -105,10 +106,21 @@ class Settings extends React.Component{
       this.setState({
         files: files
       });
+    } 
+
+    async handleDeleteUser() {
+      let response = await deleteUser(this.state.userId);
+      if(response.userDeleted) {
+        this.setState({ redirectToLogin: true });
+      }
     }
 
 
   render(){
+    const { redirectToLogin } = this.state;
+         if (redirectToLogin) {
+           return <Redirect to='/login'/>;
+         }
     return(
       <div>
         <div className="feed">
@@ -154,7 +166,7 @@ class Settings extends React.Component{
 
                 <Button className="button-upload mobile-button-border">Save</Button>
               </Form>
-
+              <Button onClick={((e) => this.handleDeleteUser())} className="button-upload">Delete User</Button>
             </div>
             <div className="account-settings">
               <Header as='h2' size="medium" icon textAlign="left">

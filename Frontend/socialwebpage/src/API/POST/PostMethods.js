@@ -481,3 +481,25 @@ export const likeComment=(commentId) => {
         });
     });
 }
+
+export const deleteUser=(userId) => {
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+        $.ajax({
+          url: url + "/user/delete",
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({userId: userId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}

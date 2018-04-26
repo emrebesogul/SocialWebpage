@@ -665,6 +665,19 @@ MongoClient.connect(url, function(err, client) {
         });
     });
 
+    //------------------------------Delete a user----------------------------//
+    app.post('/rest/user/delete', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.send({userDelete: false });
+            } else {
+                const userId = req.body.userId;
+                const currentUserId = authData.userid;
+                database.deleteUser(client.db('socialwebpage'), res, userId, currentUserId);
+            }
+        });
+    });
+
     app.listen(8000, function() {
         console.log('Listening for API Requests on port 8000...')
     });
