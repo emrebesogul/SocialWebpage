@@ -615,6 +615,10 @@ textarea {
   background-color: #1a2e3ed6;
 }
 
+.profile-edit-buttons{
+  display: flex;
+}
+
 .wrapper{
   display: none;
   height: 100vh;
