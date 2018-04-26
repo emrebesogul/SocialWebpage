@@ -62,13 +62,34 @@ class About extends React.Component{
                   <Item.Content>
                     <Item.Header as='a'>Privacy Policy</Item.Header>
                     <Item.Description>
-                        <p>Entry into force: 1st May 2018</p>
-                        <p></p>
-                        <p></p>
-                        <p></p>
+                        <p>Entry into force: 1st April 2018</p>
+                        <p>1. We take the protection of your personal data very seriously. We treat your personal data confidentially and in accordance with the statutory data protection regulations and this data protection declaration.</p>
+                        <p>2. The use of our website is generally possible without providing personal data. As far as on our sides personal data (for example name, address or e-mail addresses) are raised, this takes place, as far as possible, always on voluntary basis. This data will not be passed on to third parties without your express consent.</p>
+                        <p>3. We would like to point out that data transmission over the Internet (e.g. communication by e-mail) can have security gaps. A complete protection of data against access by third parties is not possible.</p>
                     </Item.Description>
                   </Item.Content>
                 </Item>
+
+                <Item className="roadmap-item">
+                  <Item.Content>
+                    <Item.Header as='a'>Cookies</Item.Header>
+                    <Item.Description>
+                        <p>1. Some of the Internet pages use so-called cookies. Cookies do not cause any damage to your computer and do not contain any viruses. Cookies serve to make our website more user-friendly, effective and secure. Cookies are small text files that are stored on your computer and saved by your browser.</p>
+                        <p>2. Most of the cookies we use are so-called "session cookies". They are automatically deleted at the end of your visit. Other cookies remain stored on your device until you delete them. These cookies enable us to recognize your browser the next time you visit our website.</p>
+                        <p>3. You can set your browser so that you are informed about the setting of cookies and only allow cookies in individual cases, exclude the acceptance of cookies for certain cases or generally and activate the automatic deletion of cookies when closing the browser. When cookies are deactivated, the functionality of this website may be limited.</p>
+                    </Item.Description>
+                  </Item.Content>
+                </Item>
+
+                <Item className="roadmap-item">
+                  <Item.Content>
+                    <Item.Header as='a'>SSL-Ecryption</Item.Header>
+                    <Item.Description>
+                        <p>This site uses SSL encryption for security reasons and to protect the transmission of confidential content, such as requests you send to us as a site operator. You can recognize an encrypted connection by the fact that the address line of the browser changes from "http://" to "https://" and by the lock symbol in your browser line. If SSL encryption is activated, the data you transmit to us cannot be read by third parties.</p>
+                    </Item.Description>
+                  </Item.Content>
+                </Item>
+
 
               </Item.Group>
             </div>
