@@ -68,9 +68,11 @@ class Feed extends Component {
  async getfeeddata() {
       const response = await fetchFeedData();
       this.setState({resFeedPosts: response});
-      response.map(item => {
-        item.number_of_likes_in_state = item.number_of_likes;
-      });
+      if (response){
+        response.map(item => {
+          item.number_of_likes_in_state = item.number_of_likes;
+        });
+      }
   }
 
   async getFriendRequests() {
@@ -167,9 +169,11 @@ async handleCreateComment(event, data) {
 async getComments() {
   let response = await getComments();
   this.setState({resComments: response});
-  response.map(item => {
-    item.number_of_likes_in_state = item.number_of_likes;
-  });
+  if (response){
+    response.map(item => {
+      item.number_of_likes_in_state = item.number_of_likes;
+    });
+  }
 }
 
 async handleRateComment(event, data) {
