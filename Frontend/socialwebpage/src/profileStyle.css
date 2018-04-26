@@ -186,12 +186,19 @@ h2.ui.huge.icon.center.aligned.header{
   justify-content: center;
 }
 
+.red-border-button:hover{
+    background-color: red !important;
+    color: white !important;
+    transition: all 0.3s !important;
+ }
+
 .flex-item{
   margin-top: 20px;
 }
 
 .flex-item + .flex-item{
   margin-left: 10px;
+  margin-right: 10px !important;
 }
 
 .friends-content{
@@ -986,6 +993,9 @@ a.item:hover {
 
 .feed-list-item{
   margin-bottom: 15px !important;
+  padding-top: 12px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 1px 4px 1px #c7c7c78c;
 }
 
 .profile-comments{
@@ -1161,9 +1171,7 @@ img.ui.image.image-feed{
 @media only screen and (min-width: 769px) {
   .feed-list-item{
     position: relative;
-    padding-top: 12px !important;
-    border-radius: 20px !important;
-    box-shadow: 0 1px 4px 1px #c7c7c78c;
+
   }
 
   .flex{
@@ -1176,8 +1184,8 @@ img.ui.image.image-feed{
 
   .friends-content{
     position: absolute;
-    left: 100px;
-    top: -5px;
+    left: 80px;
+    top: 6px;
     text-align: left;
   }
 
@@ -1188,14 +1196,27 @@ img.ui.image.image-feed{
   }
 }
 
+
+/*--------------------------------------------------/
+  Media Queries
+  All media queries for Feed and Profile.
+/--------------------------------------------------*/
+
+
 @media only screen and (min-width: 1251px) {
 
   .friends-content{
-    top: 10px;
+    top: 18px;
+    left: 95px;
   }
 
 
 }
+
+/*--------------------------------------------------/
+  Media Queries
+  All media queries for Feed and Profile.
+/--------------------------------------------------*/
 
 @media only screen and (max-width: 1250px) {
     #delete-button-profile-picture{
@@ -1317,6 +1338,10 @@ img.ui.image.image-feed{
     #friends {
       margin-left: 0 !important;
       width: 100% !important;
+    }
+
+    .red-border-button{
+      border: 1px solid red !important;
     }
 
     .flex-item{

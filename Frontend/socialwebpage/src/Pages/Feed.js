@@ -458,7 +458,7 @@ async handleDeletePost(event, data) {
                                                 <Button className="button-styles mobile-button-border" onClick={((e) => this.confirmFriendRequest(e, item))}>Confirm</Button>
                                               </div>
                                               <div className="flex-item">
-                                                <Button className="button-styles delete-friend-button mobile-button-border" onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
+                                                <Button className="red-border-button button-styles delete-friend-button mobile-button-border" onClick={((e) => this.declineFriendRequest(e, item))}>Decline</Button>
                                               </div>
                                             </List.Content>
                                           </List.Item>
@@ -485,7 +485,7 @@ async handleDeletePost(event, data) {
 
                                             <List.Content className="flex">
                                               <div className="flex-item">
-                                                <Button className="button-styles delete-friend-button mobile-button-border" onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
+                                                <Button className="red-border-button button-styles delete-friend-button mobile-button-border" onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>
                                                 </div>
                                             </List.Content>
                                           </List.Item>
