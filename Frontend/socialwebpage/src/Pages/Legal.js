@@ -83,7 +83,7 @@ class About extends React.Component{
 
                 <Item className="roadmap-item">
                   <Item.Content>
-                    <Item.Header as='a'>SSL-Ecryption</Item.Header>
+                    <Item.Header as='a'>SSL-Encryption</Item.Header>
                     <Item.Description>
                         <p>This site uses SSL encryption for security reasons and to protect the transmission of confidential content, such as requests you send to us as a site operator. You can recognize an encrypted connection by the fact that the address line of the browser changes from "http://" to "https://" and by the lock symbol in your browser line. If SSL encryption is activated, the data you transmit to us cannot be read by third parties.</p>
                     </Item.Description>
