@@ -1150,6 +1150,14 @@ img.ui.image.image-feed{
     position: relative;
   }
 
+  .flex{
+    display: flex;
+    position: absolute;
+    justify-content: flex-end;
+    top: 0;
+    right: 0;
+  }
+
   .friends-content{
     position: absolute;
     left: 100px;
@@ -1170,13 +1178,7 @@ img.ui.image.image-feed{
     top: 10px;
   }
 
-  .flex{
-    display: flex;
-    position: absolute;
-    justify-content: flex-end;
-    top: 0;
-    right: 0;
-  }
+
 }
 
 @media only screen and (max-width: 1250px) {
