@@ -1424,7 +1424,7 @@ var call = module.exports = {
                 },
             }
         },
-        { $sort : { "date_created" : -1 } }
+        { $sort : { "date_created" : 1 } }
         ]).toArray( (err_find_comments, res_find_comments) => {
             if (err_find_comments) throw err_find_comments;
             res_find_comments.map(item => {
@@ -1506,7 +1506,7 @@ var call = module.exports = {
                 {
                     "username": "$user.username",
                     "action": 1,
-                    "date_created": 1,
+                     date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                     "profile_picture_filename": "$user.picture",
                     "profile_picture_url": 1,
                     "story_id": 1,
