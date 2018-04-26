@@ -486,9 +486,11 @@ class Profile extends Component {
                                         </span>
                                       </Card.Meta>
                                       <Card.Description>
-                                        {this.state.updateItemId == item._id ? <Input placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : item.content}
-                                        {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
-                                        {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateImage(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
+                                        {this.state.updateItemId == item._id ? <Input className="input-upload" placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : item.content}
+                                        <div className="profile-edit-buttons">
+                                          {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
+                                          {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateImage(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
+                                        </div>
                                         {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
                                       </Card.Description>
                                     </Form>
@@ -502,7 +504,7 @@ class Profile extends Component {
                                         <Comment.Group key={index}>
                                           {comment.post_id === item._id ?
                                           <Comment className="comment-box">
-                                            {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                             <Comment.Content className="comment-content">
                                               <div className="comment-header">
                                                   <Comment.Author className="comment-author" as='a'>
@@ -599,7 +601,7 @@ class Profile extends Component {
                                             <Comment.Group key={index}>
                                               {comment.post_id === item._id ?
                                               <Comment className="comment-box">
-                                                {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                                {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                 <Comment.Content className="comment-content">
                                                   <div className="comment-header">
                                                       <Comment.Author className="comment-author" as='a'>
@@ -662,7 +664,7 @@ class Profile extends Component {
                                       <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
                                     </Form.Field>
                                     <Form.TextArea required placeholder="What do you want to say?" autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
-                                    <Button className="button-styles">Add Comment</Button>
+                                    <Button className="button-styles mobile-button-border">Add entry</Button>
                                   </Form>
                                 </Card.Content>
                               </Card>
@@ -674,7 +676,7 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                      {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                      {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
@@ -711,7 +713,7 @@ class Profile extends Component {
                                           <Comment.Group key={index}>
                                             {comment.post_id === item._id ?
                                             <Comment className="comment-box">
-                                              {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                              {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
 
                                               <Comment.Content className="comment-content">
                                                 <div className="comment-header">

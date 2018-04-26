@@ -126,7 +126,7 @@ class ProfileHeader extends Component {
                     <div>
                         {(!this.state.show || this.state.currentUserIsAdmin) && this.state.pictureExists ? <Button onClick={this.handleDeleteProfilePicture} id="delete-button-profile-picture" className="button-styles" circular icon="delete" ></Button> : null}
 
-                        {this.state.pictureURL !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
+                        {this.state.pictureURL !== "http://localhost:8000/uploads/posts/" ? <div><Image onClick={((e) => this.handleImageClick(e, true))} id="profile-header-picture" src={this.state.pictureURL} /> </div> : <div><Image id="profile-header-picture" src="/assets/images/user.png"></Image></div> }
 
                     </div>
                     <Header as='h2' size="huge" icon textAlign='center'>
@@ -141,7 +141,7 @@ class ProfileHeader extends Component {
                     </Header.Content>
                   </Header>
                   <div>
-                      {this.state.show ? <Button id="button-add-friend" icon onClick={this.doSomethingWithUser.bind(this)}>{this.state.buttonState}<Icon name="user"/></Button> : null}
+                      {this.state.show ? <Button id="button-add-friend" className="mobile-button-border button-styles" icon onClick={this.doSomethingWithUser.bind(this)}>{this.state.buttonState}<Icon name="user"/></Button> : null}
                   </div>
                 </div>
 
