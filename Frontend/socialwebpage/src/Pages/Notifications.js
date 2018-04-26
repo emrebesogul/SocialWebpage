@@ -175,9 +175,6 @@ class Notifications extends Component {
                 <Header.Content>
                   Notifications
                 </Header.Content>
-                <Header.Subheader className="feed-subheader">
-                  Check your notification.
-                </Header.Subheader>
               </Header>
 
               <div>

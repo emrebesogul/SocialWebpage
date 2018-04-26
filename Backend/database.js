@@ -882,10 +882,10 @@ var call = module.exports = {
                 res_find_user.friends.map(item => {
                     db.collection('users').findOne({"_id": ObjectId(item)}, (err_friends, res_friends) => {
                         if (err_friends) throw err_friends;
+                        i++;
                         if(res_friends){
                           friendlist.push(res_friends);
-                          i++;
-
+                          
                           result = {};
                           result ["name"] = res_friends.username;
                           result ["firstName"] = res_friends.first_name;
