@@ -699,7 +699,7 @@ var call = module.exports = {
     updateUserData: function(db, res, userData, currentUserId) {
         let newUsername = (userData.username).trim();
         let newEmail = (userData.email).trim();
-        let hashedPassword = SHA256(userData.password)
+        let newHashedPassword = SHA256(userData.password)
         let permitUpdate = 1;
         let responseMessage = "User data successfully updated.";
         db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
@@ -716,18 +716,32 @@ var call = module.exports = {
                 }
             });
             if (permitUpdate) {
-                db.collection('users').update(
-                    { _id: ObjectId(currentUserId) },
-                    {
-                        $set: {
-                        "first_name": userData.first_name,
-                        "last_name": userData.last_name,
-                        "username": newUsername,
-                        "email": newEmail,
-                        "password": hashedPassword.words
+                if(userData.password == "" || userData.password == null) {
+                    db.collection('users').update(
+                        { _id: ObjectId(currentUserId) },
+                        {
+                            $set: {
+                            "first_name": userData.first_name,
+                            "last_name": userData.last_name,
+                            "username": newUsername,
+                            "email": newEmail,
+                            }
                         }
-                    }
-                );
+                    );
+                } else {
+                    db.collection('users').update(
+                        { _id: ObjectId(currentUserId) },
+                        {
+                            $set: {
+                            "first_name": userData.first_name,
+                            "last_name": userData.last_name,
+                            "username": newUsername,
+                            "email": newEmail,
+                            "password": newHashedPassword.words
+                            }
+                        }
+                    );
+                }
             }
             res.send(JSON.stringify({message: responseMessage}));
         });
