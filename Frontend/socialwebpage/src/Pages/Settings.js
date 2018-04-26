@@ -153,7 +153,7 @@ class Settings extends React.Component{
                    </Input>
                 </Form.Field>
 
-                <Button className="button-upload">Save</Button>
+                <Button className="button-upload mobile-button-border">Save</Button>
               </Form>
               <Button onClick={((e) => this.handleDeleteUser())} className="button-upload">Delete User</Button>
             </div>
@@ -171,10 +171,10 @@ class Settings extends React.Component{
               {this.state.showMessageError ? <Message color='red'><p>{this.state.message}</p></Message> : null}
               {this.state.showMessageSuccess ? <Message color='green'><p>{this.state.message}<br/></p></Message> : null}
 
-              <Dropzone id="dz-repair" multiple={ false } name="image" acceptedFiles="image/jpeg, image/png" className="upload-dropzone" onDrop={this.onDrop.bind(this)} >
+              <Dropzone id="dz-repair" multiple={ false } name="image" acceptedFiles="image/jpeg, image/png" className="upload-dropzone mobile-button-border" onDrop={this.onDrop.bind(this)} >
                 <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
               </Dropzone>
-              <Button id="settings-upload-button" className="button-upload button-styles" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
+              <Button id="settings-upload-button" className="button-upload button-styles mobile-button-border" type="submit" onClick={this.handleProfilePicUpload.bind(this)}>Upload Picture</Button>
 
 
             </div>

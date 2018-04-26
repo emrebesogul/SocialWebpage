@@ -747,7 +747,7 @@ var call = module.exports = {
             });
         } else {
             res.send(JSON.stringify({message: "Username and email must not be empty!"}));
-        } 
+        }
     },
 
     //----------------------Send Friend requests----------------------//
