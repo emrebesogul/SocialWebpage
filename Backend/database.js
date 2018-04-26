@@ -915,7 +915,7 @@ var call = module.exports = {
                         db.collection('notifications').insert({
                             "recipient": ObjectId(res_user._id),
                             "creator": ObjectId(authorId),
-                            "action": "Posted a new entry in your guestbook.",
+                            "action": "posted a new entry in your guestbook",
                             "date_created": date_created,
                             "guestbook_id": ObjectId(res_insert_entry.ops[0]._id)
                         });

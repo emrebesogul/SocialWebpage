@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Tab, Message, Input, Card, Image, Icon, Rating, List, Button, Header, Comment, Form } from 'semantic-ui-react'
+import {  Message, Card, Image, Icon, Rating, Button, Header, Comment, Form } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
-import SearchBar from '../Components/SearchBar';
 import { checkAuthorization, getNotificationData, getComments, getCurrentUserData } from '../API/GET/GetMethods';
 import { likeStoryEntryById, likeImageById, likeGuestbookEntryById, likeComment, createComment, deleteCommentById } from '../API/POST/PostMethods';
 import '../profileStyle.css';
@@ -216,6 +215,10 @@ class Notifications extends Component {
                             <Card.Description>
                                 {notification.content}
                             </Card.Description>
+                          </Card.Content>
+                        </Card>
+                        <Card fluid centered className="comment-card">
+                          <Card.Content>
                             <Header as='h4' dividing>Comments</Header>
                             {comments.map((comment, index) => {
                               return(
@@ -241,23 +244,28 @@ class Notifications extends Component {
                                         </div>
                                       </div>
                                       {this.state.currentUserId === comment.author_id ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
-                                      <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                      </Rating>
+
                                       <div className="comment-user-info">
                                         <Comment.Metadata>
                                           <div>{comment.date_created}</div>
                                         </Comment.Metadata>
                                       </div>
-                                      <Comment.Text>{comment.content}</Comment.Text>
+                                      <Comment.Text>
+                                        <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                        </Rating>
+                                        {comment.content}
+                                      </Comment.Text>
                                     </Comment.Content>
                                   </Comment>
                                   : null }
                                 </Comment.Group>
                               )
                             })}
-                          <Form onSubmit={((e) => this.handleCreateComment(e, notification))} reply>
-                            <Form.TextArea class="commentInput"/>
-                            <Button className="button-upload" content='Add Reply' labelPosition='left' icon='edit'/>
+                          <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, notification))} reply>
+                            <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.." />
+                              <Button className="button-upload button-styles add-comment-button">
+                                <Icon name="send" />
+                              </Button>
                           </Form>
                         </Card.Content>
                       </Card>

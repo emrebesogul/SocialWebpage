@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import { Input, Tab, Card, Image, Comment, Rating, Form, Button, Message, Header, TextArea } from 'semantic-ui-react'
+import { Input, Tab, Card, Image, Comment, Rating, Icon, Form, Button, Message, Header, TextArea } from 'semantic-ui-react'
 import { Redirect, Link } from 'react-router-dom';
 import SidebarProfile from '../Components/SidebarProfile'
 import ProfileHeader from '../Components/ProfileHeader'
-import Footer from '../Components/Footer'
 import '../profileStyle.css';
 import { checkAuthorization, getCurrentUserData, getStoryForUserId, getImagesForUserId, getGuestbookEntriesForUserId, getUserData, getComments } from '../API/GET/GetMethods';
 import { likeStoryEntryById, likeImageById, deleteStoryEntryById, deleteImageById, createGuestbookentry, deleteGuestbookEntryById, likeGuestbookEntryById, getStoryEntryById, getImageById, createComment, deleteCommentById, likeComment } from '../API/POST/PostMethods';
@@ -493,6 +492,10 @@ class Profile extends Component {
                                         {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
                                       </Card.Description>
                                     </Form>
+                                  </Card.Content>
+                                </Card>
+                                <Card fluid centered className="comment-card">
+                                  <Card.Content>
                                     <Header as='h4' dividing>Comments</Header>
                                     {comments.map((comment, index) => {
                                       return(
@@ -502,7 +505,11 @@ class Profile extends Component {
                                             {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                             <Comment.Content className="comment-content">
                                               <div className="comment-header">
-                                                  <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                                  <Comment.Author className="comment-author" as='a'>
+                                                    <Link to={`/profile/${comment.authorName}`}>
+                                                      @{comment.authorName}
+                                                    </Link>
+                                                  </Comment.Author>
                                               </div>
                                               <div className="ui mini horizontal statistic post-likes comment-likes">
                                                 <div className="value">
@@ -513,23 +520,28 @@ class Profile extends Component {
                                                 </div>
                                               </div>
                                               {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
-                                              <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                              </Rating>
+
                                               <div className="comment-user-info">
                                                 <Comment.Metadata>
                                                   <div>{comment.date_created}</div>
                                                 </Comment.Metadata>
                                               </div>
-                                              <Comment.Text>{comment.content}</Comment.Text>
+                                              <Comment.Text>
+                                                <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                </Rating>
+                                                {comment.content}
+                                              </Comment.Text>
                                             </Comment.Content>
                                           </Comment>
                                           : null }
                                         </Comment.Group>
                                       )
                                     })}
-                                    <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                      <Form.TextArea class="commentInput"/>
-                                      <Button className="button-styles">Add Comment</Button>
+                                    <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                      <Form.TextArea  class="commentInput" rows="1" placeholder="Add a comment.."/>
+                                      <Button className="button-upload button-styles add-comment-button">
+                                        <Icon name="send" />
+                                      </Button>
                                     </Form>
                                   </Card.Content>
                                 </Card>
@@ -577,6 +589,10 @@ class Profile extends Component {
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
+                                      </Card.Content>
+                                    </Card>
+                                    <Card fluid centered className="comment-card">
+                                      <Card.Content>
                                         <Header as='h4' dividing>Comments</Header>
                                         {comments.map((comment, index) => {
                                           return(
@@ -586,7 +602,11 @@ class Profile extends Component {
                                                 {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                 <Comment.Content className="comment-content">
                                                   <div className="comment-header">
-                                                      <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                                      <Comment.Author className="comment-author" as='a'>
+                                                        <Link to={`/profile/${comment.authorName}`}>
+                                                          @{comment.authorName}
+                                                        </Link>
+                                                      </Comment.Author>
                                                   </div>
                                                   <div className="ui mini horizontal statistic post-likes comment-likes">
                                                     <div className="value">
@@ -597,23 +617,28 @@ class Profile extends Component {
                                                     </div>
                                                   </div>
                                                   {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ?  <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
-                                                  <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                                  </Rating>
+
                                                   <div className="comment-user-info">
                                                     <Comment.Metadata>
                                                       <div>{comment.date_created}</div>
                                                     </Comment.Metadata>
                                                   </div>
-                                                  <Comment.Text>{comment.content}</Comment.Text>
+                                                  <Comment.Text>
+                                                    <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                    </Rating>
+                                                    {comment.content}
+                                                  </Comment.Text>
                                                 </Comment.Content>
                                               </Comment>
                                               : null }
                                             </Comment.Group>
                                           )
                                         })}
-                                        <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                          <Form.TextArea class="commentInput"/>
-                                        <Button className="button-styles">Add Comment</Button>
+                                        <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                          <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.."/>
+                                          <Button className="button-upload button-styles add-comment-button">
+                                            <Icon name="send" />
+                                          </Button>
                                         </Form>
                                       </Card.Content>
                                     </Card>
@@ -676,6 +701,10 @@ class Profile extends Component {
                                       <Card.Description>
                                         {item.content}
                                       </Card.Description>
+                                    </Card.Content>
+                                  </Card>
+                                  <Card fluid centered className="comment-card">
+                                    <Card.Content>
                                       <Header as='h4' dividing>Comments</Header>
                                       {comments.map((comment, index) => {
                                         return(
@@ -683,9 +712,14 @@ class Profile extends Component {
                                             {comment.post_id === item._id ?
                                             <Comment className="comment-box">
                                               {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+
                                               <Comment.Content className="comment-content">
                                                 <div className="comment-header">
-                                                    <Comment.Author className="comment-author" as='a'>{comment.authorName}</Comment.Author>
+                                                    <Comment.Author className="comment-author" as='a'>
+                                                      <Link to={`/profile/${comment.authorName}`}>
+                                                        @{comment.authorName}
+                                                      </Link>
+                                                    </Comment.Author>
                                                 </div>
                                                 <div className="ui mini horizontal statistic post-likes comment-likes">
                                                   <div className="value">
@@ -696,23 +730,28 @@ class Profile extends Component {
                                                   </div>
                                                 </div>
                                                 {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
-                                                <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                                </Rating>
+
                                                 <div className="comment-user-info">
                                                   <Comment.Metadata>
                                                     <div>{comment.date_created}</div>
                                                   </Comment.Metadata>
                                                 </div>
-                                                <Comment.Text>{comment.content}</Comment.Text>
+                                                <Comment.Text>
+                                                  <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                  </Rating>
+                                                  {comment.content}
+                                                </Comment.Text>
                                               </Comment.Content>
                                             </Comment>
                                             : null }
                                           </Comment.Group>
                                         )
                                       })}
-                                      <Form onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea class="commentInput"/>
-                                        <Button className="button-styles">Add Comment</Button>
+                                      <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                        <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.."/>
+                                          <Button className="button-upload button-styles add-comment-button">
+                                            <Icon name="send" />
+                                          </Button>
                                       </Form>
                                     </Card.Content>
                                   </Card>
@@ -726,8 +765,6 @@ class Profile extends Component {
                       ]
                       } />
               </div>
-
-              <Footer />
           </div>
 
         )
