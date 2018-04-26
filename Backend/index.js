@@ -9,6 +9,7 @@ const multer = require('multer');
 const uuid = require('uuid/v4');
 const jwt = require('jsonwebtoken');
 const database = require('./database');
+const mongoSanitize = require('express-mongo-sanitize');
 
 // create application/json parser
 const jsonParser = bodyParser.json();
@@ -28,6 +29,8 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage});
+
+app.use(mongoSanitize());
 
 app.use(express.static('public'));
 app.use(cors());
