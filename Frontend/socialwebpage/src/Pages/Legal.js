@@ -28,7 +28,7 @@ class About extends React.Component{
                     <Item.Description>
                       <p>Ivey</p>
                       <p>Made by: Yunus Emre Besogul, Konstantin Kläger & Johannes Mändle</p>
-                      <p>0711 Stuttgart</p>
+                      <p>70174 Stuttgart</p>
                       <p>DHBW Stuttgart</p>
                       <p>Germany</p>
                     </Item.Description>
