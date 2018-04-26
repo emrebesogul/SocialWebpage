@@ -882,25 +882,27 @@ var call = module.exports = {
                 res_find_user.friends.map(item => {
                     db.collection('users').findOne({"_id": ObjectId(item)}, (err_friends, res_friends) => {
                         if (err_friends) throw err_friends;
-                        friendlist.push(res_friends);
-                        i++;
+                        if(res_friends){
+                          friendlist.push(res_friends);
+                          i++;
 
-                        result = {};
-                        result ["name"] = res_friends.username;
-                        result ["firstName"] = res_friends.first_name;
-                        result ["lastName"] = res_friends.last_name;
-                        result ["friendId"] = res_friends._id;
-                        result ["picture"] = "https://gruppe1.testsites.info/uploads/posts/" + res_friends.picture;
-                        friends.push(result);
+                          result = {};
+                          result ["name"] = res_friends.username;
+                          result ["firstName"] = res_friends.first_name;
+                          result ["lastName"] = res_friends.last_name;
+                          result ["friendId"] = res_friends._id;
+                          result ["picture"] = "https://gruppe1.testsites.info/uploads/posts/" + res_friends.picture;
+                          friends.push(result);
 
-                        if (i == friendlistLength) {
-                            let friendsByName = friends.slice(0);
-                            friendsByName.sort(function(a,b) {
-                                let x = a.name.toLowerCase();
-                                let y = b.name.toLowerCase();
-                                return x < y ? -1 : x > y ? 1 : 0;
-                            });
-                            res.status(200).send(friendsByName);
+                          if (i == friendlistLength) {
+                              let friendsByName = friends.slice(0);
+                              friendsByName.sort(function(a,b) {
+                                  let x = a.name.toLowerCase();
+                                  let y = b.name.toLowerCase();
+                                  return x < y ? -1 : x > y ? 1 : 0;
+                              });
+                              res.status(200).send(friendsByName);
+                          }
                         }
                     });
                 });

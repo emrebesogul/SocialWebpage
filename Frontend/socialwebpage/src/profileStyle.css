@@ -1329,6 +1329,10 @@ img.ui.image.image-feed{
       padding: 1em 0.5em;
     }
 
+    .friends-content {
+      padding-top: 1px !important;
+    }
+
     div.ui.item.dropdown{
       height: 54px !important;
       margin-top: -8px !important;
