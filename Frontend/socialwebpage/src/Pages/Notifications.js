@@ -169,15 +169,12 @@ class Notifications extends Component {
       return (
         <div className="feed">
           <Sidebar />
-          <div id="profile-content">
+          <div id="profile-content" className="not-height">
               <Header as='h2' icon textAlign='center'>
                 <Icon name='discussions' circular />
                 <Header.Content>
                   Notifications
                 </Header.Content>
-                <Header.Subheader className="feed-subheader">
-                  Check your notification.
-                </Header.Subheader>
               </Header>
 
               <div>

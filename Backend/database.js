@@ -456,7 +456,7 @@ var call = module.exports = {
                         if (res_find_friend_request.requesterId == userid) {
                             buttonState = "Your request was sent";
                         } else {
-                            buttonState = "You have a new Request";
+                            buttonState = "Request pending";
                         }
                     } else {
                         buttonState = "Add Friend";
@@ -702,49 +702,53 @@ var call = module.exports = {
         let newHashedPassword = SHA256(userData.password)
         let permitUpdate = 1;
         let responseMessage = "User data successfully updated.";
-        db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
-            res_find_user.map(user => {
-                if (user._id != currentUserId) {
-                    if (user.username == newUsername) {
-                        permitUpdate = 0;
-                        responseMessage = "This username already exists.";
+        if(newEmail != null && newEmail != "" && newUsername != null && newUsername != "") {
+            db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
+                res_find_user.map(user => {
+                    if (user._id != currentUserId) {
+                        if (user.username == newUsername) {
+                            permitUpdate = 0;
+                            responseMessage = "This username already exists.";
+                        }
+                        if (user.email == newEmail) {
+                            permitUpdate = 0;
+                            responseMessage = "This email address already exists.";
+                        }
                     }
-                    if (user.email == newEmail) {
-                        permitUpdate = 0;
-                        responseMessage = "This email address already exists.";
+                });
+                if (permitUpdate) {
+                    if(userData.password == "" || userData.password == null) {
+                        db.collection('users').update(
+                            { _id: ObjectId(currentUserId) },
+                            {
+                                $set: {
+                                "first_name": userData.first_name,
+                                "last_name": userData.last_name,
+                                "username": newUsername,
+                                "email": newEmail,
+                                }
+                            }
+                        );
+                    } else {
+                        db.collection('users').update(
+                            { _id: ObjectId(currentUserId) },
+                            {
+                                $set: {
+                                "first_name": userData.first_name,
+                                "last_name": userData.last_name,
+                                "username": newUsername,
+                                "email": newEmail,
+                                "password": newHashedPassword.words
+                                }
+                            }
+                        );
                     }
                 }
+                res.send(JSON.stringify({message: responseMessage}));
             });
-            if (permitUpdate) {
-                if(userData.password == "" || userData.password == null) {
-                    db.collection('users').update(
-                        { _id: ObjectId(currentUserId) },
-                        {
-                            $set: {
-                            "first_name": userData.first_name,
-                            "last_name": userData.last_name,
-                            "username": newUsername,
-                            "email": newEmail,
-                            }
-                        }
-                    );
-                } else {
-                    db.collection('users').update(
-                        { _id: ObjectId(currentUserId) },
-                        {
-                            $set: {
-                            "first_name": userData.first_name,
-                            "last_name": userData.last_name,
-                            "username": newUsername,
-                            "email": newEmail,
-                            "password": newHashedPassword.words
-                            }
-                        }
-                    );
-                }
-            }
-            res.send(JSON.stringify({message: responseMessage}));
-        });
+        } else {
+            res.send(JSON.stringify({message: "Username and email must not be empty!"}));
+        }
     },
 
     //----------------------Send Friend requests----------------------//
@@ -878,23 +882,27 @@ var call = module.exports = {
                 res_find_user.friends.map(item => {
                     db.collection('users').findOne({"_id": ObjectId(item)}, (err_friends, res_friends) => {
                         if (err_friends) throw err_friends;
-                        friendlist.push(res_friends);
                         i++;
+                        if(res_friends){
+                          friendlist.push(res_friends);
 
-                        result = {};
-                        result ["name"] = res_friends.username;
-                        result ["friendId"] = res_friends._id;
-                        result ["picture"] = "http://localhost:8000/uploads/posts/" + res_friends.picture;
-                        friends.push(result);
+                          result = {};
+                          result ["name"] = res_friends.username;
+                          result ["firstName"] = res_friends.first_name;
+                          result ["lastName"] = res_friends.last_name;
+                          result ["friendId"] = res_friends._id;
+                          result ["picture"] = "http://localhost:8000/uploads/posts/" + res_friends.picture;
+                          friends.push(result);
 
-                        if (i == friendlistLength) {
-                            let friendsByName = friends.slice(0);
-                            friendsByName.sort(function(a,b) {
-                                let x = a.name.toLowerCase();
-                                let y = b.name.toLowerCase();
-                                return x < y ? -1 : x > y ? 1 : 0;
-                            });
-                            res.status(200).send(friendsByName);
+                          if (i == friendlistLength) {
+                              let friendsByName = friends.slice(0);
+                              friendsByName.sort(function(a,b) {
+                                  let x = a.name.toLowerCase();
+                                  let y = b.name.toLowerCase();
+                                  return x < y ? -1 : x > y ? 1 : 0;
+                              });
+                              res.status(200).send(friendsByName);
+                          }
                         }
                     });
                 });
@@ -1424,7 +1432,7 @@ var call = module.exports = {
                 },
             }
         },
-        { $sort : { "date_created" : -1 } }
+        { $sort : { "date_created" : 1 } }
         ]).toArray( (err_find_comments, res_find_comments) => {
             if (err_find_comments) throw err_find_comments;
             res_find_comments.map(item => {
@@ -1506,7 +1514,7 @@ var call = module.exports = {
                 {
                     "username": "$user.username",
                     "action": 1,
-                    "date_created": 1,
+                     date_created: {$dateToString: {format: "%G-%m-%d %H:%M:%S",date: "$date_created", timezone: "Europe/Berlin"}},
                     "profile_picture_filename": "$user.picture",
                     "profile_picture_url": 1,
                     "story_id": 1,
