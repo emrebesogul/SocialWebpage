@@ -456,7 +456,7 @@ var call = module.exports = {
                         if (res_find_friend_request.requesterId == userid) {
                             buttonState = "Your request was sent";
                         } else {
-                            buttonState = "You have a new Request";
+                            buttonState = "Request pending";
                         }
                     } else {
                         buttonState = "Add Friend";
@@ -702,49 +702,53 @@ var call = module.exports = {
         let newHashedPassword = SHA256(userData.password)
         let permitUpdate = 1;
         let responseMessage = "User data successfully updated.";
-        db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
-            res_find_user.map(user => {
-                if (user._id != currentUserId) {
-                    if (user.username == newUsername) {
-                        permitUpdate = 0;
-                        responseMessage = "This username already exists.";
+        if(newEmail != null && newEmail != "" && newUsername != null && newUsername != "") {
+            db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
+                res_find_user.map(user => {
+                    if (user._id != currentUserId) {
+                        if (user.username == newUsername) {
+                            permitUpdate = 0;
+                            responseMessage = "This username already exists.";
+                        }
+                        if (user.email == newEmail) {
+                            permitUpdate = 0;
+                            responseMessage = "This email address already exists.";
+                        }
                     }
-                    if (user.email == newEmail) {
-                        permitUpdate = 0;
-                        responseMessage = "This email address already exists.";
+                });
+                if (permitUpdate) {
+                    if(userData.password == "" || userData.password == null) {
+                        db.collection('users').update(
+                            { _id: ObjectId(currentUserId) },
+                            {
+                                $set: {
+                                "first_name": userData.first_name,
+                                "last_name": userData.last_name,
+                                "username": newUsername,
+                                "email": newEmail,
+                                }
+                            }
+                        );
+                    } else {
+                        db.collection('users').update(
+                            { _id: ObjectId(currentUserId) },
+                            {
+                                $set: {
+                                "first_name": userData.first_name,
+                                "last_name": userData.last_name,
+                                "username": newUsername,
+                                "email": newEmail,
+                                "password": newHashedPassword.words
+                                }
+                            }
+                        );
                     }
                 }
+                res.send(JSON.stringify({message: responseMessage}));
             });
-            if (permitUpdate) {
-                if(userData.password == "" || userData.password == null) {
-                    db.collection('users').update(
-                        { _id: ObjectId(currentUserId) },
-                        {
-                            $set: {
-                            "first_name": userData.first_name,
-                            "last_name": userData.last_name,
-                            "username": newUsername,
-                            "email": newEmail,
-                            }
-                        }
-                    );
-                } else {
-                    db.collection('users').update(
-                        { _id: ObjectId(currentUserId) },
-                        {
-                            $set: {
-                            "first_name": userData.first_name,
-                            "last_name": userData.last_name,
-                            "username": newUsername,
-                            "email": newEmail,
-                            "password": newHashedPassword.words
-                            }
-                        }
-                    );
-                }
-            }
-            res.send(JSON.stringify({message: responseMessage}));
-        });
+        } else {
+            res.send(JSON.stringify({message: "Username and email must not be empty!"}));
+        } 
     },
 
     //----------------------Send Friend requests----------------------//
