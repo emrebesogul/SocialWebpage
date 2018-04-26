@@ -477,7 +477,7 @@ async handleDeletePost(event, data) {
                                             <List.Content className="friends-content">
                                               <List.Header >
                                                   <Link to={`/profile/${item.name}`}>
-                                                      {item.name} <br/>
+                                                      {item.name} <br />
                                                   </Link>
                                                   <span className="notifications-metatext">{item.firstName} {item.lastName}</span>
                                               </List.Header>

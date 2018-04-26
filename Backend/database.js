@@ -887,8 +887,8 @@ var call = module.exports = {
 
                         result = {};
                         result ["name"] = res_friends.username;
-                        result ["firstName"] = res.friends.first_name;
-                        result ["lastName"] = res.friends.last_name;
+                        result ["firstName"] = res_friends.first_name;
+                        result ["lastName"] = res_friends.last_name;
                         result ["friendId"] = res_friends._id;
                         result ["picture"] = "https://gruppe1.testsites.info/uploads/posts/" + res_friends.picture;
                         friends.push(result);
