@@ -68,9 +68,7 @@ MongoClient.connect(url, function(err, client) {
         if(req.query.username) {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.json({});
                 } else {
                     const userid = authData.userid
                     const username = req.query.username;
@@ -80,9 +78,7 @@ MongoClient.connect(url, function(err, client) {
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.json({});
                 } else {
                     const userid = authData.userid
                     database.getUserDataForCurrentUser(client.db('socialwebpage'), res, userid);
@@ -106,9 +102,7 @@ MongoClient.connect(url, function(err, client) {
     app.get('/rest/currentUserData', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.send({
-                    message: "User is not authorized"
-                });
+                res.json({});
             } else {
                 database.getUserDataForCurrentUser(client.db('socialwebpage'), res, authData.userid);
             }
@@ -136,9 +130,7 @@ MongoClient.connect(url, function(err, client) {
     app.get('/rest/feed', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.json([]);
             } else {
                 database.getFeed(client.db('socialwebpage'), res, authData.userid);
             }
@@ -169,15 +161,13 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------------Create Story----------------------------//
     //
-    // Calls the method createStoryEntry that insert the information of a 
+    // Calls the method createStoryEntry that insert the information of a
     // new story to the database.
     // Post parameters: title, content and userId of the new story entry
     app.post('/rest/story/create', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const userId = authData.userid
                 const storyData = req.body;
@@ -188,17 +178,15 @@ MongoClient.connect(url, function(err, client) {
 
     //----------------List story entries in a user profile-----------------//
     //
-    // Calls one of the methods listStoryEntriesForUserId or 
-    // listStoryEntriesForUsername that returns all story entries for the 
+    // Calls one of the methods listStoryEntriesForUserId or
+    // listStoryEntriesForUsername that returns all story entries for the
     // user id in the query to the react application.
     // Get prameter: userId of the respective user
     app.get('/rest/story/list', verifyToken, (req, res) => {
         if(req.query.username) {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.json([]);
                 } else {
                     const username = req.query.username;
                     const currentUserId = authData.userid;
@@ -208,9 +196,7 @@ MongoClient.connect(url, function(err, client) {
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.json([]);
                 } else {
                     const currentUserId = authData.userid;
                     database.listStoryEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId);
@@ -221,8 +207,8 @@ MongoClient.connect(url, function(err, client) {
 
       //--------------------List images in a user profile--------------------//
       //
-      // Calls the method listImagesForUserId or listImagesForUsername that 
-      // returns all images for the user id in the query to the react 
+      // Calls the method listImagesForUserId or listImagesForUsername that
+      // returns all images for the user id in the query to the react
       // application.
       // Get prameter: userId of the respective user
       app.get('/rest/image/list', verifyToken, (req, res) => {
@@ -230,9 +216,7 @@ MongoClient.connect(url, function(err, client) {
         if(req.query.username) {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.json([]);
                 } else {
                     const username = req.query.username;
                     const currentUserId = authData.userid;
@@ -242,9 +226,7 @@ MongoClient.connect(url, function(err, client) {
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.json([]);
                 } else {
                     const currentUserId = authData.userid;
                     database.listImagesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId);
@@ -257,9 +239,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/story/delete', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const storyId = req.body.storyId;
                 const userId = authData.userid;
@@ -274,9 +254,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/image/delete', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const imageId = req.body.imageId;
                 const userId = authData.userid;
@@ -307,9 +285,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/story/like', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const storyId = req.body.storyId;
                 const userId = authData.userid;
@@ -325,9 +301,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/image/like', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const imageId = req.body.imageId;
                 const userId = authData.userid;
@@ -343,7 +317,7 @@ MongoClient.connect(url, function(err, client) {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
                 res.json({
-                    message: "User is not authorized"
+                    message: "Error"
                 });
             } else {
                 const userId = authData.userid;
@@ -355,14 +329,12 @@ MongoClient.connect(url, function(err, client) {
     });
 
     //------------------------Get all friend requests------------------------//
-    // User ONE sends User TWO a friendship request. User TWO can accept or 
+    // User ONE sends User TWO a friendship request. User TWO can accept or
     // reject. If accepted, add to friendship list, else do nothing.
     app.get('/rest/friends/getRequests', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.json([]);
             } else {
                 const userId = authData.userid;
                 database.getFriendRequests(client.db('socialwebpage'), res, userId);
@@ -374,9 +346,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/friends/confirmFriendRequest', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const recipientId = authData.userid;
                 database.confirmFriendRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
@@ -388,9 +358,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/friends/declineFriendRequest', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const recipientId = authData.userid;
                 database.deleteFriendRequest(client.db('socialwebpage'), req.body.requesterId, recipientId, res);
@@ -402,9 +370,7 @@ MongoClient.connect(url, function(err, client) {
     app.get('/rest/friends/getFriends', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.json([]);
             } else {
                 const userId = authData.userid;
                 database.getFriends(client.db('socialwebpage'), res, userId);
@@ -416,9 +382,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/friends/deleteFriend', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const userId = authData.userid;
                 const userToDeleteId = req.body.userToDeleteId;
@@ -431,9 +395,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/guestbook/create', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const title = req.body.title;
                 const content = req.body.content;
@@ -449,9 +411,7 @@ MongoClient.connect(url, function(err, client) {
         if(req.query.username) {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.json([]);
                 } else {
                     const username = req.query.username;
                     const currentUserId = authData.userid;
@@ -461,9 +421,7 @@ MongoClient.connect(url, function(err, client) {
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.json([]);
                 } else {
                     const currentUserId = authData.userid;
                     database.listGuestbookEntriesForUserId(client.db('socialwebpage'), res, currentUserId, currentUserId);
@@ -474,14 +432,12 @@ MongoClient.connect(url, function(err, client) {
 
     //-------------------------Like a guestbook entry------------------------//
     //
-    // Calls the method likeGuestbookEntryById that add the user to the list 
+    // Calls the method likeGuestbookEntryById that add the user to the list
     // of likes
     app.post('/rest/guestbook/like', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const guestbookData = req.body;
                 const userId = authData.userid;
@@ -497,9 +453,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/guestbook/delete', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const guestbookData = req.body;
                 const userId = authData.userid;
@@ -515,9 +469,7 @@ MongoClient.connect(url, function(err, client) {
         } else {
             jwt.verify(req.token, 'secretkey', (err, authData) => {
                 if(err) {
-                    res.json({
-                        message: "User is not authorized"
-                    });
+                    res.send(false);
                 } else {
                     const fileData = req.file;
                     const userId = authData.userid
@@ -533,9 +485,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/user/delete/picture', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const userId = authData.userid;
                 database.deleteProfilePicture(client.db('socialwebpage'), res, userId);
@@ -550,9 +500,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/story/getEntry', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.json({});
             } else {
                 const storyId = req.body.storyId;
                 const currentUserId = authData.userid;
@@ -565,9 +513,7 @@ MongoClient.connect(url, function(err, client) {
     app.put('/rest/story/edit', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const storyId = req.body.storyId;
                 const storyTitle = req.body.storyTitle;
@@ -585,9 +531,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/image/get', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.json({});
             } else {
                 let imageId = req.body.imageId;
                 let currentUserId = authData.userid;
@@ -600,9 +544,7 @@ MongoClient.connect(url, function(err, client) {
     app.put('/rest/image/edit', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 let imageId = req.body.imageId;
                 let imageTitle = req.body.imageTitle;
@@ -617,9 +559,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/comment/create', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const commentData = req.body.commentData;
                 const currentUserId = authData.userid;
@@ -632,9 +572,7 @@ MongoClient.connect(url, function(err, client) {
     app.get('/rest/comment/list', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                  res.json([]);
             } else {
                 const currentUserId = authData.userid;
                 database.getComments(client.db('socialwebpage'), res, currentUserId);
@@ -651,9 +589,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/comment/delete', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const commentId = req.body.commentId;
                 const userId = authData.userid;
@@ -666,9 +602,7 @@ MongoClient.connect(url, function(err, client) {
     app.get('/rest/notifications', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.json([]);
             } else {
                 const userId = authData.userid;
                 database.getNotifications(client.db('socialwebpage'), res, userId);
@@ -680,9 +614,7 @@ MongoClient.connect(url, function(err, client) {
     app.get('/rest/notifications/data/:type/:typeCommented/:postId', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.json({});
             } else {
                 const currentUserId = authData.userid;
                 const type = req.params.type;
@@ -721,9 +653,7 @@ MongoClient.connect(url, function(err, client) {
     app.post('/rest/comment/like', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.send(false);
             } else {
                 const commentId = req.body.commentId;
                 const userId = authData.userid;
