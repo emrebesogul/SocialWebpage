@@ -1308,8 +1308,8 @@ img.ui.image.image-feed{
     }
 
     #friends {
-      margin-left: 0 !important; */
-      width: 100%;
+      margin-left: 0 !important; 
+      width: 100% !important;
     }
 
     #card-content{
