@@ -136,9 +136,7 @@ MongoClient.connect(url, function(err, client) {
     app.get('/rest/feed', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                res.json([]);
             } else {
                 database.getFeed(client.db('socialwebpage'), res, authData.userid);
             }
@@ -169,7 +167,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------------Create Story----------------------------//
     //
-    // Calls the method createStoryEntry that insert the information of a 
+    // Calls the method createStoryEntry that insert the information of a
     // new story to the database.
     // Post parameters: title, content and userId of the new story entry
     app.post('/rest/story/create', verifyToken, (req, res) => {
@@ -188,8 +186,8 @@ MongoClient.connect(url, function(err, client) {
 
     //----------------List story entries in a user profile-----------------//
     //
-    // Calls one of the methods listStoryEntriesForUserId or 
-    // listStoryEntriesForUsername that returns all story entries for the 
+    // Calls one of the methods listStoryEntriesForUserId or
+    // listStoryEntriesForUsername that returns all story entries for the
     // user id in the query to the react application.
     // Get prameter: userId of the respective user
     app.get('/rest/story/list', verifyToken, (req, res) => {
@@ -221,8 +219,8 @@ MongoClient.connect(url, function(err, client) {
 
       //--------------------List images in a user profile--------------------//
       //
-      // Calls the method listImagesForUserId or listImagesForUsername that 
-      // returns all images for the user id in the query to the react 
+      // Calls the method listImagesForUserId or listImagesForUsername that
+      // returns all images for the user id in the query to the react
       // application.
       // Get prameter: userId of the respective user
       app.get('/rest/image/list', verifyToken, (req, res) => {
@@ -355,7 +353,7 @@ MongoClient.connect(url, function(err, client) {
     });
 
     //------------------------Get all friend requests------------------------//
-    // User ONE sends User TWO a friendship request. User TWO can accept or 
+    // User ONE sends User TWO a friendship request. User TWO can accept or
     // reject. If accepted, add to friendship list, else do nothing.
     app.get('/rest/friends/getRequests', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -474,7 +472,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-------------------------Like a guestbook entry------------------------//
     //
-    // Calls the method likeGuestbookEntryById that add the user to the list 
+    // Calls the method likeGuestbookEntryById that add the user to the list
     // of likes
     app.post('/rest/guestbook/like', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
@@ -632,9 +630,7 @@ MongoClient.connect(url, function(err, client) {
     app.get('/rest/comment/list', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
             if(err) {
-                res.json({
-                    message: "User is not authorized"
-                });
+                  res.json([]);
             } else {
                 const currentUserId = authData.userid;
                 database.getComments(client.db('socialwebpage'), res, currentUserId);

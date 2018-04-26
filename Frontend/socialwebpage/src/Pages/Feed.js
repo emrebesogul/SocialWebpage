@@ -66,7 +66,7 @@ class Feed extends Component {
 
 
  async getfeeddata() {
-      const response = await fetchFeedData();
+      let response = await fetchFeedData();
       this.setState({resFeedPosts: response});
       if (response){
         response.map(item => {
@@ -167,7 +167,8 @@ async handleCreateComment(event, data) {
 }
 
 async getComments() {
-  let response = await getComments();
+  let response = [];
+  response = await getComments();
   this.setState({resComments: response});
   if (response){
     response.map(item => {
