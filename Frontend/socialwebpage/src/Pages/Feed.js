@@ -441,7 +441,7 @@ async handleDeletePost(event, data) {
                                   {
                                     return(
                                       <div key={index}>
-                                        <List className="feed-list-item" divided relaxed verticalAlign='middle'>
+                                        <List className="feed-list-item" divided="true" relaxed verticalAlign='middle'>
                                           <List.Item>
                                             {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.profile_picture_url} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
                                             <List.Content className="friends-content">
@@ -477,10 +477,12 @@ async handleDeletePost(event, data) {
                                             <List.Content className="friends-content">
                                               <List.Header >
                                                   <Link to={`/profile/${item.name}`}>
-                                                      {item.name}
+                                                      {item.name} <br/>
                                                   </Link>
+                                                  <span className="notifications-metatext">{item.firstName} {item.lastName}</span>
                                               </List.Header>
                                             </List.Content>
+
                                             <List.Content className="flex">
                                               <div className="flex-item">
                                                 <Button className="button-styles delete-friend-button mobile-button-border" onClick={((e) => this.deleteFriend(e, item))}>Delete Friend</Button>

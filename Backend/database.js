@@ -748,7 +748,7 @@ var call = module.exports = {
             });
         } else {
             res.send(JSON.stringify({message: "Username and email must not be empty!"}));
-        } 
+        }
     },
 
     //----------------------Send Friend requests----------------------//
@@ -887,6 +887,8 @@ var call = module.exports = {
 
                         result = {};
                         result ["name"] = res_friends.username;
+                        result ["firstName"] = res.friends.first_name;
+                        result ["lastName"] = res.friends.last_name;
                         result ["friendId"] = res_friends._id;
                         result ["picture"] = "https://gruppe1.testsites.info/uploads/posts/" + res_friends.picture;
                         friends.push(result);
