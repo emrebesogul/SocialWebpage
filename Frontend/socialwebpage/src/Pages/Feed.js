@@ -441,7 +441,7 @@ async handleDeletePost(event, data) {
                                   {
                                     return(
                                       <div key={index}>
-                                        <List className="feed-list-item" divided="true" relaxed verticalAlign='middle'>
+                                        <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
                                             {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.profile_picture_url} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
                                             <List.Content className="friends-content">
