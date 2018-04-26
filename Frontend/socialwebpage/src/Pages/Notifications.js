@@ -169,7 +169,7 @@ class Notifications extends Component {
       return (
         <div className="feed">
           <Sidebar />
-          <div id="profile-content">
+          <div id="profile-content" className="not-height">
               <Header as='h2' icon textAlign='center'>
                 <Icon name='discussions' circular />
                 <Header.Content>
@@ -185,7 +185,7 @@ class Notifications extends Component {
                     <Card.Group id="notification-card">
                       <Card fluid centered>
                         <div className="username-label">
-                          {notification.profile_picture_url !== "http://localhost:8000/uploads/posts/"? <div><Image src={notification.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                          {notification.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/"? <div><Image src={notification.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                           <Link to={`/profile/${notification.username}`}>
                             <span className="content-card-username-label"> @{notification.username} </span>
                           </Link>
@@ -225,7 +225,7 @@ class Notifications extends Component {
                                 <Comment.Group key={index}>
                                   {comment.post_id === notification._id ?
                                   <Comment className="comment-box">
-                                    {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                    {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
 
                                     <Comment.Content className="comment-content">
                                       <div className="comment-header">

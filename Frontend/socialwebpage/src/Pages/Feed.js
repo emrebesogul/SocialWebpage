@@ -66,11 +66,13 @@ class Feed extends Component {
 
 
  async getfeeddata() {
-      const response = await fetchFeedData();
+      let response = await fetchFeedData();
       this.setState({resFeedPosts: response});
-      response.map(item => {
-        item.number_of_likes_in_state = item.number_of_likes;
-      });
+      if (response){
+        response.map(item => {
+          item.number_of_likes_in_state = item.number_of_likes;
+        });
+      }
   }
 
   async getFriendRequests() {
@@ -165,11 +167,14 @@ async handleCreateComment(event, data) {
 }
 
 async getComments() {
-  let response = await getComments();
+  let response = [];
+  response = await getComments();
   this.setState({resComments: response});
-  response.map(item => {
-    item.number_of_likes_in_state = item.number_of_likes;
-  });
+  if (response){
+    response.map(item => {
+      item.number_of_likes_in_state = item.number_of_likes;
+    });
+  }
 }
 
 async handleRateComment(event, data) {
@@ -325,7 +330,7 @@ async handleDeletePost(event, data) {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                    {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                     <Link to={`/profile/${item.username}`}>
                                       <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
@@ -367,7 +372,7 @@ async handleDeletePost(event, data) {
                                           <Comment.Group key={index}>
                                             {comment.post_id === item._id ?
                                             <Comment className="comment-box">
-                                              {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                              {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
 
                                               <Comment.Content className="comment-content">
                                                 <div className="comment-header">
@@ -438,7 +443,7 @@ async handleDeletePost(event, data) {
                                       <div key={index}>
                                         <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
+                                            {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.profile_picture_url} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
                                             <List.Content className="friends-content">
                                               <List.Header>
                                                   <Link to={`/profile/${item.requester}`}>
@@ -468,7 +473,7 @@ async handleDeletePost(event, data) {
                                       <div key={index}>
                                         <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
+                                            {item.picture !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.picture} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
                                             <List.Content className="friends-content">
                                               <List.Header >
                                                   <Link to={`/profile/${item.name}`}>
@@ -511,7 +516,7 @@ async handleDeletePost(event, data) {
                                     <div key={index}>
                                       <List className="feed-list-item" divided verticalAlign='middle'>
                                         <List.Item>
-                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image size="tiny" src={item.profile_picture_url} className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
+                                          {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image size="tiny" src={item.profile_picture_url} className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
                                           <List.Content className="friends-content">
                                             <List.Header>
                                                 {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}>

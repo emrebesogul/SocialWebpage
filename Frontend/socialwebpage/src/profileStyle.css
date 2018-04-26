@@ -164,6 +164,7 @@ h2.ui.huge.icon.center.aligned.header{
   margin: 0 auto !important;
   left: 0 !important;
   width: 70px !important;
+  height: 70px !important;
   padding-top: 6px !important;
 }
 
@@ -560,6 +561,10 @@ textarea {
 .roadmap-item{
   margin-top: 10px !important;
   margin-bottom: 20px !important;
+}
+
+.not-height{
+  margin-top: 20px;
 }
 
 .logo{
@@ -1149,6 +1154,14 @@ img.ui.image.image-feed{
     position: relative;
   }
 
+  .flex{
+    display: flex;
+    position: absolute;
+    justify-content: flex-end;
+    top: 0;
+    right: 0;
+  }
+
   .friends-content{
     position: absolute;
     left: 100px;
@@ -1169,13 +1182,7 @@ img.ui.image.image-feed{
     top: 10px;
   }
 
-  .flex{
-    display: flex;
-    position: absolute;
-    justify-content: flex-end;
-    top: 0;
-    right: 0;
-  }
+
 }
 
 @media only screen and (max-width: 1250px) {
@@ -1430,15 +1437,6 @@ img.ui.image.image-feed{
       position: inherit;
       display: block;
       margin: 10px auto;
-    }
-
-    .comment-box{
-      border-radius: 4px;
-    }
-
-    .comment-header{
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
     }
 
     #button-upload {
