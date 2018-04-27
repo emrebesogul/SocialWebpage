@@ -9,6 +9,7 @@ const multer = require('multer');
 const uuid = require('uuid/v4');
 const jwt = require('jsonwebtoken');
 const database = require('./database');
+const mongoSanitize = require('express-mongo-sanitize');
 
 // create application/json parser
 const jsonParser = bodyParser.json();
@@ -28,6 +29,8 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage});
+
+app.use(mongoSanitize());
 
 app.use(express.static('public'));
 app.use(cors());
@@ -658,6 +661,19 @@ MongoClient.connect(url, function(err, client) {
                 const commentId = req.body.commentId;
                 const userId = authData.userid;
                 database.likeComment(client.db('socialwebpage'), res, commentId, userId);
+            }
+        });
+    });
+
+    //------------------------------Delete a user----------------------------//
+    app.post('/rest/user/delete', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.send({userDelete: false });
+            } else {
+                const userId = req.body.userId;
+                const currentUserId = authData.userid;
+                database.deleteUser(client.db('socialwebpage'), res, userId, currentUserId);
             }
         });
     });

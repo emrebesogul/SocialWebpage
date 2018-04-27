@@ -26,9 +26,6 @@ class SearchBar extends Component {
         }
     }
 
-    reloadPage() {
-    }
-
   resetComponent = () => {
       this.setState({ isLoading: false, results: [], value: '' })
   }
@@ -45,11 +42,28 @@ class SearchBar extends Component {
       if (this.state.value.length < 1) return this.resetComponent()
 
       const re = new RegExp(_.escapeRegExp(this.state.value), 'i')
-      const isMatch = result => re.test(result.title)
-
+      const matchUsername = result => re.test(result.title)
+      const matchFirstName = result => re.test(result.firstName)
+      const matchLastName = result => re.test(result.lastName)
+      let res = [];
+      _.filter(this.state.user, matchUsername).map(item => {
+        if(!res.includes(item)) {
+            res.push(item)
+        }
+      });
+      _.filter(this.state.user, matchFirstName).map(item => {
+        if(!res.includes(item)) {
+            res.push(item)
+        }
+      });
+      _.filter(this.state.user, matchLastName).map(item => {
+        if(!res.includes(item)) {
+            res.push(item)
+        }
+      });
       this.setState({
         isLoading: false,
-        results: _.filter(this.state.user, isMatch),
+        results: res,
       })
     }, 300)
   }

@@ -126,7 +126,7 @@ class Notifications extends Component {
         numberOfLikes = item.number_of_likes_in_state;
       }
     });
-    if(numberOfLikes == undefined) {
+    if(numberOfLikes === undefined) {
       numberOfLikes = currentItem.number_of_likes;
     }
     return numberOfLikes;
