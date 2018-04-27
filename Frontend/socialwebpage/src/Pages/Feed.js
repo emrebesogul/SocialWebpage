@@ -22,6 +22,7 @@ class Feed extends Component {
       super();
 
       this.state = {
+        commentStatus: "Show Comments",
         redirectToLogin: false,
         resFriendsRequests: [],
         resFriends: [],
@@ -173,6 +174,8 @@ async getComments() {
   if (response){
     response.map(item => {
       item.number_of_likes_in_state = item.number_of_likes;
+      item.showOrHide = 0;
+      item.commentStatus = "Show Comments";
     });
   }
 }
@@ -244,30 +247,41 @@ async handleSubmit(event) {
   }
 }
 
-onDrop(files) {
-  this.setState({files: files});
-  document.getElementById("textarea-feed").removeAttribute("required");
-}
+    onDrop(files) {
+      this.setState({files: files});
+      document.getElementById("textarea-feed").removeAttribute("required");
+    }
 
-async handleDeleteComment(event, data) {
-  const response = await deleteCommentById(data._id);
-  if(response) {
-    this.getComments();
-  }
-}
+    async handleDeleteComment(event, data) {
+      const response = await deleteCommentById(data._id);
+      if(response) {
+        this.getComments();
+      }
+    }
 
-async handleDeletePost(event, data) {
-  if(data.type == "story") {
-    await deleteStoryEntryById(data._id);
-    this.getfeeddata();
-  }
-  if(data.type == "image") {
-    await deleteImageById(data._id);
-    this.getfeeddata();
-  }
+    async handleDeletePost(event, data) {
+      if(data.type == "story") {
+        await deleteStoryEntryById(data._id);
+        this.getfeeddata();
+      }
+      if(data.type == "image") {
+        await deleteImageById(data._id);
+        this.getfeeddata();
+      }
+    }
 
+    showOrHideComments() {
+        if (this.state.commentStatus === "Show Comments") {
+            this.setState({showComments: true});
+            this.setState({commentState: 1});
+            this.setState({commentStatus: "Hide Comments"});
+        } else if (this.state.commentStatus === "Hide Comments") {
+            this.setState({showComments: false});
+            this.setState({commentState: 0});
+            this.setState({commentStatus: "Show Comments"});
+        }
 
-}
+    }
 
 
     render() {
@@ -364,48 +378,60 @@ async handleDeletePost(event, data) {
                                 </Card>
                                 <Card fluid centered className="comment-card">
                                   <Card.Content className="feed-comment-content">
-                                      <Header as='h3' dividing>Comments</Header>
-                                      {comments.map((comment, index) => {
-                                        return(
-                                          <Comment.Group key={index}>
-                                            {comment.post_id === item._id ?
-                                            <Comment className="comment-box">
-                                              {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                      <Header as='h3' dividing onClick={((e) => this.showOrHideComments(e))}>{this.state.commentStatus}</Header>
 
-                                              <Comment.Content className="comment-content">
-                                                <div className="comment-header">
-                                                    <Comment.Author className="comment-author" >
-                                                      <Link to={`/profile/${comment.authorName}`}>
-                                                        @{comment.authorName}
-                                                      </Link>
-                                                    </Comment.Author>
-                                                </div>
-                                                <div className="ui mini horizontal statistic post-likes comment-likes">
-                                                  <div className="value">
-                                                  {this.getNumberOfLikesOfComment(comment)}
-                                                  </div>
-                                                  <div className="label">
-                                                    Likes
-                                                  </div>
-                                                </div>
-                                                {(this.state.currentUserId === comment.author_id) || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                        {this.state.showComments ?
+                                            <div>
+                                                {comments.map((comment, index) => {
+                                                return(
+                                                  <Comment.Group key={index}>
+                                                    {comment.post_id === item._id ?
+                                                    <Comment className="comment-box">
 
-                                                <div className="comment-user-info">
-                                                  <Comment.Metadata>
-                                                    <div>{comment.date_created}</div>
-                                                  </Comment.Metadata>
-                                                </div>
-                                                <Comment.Text>
-                                                  <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                                  </Rating>
-                                                  {comment.content}
-                                                </Comment.Text>
-                                              </Comment.Content>
-                                            </Comment>
-                                            : null }
-                                          </Comment.Group>
-                                        )
-                                      })}
+                                                      {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+
+                                                      <Comment.Content className="comment-content">
+                                                        <div className="comment-header">
+                                                            <Comment.Author className="comment-author" >
+                                                              <Link to={`/profile/${comment.authorName}`}>
+                                                                @{comment.authorName}
+                                                              </Link>
+                                                            </Comment.Author>
+                                                        </div>
+                                                        <div className="ui mini horizontal statistic post-likes comment-likes">
+                                                          <div className="value">
+                                                          {this.getNumberOfLikesOfComment(comment)}
+                                                          </div>
+                                                          <div className="label">
+                                                            Likes
+                                                          </div>
+                                                        </div>
+                                                        {(this.state.currentUserId === comment.author_id) || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+
+                                                        <div className="comment-user-info">
+                                                          <Comment.Metadata>
+                                                            <div>{comment.date_created}</div>
+                                                          </Comment.Metadata>
+                                                        </div>
+                                                        <Comment.Text>
+                                                          <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                          </Rating>
+                                                          {comment.content}
+                                                        </Comment.Text>
+                                                      </Comment.Content>
+                                                    </Comment>
+                                                    : null }
+                                                  </Comment.Group>
+                                                )
+                                              })}
+                                            </div>
+
+                                        : null}
+
+
+
+
+
                                       <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                         <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.." />
                                         <Button className="button-upload button-styles add-comment-button">

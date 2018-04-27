@@ -68,7 +68,7 @@ class Users extends React.Component{
   }
 
   async handleDeleteUser(event, item) {
-    let response = await deleteUser(item.userId);
+    let response = await deleteUser(item._id);
     if(response && (item.userId == this.state.currentUserId)) {
       this.setState({ redirectToLogin: true });
     } else {
