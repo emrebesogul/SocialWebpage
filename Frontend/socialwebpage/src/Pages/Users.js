@@ -101,15 +101,15 @@ class Users extends React.Component{
                     <div key={index}>
                       <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                         <List.Item>
-                          {item.image !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.image} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
-                          <List.Content className="friends-content">
-                            <List.Header>
-                                <Link to={`/profile/${item.username}`}>
-                                    <span>{item.username} </span>
-                                </Link>
-                            </List.Header>
-                            <List.Description>{item.firstName} {item.lastName}</List.Description>
-                          </List.Content>
+                          <Link to={`/profile/${item.username}`}>
+                            {item.image !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.image} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
+                            <List.Content className="friends-content">
+                              <List.Header>
+                                <span>{item.username} </span>
+                              </List.Header>
+                              <List.Description>{item.firstName} {item.lastName}</List.Description>
+                            </List.Content>
+                          </Link>
                           <List.Content className="flex">
                             <div className="flex-item">
                             { this.state.currentUserIsAdmin ? <Button id="red-border-button" className=" button-styles delete-friend-button mobile-button-border" onClick={((e) => this.handleDeleteUser(e, item))}>Delete User</Button>: null}
