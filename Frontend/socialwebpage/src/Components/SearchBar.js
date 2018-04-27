@@ -73,7 +73,6 @@ class SearchBar extends Component {
 
     const { redirectToProfile } = this.state;
      if (redirectToProfile) {
-       this.reloadPage()
        return <Redirect to={'/profile/'+ this.state.value}/>;
      }
 
