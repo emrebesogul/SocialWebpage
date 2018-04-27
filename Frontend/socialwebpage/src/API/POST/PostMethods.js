@@ -239,6 +239,28 @@ export const deleteFriendshipRequest=(requesterId) => {
     });
 }
 
+export const deleteMyFriendshipRequest=(recipientId) => {
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+        $.ajax({
+          url: url + "/friends/cancelMyFriendRequest",
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({recipientId: recipientId}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
+
 export const createGuestbookentry=(title, content, ownerName) => {
     return new Promise((resolve, reject) => {
         var token = read_cookie('token')

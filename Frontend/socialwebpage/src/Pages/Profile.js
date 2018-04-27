@@ -42,9 +42,9 @@ class Profile extends Component {
       this.getComments();
 
       if(this.property === undefined) {
-          this.pageTitle = "My Profile"
+          this.pageTitle = "Ivey - My Profile"
       } else {
-          this.pageTitle = "Profile of " + this.property
+          this.pageTitle = "Ivey - Profile of " + this.property
       }
       document.title = this.pageTitle;
   }

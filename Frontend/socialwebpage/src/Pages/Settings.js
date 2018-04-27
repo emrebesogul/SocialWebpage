@@ -25,7 +25,7 @@ class Settings extends React.Component{
           rerender: false,
           files: []
         }
-        this.pageTitle = "Settings"
+        this.pageTitle = "Ivey - Settings"
         document.title = this.pageTitle;
     }
 
@@ -106,7 +106,7 @@ class Settings extends React.Component{
       this.setState({
         files: files
       });
-    } 
+    }
 
     async handleDeleteUser() {
       let response = await deleteUser(this.state.userId);
