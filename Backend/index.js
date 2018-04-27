@@ -369,6 +369,18 @@ MongoClient.connect(url, function(err, client) {
         });
     });
 
+    //-----------------------cancelMyFriendRequest-----------------------//
+    app.post('/rest/friends/cancelMyFriendRequest', verifyToken, (req, res) => {
+        jwt.verify(req.token, 'secretkey', (err, authData) => {
+            if(err) {
+                res.send(false);
+            } else {
+                const requesterId = authData.userid;
+                database.cancelMyFriendRequest(client.db('socialwebpage'), req.body.recipientId, requesterId, res);
+            }
+        });
+    });
+
     //-----------------------Get all friends of a user-----------------------//
     app.get('/rest/friends/getFriends', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {

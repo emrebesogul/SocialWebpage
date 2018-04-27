@@ -457,7 +457,7 @@ var call = module.exports = {
                         buttonState = "Delete Friend";
                     } else if (res_find_friend_request) {
                         if (res_find_friend_request.requesterId == userid) {
-                            buttonState = "Your request was sent";
+                            buttonState = "Cancel request";
                         } else {
                             buttonState = "Request pending";
                         }
@@ -796,7 +796,7 @@ var call = module.exports = {
                         }));
                     } else {
                         res.send(JSON.stringify({
-                            buttonState: "Request sent"
+                            buttonState: "Cancel my request"
                         }));
                         db.collection('friend_requests').insert({
                             "requester": requester,
@@ -897,7 +897,15 @@ var call = module.exports = {
     deleteFriendRequest: function(db, requesterId, recipientId, res) {
         db.collection('friend_requests').remove({"requesterId": new ObjectId(requesterId), "recipientId": new ObjectId(recipientId)}, (err, res_stories) => {
             if (err) throw err;
-            res.send(true);
+            res.send(JSON.stringify({buttonState: "Add Friend"}));
+        });
+    },
+
+    //----------------------Cancel Friend request----------------------//
+    cancelMyFriendRequest: function(db, recipientId, requesterId, res) {
+        db.collection('friend_requests').remove({"requesterId": new ObjectId(requesterId), "recipientId": new ObjectId(recipientId)}, (err, res_stories) => {
+            if (err) throw err;
+            res.send(JSON.stringify({buttonState: "Add Friend"}));
         });
     },
 
@@ -946,7 +954,7 @@ var call = module.exports = {
     deleteFriend: function(db, res, userId, userToDeleteId) {
         db.collection('users').update({"_id" : new ObjectId(userId)}, {'$pull': {"friends": new ObjectId(userToDeleteId)}});
         db.collection('users').update({"_id" : new ObjectId(userToDeleteId)}, {'$pull': {"friends": new ObjectId(userId)}});
-        res.send(true);
+        res.send(JSON.stringify({buttonState: "Add Friend"}));
     },
 
     //-----------------------------------Create a Guestbook Entry-----------------------------------//
