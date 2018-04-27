@@ -1485,7 +1485,9 @@ var call = module.exports = {
                 let result_users = [];
                 docs.map(item => {
                     let user = {};
+                    user ["userId"] = item._id;
                     user ["title"] = item.username;
+                    user ["username"] = item.username;
                     user ["firstName"] = item.first_name;
                     user ["lastName"] = item.last_name;
                     user ["description"] = item.first_name + " " + item.last_name;
