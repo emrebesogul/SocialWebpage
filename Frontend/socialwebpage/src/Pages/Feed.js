@@ -22,7 +22,8 @@ class Feed extends Component {
       super();
 
       this.state = {
-        commentStatus: "Show Comments",
+        showOrHide: [],
+        commentStatus: [],
         redirectToLogin: false,
         resFriendsRequests: [],
         resFriends: [],
@@ -68,12 +69,18 @@ class Feed extends Component {
 
  async getfeeddata() {
       let response = await fetchFeedData();
-      this.setState({resFeedPosts: response});
       if (response){
+        let i = 0;
         response.map(item => {
           item.number_of_likes_in_state = item.number_of_likes;
+          item.position = i;
+          this.state.showOrHide.push(0);
+          this.state.commentStatus.push("Show Comments");
+          i++;
         });
       }
+      this.setState({resFeedPosts: response});
+
   }
 
   async getFriendRequests() {
@@ -174,8 +181,6 @@ async getComments() {
   if (response){
     response.map(item => {
       item.number_of_likes_in_state = item.number_of_likes;
-      item.showOrHide = 0;
-      item.commentStatus = "Show Comments";
     });
   }
 }
@@ -270,17 +275,26 @@ async handleSubmit(event) {
       }
     }
 
-    showOrHideComments() {
-        if (this.state.commentStatus === "Show Comments") {
-            this.setState({showComments: true});
-            this.setState({commentState: 1});
-            this.setState({commentStatus: "Hide Comments"});
-        } else if (this.state.commentStatus === "Hide Comments") {
-            this.setState({showComments: false});
-            this.setState({commentState: 0});
-            this.setState({commentStatus: "Show Comments"});
-        }
+    showOrHideComments(e, item) {
+        if (this.state.commentStatus[item.position] == "Show Comments") {
+            let newIds1 = this.state.showOrHide.slice()
+            newIds1[item.position] = 1
+            this.setState({showOrHide: newIds1})
 
+            let newIds = this.state.commentStatus.slice()
+            newIds[item.position] = "Hide Comments"
+            this.setState({commentStatus: newIds})
+
+        } else if (this.state.commentStatus[item.position] == "Hide Comments") {
+
+            let newIds3 = this.state.showOrHide.slice()
+            newIds3[item.position] = 0
+            this.setState({showOrHide: newIds3})
+
+            let newIds4 = this.state.commentStatus.slice() //copy the array
+            newIds4[item.position] = "Show Comments" //execute the manipulations
+            this.setState({commentStatus: newIds4}) //set the new state
+        }
     }
 
 
@@ -378,9 +392,9 @@ async handleSubmit(event) {
                                 </Card>
                                 <Card fluid centered className="comment-card">
                                   <Card.Content className="feed-comment-content">
-                                      <Header as='h3' dividing onClick={((e) => this.showOrHideComments(e))}>{this.state.commentStatus}</Header>
+                                      <Header as='h3' dividing onClick={((e) => this.showOrHideComments(e, item))}>{this.state.commentStatus[item.position]}</Header>
 
-                                        {this.state.showComments ?
+                                        {this.state.showOrHide[item.position] ?
                                             <div>
                                                 {comments.map((comment, index) => {
                                                 return(
@@ -423,13 +437,9 @@ async handleSubmit(event) {
                                                     : null }
                                                   </Comment.Group>
                                                 )
-                                              })}
+                                                })}
                                             </div>
-
                                         : null}
-
-
-
 
 
                                       <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>

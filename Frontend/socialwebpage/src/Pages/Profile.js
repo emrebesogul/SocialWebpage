@@ -18,6 +18,14 @@ class Profile extends Component {
       super(props);
 
       this.state = {
+        showOrHideCommentsInImages: [],
+        showOrHideCommentsInStories: [],
+        showOrHideCommentsInGuestbook: [],
+
+        commentStatusInImages: [],
+        commentStatusInStories: [],
+        commentStatusInGuestbook: [],
+
         show: false,
         responseImages: [],
         responseStories: [],
@@ -68,20 +76,37 @@ class Profile extends Component {
             const responseStories = await getStoryForUserId("/story/list");
             const responseImages = await getImagesForUserId("/image/list");
             const responseGuestbookEntries = await getGuestbookEntriesForUserId("/guestbook/list");
+
+            let i = 0;
+            let j = 0;
+            let k = 0;
+
+            responseStories.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+              item.position = i;
+              this.state.showOrHideCommentsInStories.push(0);
+              this.state.commentStatusInStories.push("Show Comments");
+              i++;
+            });
+            responseImages.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+              item.position = j;
+              this.state.showOrHideCommentsInImages.push(0);
+              this.state.commentStatusInImages.push("Show Comments");
+              j++;
+            });
+            responseGuestbookEntries.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+              item.position = k;
+              this.state.showOrHideCommentsInGuestbook.push(0);
+              this.state.commentStatusInGuestbook.push("Show Comments");
+              k++;
+            });
+
             this.setState({
               responseStories : responseStories,
               responseImages : responseImages,
               responseGuestbookEntries : responseGuestbookEntries
-            });
-
-            responseStories.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-            responseImages.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-            responseGuestbookEntries.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
             });
 
             const currentUserData = await getCurrentUserData();
@@ -112,20 +137,37 @@ class Profile extends Component {
             const responseStories = await getStoryForUserId(apiStoriesWithUsername);
             const responseImages = await getImagesForUserId(apiImagesWithUsername);
             const responseGuestbookEntries = await getGuestbookEntriesForUserId(apiGuestbookEntriesWithUsername);
+
+            let i = 0;
+            let j = 0;
+            let k = 0;
+
+            responseStories.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+              item.position = i;
+              this.state.showOrHideCommentsInStories.push(0);
+              this.state.commentStatusInStories.push("Show Comments");
+              i++;
+            });
+            responseImages.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+              item.position = j;
+              this.state.showOrHideCommentsInImages.push(0);
+              this.state.commentStatusInImages.push("Show Comments");
+              j++;
+            });
+            responseGuestbookEntries.map(item => {
+              item.number_of_likes_in_state = item.number_of_likes;
+              item.position = k;
+              this.state.showOrHideCommentsInGuestbook.push(0);
+              this.state.commentStatusInGuestbook.push("Show Comments");
+              k++;
+            });
+
             this.setState({
               responseStories : responseStories,
               responseImages : responseImages,
               responseGuestbookEntries : responseGuestbookEntries
-            });
-
-            responseStories.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-            responseImages.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
-            });
-            responseGuestbookEntries.map(item => {
-              item.number_of_likes_in_state = item.number_of_likes;
             });
 
             const currentUserData = await getCurrentUserData();
@@ -432,6 +474,70 @@ class Profile extends Component {
       }
 
 
+      showOrHideCommentsInImages(e, item) {
+          if (this.state.commentStatusInImages[item.position] == "Show Comments") {
+              let newIds1 = this.state.showOrHideCommentsInImages.slice()
+              newIds1[item.position] = 1
+              this.setState({showOrHideCommentsInImages: newIds1})
+
+              let newIds = this.state.commentStatusInStories.slice()
+              newIds[item.position] = "Hide Comments"
+              this.setState({commentStatusInImages: newIds})
+
+          } else if (this.state.commentStatusInImages[item.position] == "Hide Comments") {
+              let newIds3 = this.state.showOrHideCommentsInImages.slice()
+              newIds3[item.position] = 0
+              this.setState({showOrHideCommentsInImages: newIds3})
+
+              let newIds4 = this.state.commentStatusInImages.slice() //copy the array
+              newIds4[item.position] = "Show Comments" //execute the manipulations
+              this.setState({commentStatusInImages: newIds4}) //set the new state
+          }
+      }
+
+      showOrHideCommentsInStories(e, item) {
+          if (this.state.commentStatusInStories[item.position] == "Show Comments") {
+              let newIds1 = this.state.showOrHideCommentsInStories.slice()
+              newIds1[item.position] = 1
+              this.setState({showOrHideCommentsInStories: newIds1})
+
+              let newIds = this.state.commentStatusInStories.slice()
+              newIds[item.position] = "Hide Comments"
+              this.setState({commentStatusInStories: newIds})
+
+          } else if (this.state.commentStatusInStories[item.position] == "Hide Comments") {
+              let newIds3 = this.state.showOrHideCommentsInStories.slice()
+              newIds3[item.position] = 0
+              this.setState({showOrHideCommentsInStories: newIds3})
+
+              let newIds4 = this.state.showOrHideCommentsInStories.slice() //copy the array
+              newIds4[item.position] = "Show Comments" //execute the manipulations
+              this.setState({commentStatusInStories: newIds4}) //set the new state
+          }
+      }
+
+      showOrHideCommentsInGuestbook(e, item) {
+          if (this.state.commentStatusInGuestbook[item.position] == "Show Comments") {
+              let newIds1 = this.state.showOrHideCommentsInGuestbook.slice()
+              newIds1[item.position] = 1
+              this.setState({showOrHideCommentsInGuestbook: newIds1})
+
+              let newIds = this.state.commentStatusInGuestbook.slice()
+              newIds[item.position] = "Hide Comments"
+              this.setState({commentStatusInGuestbook: newIds})
+
+          } else if (this.state.commentStatusInGuestbook[item.position] == "Hide Comments") {
+              let newIds3 = this.state.showOrHideCommentsInGuestbook.slice()
+              newIds3[item.position] = 0
+              this.setState({showOrHideCommentsInGuestbook: newIds3})
+
+              let newIds4 = this.state.commentStatusInGuestbook.slice() //copy the array
+              newIds4[item.position] = "Show Comments" //execute the manipulations
+              this.setState({commentStatusInGuestbook: newIds4}) //set the new state
+          }
+      }
+
+
     render() {
 
     const { redirectToLogin } = this.state;
@@ -498,47 +604,54 @@ class Profile extends Component {
                                 </Card>
                                 <Card fluid centered className="comment-card">
                                   <Card.Content>
-                                    <Header as='h4' dividing>Comments</Header>
-                                    {comments.map((comment, index) => {
-                                      return(
-                                        <Comment.Group key={index}>
-                                          {comment.post_id === item._id ?
-                                          <Comment className="comment-box">
-                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
-                                            <Comment.Content className="comment-content">
-                                              <div className="comment-header">
-                                                  <Comment.Author className="comment-author" as='a'>
-                                                    <Link to={`/profile/${comment.authorName}`}>
-                                                      @{comment.authorName}
-                                                    </Link>
-                                                  </Comment.Author>
-                                              </div>
-                                              <div className="ui mini horizontal statistic post-likes comment-likes">
-                                                <div className="value">
-                                                {this.getNumberOfLikesOfComment(comment)}
-                                                </div>
-                                                <div className="label">
-                                                  Likes
-                                                </div>
-                                              </div>
-                                              {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                    <Header as='h4' dividing onClick={((e) => this.showOrHideCommentsInImages(e, item))}>{this.state.commentStatusInImages[item.position]}</Header>
 
-                                              <div className="comment-user-info">
-                                                <Comment.Metadata>
-                                                  <div>{comment.date_created}</div>
-                                                </Comment.Metadata>
-                                              </div>
-                                              <Comment.Text>
-                                                <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                                </Rating>
-                                                {comment.content}
-                                              </Comment.Text>
-                                            </Comment.Content>
-                                          </Comment>
-                                          : null }
-                                        </Comment.Group>
-                                      )
-                                    })}
+                                    {this.state.showOrHideCommentsInImages[item.position] ?
+                                        <div>
+                                            {comments.map((comment, index) => {
+                                              return(
+                                                <Comment.Group key={index}>
+                                                  {comment.post_id === item._id ?
+                                                  <Comment className="comment-box">
+                                                    {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                                    <Comment.Content className="comment-content">
+                                                      <div className="comment-header">
+                                                          <Comment.Author className="comment-author" as='a'>
+                                                            <Link to={`/profile/${comment.authorName}`}>
+                                                              @{comment.authorName}
+                                                            </Link>
+                                                          </Comment.Author>
+                                                      </div>
+                                                      <div className="ui mini horizontal statistic post-likes comment-likes">
+                                                        <div className="value">
+                                                        {this.getNumberOfLikesOfComment(comment)}
+                                                        </div>
+                                                        <div className="label">
+                                                          Likes
+                                                        </div>
+                                                      </div>
+                                                      {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+
+                                                      <div className="comment-user-info">
+                                                        <Comment.Metadata>
+                                                          <div>{comment.date_created}</div>
+                                                        </Comment.Metadata>
+                                                      </div>
+                                                      <Comment.Text>
+                                                        <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                        </Rating>
+                                                        {comment.content}
+                                                      </Comment.Text>
+                                                    </Comment.Content>
+                                                  </Comment>
+                                                  : null }
+                                                </Comment.Group>
+                                              )
+                                            })}
+                                        </div>
+                                    : null}
+
+
                                     <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                       <Form.TextArea  class="commentInput" rows="1" placeholder="Add a comment.."/>
                                       <Button className="button-upload button-styles add-comment-button">
@@ -597,47 +710,52 @@ class Profile extends Component {
                                     </Card>
                                     <Card fluid centered className="comment-card">
                                       <Card.Content>
-                                        <Header as='h4' dividing>Comments</Header>
-                                        {comments.map((comment, index) => {
-                                          return(
-                                            <Comment.Group key={index}>
-                                              {comment.post_id === item._id ?
-                                              <Comment className="comment-box">
-                                                {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
-                                                <Comment.Content className="comment-content">
-                                                  <div className="comment-header">
-                                                      <Comment.Author className="comment-author" as='a'>
-                                                        <Link to={`/profile/${comment.authorName}`}>
-                                                          @{comment.authorName}
-                                                        </Link>
-                                                      </Comment.Author>
-                                                  </div>
-                                                  <div className="ui mini horizontal statistic post-likes comment-likes">
-                                                    <div className="value">
-                                                    {this.getNumberOfLikesOfComment(comment)}
-                                                    </div>
-                                                    <div className="label">
-                                                      Likes
-                                                    </div>
-                                                  </div>
-                                                  {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ?  <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                          <Header as='h4' dividing onClick={((e) => this.showOrHideCommentsInStories(e, item))}>{this.state.commentStatusInStories[item.position]}</Header>
+                                          {this.state.showOrHideCommentsInStories[item.position] ?
+                                              <div>
+                                                  {comments.map((comment, index) => {
+                                                    return(
+                                                      <Comment.Group key={index}>
+                                                        {comment.post_id === item._id ?
+                                                        <Comment className="comment-box">
+                                                          {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                                          <Comment.Content className="comment-content">
+                                                            <div className="comment-header">
+                                                                <Comment.Author className="comment-author" as='a'>
+                                                                  <Link to={`/profile/${comment.authorName}`}>
+                                                                    @{comment.authorName}
+                                                                  </Link>
+                                                                </Comment.Author>
+                                                            </div>
+                                                            <div className="ui mini horizontal statistic post-likes comment-likes">
+                                                              <div className="value">
+                                                              {this.getNumberOfLikesOfComment(comment)}
+                                                              </div>
+                                                              <div className="label">
+                                                                Likes
+                                                              </div>
+                                                            </div>
+                                                            {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ?  <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
 
-                                                  <div className="comment-user-info">
-                                                    <Comment.Metadata>
-                                                      <div>{comment.date_created}</div>
-                                                    </Comment.Metadata>
-                                                  </div>
-                                                  <Comment.Text>
-                                                    <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                                    </Rating>
-                                                    {comment.content}
-                                                  </Comment.Text>
-                                                </Comment.Content>
-                                              </Comment>
-                                              : null }
-                                            </Comment.Group>
-                                          )
-                                        })}
+                                                            <div className="comment-user-info">
+                                                              <Comment.Metadata>
+                                                                <div>{comment.date_created}</div>
+                                                              </Comment.Metadata>
+                                                            </div>
+                                                            <Comment.Text>
+                                                              <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                              </Rating>
+                                                              {comment.content}
+                                                            </Comment.Text>
+                                                          </Comment.Content>
+                                                        </Comment>
+                                                        : null }
+                                                      </Comment.Group>
+                                                    )
+                                                  })}
+                                              </div>
+                                          : null}
+
                                         <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                           <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.."/>
                                           <Button className="button-upload button-styles add-comment-button">
@@ -709,48 +827,53 @@ class Profile extends Component {
                                   </Card>
                                   <Card fluid centered className="comment-card">
                                     <Card.Content>
-                                      <Header as='h4' dividing>Comments</Header>
-                                      {comments.map((comment, index) => {
-                                        return(
-                                          <Comment.Group key={index}>
-                                            {comment.post_id === item._id ?
-                                            <Comment className="comment-box">
-                                              {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                      <Header as='h4' dividing onClick={((e) => this.showOrHideCommentsInGuestbook(e, item))}>{this.state.commentStatusInGuestbook[item.position]}</Header>
+                                      {this.state.showOrHideCommentsInGuestbook[item.position] ?
+                                          <div>
+                                              {comments.map((comment, index) => {
+                                                return(
+                                                  <Comment.Group key={index}>
+                                                    {comment.post_id === item._id ?
+                                                    <Comment className="comment-box">
+                                                      {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
 
-                                              <Comment.Content className="comment-content">
-                                                <div className="comment-header">
-                                                    <Comment.Author className="comment-author" as='a'>
-                                                      <Link to={`/profile/${comment.authorName}`}>
-                                                        @{comment.authorName}
-                                                      </Link>
-                                                    </Comment.Author>
-                                                </div>
-                                                <div className="ui mini horizontal statistic post-likes comment-likes">
-                                                  <div className="value">
-                                                  {this.getNumberOfLikesOfComment(comment)}
-                                                  </div>
-                                                  <div className="label">
-                                                    Likes
-                                                  </div>
-                                                </div>
-                                                {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
+                                                      <Comment.Content className="comment-content">
+                                                        <div className="comment-header">
+                                                            <Comment.Author className="comment-author" as='a'>
+                                                              <Link to={`/profile/${comment.authorName}`}>
+                                                                @{comment.authorName}
+                                                              </Link>
+                                                            </Comment.Author>
+                                                        </div>
+                                                        <div className="ui mini horizontal statistic post-likes comment-likes">
+                                                          <div className="value">
+                                                          {this.getNumberOfLikesOfComment(comment)}
+                                                          </div>
+                                                          <div className="label">
+                                                            Likes
+                                                          </div>
+                                                        </div>
+                                                        {this.state.currentUserId === comment.author_id || this.state.currentUserIsAdmin ? <Button className="button-upload delete-button-comment" onClick={((e) => this.handleDeleteComment(e, comment))} circular icon="delete" size="tiny"></Button> : null }
 
-                                                <div className="comment-user-info">
-                                                  <Comment.Metadata>
-                                                    <div>{comment.date_created}</div>
-                                                  </Comment.Metadata>
-                                                </div>
-                                                <Comment.Text>
-                                                  <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
-                                                  </Rating>
-                                                  {comment.content}
-                                                </Comment.Text>
-                                              </Comment.Content>
-                                            </Comment>
-                                            : null }
-                                          </Comment.Group>
-                                        )
-                                      })}
+                                                        <div className="comment-user-info">
+                                                          <Comment.Metadata>
+                                                            <div>{comment.date_created}</div>
+                                                          </Comment.Metadata>
+                                                        </div>
+                                                        <Comment.Text>
+                                                          <Rating className="comment-rating" onRate={((e) => this.handleRateComment(e, comment))} icon='heart' size="large" rating={comment.current_user_has_liked} maxRating={1}>
+                                                          </Rating>
+                                                          {comment.content}
+                                                        </Comment.Text>
+                                                      </Comment.Content>
+                                                    </Comment>
+                                                    : null }
+                                                  </Comment.Group>
+                                                )
+                                              })}
+                                          </div>
+                                      : null}
+
                                       <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
                                         <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.."/>
                                           <Button className="button-upload button-styles add-comment-button">
