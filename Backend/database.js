@@ -66,7 +66,7 @@ var call = module.exports = {
         let friends = [];
         let passwordHashed = SHA256(password);
 
-        if (username !== null && password !== null) {
+        if (username.trim().length !== 0 && password.trim().length !== 0 && username !== null && password !== null) {
             let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             if (email !== null) {
                 if (email.match(mailformat)) {
@@ -160,6 +160,10 @@ var call = module.exports = {
                     message: "Username and Password is required."
                 }));
             }
+        } else {
+            res.send(JSON.stringify({
+                message: "Username or Password can't be blank."
+            }));
         }
 
     },
@@ -704,6 +708,7 @@ var call = module.exports = {
 
         let responseMessage = "User data successfully updated.";
         if(newEmail != null && newEmail != "" && newUsername != null && newUsername != "") {
+            let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
                 res_find_user.map(user => {
                     if (user._id != currentUserId) {
@@ -719,47 +724,62 @@ var call = module.exports = {
                     }
                 });
                 if (permitUpdate) {
-                    if(userData.new_password == "" || userData.new_password == null) {
-                        db.collection('users').update(
-                            { _id: new ObjectId(currentUserId) },
-                            {
-                                $set: {
-                                "first_name": userData.first_name,
-                                "last_name": userData.last_name,
-                                "username": newUsername,
-                                "email": newEmail,
-                                }
-                            }
-                        );
-                        res.send(JSON.stringify({message: responseMessage}));
-                    } else {
-                        db.collection('users').findOne({"_id": new ObjectId(currentUserId)}, (err, docs) => {
-                            if (err) throw err;
-                            if (docs) {
-                                if (JSON.stringify(oldHashedPassword.words) === JSON.stringify(docs.password)) {
-                                    db.collection('users').update(
-                                        { _id: ObjectId(currentUserId) },
-                                        {
-                                            $set: {
-                                            "first_name": userData.first_name,
-                                            "last_name": userData.last_name,
-                                            "username": newUsername,
-                                            "email": newEmail,
-                                            "password": newHashedPassword.words
+                    if (newEmail.match(mailformat)) {
+                        if (newUsername.trim().length !== 0) {
+                            if(userData.new_password == "" || userData.new_password == null) {
+                                db.collection('users').update(
+                                    { _id: new ObjectId(currentUserId) },
+                                    {
+                                        $set: {
+                                        "first_name": userData.first_name,
+                                        "last_name": userData.last_name,
+                                        "username": newUsername,
+                                        "email": newEmail,
+                                        }
+                                    }
+                                );
+                                res.send(JSON.stringify({message: responseMessage}));
+                            } else {
+                                if (userData.new_password.trim().length !== 0) {
+                                    db.collection('users').findOne({"_id": new ObjectId(currentUserId)}, (err, docs) => {
+                                        if (err) throw err;
+                                        if (docs) {
+                                            if (JSON.stringify(oldHashedPassword.words) === JSON.stringify(docs.password)) {
+                                                db.collection('users').update(
+                                                    { _id: ObjectId(currentUserId) },
+                                                    {
+                                                        $set: {
+                                                        "first_name": userData.first_name,
+                                                        "last_name": userData.last_name,
+                                                        "username": newUsername,
+                                                        "email": newEmail,
+                                                        "password": newHashedPassword.words
+                                                        }
+                                                    }
+                                                );
+                                            } else {
+                                                responseMessage = "Your old password is not the same.";
                                             }
                                         }
-                                    );
+                                        res.send(JSON.stringify({message: responseMessage}));
+                                    });
                                 } else {
-                                    responseMessage = "Your old password is not the same.";
+                                    res.send(JSON.stringify({
+                                        message: "New Password can't be blank."
+                                    }));
                                 }
                             }
-                            res.send(JSON.stringify({message: responseMessage}));
-                        });
+                        }
+                    } else {
+                        res.send(JSON.stringify({
+                            message: "You have entered an invalid email address."
+                        }));
                     }
                 }
+
             });
         } else {
-            res.send(JSON.stringify({message: "Username and email must not be empty!"}));
+            res.send(JSON.stringify({message: "New Username can't be blank."}));
         }
     },
 
