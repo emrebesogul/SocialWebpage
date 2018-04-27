@@ -66,7 +66,7 @@ var call = module.exports = {
         let friends = [];
         let passwordHashed = SHA256(password);
 
-        if (username.trim().length !== 0 && password.trim().length !== 0 && username !== null && password !== null) {
+        if (firstname.trim().length !== 0 && lastname.trim().length !== 0 && username.trim().length !== 0 && password.trim().length !== 0 && username !== null && password !== null) {
             let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             if (email !== null) {
                 if (email.match(mailformat)) {
@@ -162,7 +162,7 @@ var call = module.exports = {
             }
         } else {
             res.send(JSON.stringify({
-                message: "Username or Password can't be blank."
+                message: "User data can't be empty."
             }));
         }
 
@@ -707,7 +707,7 @@ var call = module.exports = {
         let permitUpdate = 1;
 
         let responseMessage = "User data successfully updated.";
-        if(newEmail != null && newEmail != "" && newUsername != null && newUsername != "") {
+        if(newEmail != null && newEmail != "" && newUsername != null && newUsername != "" && userData.first_name.trim().length !== 0 && userData.last_name.trim().length !== 0 ) {
             let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             db.collection('users').find( { $or: [ {"username": newUsername}, {"email": newEmail} ]}).toArray((err, res_find_user) => {
                 res_find_user.map(user => {
@@ -765,7 +765,7 @@ var call = module.exports = {
                                     });
                                 } else {
                                     res.send(JSON.stringify({
-                                        message: "New Password can't be blank."
+                                        message: "New Password can't be empty."
                                     }));
                                 }
                             }
@@ -779,7 +779,7 @@ var call = module.exports = {
 
             });
         } else {
-            res.send(JSON.stringify({message: "New Username can't be blank."}));
+            res.send(JSON.stringify({message: "User data can't be empty."}));
         }
     },
 
