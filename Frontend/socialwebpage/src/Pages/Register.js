@@ -23,7 +23,7 @@ class Reqister extends Component {
           message: "",
           messageDetail: ""
         }
-        this.pageTitle = "Reqister to Ivey"
+        this.pageTitle = "Ivey - Register"
         document.title = this.pageTitle;
     }
 

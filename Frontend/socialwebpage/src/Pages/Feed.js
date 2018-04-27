@@ -37,7 +37,7 @@ class Feed extends Component {
         redirectToFeed: false,
         status: false
       }
-      this.pageTitle = "Ivey";
+      this.pageTitle = "Ivey - Feed";
       document.title = this.pageTitle;
   }
 

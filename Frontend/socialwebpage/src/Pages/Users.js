@@ -19,7 +19,7 @@ class Users extends React.Component{
       currentUserIsAdmin: false
     }
 
-    this.pageTitle = "Network - Ivey"
+    this.pageTitle = "Ivey - Network"
     document.title = this.pageTitle;
   }
 
@@ -74,7 +74,7 @@ class Users extends React.Component{
     } else {
       this.getUsers();
     }
-    
+
   }
 
   render(){

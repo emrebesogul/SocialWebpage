@@ -21,7 +21,7 @@ class Login extends Component {
 
         this.handleSubmit = this.handleSubmit.bind(this);
 
-        this.pageTitle = "Login to Ivey";
+        this.pageTitle = "Ivey - Login";
         document.title = this.pageTitle;
     }
 

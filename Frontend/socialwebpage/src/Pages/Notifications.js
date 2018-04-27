@@ -21,7 +21,7 @@ class Notifications extends Component {
         responseNotification: ""
       }
 
-      this.pageTitle = "Ivey - Posts";
+      this.pageTitle = "Ivey - Notification";
       document.title = this.pageTitle;
   }
 

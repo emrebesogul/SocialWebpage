@@ -3,6 +3,11 @@ import { Item } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
 
 class About extends React.Component{
+    constructor() {
+        super();
+        this.pageTitle = "Ivey - Legal"
+        document.title = this.pageTitle;
+    }
 
   render(){
     return(

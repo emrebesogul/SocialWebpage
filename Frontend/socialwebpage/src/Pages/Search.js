@@ -9,7 +9,7 @@ class Search extends Component {
     constructor() {
         super();
 
-        this.pageTitle = "Search - Ivey"
+        this.pageTitle = "Ivey - Search"
         document.title = this.pageTitle;
     }
 

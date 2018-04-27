@@ -3,6 +3,10 @@ import { Image } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
 
 class About extends React.Component{
+    constructor() {
+        super();
+        document.title = "Ivey - About Us";
+    }
 
   render(){
     return(
