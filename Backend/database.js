@@ -1486,34 +1486,29 @@ var call = module.exports = {
 
     //----------------------------List all users-----------------------------//
     getAllUsers: function(db, res) {
-        db.collection('users').find({}).toArray(function (err, docs) {
-            if (err) throw err;
-            if (docs) {
-                let userLength = (docs).length;
-                let result_users = [];
-                docs.map(item => {
-                    let user = {};
-                    user ["userId"] = item._id;
-                    user ["title"] = item.username;
-                    user ["username"] = item.username;
-                    user ["firstName"] = item.first_name;
-                    user ["lastName"] = item.last_name;
-                    user ["description"] = item.first_name + " " + item.last_name;
-                    if(item.picture !== "") {
-                        user ["image"] = "http://localhost:8000/uploads/posts/" + item.picture;
-                    } else {
-                        user ["image"] = "/assets/images/user.png";
-                    }
-                    result_users.push(user);
-                });
-                result_users = result_users.slice(0);
-                result_users.sort(function(a,b) {
-                    let x = a.title.toLowerCase();
-                    let y = b.title.toLowerCase();
-                    return x < y ? -1 : x > y ? 1 : 0;
-                });
-            res.status(200).send(result_users);
-            }
+        db.collection('users').aggregate([
+            { $project : {
+                    "username": 1,
+                    "first_name": 1,
+                    "last_name": 1,
+                    "picture" : 1
+                }
+            },
+            { $sort : { "username" : 1 } }
+            ]).toArray(function (err_find_all_Users, res_find_all_Users) {
+            if (err_find_all_Users) throw err_find_all_Users;
+            res_find_all_Users.map(user => {
+                if(user.picture !== "") {
+                    user.picture = "http://localhost:8000/uploads/posts/" + user.picture;
+                } else {
+                    user.picture = "/assets/images/user.png"
+                }
+                // Only for the search bar
+                user.title = user.username;
+                user.description = user.first_name + " " + user.last_name;
+                user.image = user.picture;
+            });
+            res.send(res_find_all_Users);
         });
     },
 

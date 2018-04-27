@@ -52,7 +52,7 @@ class Users extends React.Component{
     let result = [];
     let allUsers = await getAllUsers();
     allUsers.map(user => {
-      let fullName = user.firstName.trim().toLowerCase()  + user.lastName.trim().toLowerCase();
+      let fullName = user.first_name.trim().toLowerCase()  + user.last_name.trim().toLowerCase();
       if(user.title.toLowerCase().includes(requestedName)){
         if(!result.includes(user)) {
           result.push(user)
@@ -102,12 +102,12 @@ class Users extends React.Component{
                       <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                         <List.Item>
                           <Link to={`/profile/${item.username}`}>
-                            {item.image !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.image} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
+                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
                             <List.Content className="friends-content">
                               <List.Header>
                                 <span>{item.username} </span>
                               </List.Header>
-                              <List.Description>{item.firstName} {item.lastName}</List.Description>
+                              <List.Description>{item.first_name} {item.last_name}</List.Description>
                             </List.Content>
                           </Link>
                           <List.Content className="flex">

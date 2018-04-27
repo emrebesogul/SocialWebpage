@@ -43,8 +43,8 @@ class SearchBar extends Component {
 
       const re = new RegExp(_.escapeRegExp(this.state.value), 'i')
       const matchUsername = result => re.test(result.title)
-      const matchFirstName = result => re.test(result.firstName)
-      const matchLastName = result => re.test(result.lastName)
+      const matchFirstName = result => re.test(result.first_name)
+      const matchLastName = result => re.test(result.last_name)
       let res = [];
       _.filter(this.state.user, matchUsername).map(item => {
         if(!res.includes(item)) {
