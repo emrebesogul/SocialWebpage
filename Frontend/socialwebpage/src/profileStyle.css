@@ -108,7 +108,7 @@ h2.ui.huge.icon.center.aligned.header{
   position: absolute;
   bottom: 0;
   right: 10px;
-  bottom: 15px;
+  bottom: 12px;
   text-align: center !important;
   width: 55px;
   height: 35px;
@@ -254,6 +254,14 @@ a{
           Only visible in desktop mode.
 --------------------------------------------------*/
 
+#users-search{
+  margin-top: 25px;
+  /* width: 30%; */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 #welcome-label{
   position: fixed;
   top: 38px;
@@ -264,7 +272,7 @@ a{
   max-width: 230px;
   text-align: center;
   border-radius: 2px;
-  height: 427px;
+  height: 477px;
   padding-top: 10px;
   color: rgb(30,30,30);
   background: #fefefe;
@@ -372,6 +380,7 @@ a{
 div.ui.centered.fluid.card {
   border-radius: 2px;
   box-shadow: 0px 1px 6px 1px #cfcfcf;
+  margin-bottom: 0 !important;
 }
 
 div.ui.pointing.secondary.menu{
@@ -473,8 +482,19 @@ div.ui.comments {
   box-shadow: none !important;
 }
 
+.feed-comment-content{
+    padding-top: 4px !important;
+    margin-bottom: 25px !important;
+}
+
+#feed-upload {
+  margin-bottom: 20px !important;
+  margin-top: 0 !important;
+}
+
 #feed-upload-content{
   padding: 1em 0;
+
 }
 
 .comments-user-image{
@@ -718,8 +738,9 @@ div.ui.compact.menu{
 }
 
 #profile-header {
-  margin-bottom: 25px;
+  margin-bottom: 1px;
 }
+
 
 /*
   Feed
@@ -751,8 +772,9 @@ div.sub.header.feed-subheader{
 .feed-comments-form{
   border: 1px solid rgb(220,220,220);
   border-radius: 17px;
-  padding: 10px;
+  padding: 8px;
   position: relative;
+  margin-top: -5px;
   box-shadow: 0 1px 2px #b8b8b8b0 !important;
 }
 
@@ -815,7 +837,7 @@ div.sub.header.feed-subheader{
 
 #settings-upload-button{
   position: absolute;
-  bottom: 10px;
+  bottom: 15px;
   right: 30px;
   z-index: 200;
 }
@@ -828,9 +850,8 @@ div.sub.header.feed-subheader{
   width: 135px;
   cursor: pointer;
   margin-top: 10px;
-  padding: 8px;
   padding-bottom: 32px;
-  padding-top: 6px;
+  padding-top: 3px;
   border-width: 1px;
   border-radius: 4px;
   height: 36px;
@@ -848,6 +869,10 @@ div.sub.header.feed-subheader{
   display: block;
   margin-top: 25px;
   margin-right: 20px;
+}
+
+#guestbook-wrapper{
+  margin-bottom: 20px !important;
 }
 
 #feed-content{
@@ -895,6 +920,10 @@ div.sub.header.feed-subheader{
 
 div.ui.item.dropdown{
   margin-top: -1px !important;
+}
+
+div.ui.segment.active.tab {
+  padding-top: 0 !important;
 }
 
 div.ui.active.visible.item.dropdown{
@@ -966,7 +995,7 @@ a.item:hover {
 .upload-image{
   width: 96%;
   max-height: 370px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   display: block;
   object-fit: contain;
   border-radius: 3px;
@@ -1168,7 +1197,7 @@ img.ui.image.image-feed{
   All media queries for Feed and Profile.
 /--------------------------------------------------*/
 
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: 766px) {
   .feed-list-item{
     position: relative;
 
@@ -1210,6 +1239,9 @@ img.ui.image.image-feed{
     left: 95px;
   }
 
+  div.ui.pointing.secondary.menu {
+    margin-bottom: 21px !important;
+  }
 
 }
 
@@ -1223,6 +1255,11 @@ img.ui.image.image-feed{
       top: 20px;
       right: 2%;
       position: absolute;
+    }
+
+    div.ui.pointing.secondary.menu{
+      position: relative;
+      top: -13px;
     }
 
     #search{
@@ -1294,6 +1331,7 @@ img.ui.image.image-feed{
     #profile-header{
       width: 100% !important;
       max-width: 765px;
+      margin-bottom: 22px;
     }
 
     .feed-header{
@@ -1323,6 +1361,10 @@ img.ui.image.image-feed{
     #mobile-header{
       display: block;
     }
+
+    #feed-upload{
+      margin-top: -7px !important;
+    }
 }
 
 /*-------------------------------------------------------
@@ -1335,9 +1377,39 @@ img.ui.image.image-feed{
       margin-top: 10px;
     }
 
+    #guestbook-wrapper{
+      margin-bottom: 35px !important;
+    }
+
+    .feed-comment-content{
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+    }
+
+    div.ui.centered.fluid.card {
+      margin-top: 0 !important;
+    }
+
+    .feed-friend-header{
+      display: none;
+    }
+
+    .comment-box{
+      border-radius: 15px;
+    }
+
+    .comment-header{
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+
     #friends {
       margin-left: 0 !important;
       width: 100% !important;
+      margin-top: -12px;
+      box-shadow: none;
+      border: none;
+      padding-top: 1px;
     }
 
     #red-border-button{
@@ -1355,6 +1427,7 @@ img.ui.image.image-feed{
 
     #card-content{
       padding: 1em 0.5em;
+      padding-bottom: 10px;
     }
 
     .friends-content {
@@ -1418,6 +1491,7 @@ img.ui.image.image-feed{
     #guestbook-reply{
       width: 90% !important;
       padding: 0;
+      padding-bottom: 7px;
       padding-left: 10px;
     }
 
@@ -1469,6 +1543,15 @@ img.ui.image.image-feed{
 
     #profile-header{
       margin-bottom: 8px !important;
+    }
+
+    #feed-upload {
+      margin-top: 1px !important;
+    }
+
+    div.ui.pointing.secondary.menu {
+      position: relative;
+      top: 0;
     }
 }
 

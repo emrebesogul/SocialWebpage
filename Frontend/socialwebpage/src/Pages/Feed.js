@@ -295,7 +295,7 @@ async handleDeletePost(event, data) {
                           { menuItem: 'Feed', render: () => <Tab.Pane attached={false}>
                           <div id="feed-card">
                             <Card.Group>
-                              <Card fluid centered>
+                              <Card fluid centered id="feed-upload">
                                 <div className="username-label">
                                   Share something with your friends
                                 </div>
@@ -303,12 +303,10 @@ async handleDeletePost(event, data) {
                                   <div id="upload-content">
                                      <Form onSubmit={this.handleSubmit.bind(this)}>
 
+                                        <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>
                                         <Input className="input-upload" placeholder=" What's the title of your post?" type="text"/>
-
                                         <span className="input-label-upload"> </span>
                                         <TextArea id="textarea-feed" className="input-upload" placeholder="What story do you want to share?" required type="text"></TextArea>
-
-                                        <div>{this.state.files.map((file, index) => <img key={index} className="upload-image" alt="preview" src={file.preview} /> )}</div>
 
                                         {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
 
@@ -365,7 +363,7 @@ async handleDeletePost(event, data) {
                                   </Card.Content>
                                 </Card>
                                 <Card fluid centered className="comment-card">
-                                  <Card.Content>
+                                  <Card.Content className="feed-comment-content">
                                       <Header as='h3' dividing>Comments</Header>
                                       {comments.map((comment, index) => {
                                         return(
@@ -425,8 +423,8 @@ async handleDeletePost(event, data) {
                           </Tab.Pane> },
                           { menuItem: 'Friends', render: () => <Tab.Pane attached={false}>
                             <div id="friends">
-                              <div>
-                                <Header as='h2' icon textAlign='center'>
+                              <div className="feed-friend-header">
+                                <Header as='h2'  icon textAlign='center'>
                                   <Icon name='users' circular />
                                   <Header.Content>
                                     Friends
@@ -500,8 +498,8 @@ async handleDeletePost(event, data) {
                           </Tab.Pane> },
                           { menuItem: 'Notifications', render: () => <Tab.Pane attached={false}>
                             <div id="friends">
-                              <div>
-                                <Header as='h2' icon textAlign='center'>
+                              <div className="feed-friend-header">
+                                <Header  as='h2' icon textAlign='center'>
                                   <Icon name='discussions' circular />
                                   <Header.Content>
                                     Notifications

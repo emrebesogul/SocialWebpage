@@ -10,6 +10,7 @@ import About from './Pages/About'
 import Legal from './Pages/Legal'
 import Search from './Pages/Search'
 import Notifications from './Pages/Notifications'
+import Users from './Pages/Users'
 
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 
@@ -29,6 +30,7 @@ ReactDOM.render(
             <Route exact path="/about" component={About}></Route>
             <Route exact path="/legal" component={Legal}></Route>
             <Route exact path="/search" component={Search}></Route>
+            <Route exact path="/network" component={Users}></Route>
         </Switch>
     </BrowserRouter>,
 root);

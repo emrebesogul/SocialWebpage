@@ -586,8 +586,10 @@ class Profile extends Component {
                                           </Card.Meta>
                                           <Card.Description>
                                           {this.state.updateItemId == item._id ? <TextArea required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")}></TextArea> : item.content}
-                                          {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
-                                          {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateStoryEntry(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
+                                          <div className="profile-edit-buttons">
+                                            {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
+                                            {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateStoryEntry(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
+                                          </div>
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
@@ -653,7 +655,7 @@ class Profile extends Component {
                         { menuItem: 'Guestbook', render: () => <Tab.Pane attached={false}>
                         <div>
                           {!this.state.show ?
-                            <Card.Group>
+                            <Card.Group id="guestbook-wrapper">
                               <Card fluid centered>
                                 <div className="username-label">
                                 Add a new guestbook post

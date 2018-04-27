@@ -123,17 +123,17 @@ class SidebarProfile extends Component {
 
                   <div className="seperator"></div>
 
+                  <Link to="/network">
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='globe' />
+                      Network
+                    </Button>
+                  </Link>
+                  
                   <Link to="/settings">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='cogs' />
                       Settings
-                    </Button>
-                  </Link>
-
-                  <Link to="/legal">
-                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
-                      <Icon className="menu-icons" size="large" name='legal' />
-                      Legal
                     </Button>
                   </Link>
 
@@ -145,6 +145,13 @@ class SidebarProfile extends Component {
                   </Link>
 
                   <div className="seperator"></div>
+
+                  <Link to="/legal">
+                    <Button labelPosition="right"  size="medium" id="upload-button" icon>
+                      <Icon className="menu-icons" size="large" name='legal' />
+                      Legal
+                    </Button>
+                  </Link>
 
                   <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
                       <Icon className="menu-icons" size="large" name='log out' />
