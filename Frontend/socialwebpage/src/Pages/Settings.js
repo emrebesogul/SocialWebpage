@@ -115,6 +115,16 @@ class Settings extends React.Component{
       }
     }
 
+    async handleImageClick(event, bool){
+      let wrapper = document.getElementsByClassName("wrapper");
+      if (bool === true){
+        wrapper[0].style.display = "block";
+        wrapper[0].style.animation= "fadeIn 0.3s";
+      }else{
+        wrapper[0].style.display = "none";
+      }
+    }
+
 
   render(){
     const { redirectToLogin } = this.state;
@@ -125,6 +135,18 @@ class Settings extends React.Component{
       <div>
         <div className="feed">
           <Sidebar />
+        </div>
+
+        <div className="wrapper"  onClick={((e) => this.handleImageClick(e, false))}>
+          <div className="wrapper-content">
+            <div>
+              <h3 id="confirm-delete-user-label">Do you really want to delete your account with all its related data?</h3>
+            </div>
+            <div id="delete-user-buttons">
+            <button id="delete-user-action-button" class="ui negative basic button delete-user-action-button" onClick={((e) => this.handleImageClick(e, false))}>Decline</button>
+            <button id="delete-user-action-button" class="ui positive basic button delete-user-action-button" onClick={((e) => this.handleDeleteUser())}>Confirm</button>
+            </div>
+          </div>
         </div>
 
         <div >
@@ -160,13 +182,13 @@ class Settings extends React.Component{
                      <Icon name='at' />
                      <input />
                    </Input>
-                    {this.state.show_old_password ? <Label basic className="input-label">Old Password</Label> : null}
-                    {this.state.show_old_password ? <Input className="account-input-text" type="password" placeholder='Enter old password for confirmation' /> : null}
+                   {this.state.show_old_password ? <Label basic className="input-label">Password</Label> : null}
+                   {this.state.show_old_password ? <Input className="account-input-text" type="password" placeholder='Enter password for confirmation' /> : null}
                 </Form.Field>
 
                 <Button className="button-upload mobile-button-border">Save</Button>
               </Form>
-              <Button onClick={((e) => this.handleDeleteUser())} className="button-upload">Delete User</Button>
+              <Button id="delete-user-button" className="button-upload" onClick={((e) => this.handleImageClick(e, true))}>Delete User</Button>
             </div>
             <div className="account-settings">
               <Header as='h2' size="medium" icon textAlign="left">

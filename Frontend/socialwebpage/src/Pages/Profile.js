@@ -85,21 +85,21 @@ class Profile extends Component {
               item.number_of_likes_in_state = item.number_of_likes;
               item.position = i;
               this.state.showOrHideCommentsInStories.push(0);
-              this.state.commentStatusInStories.push("Show Comments");
+              this.state.commentStatusInStories.push("angle down");
               i++;
             });
             responseImages.map(item => {
               item.number_of_likes_in_state = item.number_of_likes;
               item.position = j;
               this.state.showOrHideCommentsInImages.push(0);
-              this.state.commentStatusInImages.push("Show Comments");
+              this.state.commentStatusInImages.push("angle down");
               j++;
             });
             responseGuestbookEntries.map(item => {
               item.number_of_likes_in_state = item.number_of_likes;
               item.position = k;
               this.state.showOrHideCommentsInGuestbook.push(0);
-              this.state.commentStatusInGuestbook.push("Show Comments");
+              this.state.commentStatusInGuestbook.push("angle down");
               k++;
             });
 
@@ -146,21 +146,21 @@ class Profile extends Component {
               item.number_of_likes_in_state = item.number_of_likes;
               item.position = i;
               this.state.showOrHideCommentsInStories.push(0);
-              this.state.commentStatusInStories.push("Show Comments");
+              this.state.commentStatusInStories.push("angle down");
               i++;
             });
             responseImages.map(item => {
               item.number_of_likes_in_state = item.number_of_likes;
               item.position = j;
               this.state.showOrHideCommentsInImages.push(0);
-              this.state.commentStatusInImages.push("Show Comments");
+              this.state.commentStatusInImages.push("angle down");
               j++;
             });
             responseGuestbookEntries.map(item => {
               item.number_of_likes_in_state = item.number_of_likes;
               item.position = k;
               this.state.showOrHideCommentsInGuestbook.push(0);
-              this.state.commentStatusInGuestbook.push("Show Comments");
+              this.state.commentStatusInGuestbook.push("angle down");
               k++;
             });
 
@@ -410,7 +410,7 @@ class Profile extends Component {
         this.setState({ updateItemId: ""});
       }
 
-      async handleCreateComment(event, data) {
+      async handleCreateComment(event, data, string) {
         if(event.target[0].value.trim() != "" && event.target[0].value != null) {
           let commentData = {
             "content": event.target[0].value,
@@ -418,6 +418,33 @@ class Profile extends Component {
             "postType" : data.type
           }
           let response = await createComment(commentData);
+          if (string==="image"){
+            let newIds1 = this.state.showOrHideCommentsInImages.slice()
+            newIds1[data.position] = 1
+            this.setState({showOrHideCommentsInImages: newIds1})
+
+            let newIds = this.state.commentStatusInStories.slice()
+            newIds[data.position] = "angle up"
+            this.setState({commentStatusInImages: newIds})
+          }
+          if (string==="story"){
+            let newIds1 = this.state.showOrHideCommentsInStories.slice()
+            newIds1[data.position] = 1
+            this.setState({showOrHideCommentsInStories: newIds1})
+
+            let newIds = this.state.commentStatusInStories.slice()
+            newIds[data.position] = "angle up"
+            this.setState({commentStatusInStories: newIds})
+          }
+          if (string==="guestbook"){
+            let newIds1 = this.state.showOrHideCommentsInGuestbook.slice()
+            newIds1[data.position] = 1
+            this.setState({showOrHideCommentsInGuestbook: newIds1})
+
+            let newIds = this.state.commentStatusInGuestbook.slice()
+            newIds[data.position] = "angle up"
+            this.setState({commentStatusInGuestbook: newIds})
+          }
           if(response) {
             let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
             commentInputElements.map(item => {
@@ -475,22 +502,22 @@ class Profile extends Component {
 
 
       showOrHideCommentsInImages(e, item) {
-          if (this.state.commentStatusInImages[item.position] == "Show Comments") {
+          if (this.state.commentStatusInImages[item.position] == "angle down") {
               let newIds1 = this.state.showOrHideCommentsInImages.slice()
               newIds1[item.position] = 1
               this.setState({showOrHideCommentsInImages: newIds1})
 
               let newIds = this.state.commentStatusInStories.slice()
-              newIds[item.position] = "Hide Comments"
+              newIds[item.position] = "angle up"
               this.setState({commentStatusInImages: newIds})
 
-          } else if (this.state.commentStatusInImages[item.position] == "Hide Comments") {
+          } else if (this.state.commentStatusInImages[item.position] == "angle up") {
               let newIds3 = this.state.showOrHideCommentsInImages.slice()
               newIds3[item.position] = 0
               this.setState({showOrHideCommentsInImages: newIds3})
 
               let newIds4 = this.state.commentStatusInImages.slice() //copy the array
-              newIds4[item.position] = "Show Comments" //execute the manipulations
+              newIds4[item.position] = "angle down" //execute the manipulations
               this.setState({commentStatusInImages: newIds4}) //set the new state
           }
       }
@@ -502,37 +529,37 @@ class Profile extends Component {
               this.setState({showOrHideCommentsInStories: newIds1})
 
               let newIds = this.state.commentStatusInStories.slice()
-              newIds[item.position] = "Hide Comments"
+              newIds[item.position] = "angle up"
               this.setState({commentStatusInStories: newIds})
 
-          } else if (this.state.commentStatusInStories[item.position] == "Hide Comments") {
+          } else if (this.state.commentStatusInStories[item.position] == "angle up") {
               let newIds3 = this.state.showOrHideCommentsInStories.slice()
               newIds3[item.position] = 0
               this.setState({showOrHideCommentsInStories: newIds3})
 
               let newIds4 = this.state.showOrHideCommentsInStories.slice() //copy the array
-              newIds4[item.position] = "Show Comments" //execute the manipulations
+              newIds4[item.position] = "angle down" //execute the manipulations
               this.setState({commentStatusInStories: newIds4}) //set the new state
           }
       }
 
       showOrHideCommentsInGuestbook(e, item) {
-          if (this.state.commentStatusInGuestbook[item.position] == "Show Comments") {
+          if (this.state.commentStatusInGuestbook[item.position] == "angle down") {
               let newIds1 = this.state.showOrHideCommentsInGuestbook.slice()
               newIds1[item.position] = 1
               this.setState({showOrHideCommentsInGuestbook: newIds1})
 
               let newIds = this.state.commentStatusInGuestbook.slice()
-              newIds[item.position] = "Hide Comments"
+              newIds[item.position] = "angle up"
               this.setState({commentStatusInGuestbook: newIds})
 
-          } else if (this.state.commentStatusInGuestbook[item.position] == "Hide Comments") {
+          } else if (this.state.commentStatusInGuestbook[item.position] == "angle up") {
               let newIds3 = this.state.showOrHideCommentsInGuestbook.slice()
               newIds3[item.position] = 0
               this.setState({showOrHideCommentsInGuestbook: newIds3})
 
               let newIds4 = this.state.commentStatusInGuestbook.slice() //copy the array
-              newIds4[item.position] = "Show Comments" //execute the manipulations
+              newIds4[item.position] = "angle down" //execute the manipulations
               this.setState({commentStatusInGuestbook: newIds4}) //set the new state
           }
       }
@@ -592,7 +619,7 @@ class Profile extends Component {
                                         </span>
                                       </Card.Meta>
                                       <Card.Description>
-                                        {this.state.updateItemId == item._id ? <Input className="input-upload" placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : item.content}
+                                        {this.state.updateItemId == item._id ? <Input className="input-upload" placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : (item.content ? item.content : <br/>)}
                                         <div className="profile-edit-buttons">
                                           {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
                                           {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateImage(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
@@ -600,14 +627,17 @@ class Profile extends Component {
                                         {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
                                       </Card.Description>
                                     </Form>
+                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideCommentsInImages(e, item))}>
+                                      <Icon name="comment" />
+                                      <Icon name={this.state.commentStatusInImages[item.position]} />
+                                    </Button>
                                   </Card.Content>
                                 </Card>
                                 <Card fluid centered className="comment-card">
                                   <Card.Content>
-                                    <Header as='h4' dividing onClick={((e) => this.showOrHideCommentsInImages(e, item))}>{this.state.commentStatusInImages[item.position]}</Header>
-
                                     {this.state.showOrHideCommentsInImages[item.position] ?
                                         <div>
+                                            <Header as='h4' dividing>Comments</Header>
                                             {comments.map((comment, index) => {
                                               return(
                                                 <Comment.Group key={index}>
@@ -652,7 +682,7 @@ class Profile extends Component {
                                     : null}
 
 
-                                    <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                    <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item, "image"))} reply>
                                       <Form.TextArea  class="commentInput" rows="1" placeholder="Add a comment.."/>
                                       <Button className="button-upload button-styles add-comment-button">
                                         <Icon name="send" />
@@ -756,7 +786,7 @@ class Profile extends Component {
                                               </div>
                                           : null}
 
-                                        <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                        <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item, "story"))} reply>
                                           <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.."/>
                                           <Button className="button-upload button-styles add-comment-button">
                                             <Icon name="send" />
@@ -874,7 +904,7 @@ class Profile extends Component {
                                           </div>
                                       : null}
 
-                                      <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                      <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item, "guestbook"))} reply>
                                         <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.."/>
                                           <Button className="button-upload button-styles add-comment-button">
                                             <Icon name="send" />
