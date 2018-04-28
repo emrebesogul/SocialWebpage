@@ -505,69 +505,66 @@ class Profile extends Component {
       }
 
 
-      showOrHideCommentsInImages(e, item) {
-          if (this.state.commentStatusInImages[item.position] == "angle down") {
-              let newIds1 = this.state.showOrHideCommentsInImages.slice()
-              newIds1[item.position] = 1
-              this.setState({showOrHideCommentsInImages: newIds1})
+      showOrHideComments(e, item, tabName) {
+          if (tabName === "Image") {
+              if (this.state.commentStatusInImages[item.position] == "angle down") {
+                  let newIds1 = this.state.showOrHideCommentsInImages.slice()
+                  newIds1[item.position] = 1
+                  this.setState({showOrHideCommentsInImages: newIds1})
 
-              let newIds = this.state.commentStatusInStories.slice()
-              newIds[item.position] = "angle up"
-              this.setState({commentStatusInImages: newIds})
+                  let newIds = this.state.commentStatusInStories.slice()
+                  newIds[item.position] = "angle up"
+                  this.setState({commentStatusInImages: newIds})
 
-          } else if (this.state.commentStatusInImages[item.position] == "angle up") {
-              let newIds3 = this.state.showOrHideCommentsInImages.slice()
-              newIds3[item.position] = 0
-              this.setState({showOrHideCommentsInImages: newIds3})
+              } else if (this.state.commentStatusInImages[item.position] == "angle up") {
+                  let newIds3 = this.state.showOrHideCommentsInImages.slice()
+                  newIds3[item.position] = 0
+                  this.setState({showOrHideCommentsInImages: newIds3})
 
-              let newIds4 = this.state.commentStatusInImages.slice() //copy the array
-              newIds4[item.position] = "angle down" //execute the manipulations
-              this.setState({commentStatusInImages: newIds4}) //set the new state
+                  let newIds4 = this.state.commentStatusInImages.slice() //copy the array
+                  newIds4[item.position] = "angle down" //execute the manipulations
+                  this.setState({commentStatusInImages: newIds4}) //set the new state
+              }
+          } else if (tabName === "Story") {
+              if (this.state.commentStatusInStories[item.position] == "Show Comments") {
+                  let newIds1 = this.state.showOrHideCommentsInStories.slice()
+                  newIds1[item.position] = 1
+                  this.setState({showOrHideCommentsInStories: newIds1})
+
+                  let newIds = this.state.commentStatusInStories.slice()
+                  newIds[item.position] = "angle up"
+                  this.setState({commentStatusInStories: newIds})
+
+              } else if (this.state.commentStatusInStories[item.position] == "angle up") {
+                  let newIds3 = this.state.showOrHideCommentsInStories.slice()
+                  newIds3[item.position] = 0
+                  this.setState({showOrHideCommentsInStories: newIds3})
+
+                  let newIds4 = this.state.showOrHideCommentsInStories.slice() //copy the array
+                  newIds4[item.position] = "angle down" //execute the manipulations
+                  this.setState({commentStatusInStories: newIds4}) //set the new state
+              }
+          } else if (tabName === "Guestbook") {
+              if (this.state.commentStatusInGuestbook[item.position] == "angle down") {
+                  let newIds1 = this.state.showOrHideCommentsInGuestbook.slice()
+                  newIds1[item.position] = 1
+                  this.setState({showOrHideCommentsInGuestbook: newIds1})
+
+                  let newIds = this.state.commentStatusInGuestbook.slice()
+                  newIds[item.position] = "angle up"
+                  this.setState({commentStatusInGuestbook: newIds})
+
+              } else if (this.state.commentStatusInGuestbook[item.position] == "angle up") {
+                  let newIds3 = this.state.showOrHideCommentsInGuestbook.slice()
+                  newIds3[item.position] = 0
+                  this.setState({showOrHideCommentsInGuestbook: newIds3})
+
+                  let newIds4 = this.state.commentStatusInGuestbook.slice() //copy the array
+                  newIds4[item.position] = "angle down" //execute the manipulations
+                  this.setState({commentStatusInGuestbook: newIds4}) //set the new state
+              }
           }
       }
-
-      showOrHideCommentsInStories(e, item) {
-          if (this.state.commentStatusInStories[item.position] == "Show Comments") {
-              let newIds1 = this.state.showOrHideCommentsInStories.slice()
-              newIds1[item.position] = 1
-              this.setState({showOrHideCommentsInStories: newIds1})
-
-              let newIds = this.state.commentStatusInStories.slice()
-              newIds[item.position] = "angle up"
-              this.setState({commentStatusInStories: newIds})
-
-          } else if (this.state.commentStatusInStories[item.position] == "angle up") {
-              let newIds3 = this.state.showOrHideCommentsInStories.slice()
-              newIds3[item.position] = 0
-              this.setState({showOrHideCommentsInStories: newIds3})
-
-              let newIds4 = this.state.showOrHideCommentsInStories.slice() //copy the array
-              newIds4[item.position] = "angle down" //execute the manipulations
-              this.setState({commentStatusInStories: newIds4}) //set the new state
-          }
-      }
-
-      showOrHideCommentsInGuestbook(e, item) {
-          if (this.state.commentStatusInGuestbook[item.position] == "angle down") {
-              let newIds1 = this.state.showOrHideCommentsInGuestbook.slice()
-              newIds1[item.position] = 1
-              this.setState({showOrHideCommentsInGuestbook: newIds1})
-
-              let newIds = this.state.commentStatusInGuestbook.slice()
-              newIds[item.position] = "angle up"
-              this.setState({commentStatusInGuestbook: newIds})
-
-          } else if (this.state.commentStatusInGuestbook[item.position] == "angle up") {
-              let newIds3 = this.state.showOrHideCommentsInGuestbook.slice()
-              newIds3[item.position] = 0
-              this.setState({showOrHideCommentsInGuestbook: newIds3})
-
-              let newIds4 = this.state.commentStatusInGuestbook.slice() //copy the array
-              newIds4[item.position] = "angle down" //execute the manipulations
-              this.setState({commentStatusInGuestbook: newIds4}) //set the new state
-          }
-      }
-
 
     render() {
 
@@ -631,7 +628,7 @@ class Profile extends Component {
                                         {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
                                       </Card.Description>
                                     </Form>
-                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideCommentsInImages(e, item))}>
+                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item, "Image"))}>
                                       <Icon name="comment" />
                                       <Icon name={this.state.commentStatusInImages[item.position]} />
                                     </Button>
@@ -744,7 +741,7 @@ class Profile extends Component {
                                     </Card>
                                     <Card fluid centered className="comment-card">
                                       <Card.Content>
-                                          <Header as='h4' dividing onClick={((e) => this.showOrHideCommentsInStories(e, item))}>{this.state.commentStatusInStories[item.position]}</Header>
+                                          <Header as='h4' dividing onClick={((e) => this.showOrHideComments(e, item, "Story"))}>{this.state.commentStatusInStories[item.position]}</Header>
                                           {this.state.showOrHideCommentsInStories[item.position] ?
                                               <div>
                                                   {comments.map((comment, index) => {
@@ -861,7 +858,7 @@ class Profile extends Component {
                                   </Card>
                                   <Card fluid centered className="comment-card">
                                     <Card.Content>
-                                      <Header as='h4' dividing onClick={((e) => this.showOrHideCommentsInGuestbook(e, item))}>{this.state.commentStatusInGuestbook[item.position]}</Header>
+                                      <Header as='h4' dividing onClick={((e) => this.showOrHideComments(e, item, "Guestbook"))}>{this.state.commentStatusInGuestbook[item.position]}</Header>
                                       {this.state.showOrHideCommentsInGuestbook[item.position] ?
                                           <div>
                                               {comments.map((comment, index) => {
