@@ -103,11 +103,13 @@ class Profile extends Component {
               k++;
             });
 
-            this.setState({
-              responseStories : responseStories,
-              responseImages : responseImages,
-              responseGuestbookEntries : responseGuestbookEntries
-            });
+            if (i === responseStories.length && j=== responseImages.length && k === responseGuestbookEntries.length) {
+                this.setState({
+                  responseStories : responseStories,
+                  responseImages : responseImages,
+                  responseGuestbookEntries : responseGuestbookEntries
+                });
+            }
 
             const currentUserData = await getCurrentUserData();
             this.setState({currentUserIsAdmin: currentUserData.is_admin});
@@ -164,11 +166,13 @@ class Profile extends Component {
               k++;
             });
 
-            this.setState({
-              responseStories : responseStories,
-              responseImages : responseImages,
-              responseGuestbookEntries : responseGuestbookEntries
-            });
+            if (i === responseStories.length && j=== responseImages.length && k === responseGuestbookEntries.length) {
+                this.setState({
+                  responseStories : responseStories,
+                  responseImages : responseImages,
+                  responseGuestbookEntries : responseGuestbookEntries
+                });
+            }
 
             const currentUserData = await getCurrentUserData();
             this.setState({currentUserIsAdmin: currentUserData.is_admin});

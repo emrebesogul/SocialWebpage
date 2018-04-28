@@ -78,9 +78,10 @@ class Feed extends Component {
           this.state.commentStatus.push("Show Comments");
           i++;
         });
+        if (i === response.length) {
+            this.setState({resFeedPosts: response});
+        }
       }
-      this.setState({resFeedPosts: response});
-
   }
 
   async getFriendRequests() {
@@ -177,11 +178,11 @@ async handleCreateComment(event, data) {
 async getComments() {
   let response = [];
   response = await getComments();
-  this.setState({resComments: response});
   if (response){
     response.map(item => {
       item.number_of_likes_in_state = item.number_of_likes;
     });
+    this.setState({resComments: response});
   }
 }
 
@@ -392,7 +393,7 @@ async handleSubmit(event) {
                                 </Card>
                                 <Card fluid centered className="comment-card">
                                   <Card.Content className="feed-comment-content">
-                                      <Header as='h3' dividing onClick={((e) => this.showOrHideComments(e, item))}>{this.state.commentStatus[item.position]}</Header>
+                                    <Header as='h3' dividing onClick={((e) => this.showOrHideComments(e, item))}>{this.state.commentStatus[item.position]}</Header>
 
                                         {this.state.showOrHide[item.position] ?
                                             <div>
