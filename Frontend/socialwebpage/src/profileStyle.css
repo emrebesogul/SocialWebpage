@@ -254,12 +254,46 @@ a{
           Only visible in desktop mode.
 --------------------------------------------------*/
 
+#comments-button{
+  position: absolute !important;
+  bottom: 10px !important;
+  right: 16px !important;
+  padding-left: 10px !important;
+  padding-right: 4px !important;
+}
+
 #users-search{
   margin-top: 25px;
   /* width: 30%; */
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+#delete-user-button{
+  position: absolute;
+  bottom: 14px;
+  right: 30px;
+}
+
+#delete-user-buttons{
+  top: 50%;
+  position: absolute;
+  left: 50%;
+  display: flex;
+  transform: translateX(-50%);
+}
+
+#confirm-delete-user-label{
+  color: white;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#delete-user-action-button{
+  margin-left: 20px !important;
 }
 
 #welcome-label{
@@ -656,7 +690,7 @@ textarea {
   left: 0;
   z-index: 8999;
   touch-action: none !important;
-  background: rgba(30,30,30, 0.9);
+  background: rgba(20,20,20, 0.91);
 }
 
 #profile-image-large{

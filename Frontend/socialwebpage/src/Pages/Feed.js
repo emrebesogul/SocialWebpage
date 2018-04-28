@@ -78,7 +78,7 @@ class Feed extends Component {
           item.number_of_likes_in_state = item.number_of_likes;
           item.position = i;
           this.state.showOrHide.push(0);
-          this.state.commentStatus.push("Show Comments");
+          this.state.commentStatus.push("angle down");
           i++;
         });
         if (i === response.length) {
@@ -168,6 +168,16 @@ async handleCreateComment(event, data) {
       "postType" : data.type
     }
     let response = await createComment(commentData);
+
+    //Show all comments, if a comment was posted
+    let newIds1 = this.state.showOrHide.slice()
+    newIds1[data.position] = 1
+    this.setState({showOrHide: newIds1})
+
+    let newIds = this.state.commentStatus.slice()
+    newIds[data.position] = "angle up"
+    this.setState({commentStatus: newIds})
+
     if(response) {
       let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
       commentInputElements.map(item => {
@@ -280,23 +290,23 @@ async handleSubmit(event) {
     }
 
     showOrHideComments(e, item) {
-        if (this.state.commentStatus[item.position] == "Show Comments") {
+        if (this.state.commentStatus[item.position] == "angle down") {
             let newIds1 = this.state.showOrHide.slice()
             newIds1[item.position] = 1
             this.setState({showOrHide: newIds1})
 
             let newIds = this.state.commentStatus.slice()
-            newIds[item.position] = "Hide Comments"
+            newIds[item.position] = "angle up"
             this.setState({commentStatus: newIds})
 
-        } else if (this.state.commentStatus[item.position] == "Hide Comments") {
+        } else if (this.state.commentStatus[item.position] == "angle up") {
 
             let newIds3 = this.state.showOrHide.slice()
             newIds3[item.position] = 0
             this.setState({showOrHide: newIds3})
 
             let newIds4 = this.state.commentStatus.slice() //copy the array
-            newIds4[item.position] = "Show Comments" //execute the manipulations
+            newIds4[item.position] = "angle down" //execute the manipulations
             this.setState({commentStatus: newIds4}) //set the new state
         }
     }
@@ -390,16 +400,19 @@ async handleSubmit(event) {
                                       </span>
                                     </Card.Meta>
                                     <Card.Description>
-                                      {item.content}
+                                      {item.content ? item.content : <br/>}
                                     </Card.Description>
+                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item))}>
+                                      <Icon name="comment" />
+                                      <Icon name={this.state.commentStatus[item.position]} />
+                                    </Button>
                                   </Card.Content>
                                 </Card>
                                 <Card fluid centered className="comment-card">
                                   <Card.Content className="feed-comment-content">
-                                    <Header as='h3' dividing onClick={((e) => this.showOrHideComments(e, item))}>{this.state.commentStatus[item.position]}</Header>
-
                                         {this.state.showOrHide[item.position] ?
                                             <div>
+                                                <Header as='h3' dividing>Comments</Header>
                                                 {comments.map((comment, index) => {
                                                 return(
                                                   <Comment.Group key={index}>
@@ -445,13 +458,12 @@ async handleSubmit(event) {
                                             </div>
                                         : null}
 
-
-                                      <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
-                                        <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.." />
-                                        <Button className="button-upload button-styles add-comment-button">
-                                          <Icon name="send" />
-                                        </Button>
-                                      </Form>
+                                    <Form className="feed-comments-form" onSubmit={((e) => this.handleCreateComment(e, item))} reply>
+                                      <Form.TextArea class="commentInput" rows="1" placeholder="Add a comment.." />
+                                      <Button className="button-upload button-styles add-comment-button">
+                                        <Icon name="send" />
+                                      </Button>
+                                    </Form>
                                   </Card.Content>
                                 </Card>
                               </Card.Group>
