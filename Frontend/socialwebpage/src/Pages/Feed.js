@@ -78,9 +78,10 @@ class Feed extends Component {
           this.state.commentStatus.push("angle down");
           i++;
         });
+        if (i === response.length) {
+            this.setState({resFeedPosts: response});
+        }
       }
-      this.setState({resFeedPosts: response});
-
   }
 
   async getFriendRequests() {
@@ -187,11 +188,11 @@ async handleCreateComment(event, data) {
 async getComments() {
   let response = [];
   response = await getComments();
-  this.setState({resComments: response});
   if (response){
     response.map(item => {
       item.number_of_likes_in_state = item.number_of_likes;
     });
+    this.setState({resComments: response});
   }
 }
 
