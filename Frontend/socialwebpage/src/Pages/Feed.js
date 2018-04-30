@@ -416,9 +416,8 @@ async handleSubmit(event) {
                                                     {comment.post_id === item._id ?
                                                     <Comment className="comment-box">
 
-                                                      {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
-
                                                       <Comment.Content className="comment-content">
+                                                        {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                         <div className="comment-header">
                                                             <Comment.Author className="comment-author" >
                                                               <Link to={`/profile/${comment.authorName}`}>

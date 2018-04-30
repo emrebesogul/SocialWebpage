@@ -527,7 +527,7 @@ class Profile extends Component {
       }
 
       showOrHideCommentsInStories(e, item) {
-          if (this.state.commentStatusInStories[item.position] == "Show Comments") {
+          if (this.state.commentStatusInStories[item.position] == "angle down") {
               let newIds1 = this.state.showOrHideCommentsInStories.slice()
               newIds1[item.position] = 1
               this.setState({showOrHideCommentsInStories: newIds1})
@@ -740,11 +740,15 @@ class Profile extends Component {
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
+                                        <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideCommentsInStories(e, item))}>
+                                          <Icon name="comment" />
+                                          <Icon name={this.state.commentStatusInStories[item.position]} />
+                                        </Button>
                                       </Card.Content>
                                     </Card>
                                     <Card fluid centered className="comment-card">
                                       <Card.Content>
-                                          <Header as='h4' dividing onClick={((e) => this.showOrHideCommentsInStories(e, item))}>{this.state.commentStatusInStories[item.position]}</Header>
+                                          <Header as='h4' dividing >Comments</Header>
                                           {this.state.showOrHideCommentsInStories[item.position] ?
                                               <div>
                                                   {comments.map((comment, index) => {
@@ -857,11 +861,15 @@ class Profile extends Component {
                                       <Card.Description>
                                         {item.content}
                                       </Card.Description>
+                                      <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideCommentsInGuestbook(e, item))}>
+                                        <Icon name="comment" />
+                                        <Icon name={this.state.showOrHideCommentsInGuestbook[item.position]} />
+                                      </Button>
                                     </Card.Content>
                                   </Card>
                                   <Card fluid centered className="comment-card">
                                     <Card.Content>
-                                      <Header as='h4' dividing onClick={((e) => this.showOrHideCommentsInGuestbook(e, item))}>{this.state.commentStatusInGuestbook[item.position]}</Header>
+                                      <Header as='h4' dividing>Comments</Header>
                                       {this.state.showOrHideCommentsInGuestbook[item.position] ?
                                           <div>
                                               {comments.map((comment, index) => {
