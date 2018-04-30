@@ -182,8 +182,8 @@ class Settings extends React.Component{
                      <Icon name='at' />
                      <input />
                    </Input>
-                   {this.state.show_old_password ? <Label basic className="input-label">Old Password</Label> : null}
-                   {this.state.show_old_password ? <Input className="account-input-text" type="password" placeholder='Enter old password for confirmation' /> : null}
+                   {this.state.show_old_password ? <Label basic className="input-label">Current Password</Label> : null}
+                   {this.state.show_old_password ? <Input className="account-input-text" type="password" placeholder='Enter current password for confirmation' /> : null}
                 </Form.Field>
 
                 <Button className="button-upload mobile-button-border">Save</Button>
