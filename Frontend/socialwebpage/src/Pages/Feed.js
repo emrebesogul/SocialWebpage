@@ -402,7 +402,7 @@ async handleSubmit(event) {
                                     <Card.Description>
                                       {item.content ? item.content : <br/>}
                                     </Card.Description>
-                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item))}>
+                                    <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item))}>
                                       <Icon name="comment" />
                                       <Icon name={this.state.commentStatus[item.position]} />
                                     </Button>
