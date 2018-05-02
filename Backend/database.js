@@ -1,10 +1,12 @@
-var SHA256 = require("crypto-js/sha256");
-var session = require('express-session')
-var jwt = require('jsonwebtoken');
-var ObjectId = require('mongodb').ObjectId;
-var fs = require('fs');
+const SHA256 = require("crypto-js/sha256");
+const session = require('express-session')
+const jwt = require('jsonwebtoken');
+const ObjectId = require('mongodb').ObjectId;
+const fs = require('fs');
+const uuid = require('uuid/v4');
+const nodemailer = require('nodemailer');
 
-var call = module.exports = {
+const call = module.exports = {
 
     //----------------------LOGIN----------------------//
     checkUserCredentials: function (db, res, userCredential) {
@@ -27,18 +29,24 @@ var call = module.exports = {
                         throw err;
                     }
                     if (docs) {
-                        if (JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password)) {
-                            jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
-                                console.log(docs.username + " has logged in successfully.");
+                        if (docs.activated === true) {
+                            if (JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password)) {
+                                jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
+                                    console.log(docs.username + " has logged in successfully.");
+                                    res.send(JSON.stringify({
+                                        message : "Correct credentials",
+                                        token,
+                                    }));
+                                });
+                            } else {
+                                console.log(username + " failed to login.")
                                 res.send(JSON.stringify({
-                                    message : "Correct credentials",
-                                    token,
+                                    message: "Sorry, your password is incorrect. Please check again."
                                 }));
-                            });
+                            }
                         } else {
-                            console.log(username + " failed to login.")
                             res.send(JSON.stringify({
-                                message: "Sorry, your password is incorrect. Please check again."
+                                message: "Sorry, your account isn't activated. Please follow the instructions in the Email we have sent."
                             }));
                         }
                     }
@@ -87,6 +95,8 @@ var call = module.exports = {
                                                 message: "This email is not available. Please try another one."
                                             }));
                                         } else {
+                                            const activationToken = uuid();
+
                                             db.collection('users').insert({
                                                 "first_name": firstname,
                                                 "last_name": lastname,
@@ -97,12 +107,33 @@ var call = module.exports = {
                                                 "gender": gender,
                                                 "picture": profilePicture,
                                                 "friends": friends,
+                                                "activated": false,
+                                                "activation_token": activationToken,
                                                 "is_admin" : false
                                             });
+
                                             console.log("User created: " + username);
+                                            console.log("Email sent to: " + username + ", " + email);
+
+                                            let transport = nodemailer.createTransport({
+                                              host: "smtp-mail.outlook.com",
+                                              port: 587,
+                                              auth: {
+                                                user: process.env.emailUsername,
+                                                pass: process.env.emailPassword
+                                              }
+                                            });
+
+                                            let mail = {
+                                              from: process.env.emailUsername,
+                                              to: email,
+                                              subject: 'Activate your account',
+                                              html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>http://localhost:3000/activation/'+activationToken
+                                            };
+
                                             res.send(JSON.stringify({
                                                 message: "User successfully created",
-                                                messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
+                                                messageDetails: "Your user registration was successful. We have sent you an email to activate your account. You may now activate your account and Login with the username you have chosen."
                                             }));
                                         }
                                     })
@@ -128,10 +159,8 @@ var call = module.exports = {
                                             message: "This email is not available. Please try another one."
                                         }));
                                     } else {
-                                        res.send(JSON.stringify({
-                                            message: "User successfully created",
-                                            messageDetails: "Your user registration was successful. You may now Login with the username you have chosen."
-                                        }));
+                                        const activationToken = uuid();
+
                                         db.collection('users').insert({
                                             "first_name": firstname,
                                             "last_name": lastname,
@@ -142,9 +171,36 @@ var call = module.exports = {
                                             "gender": gender,
                                             "picture": profilePicture,
                                             "friends": friends,
+                                            "activated": false,
+                                            "activation_token": activationToken,
                                             "is_admin" : false
                                         });
+
                                         console.log("User created: " + username);
+                                        console.log("Email sent to: " + username + ", " + email);
+
+                                        let transport = nodemailer.createTransport({
+                                          host: "smtp-mail.outlook.com",
+                                          port: 587,
+                                          auth: {
+                                            user: process.env.emailUsername,
+                                            pass: process.env.emailPassword
+                                          }
+                                        });
+
+                                        let mail = {
+                                          from: process.env.emailUsername,
+                                          to: email,
+                                          subject: 'Activate your account',
+                                          html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>http://localhost:3000/activation/'+activationToken
+                                        };
+
+                                        transport.sendMail(mail);
+
+                                        res.send(JSON.stringify({
+                                            message: "User successfully created",
+                                            messageDetails: "Your user registration was successful. We have sent you an email to activate your account. You may now activate your account and Login with the username you have chosen."
+                                        }));
                                     }
                                 })
                             }
@@ -166,6 +222,22 @@ var call = module.exports = {
             }));
         }
 
+    },
+
+    //----------------------Activate Account of User----------------------//
+    activateAccountOfUser: function (db, res, token) {
+        db.collection('users').update(
+            { activation_token: token.activationToken},
+            {
+                $set: {
+                    "activated": true
+                }
+            }
+        );
+
+        res.send(JSON.stringify({
+            message: "Image uploaded"
+        }));
     },
 
     //----------------------Get Feed----------------------//

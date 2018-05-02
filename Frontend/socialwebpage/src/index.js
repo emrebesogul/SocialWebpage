@@ -7,6 +7,7 @@ import Profile from './Pages/Profile';
 import Feed from './Pages/Feed';
 import Settings from './Pages/Settings';
 import About from './Pages/About';
+import Activation from './Pages/Activation';
 import Legal from './Pages/Legal';
 import Notifications from './Pages/Notifications';
 import Users from './Pages/Users';
@@ -25,6 +26,7 @@ ReactDOM.render(
             <Route exact path="/about" component={About}></Route>
             <Route exact path="/legal" component={Legal}></Route>
             <Route exact path="/network" component={Users}></Route>
+            <Route path="/activation/:activationToken?" component={Activation}></Route>
         </Switch>
     </BrowserRouter>,
 root);

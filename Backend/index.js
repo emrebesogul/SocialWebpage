@@ -129,6 +129,12 @@ MongoClient.connect(url, function(err, client) {
         database.registerUserToPlatform(client.db('socialwebpage'), res, newUserData);
     });
 
+    //-----------------------------Activate user------------------------------//
+    app.post('/rest/account/activate', (req, res) => {
+        const activationToken = req.body;
+        database.activateAccountOfUser(client.db('socialwebpage'), res, activationToken);
+    });
+
     //------------------------------Show the Feed-----------------------------//
     app.get('/rest/feed', verifyToken, (req, res) => {
         jwt.verify(req.token, 'secretkey', (err, authData) => {
