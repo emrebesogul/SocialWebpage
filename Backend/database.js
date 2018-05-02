@@ -54,6 +54,7 @@ var call = module.exports = {
     },
 
     //----------------------REGISTER----------------------//
+    /*
     registerUserToPlatform: function (db, res, newUserData) {
         let firstname = newUserData.firstname;
         let lastname = newUserData.lastname;
@@ -166,7 +167,7 @@ var call = module.exports = {
             }));
         }
 
-    },
+    },*/
 
     //----------------------Get Feed----------------------//
     //

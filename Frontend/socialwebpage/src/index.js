@@ -17,7 +17,7 @@ ReactDOM.render(
     <BrowserRouter>
         <Switch>
             <Route exact path="/login" component={Login}></Route>
-            <Route exact path="/register" component={Register}></Route>
+            {/* <Route exact path="/register" component={Register}></Route> */}
             <Route path="/profile/:username?" component={Profile}></Route>
             <Route exact path="/notifications/:type/:typeCommented/:postId?" component={Notifications}></Route>
             <Route exact path="/" component={Feed}></Route>
