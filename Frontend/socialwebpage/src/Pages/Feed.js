@@ -70,6 +70,9 @@ class Feed extends Component {
  async getfeeddata() {
       let response = await fetchFeedData();
       if (response){
+        //console.log("Feed: ", response)
+        //console.log("kommentare: ", comments)
+
         let i = 0;
         response.map(item => {
           item.number_of_likes_in_state = item.number_of_likes;

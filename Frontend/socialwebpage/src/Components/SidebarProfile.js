@@ -69,9 +69,9 @@ class SidebarProfile extends Component {
                         <Icon name="feed"/> Feed
                      </Dropdown.Item>
                     </Link>
-                    <Link to="/search">
+                    <Link to="/Network">
                      <Dropdown.Item>
-                        <Icon name="search"/> Search
+                        <Icon name="globe"/> Network
                      </Dropdown.Item>
                     </Link>
                     <Link to="/settings">
@@ -114,22 +114,15 @@ class SidebarProfile extends Component {
                       </Button>
                     </Link>
 
-                    <Link to="/search">
-                      <Button labelPosition="right" size="medium" id="upload-button" icon>
-                        <Icon className="menu-icons" size="large" name='search' />
-                        Search
-                      </Button>
-                    </Link>
-
-                  <div className="seperator"></div>
-
                   <Link to="/network">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='globe' />
                       Network
                     </Button>
                   </Link>
-                  
+
+                  <div className="seperator"></div>
+
                   <Link to="/settings">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='cogs' />
@@ -144,14 +137,14 @@ class SidebarProfile extends Component {
                     </Button>
                   </Link>
 
-                  <div className="seperator"></div>
-
                   <Link to="/legal">
                     <Button labelPosition="right"  size="medium" id="upload-button" icon>
                       <Icon className="menu-icons" size="large" name='legal' />
                       Legal
                     </Button>
                   </Link>
+
+                  <div className="seperator"></div>
 
                   <Button labelPosition="right" size="medium" id="logout-button" icon onClick={this.handleLogout.bind(this)}>
                       <Icon className="menu-icons" size="large" name='log out' />

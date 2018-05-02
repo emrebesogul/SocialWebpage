@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, List, Button, Input } from 'semantic-ui-react'
+import { Image, List, Button, Input,  Card } from 'semantic-ui-react'
 import Sidebar from '../Components/Sidebar'
 import { Link, Redirect } from 'react-router-dom';
 import { checkAuthorization, getAllUsers, getCurrentUserData } from '../API/GET/GetMethods';
@@ -95,32 +95,33 @@ class Users extends React.Component{
               <div >
                 <Input onChange={(e) => this.handleChange(e)} id="users-search" placeholder="Enter a username..." />
               </div>
+              <Card.Group id="network-card-group">
               {users.map((item, index) =>
                 {
                   return(
                     <div key={index}>
-                      <List className="feed-list-item" divided relaxed verticalAlign='middle'>
-                        <List.Item>
+                        <Card id="network-cards">
+                          <Card.Content>
                           <Link to={`/profile/${item.username}`}>
-                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
-                            <List.Content className="friends-content">
-                              <List.Header>
-                                <span>{item.username} </span>
-                              </List.Header>
-                              <List.Description>{item.first_name} {item.last_name}</List.Description>
-                            </List.Content>
+                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} size="tiny" floated="right" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" floated="right" src="/assets/images/user.png"></Image></div> }
+                              <Card.Header>
+                                <span id="network-card-header">{item.username}</span>
+                              </Card.Header>
+                              <Card.Meta>{item.first_name} {item.last_name}</Card.Meta>
                           </Link>
-                          <List.Content className="flex">
+                          </Card.Content>
+                          <Card.Content className="flex">
                             <div className="flex-item">
                             { this.state.currentUserIsAdmin ? <Button id="red-border-button" className=" button-styles delete-friend-button mobile-button-border" onClick={((e) => this.handleDeleteUser(e, item))}>Delete User</Button>: null}
                             </div>
-                          </List.Content>
-                        </List.Item>
-                      </List>
+                          </Card.Content>
+                        </Card>
+
                     </div>
                   )
                 }
               )}
+                </Card.Group>
             </div>
           </div>
         </div>

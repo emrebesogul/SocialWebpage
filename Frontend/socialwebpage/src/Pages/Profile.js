@@ -427,7 +427,7 @@ class Profile extends Component {
             newIds1[data.position] = 1
             this.setState({showOrHideCommentsInImages: newIds1})
 
-            let newIds = this.state.commentStatusInStories.slice()
+            let newIds = this.state.commentStatusInImages.slice()
             newIds[data.position] = "angle up"
             this.setState({commentStatusInImages: newIds})
           }
@@ -505,69 +505,66 @@ class Profile extends Component {
       }
 
 
-      showOrHideCommentsInImages(e, item) {
-          if (this.state.commentStatusInImages[item.position] == "angle down") {
-              let newIds1 = this.state.showOrHideCommentsInImages.slice()
-              newIds1[item.position] = 1
-              this.setState({showOrHideCommentsInImages: newIds1})
+      showOrHideComments(e, item, tabName) {
+          if (tabName === "Image") {
+              if (this.state.commentStatusInImages[item.position] == "angle down") {
+                  let newIds1 = this.state.showOrHideCommentsInImages.slice()
+                  newIds1[item.position] = 1
+                  this.setState({showOrHideCommentsInImages: newIds1})
 
-              let newIds = this.state.commentStatusInStories.slice()
-              newIds[item.position] = "angle up"
-              this.setState({commentStatusInImages: newIds})
+                  let newIds = this.state.commentStatusInImages.slice()
+                  newIds[item.position] = "angle up"
+                  this.setState({commentStatusInImages: newIds})
 
-          } else if (this.state.commentStatusInImages[item.position] == "angle up") {
-              let newIds3 = this.state.showOrHideCommentsInImages.slice()
-              newIds3[item.position] = 0
-              this.setState({showOrHideCommentsInImages: newIds3})
+              } else if (this.state.commentStatusInImages[item.position] == "angle up") {
+                  let newIds3 = this.state.showOrHideCommentsInImages.slice()
+                  newIds3[item.position] = 0
+                  this.setState({showOrHideCommentsInImages: newIds3})
 
-              let newIds4 = this.state.commentStatusInImages.slice() //copy the array
-              newIds4[item.position] = "angle down" //execute the manipulations
-              this.setState({commentStatusInImages: newIds4}) //set the new state
+                  let newIds4 = this.state.commentStatusInImages.slice() //copy the array
+                  newIds4[item.position] = "angle down" //execute the manipulations
+                  this.setState({commentStatusInImages: newIds4}) //set the new state
+              }
+          } else if (tabName === "Story") {
+              if (this.state.commentStatusInStories[item.position] == "angle down") {
+                  let newIds1 = this.state.showOrHideCommentsInStories.slice()
+                  newIds1[item.position] = 1
+                  this.setState({showOrHideCommentsInStories: newIds1})
+
+                  let newIds = this.state.commentStatusInStories.slice()
+                  newIds[item.position] = "angle up"
+                  this.setState({commentStatusInStories: newIds})
+
+              } else if (this.state.commentStatusInStories[item.position] == "angle up") {
+                  let newIds3 = this.state.showOrHideCommentsInStories.slice()
+                  newIds3[item.position] = 0
+                  this.setState({showOrHideCommentsInStories: newIds3})
+
+                  let newIds4 = this.state.showOrHideCommentsInStories.slice() //copy the array
+                  newIds4[item.position] = "angle down" //execute the manipulations
+                  this.setState({commentStatusInStories: newIds4}) //set the new state
+              }
+          } else if (tabName === "Guestbook") {
+              if (this.state.commentStatusInGuestbook[item.position] == "angle down") {
+                  let newIds1 = this.state.showOrHideCommentsInGuestbook.slice()
+                  newIds1[item.position] = 1
+                  this.setState({showOrHideCommentsInGuestbook: newIds1})
+
+                  let newIds = this.state.commentStatusInGuestbook.slice()
+                  newIds[item.position] = "angle up"
+                  this.setState({commentStatusInGuestbook: newIds})
+
+              } else if (this.state.commentStatusInGuestbook[item.position] == "angle up") {
+                  let newIds3 = this.state.showOrHideCommentsInGuestbook.slice()
+                  newIds3[item.position] = 0
+                  this.setState({showOrHideCommentsInGuestbook: newIds3})
+
+                  let newIds4 = this.state.commentStatusInGuestbook.slice() //copy the array
+                  newIds4[item.position] = "angle down" //execute the manipulations
+                  this.setState({commentStatusInGuestbook: newIds4}) //set the new state
+              }
           }
       }
-
-      showOrHideCommentsInStories(e, item) {
-          if (this.state.commentStatusInStories[item.position] == "angle down") {
-              let newIds1 = this.state.showOrHideCommentsInStories.slice()
-              newIds1[item.position] = 1
-              this.setState({showOrHideCommentsInStories: newIds1})
-
-              let newIds = this.state.commentStatusInStories.slice()
-              newIds[item.position] = "angle up"
-              this.setState({commentStatusInStories: newIds})
-
-          } else if (this.state.commentStatusInStories[item.position] == "angle up") {
-              let newIds3 = this.state.showOrHideCommentsInStories.slice()
-              newIds3[item.position] = 0
-              this.setState({showOrHideCommentsInStories: newIds3})
-
-              let newIds4 = this.state.showOrHideCommentsInStories.slice() //copy the array
-              newIds4[item.position] = "angle down" //execute the manipulations
-              this.setState({commentStatusInStories: newIds4}) //set the new state
-          }
-      }
-
-      showOrHideCommentsInGuestbook(e, item) {
-          if (this.state.commentStatusInGuestbook[item.position] == "angle down") {
-              let newIds1 = this.state.showOrHideCommentsInGuestbook.slice()
-              newIds1[item.position] = 1
-              this.setState({showOrHideCommentsInGuestbook: newIds1})
-
-              let newIds = this.state.commentStatusInGuestbook.slice()
-              newIds[item.position] = "angle up"
-              this.setState({commentStatusInGuestbook: newIds})
-
-          } else if (this.state.commentStatusInGuestbook[item.position] == "angle up") {
-              let newIds3 = this.state.showOrHideCommentsInGuestbook.slice()
-              newIds3[item.position] = 0
-              this.setState({showOrHideCommentsInGuestbook: newIds3})
-
-              let newIds4 = this.state.commentStatusInGuestbook.slice() //copy the array
-              newIds4[item.position] = "angle down" //execute the manipulations
-              this.setState({commentStatusInGuestbook: newIds4}) //set the new state
-          }
-      }
-
 
     render() {
 
@@ -631,26 +628,26 @@ class Profile extends Component {
                                         {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
                                       </Card.Description>
                                     </Form>
-                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideCommentsInImages(e, item))}>
+                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item, "Image"))}>
                                       <Icon name="comment" />
                                       <Icon name={this.state.commentStatusInImages[item.position]} />
                                     </Button>
                                   </Card.Content>
                                 </Card>
                                 <Card fluid centered className="comment-card">
-                                  <Card.Content>
+                                  <Card.Content className="feed-comment-content">
                                     {this.state.showOrHideCommentsInImages[item.position] ?
                                         <div>
-                                            <Header as='h4' dividing>Comments</Header>
+                                            <Header as='h3' dividing>Comments</Header>
                                             {comments.map((comment, index) => {
                                               return(
                                                 <Comment.Group key={index}>
                                                   {comment.post_id === item._id ?
                                                   <Comment className="comment-box">
-                                                    {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                     <Comment.Content className="comment-content">
+                                                      {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                       <div className="comment-header">
-                                                          <Comment.Author className="comment-author" as='a'>
+                                                          <Comment.Author className="comment-author" >
                                                             <Link to={`/profile/${comment.authorName}`}>
                                                               @{comment.authorName}
                                                             </Link>
@@ -740,26 +737,26 @@ class Profile extends Component {
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
-                                        <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideCommentsInStories(e, item))}>
+                                        <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) =>  this.showOrHideComments(e, item, "Story"))}>
                                           <Icon name="comment" />
                                           <Icon name={this.state.commentStatusInStories[item.position]} />
                                         </Button>
                                       </Card.Content>
                                     </Card>
                                     <Card fluid centered className="comment-card">
-                                      <Card.Content>
-                                          <Header as='h4' dividing >Comments</Header>
+                                      <Card.Content className="feed-comment-content">
                                           {this.state.showOrHideCommentsInStories[item.position] ?
                                               <div>
+                                                  <Header as='h3' dividing >Comments</Header>
                                                   {comments.map((comment, index) => {
                                                     return(
                                                       <Comment.Group key={index}>
                                                         {comment.post_id === item._id ?
                                                         <Comment className="comment-box">
-                                                          {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                           <Comment.Content className="comment-content">
+                                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                             <div className="comment-header">
-                                                                <Comment.Author className="comment-author" as='a'>
+                                                                <Comment.Author className="comment-author">
                                                                   <Link to={`/profile/${comment.authorName}`}>
                                                                     @{comment.authorName}
                                                                   </Link>
@@ -861,27 +858,26 @@ class Profile extends Component {
                                       <Card.Description>
                                         {item.content}
                                       </Card.Description>
-                                      <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideCommentsInGuestbook(e, item))}>
+                                      <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item, "Guestbook"))}>
                                         <Icon name="comment" />
-                                        <Icon name={this.state.showOrHideCommentsInGuestbook[item.position]} />
+                                        <Icon name={this.state.commentStatusInGuestbook[item.position]} />
                                       </Button>
                                     </Card.Content>
                                   </Card>
                                   <Card fluid centered className="comment-card">
-                                    <Card.Content>
-                                      <Header as='h4' dividing>Comments</Header>
+                                    <Card.Content className="feed-comment-content">
                                       {this.state.showOrHideCommentsInGuestbook[item.position] ?
                                           <div>
+                                            <Header as='h3' dividing>Comments</Header>
                                               {comments.map((comment, index) => {
                                                 return(
                                                   <Comment.Group key={index}>
                                                     {comment.post_id === item._id ?
                                                     <Comment className="comment-box">
-                                                      {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
-
                                                       <Comment.Content className="comment-content">
+                                                        {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                         <div className="comment-header">
-                                                            <Comment.Author className="comment-author" as='a'>
+                                                            <Comment.Author className="comment-author">
                                                               <Link to={`/profile/${comment.authorName}`}>
                                                                 @{comment.authorName}
                                                               </Link>

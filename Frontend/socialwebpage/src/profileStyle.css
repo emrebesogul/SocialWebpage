@@ -262,9 +262,27 @@ a{
   padding-right: 4px !important;
 }
 
+#network-card-group{
+  margin-left: auto !important;
+}
+
+#network-card-header{
+  font-weight: 600;
+}
+
+#network-cards{
+  margin-left: 20px;
+  margin-bottom: 30px !important;
+  border-radius: 2px;
+  -webkit-box-shadow: 0px 1px 6px 1px #cfcfcf;
+  box-shadow: 0px 1px 6px 1px #cfcfcf;
+  padding-right: 15px;
+}
+
 #users-search{
   margin-top: 25px;
-  /* width: 30%; */
+  margin-bottom: 40px !important;
+  margin-left: 20px !important;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -306,7 +324,7 @@ a{
   max-width: 230px;
   text-align: center;
   border-radius: 2px;
-  height: 477px;
+  height: 430px;
   padding-top: 10px;
   color: rgb(30,30,30);
   background: #fefefe;
@@ -498,16 +516,16 @@ div.ui.comments {
 
 .comment-user-info{
   position: absolute;
-  top: 40px;
-  left: 74px;
+  top: 38px;
+  left: 75px;
 }
 
 .comment-box{
   border: 1px solid rgb(220,220,220);
   border-radius: 20px;
   margin-bottom: 20px !important;
-  padding-left: 15px !important;
-  padding-top: 10px !important;
+  /*padding-left: 15px !important;
+  padding-top: 10px !important;*/
   box-shadow: 0 1px 4px 1px #c5c5c59e;
   position: relative;
 }
@@ -519,6 +537,7 @@ div.ui.comments {
 .feed-comment-content{
     padding-top: 4px !important;
     margin-bottom: 25px !important;
+    margin-top: 5px !important;
 }
 
 #feed-upload {
@@ -539,7 +558,8 @@ div.ui.comments {
   display: block;
   -o-object-fit: cover;
   object-fit: cover;
-  margin-top: -4px;
+  margin-top: -6px;
+  margin-bottom: 6px;
   z-index: 100;
   border-radius: 75%;
   -webkit-box-shadow: 0 0 3px #b9b9b9a8;
@@ -548,12 +568,24 @@ div.ui.comments {
 
 .comment-rating{
   position: relative;
-  left: -8px;
-  margin-right: 10px;
+  left: 7px;
+  top: 2px;
+  margin-right: 10px !important;
+}
+
+i.selected.icon{
+  color: green !important;
 }
 
 .comment-content{
   padding: 1em !important;
+}
+
+div.ui.heart.large.rating{
+  font-size: 1.24999rem !important;
+  margin-right: 4px;
+  position: relative;
+  top: 1px;
 }
 
 /*----------------------------------------------
@@ -678,7 +710,7 @@ textarea {
 
 .profile-edit-buttons{
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .wrapper{
@@ -1055,10 +1087,15 @@ a.item:hover {
 }
 
 .feed-list-item{
+  margin-left: 20px!important;
   margin-bottom: 15px !important;
   padding-top: 12px !important;
   border-radius: 20px !important;
+  width: 31%;
+  min-width: 300px;
+  -webkit-box-shadow: 0 1px 4px 1px #c7c7c78c;
   box-shadow: 0 1px 4px 1px #c7c7c78c;
+  margin-right: auto !important;
 }
 
 .profile-comments{

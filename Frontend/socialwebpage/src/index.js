@@ -5,18 +5,13 @@ import Login from './Pages/Login';
 import Register from './Pages/Register';
 import Profile from './Pages/Profile';
 import Feed from './Pages/Feed';
-import Settings from './Pages/Settings'
-import About from './Pages/About'
-import Legal from './Pages/Legal'
-import Search from './Pages/Search'
-import Notifications from './Pages/Notifications'
-import Users from './Pages/Users'
-
+import Settings from './Pages/Settings';
+import About from './Pages/About';
+import Legal from './Pages/Legal';
+import Notifications from './Pages/Notifications';
+import Users from './Pages/Users';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
-
 import registerServiceWorker from './registerServiceWorker';
-
-//
 
 ReactDOM.render(
     <BrowserRouter>
@@ -29,7 +24,6 @@ ReactDOM.render(
             <Route exact path="/settings" component={Settings}></Route>
             <Route exact path="/about" component={About}></Route>
             <Route exact path="/legal" component={Legal}></Route>
-            <Route exact path="/search" component={Search}></Route>
             <Route exact path="/network" component={Users}></Route>
         </Switch>
     </BrowserRouter>,
