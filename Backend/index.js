@@ -123,11 +123,12 @@ MongoClient.connect(url, function(err, client) {
         database.checkUserCredentials(client.db('socialwebpage'), res, userCredential);
     });
 
+    /*
     //-----------------------------Register user------------------------------//
     app.post('/rest/user/create', (req, res) => {
         const newUserData = req.body;
         database.registerUserToPlatform(client.db('socialwebpage'), res, newUserData);
-    });
+    });*/
 
     //------------------------------Show the Feed-----------------------------//
     app.get('/rest/feed', verifyToken, (req, res) => {
