@@ -241,12 +241,12 @@ var call = module.exports = {
 
                 res_stories.map(item => {
                     item.number_of_likes = item.liking_users.length;
-                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                    item.profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + item.profile_picture_filename;
                 });
                 res_images.map(item => {
-                    item.src = "http://localhost:8000/uploads/posts/" + item.filename;
+                    item.src = "https://gruppe1.testsites.info/uploads/posts/" + item.filename;
                     item.number_of_likes = item.liking_users.length;
-                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                    item.profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + item.profile_picture_filename;
                 });
 
                 let feed = res_images.concat(res_stories);
@@ -426,7 +426,7 @@ var call = module.exports = {
             if (err_images) throw err_images;
             result_images.map(item => {
                 item.date_created = getDate(item.date_created);
-                item.src = "http://localhost:8000/uploads/posts/" + item.filename;
+                item.src = "https://gruppe1.testsites.info/uploads/posts/" + item.filename;
                 item.number_of_likes = item.liking_users.length;
             });
             res.status(200).send(result_images);
@@ -471,7 +471,7 @@ var call = module.exports = {
                         lastname: res_find_user.last_name,
                         email: res_find_user.email,
                         picture: res_find_user.picture,
-                        pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture,
+                        pictureURL: "https://gruppe1.testsites.info/uploads/posts/" + res_find_user.picture,
                         buttonState: buttonState,
                         is_admin: res_find_user.is_admin
                     }));
@@ -502,7 +502,7 @@ var call = module.exports = {
                     lastname: res_find_user.last_name,
                     email: res_find_user.email,
                     picture: res_find_user.picture,
-                    pictureURL: "http://localhost:8000/uploads/posts/" + res_find_user.picture,
+                    pictureURL: "https://gruppe1.testsites.info/uploads/posts/" + res_find_user.picture,
                     is_admin: res_find_user.is_admin
                 }));
             }
@@ -846,7 +846,7 @@ var call = module.exports = {
                 item.requester = item.requester;
                 item.requesterId = item.requesterId;
                 item.date_created = getDate(item.time);
-                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                item.profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + item.profile_picture_filename;
             });
             res.status(200).send(result);
         });
@@ -930,7 +930,7 @@ var call = module.exports = {
                             result ["firstName"] = res_friends.first_name;
                             result ["lastName"] = res_friends.last_name;
                             result ["friendId"] = res_friends._id;
-                            result ["picture"] = "http://localhost:8000/uploads/posts/" + res_friends.picture;
+                            result ["picture"] = "https://gruppe1.testsites.info/uploads/posts/" + res_friends.picture;
                             friends.push(result);
 
                             if (i == friendlistLength) {
@@ -1051,7 +1051,7 @@ var call = module.exports = {
                 res_guestbook_entries.map(item => {
                     item.date_created = getDate(item.date_created);
                     item.number_of_likes = item.liking_users.length;
-                    item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                    item.profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + item.profile_picture_filename;
                     item.profile_picture_filename = item.profile_picture_filename;
                 });
                 res.status(200).send(res_guestbook_entries);
@@ -1175,7 +1175,7 @@ var call = module.exports = {
             if (err_guestbook_entries) throw err_guestbook_entries;
             res_guestbook_entries[0].date_created = getDate(res_guestbook_entries[0].date_created);
             res_guestbook_entries[0].number_of_likes = res_guestbook_entries[0].liking_users.length;
-            res_guestbook_entries[0].profile_picture_url = "http://localhost:8000/uploads/posts/" + res_guestbook_entries[0].profile_picture_filename;
+            res_guestbook_entries[0].profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + res_guestbook_entries[0].profile_picture_filename;
             res_guestbook_entries[0].profile_picture_filename = res_guestbook_entries[0].profile_picture_filename;
             res.status(200).send(res_guestbook_entries[0]);
         });
@@ -1266,7 +1266,7 @@ var call = module.exports = {
             if (err_stories) throw err_stories;
             result_stories[0].date_created = getDate(result_stories[0].date_created);
             result_stories[0].number_of_likes = result_stories[0].liking_users.length;
-            result_stories[0].profile_picture_url = "http://localhost:8000/uploads/posts/" + result_stories[0].profile_picture_filename;
+            result_stories[0].profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + result_stories[0].profile_picture_filename;
             res.status(200).send(result_stories[0]);
         });
     },
@@ -1341,9 +1341,9 @@ var call = module.exports = {
             ]).toArray((err_images, result_images) => {
             if (err_images) throw err_images;
             result_images[0].date_created = getDate(result_images[0].date_created);
-            result_images[0].src = "http://localhost:8000/uploads/posts/" + result_images[0].filename;
+            result_images[0].src = "https://gruppe1.testsites.info/uploads/posts/" + result_images[0].filename;
             result_images[0].number_of_likes = result_images[0].liking_users.length;
-            result_images[0].profile_picture_url = "http://localhost:8000/uploads/posts/" + result_images[0].profile_picture_filename;
+            result_images[0].profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + result_images[0].profile_picture_filename;
             res.status(200).send(result_images[0]);
         });
     },
@@ -1478,7 +1478,7 @@ var call = module.exports = {
             res_find_comments.map(item => {
                 item.number_of_likes = item.liking_users.length;
                 item.date_created = getDate(item.date_created);
-                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                item.profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + item.profile_picture_filename;
             });
             res.status(200).send(res_find_comments);
         });
@@ -1499,7 +1499,7 @@ var call = module.exports = {
             if (err_find_all_Users) throw err_find_all_Users;
             res_find_all_Users.map(user => {
                 if(user.picture !== "") {
-                    user.picture = "http://localhost:8000/uploads/posts/" + user.picture;
+                    user.picture = "https://gruppe1.testsites.info/uploads/posts/" + user.picture;
                 } else {
                     user.picture = "/assets/images/user.png"
                 }
@@ -1595,7 +1595,7 @@ var call = module.exports = {
                     item.type = "guestbook";
                     item.linkToPost = item.guestbook_id;
                 }
-                item.profile_picture_url = "http://localhost:8000/uploads/posts/" + item.profile_picture_filename;
+                item.profile_picture_url = "https://gruppe1.testsites.info/uploads/posts/" + item.profile_picture_filename;
             });
             result.sort((a, b) => {
                 return new Date(b.date_created) - new Date(a.date_created);
