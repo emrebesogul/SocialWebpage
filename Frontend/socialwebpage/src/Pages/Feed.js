@@ -70,9 +70,6 @@ class Feed extends Component {
  async getfeeddata() {
       let response = await fetchFeedData();
       if (response){
-        //console.log("Feed: ", response)
-        //console.log("kommentare: ", comments)
-
         let i = 0;
         response.map(item => {
           item.number_of_likes_in_state = item.number_of_likes;
@@ -177,13 +174,21 @@ async handleCreateComment(event, data) {
     let newIds = this.state.commentStatus.slice()
     newIds[data.position] = "angle up"
     this.setState({commentStatus: newIds})
-
     if(response) {
       let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
       commentInputElements.map(item => {
         item.value = "";
       })
       this.getComments();
+    } 
+    else {
+      let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
+      commentInputElements.map(item => {
+        item.value = "";
+      });
+      this.setState({ commentUploadLimitMessage : "The upload limit for this hour has beed reached. Please try again later." });
+      this.setState({ currentPostId: data._id});
+      this.setState({ showCommentUploadLimitMessage: true });
     }
   }
 }
@@ -243,25 +248,21 @@ async handleSubmit(event) {
     fd.append('content', this.state.content);
 
     const response = await uploadPictureToPlatform(fd);
-
-    this.setState({message : JSON.parse(response).message});
-    if(this.state.message === "Image uploaded") {
+    if(response) {
         this.setState({ redirectToFeed: true });
         window.location.reload();
     } else {
-        this.setState({ showMessage: true });
+        this.setState({ postUploadLimitMessage : "The upload limit for this hour has beed reached. Please try again later." });
+        this.setState({ showPostUploadLimitMessage: true });
     }
-
-  }else{
+  } else {
     const response = await uploadStoryToPlatform(this.state.title, this.state.content);
-
-    this.setState({status: response});
-
-    if(this.state.status === true) {
+    if(response) {
         this.setState({ redirectToFeed: true });
         window.location.reload();
     } else {
-        this.setState({ showMessage: true });
+      this.setState({ postUploadLimitMessage : "The upload limit for this hour has beed reached. Please try again later." });
+      this.setState({ showPostUploadLimitMessage: true });
     }
   }
 }
@@ -350,7 +351,7 @@ async handleSubmit(event) {
                                         <span className="input-label-upload"> </span>
                                         <TextArea id="textarea-feed" className="input-upload" placeholder="What story do you want to share?" required type="text"></TextArea>
 
-                                        {this.state.showMessage ? <Message negative><p>{this.state.message}</p></Message> : null}
+                                        {this.state.showPostUploadLimitMessage ? <Message negative><p>{this.state.postUploadLimitMessage}</p></Message> : null}
 
                                         <Dropzone id="dz-repair" multiple={ false } name="theImage" acceptedFiles="image/jpeg, image/png, image/gif" className="upload-dropzone mobile-button-border" onDrop={this.onDrop.bind(this)} >
                                             <p id="feed-share-text"><Icon name='image' size="large" id="settings-icon" /> Add Photo</p>
@@ -390,6 +391,10 @@ async handleSubmit(event) {
                                           <div className="label">
                                             Likes
                                           </div>
+                                          <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item))}>
+                                            <Icon name="comment" />
+                                            <Icon name={this.state.commentStatus[item.position]} />
+                                          </Button>
                                       </div>
 
                                     </Card.Header>
@@ -399,13 +404,9 @@ async handleSubmit(event) {
                                         {item.updated ? <p>(edited)</p> :  null}
                                       </span>
                                     </Card.Meta>
-                                    <Card.Description>
+                                    <Card.Description className="content-card-description">
                                       {item.content ? item.content : <br/>}
                                     </Card.Description>
-                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item))}>
-                                      <Icon name="comment" />
-                                      <Icon name={this.state.commentStatus[item.position]} />
-                                    </Button>
                                   </Card.Content>
                                 </Card>
                                 <Card fluid centered className="comment-card">
@@ -462,6 +463,7 @@ async handleSubmit(event) {
                                       <Button className="button-upload button-styles add-comment-button">
                                         <Icon name="send" />
                                       </Button>
+                                      {this.state.showCommentUploadLimitMessage && this.state.currentPostId === item._id ? <Message negative><p>{this.state.commentUploadLimitMessage}</p></Message> : null}
                                     </Form>
                                   </Card.Content>
                                 </Card>

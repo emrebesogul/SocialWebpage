@@ -204,14 +204,19 @@ class Profile extends Component {
         this.state.newGuestbookEntryTitle =  event.target[0].value;
         this.state.newGuestbookEntryContent =  event.target[1].value;
 
-      await createGuestbookentry(
-            this.state.newGuestbookEntryTitle,
-            this.state.newGuestbookEntryContent,
-            this.ownerName
+        let response = await createGuestbookentry(
+              this.state.newGuestbookEntryTitle,
+              this.state.newGuestbookEntryContent,
+              this.ownerName
         );
-        this.getProfileData(this.property);
-        this.setState({guestbookEntryTitle: ""});
-        this.setState({guestbookEntryContent: ""});
+        if(response) {
+          this.getProfileData(this.property);
+          this.setState({guestbookEntryTitle: ""});
+          this.setState({guestbookEntryContent: ""});
+        } else {
+          this.setState({ guestbookEntryUploadLimitMessage : "The upload limit for this hour has beed reached. Please try again later."});
+          this.setState({ showGuestbookEntryUploadLimitMessage: true });
+        }
       }
 
       handleChangeGuestbookEntryInput(e, attribut) {
@@ -369,7 +374,6 @@ class Profile extends Component {
         this.setState({ updateItemId: ""});
       }
 
-
       async handleOpenImageUpdateWindow(event, data) {
         const response = await getImageById(data._id);
         if(response) {
@@ -453,8 +457,17 @@ class Profile extends Component {
             let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
             commentInputElements.map(item => {
               item.value = "";
-            })
+            });
             this.getComments();
+          }
+          else {
+            let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
+            commentInputElements.map(item => {
+              item.value = "";
+            });
+            this.setState({ commentUploadLimitMessage : "The upload limit for this hour has beed reached. Please try again later." });
+            this.setState({ currentPostId: data._id});
+            this.setState({ showCommentUploadLimitMessage: true });
           }
         }
       }
@@ -611,6 +624,10 @@ class Profile extends Component {
                                             <div className="label">
                                               Likes
                                             </div>
+                                            <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item, "Image"))}>
+                                              <Icon name="comment" />
+                                              <Icon name={this.state.commentStatusInImages[item.position]} />
+                                            </Button>
                                           </div>
                                       </Card.Header>
                                       <Card.Meta className="card-meta">
@@ -619,7 +636,7 @@ class Profile extends Component {
                                           {item.updated ? <p>(edited)</p> :  null}
                                         </span>
                                       </Card.Meta>
-                                      <Card.Description>
+                                      <Card.Description className="content-card-description">
                                         {this.state.updateItemId == item._id ? <Input className="input-upload" placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : (item.content ? item.content : <br/>)}
                                         <div className="profile-edit-buttons">
                                           {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
@@ -628,10 +645,6 @@ class Profile extends Component {
                                         {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
                                       </Card.Description>
                                     </Form>
-                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item, "Image"))}>
-                                      <Icon name="comment" />
-                                      <Icon name={this.state.commentStatusInImages[item.position]} />
-                                    </Button>
                                   </Card.Content>
                                 </Card>
                                 <Card fluid centered className="comment-card">
@@ -688,6 +701,7 @@ class Profile extends Component {
                                       <Button className="button-upload button-styles add-comment-button">
                                         <Icon name="send" />
                                       </Button>
+                                      {this.state.showCommentUploadLimitMessage && this.state.currentPostId === item._id ? <Message negative><p>{this.state.commentUploadLimitMessage}</p></Message> : null}
                                     </Form>
                                   </Card.Content>
                                 </Card>
@@ -720,6 +734,10 @@ class Profile extends Component {
                                                 <div className="label">
                                                   Likes
                                                 </div>
+                                                <Button id="comments-button" className="button-upload" onClick={((e) =>  this.showOrHideComments(e, item, "Story"))}>
+                                                  <Icon name="comment" />
+                                                  <Icon name={this.state.commentStatusInStories[item.position]} />
+                                                </Button>
                                             </div>
                                           </Card.Header>
                                           <Card.Meta className="card-meta">
@@ -728,7 +746,7 @@ class Profile extends Component {
                                               {item.updated ? <p>(edited)</p> :  null}
                                             </span>
                                           </Card.Meta>
-                                          <Card.Description>
+                                          <Card.Description className="content-card-description">
                                           {this.state.updateItemId == item._id ? <TextArea required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")}></TextArea> : item.content}
                                           <div className="profile-edit-buttons">
                                             {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
@@ -737,10 +755,6 @@ class Profile extends Component {
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
-                                        <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) =>  this.showOrHideComments(e, item, "Story"))}>
-                                          <Icon name="comment" />
-                                          <Icon name={this.state.commentStatusInStories[item.position]} />
-                                        </Button>
                                       </Card.Content>
                                     </Card>
                                     <Card fluid centered className="comment-card">
@@ -796,6 +810,7 @@ class Profile extends Component {
                                           <Button className="button-upload button-styles add-comment-button">
                                             <Icon name="send" />
                                           </Button>
+                                          {this.state.showCommentUploadLimitMessage && this.state.currentPostId === item._id ? <Message negative><p>{this.state.commentUploadLimitMessage}</p></Message> : null}
                                         </Form>
                                       </Card.Content>
                                     </Card>
@@ -819,7 +834,8 @@ class Profile extends Component {
                                       <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
                                     </Form.Field>
                                     <Form.TextArea required placeholder="What do you want to say?" autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
-                                    <Button className="button-styles mobile-button-border">Add entry</Button>
+                                    {this.state.showGuestbookEntryUploadLimitMessage ? <Message negative><p>{this.state.guestbookEntryUploadLimitMessage}</p></Message> : null}
+                                    <Button className="button-styles mobile-button-border">Add Posts</Button>
                                   </Form>
                                 </Card.Content>
                               </Card>
@@ -848,6 +864,10 @@ class Profile extends Component {
                                             <div className="label">
                                               Likes
                                             </div>
+                                            <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item, "Guestbook"))}>
+                                              <Icon name="comment" />
+                                              <Icon name={this.state.commentStatusInGuestbook[item.position]} />
+                                            </Button>
                                         </div>
                                       </Card.Header>
                                       <Card.Meta className="card-meta">
@@ -855,13 +875,9 @@ class Profile extends Component {
                                           {item.date_created}
                                         </span>
                                       </Card.Meta>
-                                      <Card.Description>
-                                        {item.content}
+                                      <Card.Description className="content-card-description">
+                                         {item.content}
                                       </Card.Description>
-                                      <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item, "Guestbook"))}>
-                                        <Icon name="comment" />
-                                        <Icon name={this.state.commentStatusInGuestbook[item.position]} />
-                                      </Button>
                                     </Card.Content>
                                   </Card>
                                   <Card fluid centered className="comment-card">
@@ -917,6 +933,7 @@ class Profile extends Component {
                                           <Button className="button-upload button-styles add-comment-button">
                                             <Icon name="send" />
                                           </Button>
+                                          {this.state.showCommentUploadLimitMessage && this.state.currentPostId === item._id ? <Message negative><p>{this.state.commentUploadLimitMessage}</p></Message> : null}
                                       </Form>
                                     </Card.Content>
                                   </Card>
