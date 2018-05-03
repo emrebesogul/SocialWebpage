@@ -132,6 +132,8 @@ const call = module.exports = {
                                               html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>https://grupp1.testsites.info/activation/'+activationToken
                                             };
 
+                                            transport.sendMail(mail);
+
                                             res.send(JSON.stringify({
                                                 message: "User successfully created",
                                                 messageDetails: "Your user registration was successful. We have sent you an email to activate your account. You may now activate your account and Login with the username you have chosen."
@@ -193,7 +195,7 @@ const call = module.exports = {
                                           from: process.env.emailUsername,
                                           to: email,
                                           subject: 'Activate your account',
-                                          html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>http://localhost:3000/activation/'+activationToken
+                                          html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>https://gruppe1.testsites.info/activation/'+activationToken
                                         };
 
                                         transport.sendMail(mail);
