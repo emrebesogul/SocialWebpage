@@ -342,20 +342,29 @@ const call = module.exports = {
         let content = fileDataInfo.content;
         let src = fileData.destination;
         let filename = fileData.filename;
-        db.collection('images').insert({
-            "title": title,
-            "content": content,
-            "filename": filename,
-            "liking_users": [],
-            "date_created": new Date(),
-            "user_id": new ObjectId(userId),
-            "updated" : false,
-            "type": "image"
-        });
-        res.send(JSON.stringify({
-            message: "Image uploaded"
-        }));
 
+        let referenceDate = new Date();
+        referenceDate.setHours(referenceDate.getHours() - 1);
+
+        db.collection('images').find({"user_id": new ObjectId(userId), "date_created" : { $gte : referenceDate}}).toArray((err_find_images_of_user, res_find_images_of_user) => {
+            if (err_find_images_of_user) throw err_find_images_of_user; 
+            if (res_find_images_of_user.length < 20) {
+                db.collection('images').insert({
+                    "title": title,
+                    "content": content,
+                    "filename": filename,
+                    "liking_users": [],
+                    "date_created": new Date(),
+                    "user_id": new ObjectId(userId),
+                    "updated" : false,
+                    "type": "image"
+                });
+                res.send(true);
+            }
+            else {
+                res.send(false);
+            }
+        });
     },
 
     //----------------------Create Story Entry----------------------//
@@ -365,16 +374,26 @@ const call = module.exports = {
     createStoryEntry: function (db, res, storyData, userId) {
         let title = storyData.title;
         let content = storyData.content;
-        db.collection('stories').insert({
-            "title": title,
-            "content": content,
-            "liking_users": [],
-            "date_created": new Date(),
-            "user_id": new ObjectId(userId),
-            "updated" : false,
-            "type": "story"
-        });
-        res.send(true);
+        let referenceDate = new Date();
+        referenceDate.setHours(referenceDate.getHours() - 1);
+
+        db.collection('stories').find({"user_id": new ObjectId(userId), "date_created" : { $gte : referenceDate}}).toArray((err_find_stories_of_user, res_find_stories_of_user) => {
+            if (err_find_stories_of_user) throw err_find_stories_of_user; 
+            if (res_find_stories_of_user.length < 20) {
+                db.collection('stories').insert({
+                    "title": title,
+                    "content": content,
+                    "liking_users": [],
+                    "date_created": new Date(),
+                    "user_id": new ObjectId(userId),
+                    "updated" : false,
+                    "type": "story"
+                });
+                res.send(true);
+            } else {
+                res.send(false);
+            }     
+        }); 
     },
 
     //----------------------List Story Entries in Profile for a Username----------------------//
@@ -1036,25 +1055,36 @@ const call = module.exports = {
                 if (err_user) throw err_user;
 
                 if (res_user && (res_user._id != authorId)) {
-                    let date_created = new Date();
-                    db.collection('guestbookEntries').insert({
-                        "title": title,
-                        "content": content,
-                        "liking_users": [],
-                        "date_created": date_created,
-                        "owner_id": new ObjectId(res_user._id),
-                        "author_id": new ObjectId(authorId),
-                        "type": "guestbook"
-                    }, (err_insert_enty, res_insert_entry) => {
-                        db.collection('notifications').insert({
-                            "recipient": new ObjectId(res_user._id),
-                            "creator": new ObjectId(authorId),
-                            "action": "posted a new entry in your guestbook",
-                            "date_created": date_created,
-                            "guestbook_id": new ObjectId(res_insert_entry.ops[0]._id)
-                        });
+                    let referenceDate = new Date();
+                    referenceDate.setHours(referenceDate.getHours() - 1);
+                    db.collection('guestbookEntries').find({"author_id": new ObjectId(authorId), "date_created" : { $gte : referenceDate}}).toArray((err_find_guestbook_entries_of_user, res_find_guestbook_entries_of_user) => {
+                        if (err_find_guestbook_entries_of_user) throw err_find_guestbook_entries_of_user; 
+                        if (res_find_guestbook_entries_of_user.length < 20) {
+                            let date_created = new Date();
+                            db.collection('guestbookEntries').insert({
+                                "title": title,
+                                "content": content,
+                                "liking_users": [],
+                                "date_created": date_created,
+                                "owner_id": new ObjectId(res_user._id),
+                                "author_id": new ObjectId(authorId),
+                                "type": "guestbook"
+                            }, (err_insert_enty, res_insert_entry) => {
+                                db.collection('notifications').insert({
+                                    "recipient": new ObjectId(res_user._id),
+                                    "creator": new ObjectId(authorId),
+                                    "action": "posted a new entry in your guestbook",
+                                    "date_created": date_created,
+                                    "guestbook_id": new ObjectId(res_insert_entry.ops[0]._id)
+                                });
+                            });
+                            res.send(true);
+                        } 
+                        else {
+                            res.send(false);
+                        }
                     });
-                    res.send(true);
+                    
                 }
                 else {
                     res.send(false);
@@ -1452,68 +1482,80 @@ const call = module.exports = {
     //----------------------------Create Comment-----------------------------//
     createComment: function (db, res, commentData, currentUserId) {
         var date_created = new Date();
-        db.collection('comments').insert({
-            "content": commentData.content,
-            "date_created": date_created,
-            "liking_users": [],
-            "post_id": new ObjectId(commentData.postId),
-            "author_id": new ObjectId(currentUserId),
-            "type": "comment"
-        }, (err_insert_entry, res_insert_entry) => {
-            if (err_insert_entry) throw err_insert_entry;
-            if (commentData.postType == "story") {
-                db.collection("stories").findOne({"_id": new ObjectId(commentData.postId)}, (err_find_stories, res_find_stories) => {
-                    if (err_find_stories) throw err_find_stories;
-                    if (res_find_stories) {
-                        if (res_find_stories.user_id !== currentUserId) {
-                            db.collection('notifications').insert({
-                                "recipient": new ObjectId(res_find_stories.user_id),
-                                "creator": new ObjectId(currentUserId),
-                                "action": "commented on your story",
-                                "type": res_find_stories.type,
-                                "date_created": date_created,
-                                "story_id": new ObjectId(commentData.postId)
-                            });
-                        }
+        let referenceDate = new Date();
+        referenceDate.setHours(referenceDate.getHours() - 1);
+        db.collection('comments').find({"author_id": new ObjectId(currentUserId), "date_created" : { $gte : referenceDate}}).toArray((err_find_comments_of_user, res_find_comments_of_user) => {
+            if (err_find_comments_of_user) throw err_find_comments_of_user; 
+
+            if (res_find_comments_of_user.length < 20) {
+                db.collection('comments').insert({
+                    "content": commentData.content,
+                    "date_created": date_created,
+                    "liking_users": [],
+                    "post_id": new ObjectId(commentData.postId),
+                    "author_id": new ObjectId(currentUserId),
+                    "type": "comment"
+                }, (err_insert_entry, res_insert_entry) => {
+                    if (err_insert_entry) throw err_insert_entry;
+                    
+                    if (commentData.postType == "story") {
+                        db.collection("stories").findOne({"_id": new ObjectId(commentData.postId)}, (err_find_stories, res_find_stories) => {
+                            if (err_find_stories) throw err_find_stories;
+                            if (res_find_stories) {
+                                if (res_find_stories.user_id !== currentUserId) {
+                                    db.collection('notifications').insert({
+                                        "recipient": new ObjectId(res_find_stories.user_id),
+                                        "creator": new ObjectId(currentUserId),
+                                        "action": "commented on your story",
+                                        "type": res_find_stories.type,
+                                        "date_created": date_created,
+                                        "story_id": new ObjectId(commentData.postId)
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    if (commentData.postType == "image") {
+                        db.collection("images").findOne({"_id": new ObjectId(commentData.postId)}, (err_find_image, res_find_image) => {
+                            if (err_find_image) throw err_find_image;
+                            if (res_find_image) {
+                                if (res_find_image.user_id !== currentUserId) {
+                                    db.collection('notifications').insert({
+                                        "recipient": new ObjectId(res_find_image.user_id),
+                                        "creator": new ObjectId(currentUserId),
+                                        "action": "commented on your image",
+                                        "type": res_find_image.type,
+                                        "date_created": date_created,
+                                        "image_id": new ObjectId(commentData.postId)
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    if (commentData.postType == "guestbook") {
+                        db.collection("guestbookEntries").findOne({"_id": new ObjectId(commentData.postId)}, (err_find_guestbook_entry, res_find_guestbook_entry) => {
+                            if (err_find_guestbook_entry) throw err_find_guestbook_entry;
+                            if (res_find_guestbook_entry) {
+                                if (res_find_guestbook_entry.owner_id !== currentUserId) {
+                                    db.collection('notifications').insert({
+                                        "recipient": new ObjectId(res_find_guestbook_entry.owner_id),
+                                        "creator": new ObjectId(currentUserId),
+                                        "action": "commented on your guestbook entry",
+                                        "type": res_find_guestbook_entry.type,
+                                        "date_created": date_created,
+                                        "guestbook_id": new ObjectId(commentData.postId)
+                                    });
+                                }
+                            }
+                        });
                     }
                 });
+                res.send(true);
             }
-            if (commentData.postType == "image") {
-                db.collection("images").findOne({"_id": new ObjectId(commentData.postId)}, (err_find_image, res_find_image) => {
-                    if (err_find_image) throw err_find_image;
-                    if (res_find_image) {
-                        if (res_find_image.user_id !== currentUserId) {
-                            db.collection('notifications').insert({
-                                "recipient": new ObjectId(res_find_image.user_id),
-                                "creator": new ObjectId(currentUserId),
-                                "action": "commented on your image",
-                                "type": res_find_image.type,
-                                "date_created": date_created,
-                                "image_id": new ObjectId(commentData.postId)
-                            });
-                        }
-                    }
-                });
-            }
-            if (commentData.postType == "guestbook") {
-                db.collection("guestbookEntries").findOne({"_id": new ObjectId(commentData.postId)}, (err_find_guestbook_entry, res_find_guestbook_entry) => {
-                    if (err_find_guestbook_entry) throw err_find_guestbook_entry;
-                    if (res_find_guestbook_entry) {
-                        if (res_find_guestbook_entry.owner_id !== currentUserId) {
-                            db.collection('notifications').insert({
-                                "recipient": new ObjectId(res_find_guestbook_entry.owner_id),
-                                "creator": new ObjectId(currentUserId),
-                                "action": "commented on your guestbook entry",
-                                "type": res_find_guestbook_entry.type,
-                                "date_created": date_created,
-                                "guestbook_id": new ObjectId(commentData.postId)
-                            });
-                        }
-                    }
-                });
+            else {
+                res.send(false);
             }
         });
-        res.send(true);
     },
 
     //----------------------------List Comments-----------------------------//
