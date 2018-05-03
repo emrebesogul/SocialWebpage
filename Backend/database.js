@@ -62,6 +62,7 @@ const call = module.exports = {
     },
 
     //----------------------REGISTER----------------------//
+
     registerUserToPlatform: function (db, res, newUserData) {
         let firstname = newUserData.firstname;
         let lastname = newUserData.lastname;
@@ -156,7 +157,7 @@ const call = module.exports = {
                                     if (err) throw err;
                                     if (docs) {
                                         res.send(JSON.stringify({
-                                            message: "This email is not available. Please try another one."
+                                            message: "This email is already taken. Please try another one."
                                         }));
                                     } else {
                                         const activationToken = uuid();
@@ -199,7 +200,7 @@ const call = module.exports = {
 
                                         res.send(JSON.stringify({
                                             message: "User successfully created",
-                                            messageDetails: "Your user registration was successful. We have sent you an email to activate your account. You may now activate your account and Login with the username you have chosen."
+                                            messageDetails: "Your user registration was successful. We have sent you an email to activate your account. You may now activate your account and login with your username."
                                         }));
                                     }
                                 })
@@ -236,7 +237,7 @@ const call = module.exports = {
         );
 
         res.send(JSON.stringify({
-            message: "Image uploaded"
+            message: "Account successfully activated"
         }));
     },
 

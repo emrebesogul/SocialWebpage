@@ -624,6 +624,10 @@ class Profile extends Component {
                                             <div className="label">
                                               Likes
                                             </div>
+                                            <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item, "Image"))}>
+                                              <Icon name="comment" />
+                                              <Icon name={this.state.commentStatusInImages[item.position]} />
+                                            </Button>
                                           </div>
                                       </Card.Header>
                                       <Card.Meta className="card-meta">
@@ -632,7 +636,7 @@ class Profile extends Component {
                                           {item.updated ? <p>(edited)</p> :  null}
                                         </span>
                                       </Card.Meta>
-                                      <Card.Description>
+                                      <Card.Description className="content-card-description">
                                         {this.state.updateItemId == item._id ? <Input className="input-upload" placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : (item.content ? item.content : <br/>)}
                                         <div className="profile-edit-buttons">
                                           {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
@@ -641,10 +645,6 @@ class Profile extends Component {
                                         {this.state.showUpdateImageErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this image!</p></Message> : null}
                                       </Card.Description>
                                     </Form>
-                                    <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item, "Image"))}>
-                                      <Icon name="comment" />
-                                      <Icon name={this.state.commentStatusInImages[item.position]} />
-                                    </Button>
                                   </Card.Content>
                                 </Card>
                                 <Card fluid centered className="comment-card">
@@ -734,6 +734,10 @@ class Profile extends Component {
                                                 <div className="label">
                                                   Likes
                                                 </div>
+                                                <Button id="comments-button" className="button-upload" onClick={((e) =>  this.showOrHideComments(e, item, "Story"))}>
+                                                  <Icon name="comment" />
+                                                  <Icon name={this.state.commentStatusInStories[item.position]} />
+                                                </Button>
                                             </div>
                                           </Card.Header>
                                           <Card.Meta className="card-meta">
@@ -742,7 +746,7 @@ class Profile extends Component {
                                               {item.updated ? <p>(edited)</p> :  null}
                                             </span>
                                           </Card.Meta>
-                                          <Card.Description>
+                                          <Card.Description className="content-card-description">
                                           {this.state.updateItemId == item._id ? <TextArea required placeholder={this.state.storyContent} value={this.state.storyContent} onChange={(e) => this.handleChangeStoryData(e,"storyContent")}></TextArea> : item.content}
                                           <div className="profile-edit-buttons">
                                             {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
@@ -751,10 +755,6 @@ class Profile extends Component {
                                           {this.state.showUpdateStoryErrorMessage && this.state.updateItemId == item._id ? <Message negative><p>Error while updating this story!</p></Message> : null}
                                           </Card.Description>
                                         </Form>
-                                        <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) =>  this.showOrHideComments(e, item, "Story"))}>
-                                          <Icon name="comment" />
-                                          <Icon name={this.state.commentStatusInStories[item.position]} />
-                                        </Button>
                                       </Card.Content>
                                     </Card>
                                     <Card fluid centered className="comment-card">
@@ -835,7 +835,7 @@ class Profile extends Component {
                                     </Form.Field>
                                     <Form.TextArea required placeholder="What do you want to say?" autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
                                     {this.state.showGuestbookEntryUploadLimitMessage ? <Message negative><p>{this.state.guestbookEntryUploadLimitMessage}</p></Message> : null}
-                                    <Button className="button-styles mobile-button-border">Add entry</Button>
+                                    <Button className="button-styles mobile-button-border">Add Posts</Button>
                                   </Form>
                                 </Card.Content>
                               </Card>
@@ -864,6 +864,10 @@ class Profile extends Component {
                                             <div className="label">
                                               Likes
                                             </div>
+                                            <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item, "Guestbook"))}>
+                                              <Icon name="comment" />
+                                              <Icon name={this.state.commentStatusInGuestbook[item.position]} />
+                                            </Button>
                                         </div>
                                       </Card.Header>
                                       <Card.Meta className="card-meta">
@@ -871,13 +875,9 @@ class Profile extends Component {
                                           {item.date_created}
                                         </span>
                                       </Card.Meta>
-                                      <Card.Description>
-                                        {item.content}
+                                      <Card.Description className="content-card-description">
+                                         {item.content}
                                       </Card.Description>
-                                      <Button id="comments-button" className="button-upload mobile-button-border" onClick={((e) => this.showOrHideComments(e, item, "Guestbook"))}>
-                                        <Icon name="comment" />
-                                        <Icon name={this.state.commentStatusInGuestbook[item.position]} />
-                                      </Button>
                                     </Card.Content>
                                   </Card>
                                   <Card fluid centered className="comment-card">
