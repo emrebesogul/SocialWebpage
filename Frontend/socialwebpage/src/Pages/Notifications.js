@@ -215,8 +215,8 @@ class Notifications extends Component {
                           </Card.Content>
                         </Card>
                         <Card fluid centered className="comment-card">
-                          <Card.Content>
-                            <Header as='h4' dividing>Comments</Header>
+                          <Card.Content className="feed-comment-content">
+                            <Header as='h3' dividing>Comments</Header>
                             {comments.map((comment, index) => {
                               return(
                                 <Comment.Group key={index}>

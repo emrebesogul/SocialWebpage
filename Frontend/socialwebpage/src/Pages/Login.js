@@ -62,7 +62,7 @@ class Login extends Component {
 
               <div id="login-menu">
                 <Link to="/login"><span id="login-active" className="login-menu-label">Sign Up</span></Link>
-                {/* <Link to="/register"><span id="login-inactive" className="login-menu-label">Register</span></Link> */}
+                <Link to="/register"><span id="login-inactive" className="login-menu-label">Register</span></Link> 
               </div>
 
               <div id="ourProduct">

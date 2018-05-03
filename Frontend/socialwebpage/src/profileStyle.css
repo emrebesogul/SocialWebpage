@@ -242,7 +242,7 @@ a{
 .post-likes{
   float: right;
   font-size: 12px;
-  margin-right: 20px;
+  margin-right: 50px !important;
 }
 
 .image-feed{
@@ -256,9 +256,9 @@ a{
 
 #comments-button{
   position: absolute !important;
-  bottom: 10px !important;
-  right: 16px !important;
+  right: 5px !important;
   padding-left: 10px !important;
+  margin-top: 0 !important;
   padding-right: 4px !important;
 }
 
@@ -1092,6 +1092,7 @@ a.item:hover {
 
 .feed-list-item{
   margin-bottom: 15px !important;
+  margin-top: 10px !important;
   padding-top: 12px !important;
   border-radius: 20px !important;
   -webkit-box-shadow: 0 1px 4px 1px #c7c7c78c;
@@ -1493,6 +1494,8 @@ img.ui.image.image-feed{
       margin-top: -12px;
       box-shadow: none;
       border: none;
+      padding-left: 0;
+      padding-right: 0;
       padding-top: 1px;
     }
 

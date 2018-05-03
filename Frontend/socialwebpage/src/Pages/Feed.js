@@ -390,6 +390,10 @@ async handleSubmit(event) {
                                           <div className="label">
                                             Likes
                                           </div>
+                                          <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item))}>
+                                            <Icon name="comment" />
+                                            <Icon name={this.state.commentStatus[item.position]} />
+                                          </Button>
                                       </div>
 
                                     </Card.Header>
@@ -402,10 +406,6 @@ async handleSubmit(event) {
                                     <Card.Description className="content-card-description">
                                       {item.content ? item.content : <br/>}
                                     </Card.Description>
-                                    <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item))}>
-                                      <Icon name="comment" />
-                                      <Icon name={this.state.commentStatus[item.position]} />
-                                    </Button>
                                   </Card.Content>
                                 </Card>
                                 <Card fluid centered className="comment-card">
