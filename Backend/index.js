@@ -11,6 +11,10 @@ const jwt = require('jsonwebtoken');
 const database = require('./database');
 const mongoSanitize = require('express-mongo-sanitize');
 
+
+console.log(process.env.emailUsername);
+console.log(process.env.emailPassword);
+
 // create application/json parser
 const jsonParser = bodyParser.json();
 const url = 'mongodb://127.0.0.1:27017/socialwebpage';

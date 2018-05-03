@@ -31,7 +31,7 @@ const call = module.exports = {
                     if (docs) {
                         if (docs.activated === true) {
                             if (JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password)) {
-                                jwt.sign({userid: docs._id, username: docs.username}, 'secretkey', (err, token) => {
+                                jwt.sign({userid: docs._id, username: docs.username}, process.env.secretkey, (err, token) => {
                                     console.log(docs.username + " has logged in successfully.");
                                     res.send(JSON.stringify({
                                         message : "Correct credentials",
@@ -348,7 +348,7 @@ const call = module.exports = {
         referenceDate.setHours(referenceDate.getHours() - 1);
 
         db.collection('images').find({"user_id": new ObjectId(userId), "date_created" : { $gte : referenceDate}}).toArray((err_find_images_of_user, res_find_images_of_user) => {
-            if (err_find_images_of_user) throw err_find_images_of_user; 
+            if (err_find_images_of_user) throw err_find_images_of_user;
             if (res_find_images_of_user.length < 20) {
                 db.collection('images').insert({
                     "title": title,
@@ -379,7 +379,7 @@ const call = module.exports = {
         referenceDate.setHours(referenceDate.getHours() - 1);
 
         db.collection('stories').find({"user_id": new ObjectId(userId), "date_created" : { $gte : referenceDate}}).toArray((err_find_stories_of_user, res_find_stories_of_user) => {
-            if (err_find_stories_of_user) throw err_find_stories_of_user; 
+            if (err_find_stories_of_user) throw err_find_stories_of_user;
             if (res_find_stories_of_user.length < 20) {
                 db.collection('stories').insert({
                     "title": title,
@@ -393,8 +393,8 @@ const call = module.exports = {
                 res.send(true);
             } else {
                 res.send(false);
-            }     
-        }); 
+            }
+        });
     },
 
     //----------------------List Story Entries in Profile for a Username----------------------//
@@ -1059,7 +1059,7 @@ const call = module.exports = {
                     let referenceDate = new Date();
                     referenceDate.setHours(referenceDate.getHours() - 1);
                     db.collection('guestbookEntries').find({"author_id": new ObjectId(authorId), "date_created" : { $gte : referenceDate}}).toArray((err_find_guestbook_entries_of_user, res_find_guestbook_entries_of_user) => {
-                        if (err_find_guestbook_entries_of_user) throw err_find_guestbook_entries_of_user; 
+                        if (err_find_guestbook_entries_of_user) throw err_find_guestbook_entries_of_user;
                         if (res_find_guestbook_entries_of_user.length < 20) {
                             let date_created = new Date();
                             db.collection('guestbookEntries').insert({
@@ -1080,12 +1080,12 @@ const call = module.exports = {
                                 });
                             });
                             res.send(true);
-                        } 
+                        }
                         else {
                             res.send(false);
                         }
                     });
-                    
+
                 }
                 else {
                     res.send(false);
@@ -1486,7 +1486,7 @@ const call = module.exports = {
         let referenceDate = new Date();
         referenceDate.setHours(referenceDate.getHours() - 1);
         db.collection('comments').find({"author_id": new ObjectId(currentUserId), "date_created" : { $gte : referenceDate}}).toArray((err_find_comments_of_user, res_find_comments_of_user) => {
-            if (err_find_comments_of_user) throw err_find_comments_of_user; 
+            if (err_find_comments_of_user) throw err_find_comments_of_user;
 
             if (res_find_comments_of_user.length < 20) {
                 db.collection('comments').insert({
@@ -1498,7 +1498,7 @@ const call = module.exports = {
                     "type": "comment"
                 }, (err_insert_entry, res_insert_entry) => {
                     if (err_insert_entry) throw err_insert_entry;
-                    
+
                     if (commentData.postType == "story") {
                         db.collection("stories").findOne({"_id": new ObjectId(commentData.postId)}, (err_find_stories, res_find_stories) => {
                             if (err_find_stories) throw err_find_stories;
