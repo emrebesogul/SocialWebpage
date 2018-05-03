@@ -204,14 +204,19 @@ class Profile extends Component {
         this.state.newGuestbookEntryTitle =  event.target[0].value;
         this.state.newGuestbookEntryContent =  event.target[1].value;
 
-      await createGuestbookentry(
-            this.state.newGuestbookEntryTitle,
-            this.state.newGuestbookEntryContent,
-            this.ownerName
+        let response = await createGuestbookentry(
+              this.state.newGuestbookEntryTitle,
+              this.state.newGuestbookEntryContent,
+              this.ownerName
         );
-        this.getProfileData(this.property);
-        this.setState({guestbookEntryTitle: ""});
-        this.setState({guestbookEntryContent: ""});
+        if(response) {
+          this.getProfileData(this.property);
+          this.setState({guestbookEntryTitle: ""});
+          this.setState({guestbookEntryContent: ""});
+        } else {
+          this.setState({ guestbookEntryUploadLimitMessage : "The upload limit for this hour has beed reached. Please try again later."});
+          this.setState({ showGuestbookEntryUploadLimitMessage: true });
+        }
       }
 
       handleChangeGuestbookEntryInput(e, attribut) {
@@ -369,7 +374,6 @@ class Profile extends Component {
         this.setState({ updateItemId: ""});
       }
 
-
       async handleOpenImageUpdateWindow(event, data) {
         const response = await getImageById(data._id);
         if(response) {
@@ -453,8 +457,17 @@ class Profile extends Component {
             let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
             commentInputElements.map(item => {
               item.value = "";
-            })
+            });
             this.getComments();
+          }
+          else {
+            let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
+            commentInputElements.map(item => {
+              item.value = "";
+            });
+            this.setState({ commentUploadLimitMessage : "The upload limit for this hour has beed reached. Please try again later." });
+            this.setState({ currentPostId: data._id});
+            this.setState({ showCommentUploadLimitMessage: true });
           }
         }
       }
@@ -688,6 +701,7 @@ class Profile extends Component {
                                       <Button className="button-upload button-styles add-comment-button">
                                         <Icon name="send" />
                                       </Button>
+                                      {this.state.showCommentUploadLimitMessage && this.state.currentPostId === item._id ? <Message negative><p>{this.state.commentUploadLimitMessage}</p></Message> : null}
                                     </Form>
                                   </Card.Content>
                                 </Card>
@@ -796,6 +810,7 @@ class Profile extends Component {
                                           <Button className="button-upload button-styles add-comment-button">
                                             <Icon name="send" />
                                           </Button>
+                                          {this.state.showCommentUploadLimitMessage && this.state.currentPostId === item._id ? <Message negative><p>{this.state.commentUploadLimitMessage}</p></Message> : null}
                                         </Form>
                                       </Card.Content>
                                     </Card>
@@ -819,7 +834,8 @@ class Profile extends Component {
                                       <Input placeholder="Titel" value={this.state.guestbookEntryTitle} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryTitle")}/>
                                     </Form.Field>
                                     <Form.TextArea required placeholder="What do you want to say?" autoHeight rows="3" value={this.state.guestbookEntryContent} onChange={(e) => this.handleChangeGuestbookEntryInput(e,"guestbookEntryContent")}/>
-                                    <Button className="button-styles mobile-button-border">Add Post</Button>
+                                    {this.state.showGuestbookEntryUploadLimitMessage ? <Message negative><p>{this.state.guestbookEntryUploadLimitMessage}</p></Message> : null}
+                                    <Button className="button-styles mobile-button-border">Add Posts</Button>
                                   </Form>
                                 </Card.Content>
                               </Card>
@@ -917,6 +933,7 @@ class Profile extends Component {
                                           <Button className="button-upload button-styles add-comment-button">
                                             <Icon name="send" />
                                           </Button>
+                                          {this.state.showCommentUploadLimitMessage && this.state.currentPostId === item._id ? <Message negative><p>{this.state.commentUploadLimitMessage}</p></Message> : null}
                                       </Form>
                                     </Card.Content>
                                   </Card>
