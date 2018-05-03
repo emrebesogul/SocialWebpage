@@ -525,3 +525,25 @@ export const deleteUser=(userId) => {
         });
     });
 }
+
+export const activateAccountOfUser=(activationToken) => {
+    return new Promise((resolve, reject) => {
+        var token = read_cookie('token')
+        $.ajax({
+          url: url + "/account/activate",
+          type: "POST",
+          cache: false,
+          contentType: 'application/json',
+          data: JSON.stringify({activationToken: activationToken}),
+          headers: {
+              'Authorization': 'Bearer ' + token
+          },
+          success: function(res) {
+              resolve(res);
+          },
+          error: function(xhr, status, err){
+              reject(err);
+          }
+        });
+    });
+}
