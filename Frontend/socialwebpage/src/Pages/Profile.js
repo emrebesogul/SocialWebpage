@@ -645,7 +645,7 @@ class Profile extends Component {
                                                   {comment.post_id === item._id ?
                                                   <Comment className="comment-box">
                                                     <Comment.Content className="comment-content">
-                                                      {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                                      {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                       <div className="comment-header">
                                                           <Comment.Author className="comment-author" >
                                                             <Link to={`/profile/${comment.authorName}`}>
@@ -754,7 +754,7 @@ class Profile extends Component {
                                                         {comment.post_id === item._id ?
                                                         <Comment className="comment-box">
                                                           <Comment.Content className="comment-content">
-                                                            {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                                            {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                             <div className="comment-header">
                                                                 <Comment.Author className="comment-author">
                                                                   <Link to={`/profile/${comment.authorName}`}>
@@ -831,7 +831,7 @@ class Profile extends Component {
                                 <Card.Group>
                                   <Card fluid centered>
                                     <div className="username-label">
-                                      {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                      {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                         <Link to={`/profile/${item.username}`} onClick={window.location.reload}>
                                           <span className="content-card-username-label"> @{item.username} </span>
                                         </Link>
@@ -875,7 +875,7 @@ class Profile extends Component {
                                                     {comment.post_id === item._id ?
                                                     <Comment className="comment-box">
                                                       <Comment.Content className="comment-content">
-                                                        {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                                        {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                         <div className="comment-header">
                                                             <Comment.Author className="comment-author">
                                                               <Link to={`/profile/${comment.authorName}`}>
