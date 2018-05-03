@@ -73,7 +73,7 @@ MongoClient.connect(url, function(err, client) {
     //-----------------------------Get user data-----------------------------//
     app.get('/rest/getUserData', verifyToken, (req, res) => {
         if(req.query.username) {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json({});
                 } else {
@@ -83,7 +83,7 @@ MongoClient.connect(url, function(err, client) {
                 }
             });
         } else {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json({});
                 } else {
@@ -96,7 +96,7 @@ MongoClient.connect(url, function(err, client) {
 
     //--------------------------Check authorization--------------------------//
     app.get('/rest/checkAuthorization', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -107,7 +107,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-------------------Get user data of the current user-------------------//
     app.get('/rest/currentUserData', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json({});
             } else {
@@ -141,7 +141,7 @@ MongoClient.connect(url, function(err, client) {
 
     //------------------------------Show the Feed-----------------------------//
     app.get('/rest/feed', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json([]);
             } else {
@@ -157,7 +157,7 @@ MongoClient.connect(url, function(err, client) {
             message: "Image could not be uploaded"
         }));
         } else {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json({
                         message: "User is not authorized"
@@ -178,7 +178,7 @@ MongoClient.connect(url, function(err, client) {
     // new story to the database.
     // Post parameters: title, content and userId of the new story entry
     app.post('/rest/story/create', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -197,7 +197,7 @@ MongoClient.connect(url, function(err, client) {
     // Get prameter: userId of the respective user
     app.get('/rest/story/list', verifyToken, (req, res) => {
         if(req.query.username) {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json([]);
                 } else {
@@ -207,7 +207,7 @@ MongoClient.connect(url, function(err, client) {
                 }
             });
         } else {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json([]);
                 } else {
@@ -227,7 +227,7 @@ MongoClient.connect(url, function(err, client) {
       app.get('/rest/image/list', verifyToken, (req, res) => {
 
         if(req.query.username) {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json([]);
                 } else {
@@ -237,7 +237,7 @@ MongoClient.connect(url, function(err, client) {
                 }
             });
         } else {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json([]);
                 } else {
@@ -250,7 +250,7 @@ MongoClient.connect(url, function(err, client) {
 
     //--------------------------Delete a story entry-------------------------//
     app.post('/rest/story/delete', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -265,7 +265,7 @@ MongoClient.connect(url, function(err, client) {
     //
     // Calls the method deleteImage that deletes an image from the database.
     app.post('/rest/image/delete', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -278,7 +278,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------------Update a user-----------------------------//
     app.put('/rest/user/edit', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json({
                     message: "User is not authorized"
@@ -296,7 +296,7 @@ MongoClient.connect(url, function(err, client) {
     // Calls the method likeStoryEntryById that add the user to the list of
     // likes.
     app.post('/rest/story/like', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -312,7 +312,7 @@ MongoClient.connect(url, function(err, client) {
     // Calls the method likeImageById that add the user to the list of
     // likes
     app.post('/rest/image/like', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -327,7 +327,7 @@ MongoClient.connect(url, function(err, client) {
     // User ONE sends User TWO a friendship request. User TWO can accept or reject
     // If accepted, add to friendship list, else do nothing...
     app.post('/rest/friends/sendFriendshipRequest', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json({
                     message: "Error"
@@ -345,7 +345,7 @@ MongoClient.connect(url, function(err, client) {
     // User ONE sends User TWO a friendship request. User TWO can accept or
     // reject. If accepted, add to friendship list, else do nothing.
     app.get('/rest/friends/getRequests', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json([]);
             } else {
@@ -357,7 +357,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------Confirm a friend requests-----------------------//
     app.post('/rest/friends/confirmFriendRequest', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -369,7 +369,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------Decline a friend requests-----------------------//
     app.post('/rest/friends/declineFriendRequest', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -381,7 +381,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------cancelMyFriendRequest-----------------------//
     app.post('/rest/friends/cancelMyFriendRequest', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -393,7 +393,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------Get all friends of a user-----------------------//
     app.get('/rest/friends/getFriends', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json([]);
             } else {
@@ -405,7 +405,7 @@ MongoClient.connect(url, function(err, client) {
 
     //----------------------------Delete a friend----------------------------//
     app.post('/rest/friends/deleteFriend', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -418,7 +418,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------Create a guestbook entry------------------------//
     app.post('/rest/guestbook/create', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -434,7 +434,7 @@ MongoClient.connect(url, function(err, client) {
     //-------------List all guestbook entries in a user profile------------//
     app.get('/rest/guestbook/list', verifyToken, (req, res) => {
         if(req.query.username) {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json([]);
                 } else {
@@ -444,7 +444,7 @@ MongoClient.connect(url, function(err, client) {
                 }
             });
         } else {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.json([]);
                 } else {
@@ -460,7 +460,7 @@ MongoClient.connect(url, function(err, client) {
     // Calls the method likeGuestbookEntryById that add the user to the list
     // of likes
     app.post('/rest/guestbook/like', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -476,7 +476,7 @@ MongoClient.connect(url, function(err, client) {
     // Calls the method deleteGuestbookEntryById that deletes a story entry
     // from the database.
     app.post('/rest/guestbook/delete', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -492,7 +492,7 @@ MongoClient.connect(url, function(err, client) {
         if (!req.file) {
         res.send(false);
         } else {
-            jwt.verify(req.token, 'secretkey', (err, authData) => {
+            jwt.verify(req.token, process.env.secretkey, (err, authData) => {
                 if(err) {
                     res.send(false);
                 } else {
@@ -508,7 +508,7 @@ MongoClient.connect(url, function(err, client) {
     //
     // Calls the method deleteImage that deletes an image from the database.
     app.post('/rest/user/delete/picture', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -523,7 +523,7 @@ MongoClient.connect(url, function(err, client) {
     // Calls the method getStoryEntry that returns the information of the
     // desired story entry.
     app.post('/rest/story/getEntry', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json({});
             } else {
@@ -536,7 +536,7 @@ MongoClient.connect(url, function(err, client) {
 
     //--------------------------Update Story Entry---------------------------//
     app.put('/rest/story/edit', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -554,7 +554,7 @@ MongoClient.connect(url, function(err, client) {
     // Calls the method getImage that returns the information of the
     // desired image.
     app.post('/rest/image/get', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json({});
             } else {
@@ -567,7 +567,7 @@ MongoClient.connect(url, function(err, client) {
 
     //----------------------------Update an image----------------------------//
     app.put('/rest/image/edit', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -582,7 +582,7 @@ MongoClient.connect(url, function(err, client) {
 
     //--------------------------Create a comment-----------------------------//
     app.post('/rest/comment/create', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -595,7 +595,7 @@ MongoClient.connect(url, function(err, client) {
 
     //----------------------------Get all comments----------------------------//
     app.get('/rest/comment/list', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                   res.json([]);
             } else {
@@ -612,7 +612,7 @@ MongoClient.connect(url, function(err, client) {
 
     //----------------------------Delete a comment---------------------------//
     app.post('/rest/comment/delete', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -625,7 +625,7 @@ MongoClient.connect(url, function(err, client) {
 
     //--------------------------Get all notifications------------------------//
     app.get('/rest/notifications', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json([]);
             } else {
@@ -637,7 +637,7 @@ MongoClient.connect(url, function(err, client) {
 
     //----------------------Show a specific notification---------------------//
     app.get('/rest/notifications/data/:type/:typeCommented/:postId', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.json({});
             } else {
@@ -676,7 +676,7 @@ MongoClient.connect(url, function(err, client) {
 
     //-----------------------------Like a comment----------------------------//
     app.post('/rest/comment/like', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send(false);
             } else {
@@ -689,7 +689,7 @@ MongoClient.connect(url, function(err, client) {
 
     //------------------------------Delete a user----------------------------//
     app.post('/rest/user/delete', verifyToken, (req, res) => {
-        jwt.verify(req.token, 'secretkey', (err, authData) => {
+        jwt.verify(req.token, process.env.secretkey, (err, authData) => {
             if(err) {
                 res.send({userDelete: false });
             } else {
