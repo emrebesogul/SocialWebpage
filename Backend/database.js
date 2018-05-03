@@ -237,7 +237,7 @@ const call = module.exports = {
         );
 
         res.send(JSON.stringify({
-            message: "Image uploaded"
+            message: "Account successfully activated"
         }));
     },
 
