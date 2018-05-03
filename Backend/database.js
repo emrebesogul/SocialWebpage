@@ -34,7 +34,7 @@ const call = module.exports = {
                                 jwt.sign({userid: docs._id, username: docs.username}, process.env.secretkey, (err, token) => {
                                     console.log(docs.username + " has logged in successfully.");
                                     res.send(JSON.stringify({
-                                        message : process.env.secretkey,
+                                        message : "Correct credentials",
                                         token: token,
                                     }));
                                 });
