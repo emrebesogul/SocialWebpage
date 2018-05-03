@@ -399,7 +399,7 @@ async handleSubmit(event) {
                                         {item.updated ? <p>(edited)</p> :  null}
                                       </span>
                                     </Card.Meta>
-                                    <Card.Description>
+                                    <Card.Description className="content-card-description">
                                       {item.content ? item.content : <br/>}
                                     </Card.Description>
                                     <Button id="comments-button" className="button-upload" onClick={((e) => this.showOrHideComments(e, item))}>

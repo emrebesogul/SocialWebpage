@@ -669,6 +669,10 @@ textarea {
   image-rendering: crisp-edges !important;
 }
 
+.content-card-description{
+  margin-bottom: 15px !important;
+}
+
 /*----------------------------------------------
     Start Profile Picture Large
 ----------------------------------------------*/
