@@ -31,7 +31,11 @@ const call = module.exports = {
                     if (docs) {
                         if (docs.activated === true) {
                             if (JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password)) {
-                                jwt.sign({userid: docs._id, username: docs.username}, process.env.secretkey, (err, token) => {
+                                jwt.sign({
+                                    exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
+                                    userid: docs._id, 
+                                    username: docs.username
+                                }, process.env.secretkey, (err, token) => {
                                     console.log(docs.username + " has logged in successfully.");
                                     res.send(JSON.stringify({
                                         message : "Correct credentials",
