@@ -12,6 +12,9 @@ body, html {
   All Buttons styled on Feed, Profile sites.
 */
 
+.card-meta {
+  margin-left: 4px !important;
+}
 
 #main-content{
   background-color: rgb(255,255,255) !important;
@@ -237,12 +240,14 @@ a{
 .card-header{
   margin-top: 4px !important;
   font-weight: 700;
+  font-size: 1.28571429em;
+  line-height: 1.28571429em;
 }
 
 .post-likes{
   float: right;
   font-size: 12px;
-  margin-right: 50px !important;
+  margin-top: 0 !important;
 }
 
 .image-feed{
@@ -255,11 +260,11 @@ a{
 --------------------------------------------------*/
 
 #comments-button{
-  position: absolute !important;
-  right: 5px !important;
-  padding-left: 10px !important;
+  position: relative !important;
+  padding-left: 8px !important;
   margin-top: 0 !important;
-  padding-right: 4px !important;
+  margin-left: 10px;
+  padding-right: 1px !important;
 }
 
 #network-card-group{
@@ -491,7 +496,7 @@ div.ui.comments {
 
 .comment-header {
   width: 100%;
-  height: 30px;
+  height: 28px;
   background: rgb(233,233,233);
   position: absolute;
   top: 0;
@@ -503,7 +508,7 @@ div.ui.comments {
 
 .comment-author{
   position: absolute;
-  top: 7px;
+  top: 5px;
   left: 80px;
 }
 
@@ -670,7 +675,7 @@ textarea {
 }
 
 .content-card-description{
-  margin-bottom: 15px !important;
+  margin-bottom: 5px !important;
 }
 
 /*----------------------------------------------
@@ -1222,7 +1227,7 @@ input.login-input-text{
 }
 
 img.ui.image.image-feed{
-  max-height: 565px;
+  max-height: 595px;
 }
 
 #login-button-submit{
@@ -1514,7 +1519,7 @@ img.ui.image.image-feed{
 
     #card-content{
       padding: 1em 0.5em;
-      padding-bottom: 10px;
+      padding-bottom: 5px;
     }
 
     .friends-content {
@@ -1593,7 +1598,7 @@ img.ui.image.image-feed{
     }
 
     img.ui.image.image-feed{
-      max-height: 365px;
+      max-height: 425px;
     }
 
     .settings{

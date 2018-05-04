@@ -180,7 +180,7 @@ async handleCreateComment(event, data) {
         item.value = "";
       })
       this.getComments();
-    } 
+    }
     else {
       let commentInputElements = Array.from(document.getElementsByClassName('commentInput'));
       commentInputElements.map(item => {
@@ -383,7 +383,7 @@ async handleSubmit(event) {
                                     <Card.Header className="card-header">
                                       <Rating onRate={((e) => this.handleRatePost(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}>
                                       </Rating>
-                                         {item.title}
+                                         {item.title ? item.title : "Untitled Post"}
                                         <div className="ui mini horizontal statistic post-likes">
                                           <div className="value">
                                             {this.getNumberOfLikesOfPost(item)}
@@ -405,7 +405,7 @@ async handleSubmit(event) {
                                       </span>
                                     </Card.Meta>
                                     <Card.Description className="content-card-description">
-                                      {item.content ? item.content : <br/>}
+                                      {item.content}
                                     </Card.Description>
                                   </Card.Content>
                                 </Card>
