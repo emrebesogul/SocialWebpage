@@ -118,25 +118,35 @@ const call = module.exports = {
                                             });
 
                                             console.log("User created: " + username);
-                                            console.log("Email sent to: " + username + ", " + email);
 
-                                            let transport = nodemailer.createTransport({
-                                              host: "smtp-mail.outlook.com",
-                                              port: 587,
-                                              auth: {
-                                                user: process.env.emailUsername,
-                                                pass: process.env.emailPassword
-                                              }
+                                            var transporter = nodemailer.createTransport({
+                                                host: "smtp-mail.outlook.com",
+                                                secureConnection: false, // TLS requires secureConnection to be false
+                                                port: 587, // port for secure SMTP
+                                                tls: {
+                                                   ciphers:'SSLv3'
+                                                },
+                                                auth: {
+                                                  user: process.env.emailUsername,
+                                                  pass: process.env.emailPassword
+                                                }
                                             });
 
-                                            let mail = {
-                                              from: process.env.emailUsername,
-                                              to: email,
-                                              subject: 'Activate your account',
-                                              html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>https://gruppe1.testsites.info/activation/'+activationToken
+                                            var mailOptions = {
+                                                from: process.env.emailUsername,
+                                                to: email,
+                                                subject: 'Activate your account',
+                                                html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>http://localhost:3000/activation/'+activationToken
                                             };
 
-                                            transport.sendMail(mail);
+                                            transporter.sendMail(mailOptions, function(error, info){
+                                              if (error) {
+                                                console.log(error);
+                                              } else {
+                                                console.log('Email sent: ' + info.response);
+                                                console.log("Email sent to: " + username + ", " + email);
+                                              }
+                                            });
 
                                             res.send(JSON.stringify({
                                                 message: "User successfully created",
@@ -184,25 +194,35 @@ const call = module.exports = {
                                         });
 
                                         console.log("User created: " + username);
-                                        console.log("Email sent to: " + username + ", " + email);
 
-                                        let transport = nodemailer.createTransport({
-                                          host: "smtp-mail.outlook.com",
-                                          port: 587,
-                                          auth: {
-                                            user: process.env.emailUsername,
-                                            pass: process.env.emailPassword
-                                          }
+                                        var transporter = nodemailer.createTransport({
+                                            host: "smtp-mail.outlook.com",
+                                            secureConnection: false, // TLS requires secureConnection to be false
+                                            port: 587, // port for secure SMTP
+                                            tls: {
+                                               ciphers:'SSLv3'
+                                            },
+                                            auth: {
+                                              user: process.env.emailUsername,
+                                              pass: process.env.emailPassword
+                                            }
                                         });
 
-                                        let mail = {
-                                          from: process.env.emailUsername,
-                                          to: email,
-                                          subject: 'Activate your account',
-                                          html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>https://gruppe1.testsites.info/activation/'+activationToken
+                                        var mailOptions = {
+                                            from: process.env.emailUsername,
+                                            to: email,
+                                            subject: 'Activate your account',
+                                            html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>http://localhost:3000/activation/'+activationToken
                                         };
 
-                                        transport.sendMail(mail);
+                                        transporter.sendMail(mailOptions, function(error, info){
+                                          if (error) {
+                                            console.log(error);
+                                          } else {
+                                            console.log('Email sent: ' + info.response);
+                                            console.log("Email sent to: " + username + ", " + email);
+                                          }
+                                        });
 
                                         res.send(JSON.stringify({
                                             message: "User successfully created",
