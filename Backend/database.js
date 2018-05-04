@@ -33,7 +33,7 @@ const call = module.exports = {
                             if (JSON.stringify(passwordHashed.words) === JSON.stringify(docs.password)) {
                                 jwt.sign({
                                     exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24),
-                                    userid: docs._id, 
+                                    userid: docs._id,
                                     username: docs.username
                                 }, process.env.secretkey, (err, token) => {
                                     console.log(docs.username + " has logged in successfully.");
@@ -133,7 +133,7 @@ const call = module.exports = {
                                               from: process.env.emailUsername,
                                               to: email,
                                               subject: 'Activate your account',
-                                              html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>https://grupp1.testsites.info/activation/'+activationToken
+                                              html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>https://gruppe1.testsites.info/activation/'+activationToken
                                             };
 
                                             transport.sendMail(mail);
