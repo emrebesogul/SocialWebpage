@@ -133,7 +133,7 @@ const call = module.exports = {
                                               from: process.env.emailUsername,
                                               to: email,
                                               subject: 'Activate your account',
-                                              html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>https://grupp1.testsites.info/activation/'+activationToken
+                                              html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>http://localhost:3000/activation/'+activationToken
                                             };
 
                                             transport.sendMail(mail);
@@ -199,7 +199,7 @@ const call = module.exports = {
                                           from: process.env.emailUsername,
                                           to: email,
                                           subject: 'Activate your account',
-                                          html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>http://localhost:8000/activation/'+activationToken
+                                          html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: </p>http://localhost:3000/activation/'+activationToken
                                         };
 
                                         transport.sendMail(mail);

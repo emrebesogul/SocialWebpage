@@ -13,12 +13,6 @@ const mongoSanitize = require('express-mongo-sanitize');
 
 require('dotenv').load();
 
-
-
-console.log(process.env.emailUsername);
-console.log(process.env.emailPassword);
-console.log(process.env.secretkey);
-
 // create application/json parser
 const jsonParser = bodyParser.json();
 const url = 'mongodb://127.0.0.1:27017/socialwebpage';
