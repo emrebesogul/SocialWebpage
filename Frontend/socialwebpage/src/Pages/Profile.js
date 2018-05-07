@@ -616,7 +616,7 @@ class Profile extends Component {
                                     <Form onSubmit={((e) => this.handleUpdateImage(e, item))}>
                                       <Card.Header className="card-header">
                                         <Rating onRate={((e) => this.handleRateImage(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
-                                        {this.state.updateItemId == item._id ? <Form.Field><Input  placeholder={this.state.imageTitle} value={this.state.imageTitle} onChange={(e) => this.handleChangeImageData(e,"imageTitle")}/></Form.Field> : item.title}
+                                        {this.state.updateItemId == item._id ? <Form.Field><Input  placeholder={this.state.imageTitle} value={this.state.imageTitle} onChange={(e) => this.handleChangeImageData(e,"imageTitle")}/></Form.Field> : (item.title ? item.title :  "Untitled Post") }
                                           <div className="ui mini horizontal statistic post-likes">
                                             <div className="value">
                                               {this.getNumberOfLikesOfImage(item)}
@@ -637,7 +637,7 @@ class Profile extends Component {
                                         </span>
                                       </Card.Meta>
                                       <Card.Description className="content-card-description">
-                                        {this.state.updateItemId == item._id ? <Input className="input-upload" placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : (item.content ? item.content : <br/>)}
+                                        {this.state.updateItemId == item._id ? <Input className="input-upload" placeholder={this.state.imageContent} value={this.state.imageContent} onChange={(e) => this.handleChangeImageData(e,"imageContent")} /> : item.content}
                                         <div className="profile-edit-buttons">
                                           {this.state.updateItemId == item._id ? <Button className="button-upload save-button-guestbook">Save</Button> : null}
                                           {this.state.updateItemId == item._id ? <Button onClick={((e) => this.handleCancelUpdateImage(e, item))} className="button-upload save-button-guestbook">Cancel</Button> : null}
@@ -726,7 +726,7 @@ class Profile extends Component {
                                         <Form onSubmit={((e) => this.handleUpdateStoryEntry(e, item))}>
                                           <Card.Header className="card-header">
                                               <Rating onRate={((e) => this.handleRateStoryEntry(e, item))} icon='heart' size="large" rating={item.current_user_has_liked} maxRating={1}></Rating>
-                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> : item.title}
+                                              {this.state.updateItemId == item._id ? <Form.Field required ><Input  placeholder={this.state.storyTitle} value={this.state.storyTitle} onChange={(e) => this.handleChangeStoryData(e,"storyTitle")}/></Form.Field> :  (item.title ? item.title :  "Untitled Post")}
                                                 <div className="ui mini horizontal statistic post-likes">
                                                 <div className="value">
                                                   {this.getNumberOfLikesOfStoryEntry(item)}

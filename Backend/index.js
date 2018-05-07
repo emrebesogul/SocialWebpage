@@ -11,9 +11,7 @@ const jwt = require('jsonwebtoken');
 const database = require('./database');
 const mongoSanitize = require('express-mongo-sanitize');
 
-
-console.log(process.env.emailUsername);
-console.log(process.env.emailPassword);
+require('dotenv').load();
 
 // create application/json parser
 const jsonParser = bodyParser.json();
