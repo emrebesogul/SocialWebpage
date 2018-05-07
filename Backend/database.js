@@ -137,7 +137,7 @@ const call = module.exports = {
                                                 from: process.env.emailUsername,
                                                 to: email,
                                                 subject: 'Activate your account',
-                                                html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: <a href="http://localhost:3000/activation/' + activationToken + '"></a></p>'
+                                                html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: <a href="https://gruppe1.testsites.info/activation/' + activationToken + '"></a></p>'
                                             };
 
                                             transporter.sendMail(mailOptions, function(error, info){
@@ -151,7 +151,7 @@ const call = module.exports = {
 
                                             res.send(JSON.stringify({
                                                 message: "User successfully created",
-                                                html: '<p>Welcome to Ivey. Click <a href="http://localhost:3000/activation/' + activationToken + '">here</a> to activate your account</p>'
+                                                html: '<p>Welcome to Ivey. Click <a href="https://gruppe1.testsites.info/activation/' + activationToken + '">here</a> to activate your account</p>'
                                             }));
                                         }
                                     })
@@ -213,7 +213,7 @@ const call = module.exports = {
                                             from: process.env.emailUsername,
                                             to: email,
                                             subject: 'Activate your account',
-                                            html: '<p>Welcome to Ivey. Click <a href="http://localhost:3000/activation/' + activationToken + '">here</a> to activate your account</p>'
+                                            html: '<p>Welcome to Ivey. Click <a href="https://gruppe1.testsites.info/activation/' + activationToken + '">here</a> to activate your account</p>'
                                         };
 
                                         transporter.sendMail(mailOptions, function(error, info){
