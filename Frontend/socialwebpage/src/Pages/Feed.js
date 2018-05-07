@@ -371,7 +371,7 @@ async handleSubmit(event) {
                               <Card.Group>
                                 <Card fluid centered>
                                   <div className="username-label">
-                                    {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
+                                    {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.profile_picture_url} className="user-card-avatar"/></div> : <div><Image className="user-card-avatar" src="/assets/images/user.png"></Image></div> }
                                     <Link to={`/profile/${item.username}`}>
                                       <span className="content-card-username-label"> @{item.username} </span>
                                     </Link>
@@ -421,7 +421,7 @@ async handleSubmit(event) {
                                                     <Comment className="comment-box">
 
                                                       <Comment.Content className="comment-content">
-                                                        {comment.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
+                                                        {comment.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image className="comments-user-image" src={comment.profile_picture_url} /></div> : <div><Image className="comments-user-image" src="/assets/images/user.png"></Image></div> }
                                                         <div className="comment-header">
                                                             <Comment.Author className="comment-author" >
                                                               <Link to={`/profile/${comment.authorName}`}>
@@ -494,7 +494,7 @@ async handleSubmit(event) {
                                       <div key={index}>
                                         <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.profile_picture_url} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
+                                            {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.profile_picture_url} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" src="/assets/images/user.png"></Image></div> }
                                             <List.Content className="friends-content">
                                               <List.Header>
                                                   <Link to={`/profile/${item.requester}`}>
@@ -524,7 +524,7 @@ async handleSubmit(event) {
                                       <div key={index}>
                                         <List className="feed-list-item" divided relaxed verticalAlign='middle'>
                                           <List.Item>
-                                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
+                                            {item.picture !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.picture} size="tiny" className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
                                             <List.Content className="friends-content">
                                               <List.Header >
                                                   <Link to={`/profile/${item.name}`}>
@@ -569,7 +569,7 @@ async handleSubmit(event) {
                                     <div key={index}>
                                       <List className="feed-list-item" divided verticalAlign='middle'>
                                         <List.Item>
-                                          {item.profile_picture_url !== "http://localhost:8000/uploads/posts/" ? <div><Image size="tiny" src={item.profile_picture_url} className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
+                                          {item.profile_picture_url !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image size="tiny" src={item.profile_picture_url} className="user-card-avatar friends-avatar"/></div> : <div><Image size="tiny" className="user-card-avatar friends-avatar" src="/assets/images/user.png"></Image></div> }
                                           <List.Content className="friends-content">
                                             <List.Header>
                                                 {item.redirect ? <div><Link to={`/notifications/${item.type}/${item.typeCommented}/${item.linkToPost}`}>

@@ -103,7 +103,7 @@ class Users extends React.Component{
                         <Card id="network-cards">
                           <Card.Content>
                           <Link to={`/profile/${item.username}`}>
-                            {item.picture !== "http://localhost:8000/uploads/posts/" ? <div><Image src={item.picture} size="tiny" floated="right" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" floated="right" src="/assets/images/user.png"></Image></div> }
+                            {item.picture !== "https://gruppe1.testsites.info/uploads/posts/" ? <div><Image src={item.picture} size="tiny" floated="right" className="user-card-avatar friends-avatar"/></div> : <div><Image className="user-card-avatar friends-avatar" size="tiny" floated="right" src="/assets/images/user.png"></Image></div> }
                               <Card.Header>
                                 <span id="network-card-header">{item.username}</span>
                               </Card.Header>

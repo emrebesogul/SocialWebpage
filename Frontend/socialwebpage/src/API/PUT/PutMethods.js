@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { read_cookie } from 'sfcookies';
 
 var getUrl = window.location;
-var url = getUrl.protocol + "//" + getUrl.hostname + ":8000/rest";
+var url = getUrl.protocol + "//" + getUrl.hostname + "/rest";
 
 export const updateUserData=(jsonUserData) => {
   return new Promise((resolve, reject) => {
