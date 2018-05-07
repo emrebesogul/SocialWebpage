@@ -151,7 +151,7 @@ const call = module.exports = {
 
                                             res.send(JSON.stringify({
                                                 message: "User successfully created",
-                                                html: '<p>Welcome to Ivey. Click <a href="http://localhost:3000/activation/' + activationToken + '">here</a> to activate your account</p>'
+                                                messageDetails: "Your user registration was successful. We have sent you an email to activate your account. You may now activate your account and login with your username."
                                             }));
                                         }
                                     })
