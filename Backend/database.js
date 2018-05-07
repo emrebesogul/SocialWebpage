@@ -132,20 +132,19 @@ const call = module.exports = {
                                                 }
                                             });
 
-
                                             var mailOptions = {
                                                 from: process.env.emailUsername,
                                                 to: email,
                                                 subject: 'Activate your account',
-                                                html: '<h1>Welcome to Ivey</h1><p>Please visit this link to activate your account: <a href="https://gruppe1.testsites.info/activation/' + activationToken + '"></a></p>'
+
+                                                 html: '<p>Welcome to Ivey. Click <a href="https://gruppe1.testsites.info/activation/' + activationToken + '">here</a> to activate your account</p>'
+
                                             };
 
                                             transporter.sendMail(mailOptions, function(error, info){
                                               if (error) {
                                                 console.log(error);
                                               } else {
-                                                //console.log('Email sent: ' + info.response);
-                                                console.log("Email sent to: " + username + ", " + email);
                                               }
                                             });
 
@@ -214,14 +213,13 @@ const call = module.exports = {
                                             to: email,
                                             subject: 'Activate your account',
                                             html: '<p>Welcome to Ivey. Click <a href="https://gruppe1.testsites.info/activation/' + activationToken + '">here</a> to activate your account</p>'
+
                                         };
 
                                         transporter.sendMail(mailOptions, function(error, info){
                                           if (error) {
                                             console.log(error);
                                           } else {
-                                            //console.log('Email sent: ' + info.response);
-                                            console.log("Email sent to: " + username + ", " + email);
                                           }
                                         });
 
